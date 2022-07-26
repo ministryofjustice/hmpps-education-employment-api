@@ -7,16 +7,32 @@ spring:
     name: hmpps-education-employment-api
   codec:
     max-in-memory-size: 10MB
+  mvc:
+    async:
+      request-timeout: 1m
+
 
   jackson:
     date-format: "yyyy-MM-dd HH:mm:ss"
     serialization:
       WRITE_DATES_AS_TIMESTAMPS: false
 
+  devtools:
+    add-properties: false
+
+    data:
+      web:
+        pageable:
+          max-page-size: 20000
   profiles:
     group:
       test:
         - "stdout"
+  flyway:
+    enabled: true
+
+api:
+  health-timeout-ms: 1000
 
 server:
   port: 8080

@@ -1,0 +1,27 @@
+server:
+  shutdown: immediate
+  port: 8083
+
+api:
+  base:
+    url:
+      oauth: http://localhost:9090/auth
+
+management.endpoint:
+  health.cache.time-to-live: 0
+  info.cache.time-to-live: 0
+
+spring:
+  devtools:
+    add-properties: true
+
+  flyway:
+    enabled: true
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/education-employment?sslmode=prefer
+    username: education-employment
+    password: education-employment
+
+
+
