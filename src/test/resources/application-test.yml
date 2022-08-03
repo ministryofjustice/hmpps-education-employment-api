@@ -4,3 +4,20 @@ server:
 management.endpoint:
   health.cache.time-to-live: 0
   info.cache.time-to-live: 0
+api:
+  base:
+    url:
+      oauth: http://localhost:9090/auth
+spring:
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/education-employment
+    username: education-employment
+    password: education-employment
+    properties:
+      sslMode: DISABLE
+      sslRootCert:
+  flyway:
+    enabled: true
+    url: jdbc:postgresql://localhost:5432/education-employment?sslmode=prefer
+    user: education-employment
+    password: education-employment

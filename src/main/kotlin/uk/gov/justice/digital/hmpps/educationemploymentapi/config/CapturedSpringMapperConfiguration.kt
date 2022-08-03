@@ -8,13 +8,12 @@ import org.springframework.context.annotation.Configuration
  * data classes etc may use it as they cannot have it auto injected
  */
 @Configuration
-class CapturedSpringMapperConfiguration(private val objectMapper:ObjectMapper) {
+class CapturedSpringMapperConfiguration(private val objectMapper: ObjectMapper) {
   companion object {
-    lateinit var OBJECT_MAPPER:ObjectMapper
+    lateinit var OBJECT_MAPPER: ObjectMapper
   }
 
-  init{
+  init {
     OBJECT_MAPPER = objectMapper
   }
-
 }

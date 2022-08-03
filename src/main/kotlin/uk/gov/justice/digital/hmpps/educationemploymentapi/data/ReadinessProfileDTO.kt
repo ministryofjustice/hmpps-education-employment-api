@@ -1,9 +1,9 @@
 package uk.gov.justice.digital.hmpps.educationemploymentapi.data
 
-import uk.gov.justice.digital.hmpps.educationemploymentapi.persistence.model.ReadinessProfile
 import io.swagger.v3.oas.annotations.media.Schema
 import uk.gov.justice.digital.hmpps.educationemploymentapi.config.CapturedSpringMapperConfiguration
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.Profile
+import uk.gov.justice.digital.hmpps.educationemploymentapi.persistence.model.ReadinessProfile
 import java.time.LocalDateTime
 
 data class ReadinessProfileDTO(

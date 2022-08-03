@@ -11,4 +11,5 @@ data class CreateReadinessProfileRequestDTO(
   val bookingId: Int,
 
   @Schema(description = "Work readiness profile JSON data", example = "{...}")
-  val profileData: Profile)
+  val profileData: Profile
+)

@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.educationemploymentapi.resource
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.ArraySchema
@@ -13,12 +12,9 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import reactor.core.publisher.Flux
 import uk.gov.justice.digital.hmpps.educationemploymentapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.CreateReadinessProfileRequestDTO
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.ReadinessProfileDTO
-import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.Profile
-import uk.gov.justice.digital.hmpps.educationemploymentapi.persistence.model.ReadinessProfile
 import uk.gov.justice.digital.hmpps.educationemploymentapi.service.ProfileService
 import javax.validation.Valid
 import javax.validation.constraints.NotEmpty
@@ -26,8 +22,7 @@ import javax.validation.constraints.NotEmpty
 @RestController
 @RequestMapping("/readiness-profiles", produces = [MediaType.APPLICATION_JSON_VALUE])
 class ProfileResource(
-  private val profileService: ProfileService,
-  private val objectMapper: ObjectMapper
+  private val profileService: ProfileService
 ) {
 //  @PreAuthorize("hasRole('ROLE_TBD')")
   @PostMapping("/search")

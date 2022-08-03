@@ -13,7 +13,6 @@ import org.springframework.data.relational.core.query.Query
 import org.springframework.data.relational.core.query.Query.query
 import org.springframework.stereotype.Repository
 import uk.gov.justice.digital.hmpps.educationemploymentapi.persistence.model.ReadinessProfileFilter
-
 interface ReadinessProfileCustomRepository {
   fun findForGivenOffenders(filter: ReadinessProfileFilter): Flow<ReadinessProfile>
 }

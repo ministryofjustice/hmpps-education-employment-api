@@ -5,11 +5,11 @@ import io.r2dbc.postgresql.codec.Json
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.Transient
-import java.time.LocalDateTime
 import org.springframework.data.domain.Persistable
 import org.springframework.data.relational.core.mapping.Table
 import uk.gov.justice.digital.hmpps.educationemploymentapi.config.CapturedSpringMapperConfiguration
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.Profile
+import java.time.LocalDateTime
 
 @Table("work_readiness")
 data class ReadinessProfile(

@@ -9,7 +9,6 @@ import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.Prof
 import uk.gov.justice.digital.hmpps.educationemploymentapi.persistence.model.ReadinessProfile
 import uk.gov.justice.digital.hmpps.educationemploymentapi.persistence.model.ReadinessProfileFilter
 import uk.gov.justice.digital.hmpps.educationemploymentapi.persistence.repository.ReadinessProfileRespository
-import java.util.Arrays
 
 @Service
 class ProfileService(
