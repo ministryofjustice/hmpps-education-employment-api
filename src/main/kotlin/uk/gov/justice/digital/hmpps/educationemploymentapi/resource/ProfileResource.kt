@@ -9,6 +9,7 @@ import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -93,6 +94,39 @@ class ProfileResource(
     @Schema(description = "offenderId", example = "2342342", required = true)
     @PathVariable offenderId: String,
     @RequestBody requestDTO:CreateReadinessProfileRequestDTO) :ReadinessProfileDTO = ReadinessProfileDTO(profileService.createProfileForOffender(requestDTO.offenderId, requestDTO.bookingId, requestDTO.profileData))
+
+
+  @PutMapping("/{offenderId}")
+  @Operation(
+    summary = "Update the work readiness profile for an offender",
+    description = "Called to modify the profile",
+    responses = [
+      ApiResponse(
+        responseCode = "200",
+        description = "Work readiness profile modified",
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = ReadinessProfileDTO::class)
+          )
+        ],
+      ),
+      ApiResponse(
+        responseCode = "401",
+        description = "Unauthorized to access this endpoint",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))]
+      ),
+      ApiResponse(
+        responseCode = "403",
+        description = "Incorrect permissions to access this endpoint",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))]
+      )
+    ]
+  )
+  suspend fun updateOffenderProfile(
+    @Schema(description = "offenderId", example = "2342342", required = true)
+    @PathVariable offenderId: String,
+    @RequestBody requestDTO:CreateReadinessProfileRequestDTO) :ReadinessProfileDTO = ReadinessProfileDTO(profileService.updateProfileForOffender(requestDTO.offenderId, requestDTO.bookingId, requestDTO.profileData))
 
 
   @GetMapping("/{offenderId}")

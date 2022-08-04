@@ -24,17 +24,18 @@ data class ReadinessProfile(
   @Transient
   @Value("false")
   @JsonIgnore
-  val new: Boolean = true
+  val new: Boolean
 ) : Persistable<String> {
 
-  constructor(offenderId:String, bookingId:Int, author:String, profile:Profile): this(
+  constructor(offenderId: String, bookingId: Int, author: String, profile: Profile, isNew: Boolean) : this(
     offenderId = offenderId,
     bookingId = bookingId,
     createdDateTime = LocalDateTime.now(),
     modifiedDateTime = LocalDateTime.now(),
     author = author,
     schemaVersion = "1.0.0",
-    profileData = Json.of(CapturedSpringMapperConfiguration.OBJECT_MAPPER.writeValueAsString(profile))
+    profileData = Json.of(CapturedSpringMapperConfiguration.OBJECT_MAPPER.writeValueAsString(profile)),
+    new = isNew
   )
 
   override fun equals(other: Any?): Boolean {
