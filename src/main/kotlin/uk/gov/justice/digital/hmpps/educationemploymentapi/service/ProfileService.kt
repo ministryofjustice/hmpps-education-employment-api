@@ -15,21 +15,19 @@ import uk.gov.justice.digital.hmpps.educationemploymentapi.persistence.repositor
 class ProfileService(
   private val readinessProfileRepository:ReadinessProfileRespository
 ) {
-  suspend fun createProfileForOffender(offenderId:String, bookingId:Int, profile:Profile): ReadinessProfile {
+  suspend fun createProfileForOffender(offenderId: String, bookingId: Int, profile: Profile): ReadinessProfile {
     if (readinessProfileRepository.existsById(offenderId)) {
       throw AlreadyExistsException(offenderId)
     }
     return readinessProfileRepository.save(ReadinessProfile(offenderId, bookingId, "todo_from_auth", profile, true))
   }
 
-  suspend fun updateProfileForOffender(offenderId:String, bookingId:Int, profile:Profile): ReadinessProfile {
+  suspend fun updateProfileForOffender(offenderId: String, bookingId: Int, profile: Profile): ReadinessProfile {
     return readinessProfileRepository.save(ReadinessProfile(offenderId, bookingId, "todo_from_auth", profile, false))
   }
-  suspend fun getProfilesForOffenders(offenders:List<String>) = readinessProfileRepository.findForGivenOffenders(ReadinessProfileFilter(offenders))
+  suspend fun getProfilesForOffenders(offenders: List<String>) = readinessProfileRepository.findForGivenOffenders(ReadinessProfileFilter(offenders))
 
-  suspend fun getProfileForOffender(offenderId:String) :ReadinessProfile = readinessProfileRepository.findForGivenOffenders(ReadinessProfileFilter(
-    listOf(offenderId)
-  )).take(1).first()
+  suspend fun getProfileForOffender(offenderId: String): ReadinessProfile = readinessProfileRepository.findForGivenOffenders(ReadinessProfileFilter(listOf(offenderId))).first()
 
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
