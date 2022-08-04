@@ -1,8 +1,5 @@
 package uk.gov.justice.digital.hmpps.educationemploymentapi.persistence.repository
 
-import uk.gov.justice.digital.hmpps.educationemploymentapi.persistence.model.ReadinessProfile
-
-
 import kotlinx.coroutines.flow.Flow
 import org.springframework.data.domain.Sort
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate
@@ -12,6 +9,7 @@ import org.springframework.data.relational.core.query.CriteriaDefinition
 import org.springframework.data.relational.core.query.Query
 import org.springframework.data.relational.core.query.Query.query
 import org.springframework.stereotype.Repository
+import uk.gov.justice.digital.hmpps.educationemploymentapi.persistence.model.ReadinessProfile
 import uk.gov.justice.digital.hmpps.educationemploymentapi.persistence.model.ReadinessProfileFilter
 interface ReadinessProfileCustomRepository {
   fun findForGivenOffenders(filter: ReadinessProfileFilter): Flow<ReadinessProfile>
@@ -44,4 +42,3 @@ class ReadinessProfileCustomRepositoryImpl(private val template: R2dbcEntityTemp
 private infix fun MutableList<CriteriaDefinition>.and(criteria: CriteriaDefinition?) {
   criteria?.run { add(this) }
 }
-

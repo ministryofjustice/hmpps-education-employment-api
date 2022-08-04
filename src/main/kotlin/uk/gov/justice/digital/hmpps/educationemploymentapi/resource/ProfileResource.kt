@@ -1,8 +1,8 @@
 package uk.gov.justice.digital.hmpps.educationemploymentapi.resource
 
-import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.ArraySchema
+import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import org.springframework.http.MediaType
@@ -55,7 +55,8 @@ class ProfileResource(
   )
   suspend fun getOffenderProfiles(
     @Schema(description = "List of offender Ids", example = "[2342342, 212312]", required = true)
-    @RequestBody @Valid @NotEmpty offenderIds: List<String>) : List<ReadinessProfileDTO> {
+    @RequestBody @Valid @NotEmpty offenderIds: List<String>
+  ): List<ReadinessProfileDTO> {
     val profiles = ArrayList<ReadinessProfileDTO>()
     profileService.getProfilesForOffenders(offenderIds).collect {
       profiles.add(ReadinessProfileDTO(it))
@@ -93,8 +94,8 @@ class ProfileResource(
   suspend fun createOffenderProfile(
     @Schema(description = "offenderId", example = "2342342", required = true)
     @PathVariable offenderId: String,
-    @RequestBody requestDTO:CreateReadinessProfileRequestDTO) :ReadinessProfileDTO = ReadinessProfileDTO(profileService.createProfileForOffender(requestDTO.offenderId, requestDTO.bookingId, requestDTO.profileData))
-
+    @RequestBody requestDTO: CreateReadinessProfileRequestDTO
+  ): ReadinessProfileDTO = ReadinessProfileDTO(profileService.createProfileForOffender(requestDTO.offenderId, requestDTO.bookingId, requestDTO.profileData))
 
   @PutMapping("/{offenderId}")
   @Operation(
@@ -126,8 +127,8 @@ class ProfileResource(
   suspend fun updateOffenderProfile(
     @Schema(description = "offenderId", example = "2342342", required = true)
     @PathVariable offenderId: String,
-    @RequestBody requestDTO:CreateReadinessProfileRequestDTO) :ReadinessProfileDTO = ReadinessProfileDTO(profileService.updateProfileForOffender(requestDTO.offenderId, requestDTO.bookingId, requestDTO.profileData))
-
+    @RequestBody requestDTO: CreateReadinessProfileRequestDTO
+  ): ReadinessProfileDTO = ReadinessProfileDTO(profileService.updateProfileForOffender(requestDTO.offenderId, requestDTO.bookingId, requestDTO.profileData))
 
   @GetMapping("/{offenderId}")
   @Operation(
@@ -158,5 +159,6 @@ class ProfileResource(
   )
   suspend fun getOffenderProfileSummary(
     @Schema(description = "offenderId", example = "2342342", required = true)
-    @PathVariable offenderId: String) :ReadinessProfileDTO = ReadinessProfileDTO(profileService.getProfileForOffender(offenderId))
+    @PathVariable offenderId: String
+  ): ReadinessProfileDTO = ReadinessProfileDTO(profileService.getProfileForOffender(offenderId))
 }

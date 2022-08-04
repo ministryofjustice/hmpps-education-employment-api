@@ -1,7 +1,6 @@
 package uk.gov.justice.digital.hmpps.educationemploymentapi.service
 
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.take
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -13,7 +12,7 @@ import uk.gov.justice.digital.hmpps.educationemploymentapi.persistence.repositor
 
 @Service
 class ProfileService(
-  private val readinessProfileRepository:ReadinessProfileRespository
+  private val readinessProfileRepository: ReadinessProfileRespository
 ) {
   suspend fun createProfileForOffender(offenderId: String, bookingId: Int, profile: Profile): ReadinessProfile {
     if (readinessProfileRepository.existsById(offenderId)) {
