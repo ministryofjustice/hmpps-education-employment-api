@@ -3,7 +3,11 @@ package uk.gov.justice.digital.hmpps.educationemploymentapi.persistence.model
 import com.fasterxml.jackson.annotation.JsonIgnore
 import io.r2dbc.postgresql.codec.Json
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.data.annotation.CreatedBy
+import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.Id
+import org.springframework.data.annotation.LastModifiedBy
+import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.annotation.Transient
 import org.springframework.data.domain.Persistable
 import org.springframework.data.relational.core.mapping.Table
@@ -14,27 +18,44 @@ import java.time.LocalDateTime
 @Table("work_readiness")
 data class ReadinessProfile(
   @Id
-  val offenderId: String,
-  val bookingId: Int,
-  val createdDateTime: LocalDateTime,
-  val modifiedDateTime: LocalDateTime,
-  val author: String,
-  val schemaVersion: String,
-  val profileData: Json,
+  var offenderId: String? = null,
+
+  var bookingId: Int? = null,
+
+  @CreatedBy
+  var createdBy: String? = null,
+
+  @CreatedDate
+  var createdDateTime: LocalDateTime? = null,
+
+  @LastModifiedBy
+  var modifiedBy: String? = null,
+
+  @LastModifiedDate
+  var modifiedDateTime: LocalDateTime? = null,
+
+  var schemaVersion: String? = null,
+
+  var profileData: Json? = null,
+
+  var notesData: Json? = null,
+
   @Transient
   @Value("false")
   @JsonIgnore
   val new: Boolean
 ) : Persistable<String> {
 
-  constructor(offenderId: String, bookingId: Int, author: String, profile: Profile, isNew: Boolean) : this(
+  constructor(principalName: String, offenderId: String, bookingId: Int, profile: Profile, isNew: Boolean) : this(
     offenderId = offenderId,
     bookingId = bookingId,
-    createdDateTime = LocalDateTime.now(),
-    modifiedDateTime = LocalDateTime.now(),
-    author = author,
+    createdBy = principalName,
+    createdDateTime = null,
+    modifiedBy = principalName,
+    modifiedDateTime = null,
     schemaVersion = "1.0.0",
     profileData = Json.of(CapturedSpringMapperConfiguration.OBJECT_MAPPER.writeValueAsString(profile)),
+    notesData = Json.of("[]"),
     new = isNew
   )
 
@@ -52,5 +73,5 @@ data class ReadinessProfile(
     return id.hashCode()
   }
 
-  override fun getId(): String = offenderId
+  override fun getId(): String? = offenderId
 }

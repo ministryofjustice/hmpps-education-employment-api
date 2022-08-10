@@ -1,2 +1,32 @@
+server:
+  shutdown: immediate
+  port: 8080
+
+api:
+  base:
+    url:
+      oauth: https://sign-in-dev.hmpps.service.justice.gov.uk/auth
+
+management.endpoint:
+  health.cache.time-to-live: 0
+  info.cache.time-to-live: 0
+
+spring:
+  devtools:
+    add-properties: true
 
 
+
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/education-employment?sslmode=prefer
+    username: education-employment
+    password: education-employment
+    properties:
+      sslMode: DISABLE
+      sslRootCert:
+
+  flyway:
+    enabled: true
+    url: jdbc:postgresql://localhost:5432/education-employment?sslmode=prefer
+    user: education-employment
+    password: education-employment

@@ -16,35 +16,18 @@ services:
       - SERVER_PORT=8080
       - SPRING_PROFILES_ACTIVE=dev
 
-  hmpps-auth:
-    image: quay.io/hmpps/hmpps-auth:latest
-    networks:
-      - hmpps
-    container_name: hmpps-auth-education-employment-api
-    ports:
-      - "9090:8080"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/auth/health"]
-    environment:
-      - SPRING_PROFILES_ACTIVE=dev,nomis
-      - APPLICATION_AUTHENTICATION_UI_ALLOWLIST=0.0.0.0/0
-      - NOMIS_ENDPOINT_URL=http://nomis-user-roles-api:8080
-
-  nomis-user-roles-api:
-    image: quay.io/hmpps/nomis-user-roles-api:latest
-    networks:
-      - hmpps
-    container_name: nomis-user-roles-api-education-employment-api
-    depends_on:
-      - hmpps-auth
-    ports:
-      - "8084:8080"
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8080/health" ]
-    environment:
-      - SERVER_PORT=8080
-      - SPRING_PROFILES_ACTIVE=dev
-      - API_BASE_URL_OAUTH=http://hmpps-auth:8080/auth
+#  hmpps-auth:
+#    image: quay.io/hmpps/hmpps-auth:latest
+#    networks:
+#      - hmpps
+#    container_name: edu-hmpps-auth
+#    ports:
+#      - "8090:8080"
+#    healthcheck:
+#      test: ["CMD", "curl", "-f", "http://localhost:8080/auth/health"]
+#    environment:
+#      - SERVER_PORT=8080
+#      - SPRING_PROFILES_ACTIVE=dev
 
   education-employment-db:
     image: postgres

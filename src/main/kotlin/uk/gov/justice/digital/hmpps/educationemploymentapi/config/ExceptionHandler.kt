@@ -43,6 +43,21 @@ class ExceptionHandler {
         )
     )
   }
+  @ExceptionHandler(NotFoundException::class)
+  fun handleNotFoundException(e: Exception): Mono<ResponseEntity<ErrorResponse>> {
+    log.info("Already exists exception: {}", e.message)
+    return Mono.just(
+      ResponseEntity
+        .status(BAD_REQUEST)
+        .body(
+          ErrorResponse(
+            status = BAD_REQUEST,
+            userMessage = "Bad Request: ${e.message}",
+            developerMessage = e.message
+          )
+        )
+    )
+  }
 
   @ExceptionHandler(AccessDeniedException::class)
   fun handleAccessDeniedException(e: AccessDeniedException): Mono<ResponseEntity<ErrorResponse>> {
@@ -77,6 +92,9 @@ class ExceptionHandler {
 
 class AlreadyExistsException(offenderId: String) :
   Exception("Readiness profile already exists for offender $offenderId")
+
+class NotFoundException(offenderId: String) :
+  Exception("Readiness profile does not exist for offender $offenderId")
 data class ErrorResponse(
   val status: Int,
   val errorCode: Int? = null,
