@@ -34,7 +34,7 @@ class ProfileResource(
   @PostMapping("/search")
   @Operation(
     summary = "Fetch work readiness profile summaries for a set of offenders",
-    description = "The records are un-paged and requires role <b>TBD</b>",
+    description = "The records are un-paged and requires role <b>ROLE_VIEW_PRISONER_DATA</b> currently",
     responses = [
       ApiResponse(
         responseCode = "200",
@@ -73,7 +73,7 @@ class ProfileResource(
   @PostMapping("/{offenderId}")
   @Operation(
     summary = "Create the work readiness profile for an offender",
-    description = "Called once to initially create the profile",
+    description = "Called once to initially create the profile. Currently requires role <b>ROLE_VIEW_PRISONER_DATA</b>",
     responses = [
       ApiResponse(
         responseCode = "200",
@@ -108,7 +108,7 @@ class ProfileResource(
   @PutMapping("/{offenderId}")
   @Operation(
     summary = "Update the work readiness profile for an offender",
-    description = "Called to modify the profile",
+    description = "Called to modify an offenders work readiness profile. Currently requires role <b>ROLE_VIEW_PRISONER_DATA</b>",
     responses = [
       ApiResponse(
         responseCode = "200",
@@ -142,12 +142,12 @@ class ProfileResource(
   @PreAuthorize("hasRole('ROLE_VIEW_PRISONER_DATA')")
   @GetMapping("/{offenderId}")
   @Operation(
-    summary = "Fetch work readiness profile summaries for a given offender",
-    description = "Requires role <b>TBD</b>",
+    summary = "Fetch the work readiness profile for a given offender",
+    description = "Currently requires role <b>ROLE_VIEW_PRISONER_DATA</b>",
     responses = [
       ApiResponse(
         responseCode = "200",
-        description = "Work readiness profile summary for the requested offender",
+        description = "Work readiness profile for the requested offender",
         content = [
           Content(
             mediaType = "application/json",
@@ -176,11 +176,11 @@ class ProfileResource(
   @PostMapping("/{offenderId}/notes/{attribute}")
   @Operation(
     summary = "Create a note against the offenders profile for the given attribute",
-    description = "Creates a new note against the given attribute for the offender",
+    description = "Currently requires role <b>ROLE_VIEW_PRISONER_DATA</b>. Attribute must be one of the enums values of SupportAccepted.ActionsRequired.Action.todoItem",
     responses = [
       ApiResponse(
         responseCode = "200",
-        description = "Work readiness profile note created",
+        description = "Work readiness profile attribute note created - the notes for that attribute after the addition are returned",
         content = [
           Content(
             mediaType = "application/json",
@@ -213,11 +213,12 @@ class ProfileResource(
   @GetMapping("/{offenderId}/notes/{attribute}")
   @Operation(
     summary = "Get all notes against the offenders profile for the given attribute",
-    description = "Gets all notes against the given attribute for the offender",
+    description = "Gets all notes against the given attribute for the offender. Currently requires role <b>ROLE_VIEW_PRISONER_DATA</b>",
     responses = [
       ApiResponse(
         responseCode = "200",
-        description = "Work readiness profile notes retrieved",
+        description = "Work readiness profile notes for the given attribute are returned:w" +
+          "",
         content = [
           Content(
             mediaType = "application/json",
