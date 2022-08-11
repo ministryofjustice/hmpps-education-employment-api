@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.educationemploymentapi.resource
 
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
@@ -16,14 +17,15 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.educationemploymentapi.config.ErrorResponse
-import uk.gov.justice.digital.hmpps.educationemploymentapi.data.CreateReadinessProfileRequestDTO
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.NoteDTO
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.NoteRequestDTO
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.ReadinessProfileDTO
+import uk.gov.justice.digital.hmpps.educationemploymentapi.data.ReadinessProfileRequestDTO
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.ActionTodo
 import uk.gov.justice.digital.hmpps.educationemploymentapi.service.ProfileService
 import javax.validation.Valid
 import javax.validation.constraints.NotEmpty
+import javax.validation.constraints.Pattern
 
 @RestController
 @RequestMapping("/readiness-profiles", produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -59,7 +61,8 @@ class ProfileResource(
     ]
   )
   suspend fun getOffenderProfiles(
-    @Schema(description = "List of offender Ids", example = "[2342342, 212312]", required = true)
+    @Schema(description = "List of offender Ids", example = "[\"A1234BC\", \"B1234DE\"]", required = true)
+    @Pattern(regexp = "^[A-Z]\\d{4}[A-Z]{2}$", message = "Offender ID format incorrect")
     @RequestBody @Valid @NotEmpty offenderIds: List<String>
   ): List<ReadinessProfileDTO> {
     val profiles = ArrayList<ReadinessProfileDTO>()
@@ -98,9 +101,8 @@ class ProfileResource(
     ]
   )
   suspend fun createOffenderProfile(
-    @Schema(description = "offenderId", example = "2342342", required = true)
     @PathVariable offenderId: String,
-    @RequestBody requestDTO: CreateReadinessProfileRequestDTO,
+    @RequestBody @Valid @NotEmpty requestDTO: ReadinessProfileRequestDTO,
     @AuthenticationPrincipal oauth2User: String
   ): ReadinessProfileDTO = ReadinessProfileDTO(profileService.createProfileForOffender(oauth2User, requestDTO.offenderId, requestDTO.bookingId, requestDTO.profileData))
 
@@ -133,9 +135,9 @@ class ProfileResource(
     ]
   )
   suspend fun updateOffenderProfile(
-    @Schema(description = "offenderId", example = "2342342", required = true)
+    @Pattern(regexp = "^[A-Z]\\d{4}[A-Z]{2}$", message = "Offender ID format incorrect")
     @PathVariable offenderId: String,
-    @RequestBody requestDTO: CreateReadinessProfileRequestDTO,
+    @RequestBody @Parameter requestDTO: ReadinessProfileRequestDTO,
     @AuthenticationPrincipal oauth2User: String
   ): ReadinessProfileDTO = ReadinessProfileDTO(profileService.updateProfileForOffender(oauth2User, requestDTO.offenderId, requestDTO.bookingId, requestDTO.profileData))
 
@@ -167,8 +169,9 @@ class ProfileResource(
       )
     ]
   )
-  suspend fun getOffenderProfileSummary(
-    @Schema(description = "offenderId", example = "2342342", required = true)
+  suspend fun getOffenderProfile(
+    @Schema(description = "offenderId", example = "A1234BC", required = true)
+    @Pattern(regexp = "^[A-Z]\\d{4}[A-Z]{2}$", message = "Offender ID format incorrect")
     @PathVariable offenderId: String
   ): ReadinessProfileDTO = ReadinessProfileDTO(profileService.getProfileForOffender(offenderId))
 
@@ -201,10 +204,11 @@ class ProfileResource(
     ]
   )
   suspend fun createOffenderProfileNote(
-    @Schema(description = "offenderId", example = "2342342", required = true)
+    @Schema(description = "offenderId", example = "A1234BC", required = true)
+    @Pattern(regexp = "^[A-Z]\\d{4}[A-Z]{2}$", message = "Offender ID format incorrect")
     @PathVariable offenderId: String,
     @Schema(description = "attribute", example = "DISCLOSURE_LETTER", required = true)
-    @PathVariable attribute: ActionTodo,
+    @Valid @PathVariable attribute: ActionTodo,
     @RequestBody requestDTO: NoteRequestDTO,
     @AuthenticationPrincipal oauth2User: String
   ): List<NoteDTO> = profileService.addProfileNoteForOffender(oauth2User, offenderId, attribute, requestDTO.text).map { note -> NoteDTO(note) }
@@ -239,9 +243,10 @@ class ProfileResource(
     ]
   )
   suspend fun getOffenderProfileNotes(
-    @Schema(description = "offenderId", example = "2342342", required = true)
+    @Schema(description = "offenderId", example = "A1234BC", required = true)
+    @Pattern(regexp = "^[A-Z]\\d{4}[A-Z]{2}$", message = "Offender ID format incorrect")
     @PathVariable offenderId: String,
     @Schema(description = "attribute", example = "DISCLOSURE_LETTER", required = true)
-    @PathVariable attribute: ActionTodo
+    @Valid @PathVariable attribute: ActionTodo
   ): List<NoteDTO> = profileService.getProfileNotesForOffender(offenderId, attribute).map { note -> NoteDTO(note) }
 }

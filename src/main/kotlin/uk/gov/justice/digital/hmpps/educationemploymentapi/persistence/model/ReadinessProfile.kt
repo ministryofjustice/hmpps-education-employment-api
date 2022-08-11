@@ -18,27 +18,27 @@ import java.time.LocalDateTime
 @Table("work_readiness")
 data class ReadinessProfile(
   @Id
-  var offenderId: String? = null,
+  var offenderId: String,
 
-  var bookingId: Int? = null,
+  var bookingId: Int,
 
   @CreatedBy
-  var createdBy: String? = null,
+  var createdBy: String,
 
   @CreatedDate
-  var createdDateTime: LocalDateTime? = null,
+  var createdDateTime: LocalDateTime,
 
   @LastModifiedBy
-  var modifiedBy: String? = null,
+  var modifiedBy: String,
 
   @LastModifiedDate
-  var modifiedDateTime: LocalDateTime? = null,
+  var modifiedDateTime: LocalDateTime,
 
-  var schemaVersion: String? = null,
+  var schemaVersion: String,
 
-  var profileData: Json? = null,
+  var profileData: Json,
 
-  var notesData: Json? = null,
+  var notesData: Json,
 
   @Transient
   @Value("false")
@@ -46,13 +46,13 @@ data class ReadinessProfile(
   val new: Boolean
 ) : Persistable<String> {
 
-  constructor(principalName: String, offenderId: String, bookingId: Int, profile: Profile, isNew: Boolean) : this(
+  constructor(userId: String, offenderId: String, bookingId: Int, profile: Profile, isNew: Boolean) : this(
     offenderId = offenderId,
     bookingId = bookingId,
-    createdBy = principalName,
-    createdDateTime = null,
-    modifiedBy = principalName,
-    modifiedDateTime = null,
+    createdBy = userId,
+    createdDateTime = LocalDateTime.now(),
+    modifiedBy = userId,
+    modifiedDateTime = LocalDateTime.now(),
     schemaVersion = "1.0.0",
     profileData = Json.of(CapturedSpringMapperConfiguration.OBJECT_MAPPER.writeValueAsString(profile)),
     notesData = Json.of("[]"),

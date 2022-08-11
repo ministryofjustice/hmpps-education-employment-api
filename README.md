@@ -30,3 +30,11 @@ Each offender dealt with by a PEL will have a work readiness profile created, th
 ### Architecture
 
 Architecture and Technical Design docs can be found decision records start [here](https://dsdmoj.atlassian.net/wiki/spaces/ESWE/pages/3502571831/Architecture)
+
+### JSON Schema
+
+There is a JSON schema in src/main/resources which describes the structure of the profile JSON that the client is expected to store and will subsequently get back. The schema is not currently used by the MVP - instead the JSON is serialized/deserialized on its way in and out of the API using a series of data classes in package:
+
+- uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile
+
+These classes have been built to represent the schema structure. The only validation performed currently is that the multi choice field values must conform to the enums with the data classes.

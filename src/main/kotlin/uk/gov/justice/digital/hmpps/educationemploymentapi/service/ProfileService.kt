@@ -27,30 +27,30 @@ class ProfileService(
   }
 
   suspend fun updateProfileForOffender(userId: String, offenderId: String, bookingId: Int, profile: Profile): ReadinessProfile {
-    var storedProfile: ReadinessProfile? = readinessProfileRepository.findById(offenderId) ?: throw NotFoundException(offenderId)
-    storedProfile!!.profileData = Json.of(CapturedSpringMapperConfiguration.OBJECT_MAPPER.writeValueAsString(profile))
-    storedProfile!!.modifiedBy = userId
+    var storedProfile: ReadinessProfile = readinessProfileRepository.findById(offenderId) ?: throw NotFoundException(offenderId)
+    storedProfile.profileData = Json.of(CapturedSpringMapperConfiguration.OBJECT_MAPPER.writeValueAsString(profile))
+    storedProfile.modifiedBy = userId
     return readinessProfileRepository.save(storedProfile)
   }
   suspend fun getProfilesForOffenders(offenders: List<String>) = readinessProfileRepository.findForGivenOffenders(ReadinessProfileFilter(offenders))
 
   suspend fun getProfileForOffender(offenderId: String): ReadinessProfile = readinessProfileRepository.findForGivenOffenders(ReadinessProfileFilter(listOf(offenderId))).first()
   suspend fun addProfileNoteForOffender(userId: String, offenderId: String, attribute: ActionTodo, text: String): List<Note> {
-    var storedProfile: ReadinessProfile? = readinessProfileRepository.findById(offenderId) ?: throw NotFoundException(offenderId)
+    var storedProfile: ReadinessProfile = readinessProfileRepository.findById(offenderId) ?: throw NotFoundException(offenderId)
     var notesList: MutableList<Note> = CapturedSpringMapperConfiguration.OBJECT_MAPPER.readValue(
-      storedProfile?.notesData!!.asString(), object : TypeReference<MutableList<Note>> () {}
+      storedProfile.notesData.asString(), object : TypeReference<MutableList<Note>> () {}
     )
     notesList.add(Note(userId, LocalDateTime.now(), attribute, text))
     storedProfile.notesData = Json.of(CapturedSpringMapperConfiguration.OBJECT_MAPPER.writeValueAsString(notesList))
-    storedProfile!!.modifiedBy = userId
+    storedProfile.modifiedBy = userId
     readinessProfileRepository.save(storedProfile)
     return notesList.filter { n -> n.attribute == attribute }
   }
 
   suspend fun getProfileNotesForOffender(offenderId: String, attribute: ActionTodo): List<Note> {
-    var storedProfile: ReadinessProfile? = readinessProfileRepository.findById(offenderId) ?: throw NotFoundException(offenderId)
+    var storedProfile: ReadinessProfile = readinessProfileRepository.findById(offenderId) ?: throw NotFoundException(offenderId)
     var notesList: List<Note> = CapturedSpringMapperConfiguration.OBJECT_MAPPER.readValue(
-      storedProfile?.notesData!!.asString(), object : TypeReference<List<Note>>() {}
+      storedProfile.notesData.asString(), object : TypeReference<List<Note>>() {}
     )
     return notesList.filter { n -> n.attribute == attribute }
   }

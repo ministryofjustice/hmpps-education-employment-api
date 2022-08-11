@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile
 
 enum class QualificationsAndTraining {
+  ADVANCED_EDUCATION,
   CSCS,
   DRIVING_LICENSE,
   FIRST_AID,
@@ -11,6 +12,6 @@ enum class QualificationsAndTraining {
   MACHINERY,
   MANUAL,
   TRADE,
-  SCHOOL,
+  SCHOOL_EDUCATION,
   OTHER
 }
