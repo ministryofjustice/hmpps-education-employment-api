@@ -22,8 +22,7 @@ class ReactiveResourceServerConfiguration {
         it.pathMatchers(
           "/webjars/**", "/favicon.ico", "/csrf",
           "/health/**", "/info",
-          "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/readiness-profiles/**",
-          "/queue-admin/retry-all-dlqs"
+          "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/readiness-profiles/**"
         ).permitAll()
           .anyExchange().authenticated()
       }
