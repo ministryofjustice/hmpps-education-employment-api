@@ -10,8 +10,8 @@ data class ReadinessProfileDTO(
   @Schema(description = "Offender Id", example = "ABC12345")
   val offenderId: String,
 
-  @Schema(description = "Booking Id", example = "ABC123")
-  val bookingId: Int,
+  @Schema(description = "Booking Id", example = "1234567")
+  val bookingId: Long,
 
   @Schema(description = "Author of original profile", example = "whilesp")
   val createdBy: String,

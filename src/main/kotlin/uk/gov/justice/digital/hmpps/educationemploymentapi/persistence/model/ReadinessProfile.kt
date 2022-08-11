@@ -20,7 +20,7 @@ data class ReadinessProfile(
   @Id
   var offenderId: String,
 
-  var bookingId: Int,
+  var bookingId: Long,
 
   @CreatedBy
   var createdBy: String,
@@ -46,7 +46,7 @@ data class ReadinessProfile(
   val new: Boolean
 ) : Persistable<String> {
 
-  constructor(userId: String, offenderId: String, bookingId: Int, profile: Profile, isNew: Boolean) : this(
+  constructor(userId: String, offenderId: String, bookingId: Long, profile: Profile, isNew: Boolean) : this(
     offenderId = offenderId,
     bookingId = bookingId,
     createdBy = userId,

@@ -7,8 +7,8 @@ data class ReadinessProfileRequestDTO(
   @Schema(description = "Offender Id", example = "ABC12345")
   val offenderId: String,
 
-  @Schema(description = "Booking Id", example = "ABC123")
-  val bookingId: Int,
+  @Schema(description = "Booking Id", example = "12345678")
+  val bookingId: Long,
 
   @Schema(description = "Work readiness profile JSON data", example = "{...}")
   val profileData: Profile

@@ -19,14 +19,14 @@ import java.time.LocalDateTime
 class ProfileService(
   private val readinessProfileRepository: ReadinessProfileRespository
 ) {
-  suspend fun createProfileForOffender(userId: String, offenderId: String, bookingId: Int, profile: Profile): ReadinessProfile {
+  suspend fun createProfileForOffender(userId: String, offenderId: String, bookingId: Long, profile: Profile): ReadinessProfile {
     if (readinessProfileRepository.existsById(offenderId)) {
       throw AlreadyExistsException(offenderId)
     }
     return readinessProfileRepository.save(ReadinessProfile(userId, offenderId, bookingId, profile, true))
   }
 
-  suspend fun updateProfileForOffender(userId: String, offenderId: String, bookingId: Int, profile: Profile): ReadinessProfile {
+  suspend fun updateProfileForOffender(userId: String, offenderId: String, bookingId: Long, profile: Profile): ReadinessProfile {
     var storedProfile: ReadinessProfile = readinessProfileRepository.findById(offenderId) ?: throw NotFoundException(offenderId)
     storedProfile.profileData = Json.of(CapturedSpringMapperConfiguration.OBJECT_MAPPER.writeValueAsString(profile))
     storedProfile.modifiedBy = userId
