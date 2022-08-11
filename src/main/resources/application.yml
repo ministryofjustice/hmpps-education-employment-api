@@ -15,8 +15,6 @@ spring:
 
   security:
     oauth2:
-      client:
-        scope: read:user, user:email
       resourceserver:
         jwt:
           jwk-set-uri: ${api.base.url.oauth}/.well-known/jwks.json

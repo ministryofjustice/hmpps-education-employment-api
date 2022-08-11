@@ -104,7 +104,7 @@ class ProfileResource(
     @PathVariable offenderId: String,
     @RequestBody @Valid @NotEmpty requestDTO: ReadinessProfileRequestDTO,
     @AuthenticationPrincipal oauth2User: String
-  ): ReadinessProfileDTO = ReadinessProfileDTO(profileService.createProfileForOffender(oauth2User, requestDTO.offenderId, requestDTO.bookingId, requestDTO.profileData))
+  ): ReadinessProfileDTO = ReadinessProfileDTO(profileService.createProfileForOffender(oauth2User, offenderId, requestDTO.bookingId, requestDTO.profileData))
 
   @PreAuthorize("hasRole('ROLE_VIEW_PRISONER_DATA')")
   @PutMapping("/{offenderId}")
@@ -139,7 +139,7 @@ class ProfileResource(
     @PathVariable offenderId: String,
     @RequestBody @Parameter requestDTO: ReadinessProfileRequestDTO,
     @AuthenticationPrincipal oauth2User: String
-  ): ReadinessProfileDTO = ReadinessProfileDTO(profileService.updateProfileForOffender(oauth2User, requestDTO.offenderId, requestDTO.bookingId, requestDTO.profileData))
+  ): ReadinessProfileDTO = ReadinessProfileDTO(profileService.updateProfileForOffender(oauth2User, offenderId, requestDTO.bookingId, requestDTO.profileData))
 
   @PreAuthorize("hasRole('ROLE_VIEW_PRISONER_DATA')")
   @GetMapping("/{offenderId}")
