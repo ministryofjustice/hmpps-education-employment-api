@@ -2,21 +2,61 @@ info.app:
   name: Hmpps Education Employment Api
   version: 1.0
 
+azure:
+  application-insights:
+    web:
+      enabled: false
+
 spring:
   application:
     name: hmpps-education-employment-api
   codec:
     max-in-memory-size: 10MB
 
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: ${api.base.url.oauth}/.well-known/jwks.json
+        issuer:
+          name:
+            uri: ${api.base.url.oauth}/auth/issuer
+            jwk-set-uri: ${api.base.url.oauth}/.well-known/jwks.json
+        provider:
+          hmpps-auth:
+            token-uri: ${api.base.url.oauth}//auth/oauth/token
+
   jackson:
     date-format: "yyyy-MM-dd HH:mm:ss"
     serialization:
       WRITE_DATES_AS_TIMESTAMPS: false
 
+  devtools:
+    add-properties: false
+    data:
+      web:
+        pageable:
+          max-page-size: 20000
+
   profiles:
     group:
       test:
         - "stdout"
+
+  r2dbc:
+    url: r2dbc:postgresql://${DATABASE_ENDPOINT}/${DATABASE_NAME}
+    pool:
+      max-life-time: -1
+    properties:
+      ssl: true
+      sslRootCert: /home/appuser/.postgresql/root.crt
+
+  flyway:
+    enabled: true
+    url: jdbc:postgresql://${DATABASE_ENDPOINT}/${DATABASE_NAME}?sslmode=verify-full
+
+api:
+  health-timeout-ms: 1000
 
 server:
   port: 8080

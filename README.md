@@ -1,40 +1,40 @@
-# hmpps-template-kotlin
+[![API docs](https://img.shields.io/badge/API_docs_-view-85EA2D.svg?logo=swagger)](https://hmpps-education-employment-dev.hmpps.service.justice.gov.uk/swagger-ui.html)
 
-This is a skeleton project from which to create new kotlin projects from.
+# hmpps-education-employment-api
+
+**Education & Employment Domain Microservice - resource server for offender work readiness data**
 
 # Instructions
 
-If this is a HMPPS project then the project will be created as part of bootstrapping - 
-see https://github.com/ministryofjustice/dps-project-bootstrap.
 
-## Creating a CloudPlatform namespace
+## Running locally
 
-When deploying to a new namespace, you may wish to use this template kotlin project namespace as the basis for your new namespace:
+The service has no external service dependencies currently other than HMPPS Auth and Postgres. The service will in the fullness of time send SQS audit events but does not currentlty do so. 
 
-<https://github.com/ministryofjustice/cloud-platform-environments/tree/main/namespaces/live.cloud-platform.service.justice.gov.uk/hmpps-template-kotlin>
+To run the service locally with Docker, it is assumed that the developer will wish to use HMPPS Auth dev instance, Postgres in docker, for which docker compose can be used:
 
-Copy this folder, update all the existing namespace references, and submit a PR to the CloudPlatform team. Further instructions from the CloudPlatform team can be found here: <https://user-guide.cloud-platform.service.justice.gov.uk/#cloud-platform-user-guide>
+- to run this application independently e.g. in IntelliJ:
 
-## Renaming from HMPPS Template Kotlin - github Actions
+`docker-compose up --scale hmpps-education-employment-api=0`
 
-Once the new repository is deployed. Navigate to the repository in github, and select the `Actions` tab.
-Click the link to `Enable Actions on this repository`.
+- else to run the application in docker also:
 
-Find the Action workflow named: `rename-project-create-pr` and click `Run workflow`.  This workflow will
-execute the `rename-project.bash` and create Pull Request for you to review.  Review the PR and merge.
+`docker-compose up`
 
-Note: ideally this workflow would run automatically however due to a recent change github Actions are not
-enabled by default on newly created repos. There is no way to enable Actions other then to click the button in the UI.
-If this situation changes we will update this project so that the workflow is triggered during the bootstrap project.
-Further reading: <https://github.community/t/workflow-isnt-enabled-in-repos-generated-from-template/136421>
+## Purpose
 
-## Manually renaming from HMPPS Template Kotlin
+The API supports the [hmpps-education-employment-ui](https://github.com/ministryofjustice/hmpps-education-employment-ui), storing a collection of responses to questions provided by Prison Employment Leads (PEL), related to an offenders willingess and ability to seek and obtain employment on leaving prison.
 
-Run the `rename-project.bash` and create a PR.
+Each offender dealt with by a PEL will have a work readiness profile created, the data in that profile stored by the API within Postgres/AWS RDS in a jsonb column.
 
-The `rename-project.bash` script takes a single argument - the name of the project and calculates from it:
-* The main class name (project name converted to pascal case) 
-* The project description (class name with spaces between the words)
-* The main package name (project name with hyphens removed)
+### Architecture
 
-It then performs a search and replace and directory renames so the project is ready to be used.
+Architecture and Technical Design docs can be found decision records start [here](https://dsdmoj.atlassian.net/wiki/spaces/ESWE/pages/3502571831/Architecture)
+
+### JSON Schema
+
+There is a JSON schema in src/main/resources which describes the structure of the profile JSON that the client is expected to store and will subsequently get back. The schema is not currently used by the MVP - instead the JSON is serialized/deserialized on its way in and out of the API using a series of data classes in package:
+
+- uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile
+
+These classes have been built to represent the schema structure. The only validation performed currently is that the multi choice field values must conform to the enums with the data classes.

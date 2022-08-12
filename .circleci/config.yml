@@ -14,8 +14,12 @@ parameters:
 jobs:
   validate:
     executor:
-      name: hmpps/java
-      tag: "17.0"
+      name: hmpps/java_localstack_postgres
+      jdk_tag: "17.0"
+      localstack_tag: "0.14.0"
+      postgres_tag: "14"
+      postgres_username: "education-employment"
+      postgres_password: "education-employment"
     steps:
       - checkout
       - restore_cache:

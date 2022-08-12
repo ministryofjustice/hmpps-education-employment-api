@@ -1,14 +1,39 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.2.3"
-  kotlin("plugin.spring") version "1.6.21"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.4.1"
+  kotlin("plugin.spring") version "1.7.10"
+}
+
+dependencyCheck {
+  suppressionFiles.add("reactive-suppressions.xml")
+  // Please remove the below suppressions once it has been suppressed in the DependencyCheck plugin (see this issue: https://github.com/jeremylong/DependencyCheck/issues/4616)
+  suppressionFiles.add("postgres-suppressions.xml")
 }
 
 configurations {
+  implementation { exclude(module = "spring-boot-starter-web") }
+  implementation { exclude(module = "spring-boot-starter-tomcat") }
   testImplementation { exclude(group = "org.junit.vintage") }
 }
 
 dependencies {
   implementation("org.springframework.boot:spring-boot-starter-webflux")
+  runtimeOnly("org.springframework.boot:spring-boot-starter-jdbc")
+  implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
+  implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
+  implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
+  implementation("org.springframework.boot:spring-boot-starter-security")
+  implementation("org.springdoc:springdoc-openapi-webflux-ui:1.6.9")
+  implementation("org.springdoc:springdoc-openapi-kotlin:1.6.9")
+  implementation("org.hibernate.validator:hibernate-validator")
+
+  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
+  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
+  implementation("io.jsonwebtoken:jjwt:0.9.1")
+  implementation("io.opentelemetry:opentelemetry-api:1.16.0")
+  implementation("io.r2dbc:r2dbc-postgresql:0.8.12.RELEASE")
+  runtimeOnly("org.postgresql:r2dbc-postgresql:1.0.0.RC1")
+  implementation("org.flywaydb:flyway-core:8.5.12")
+  runtimeOnly("org.postgresql:postgresql")
 }
 
 java {

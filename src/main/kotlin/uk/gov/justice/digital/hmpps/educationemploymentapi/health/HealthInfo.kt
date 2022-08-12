@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.hmppseducationemploymentapi.health
+package uk.gov.justice.digital.hmpps.educationemploymentapi.health
 
 import org.springframework.boot.actuate.health.Health
 import org.springframework.boot.actuate.health.HealthIndicator
