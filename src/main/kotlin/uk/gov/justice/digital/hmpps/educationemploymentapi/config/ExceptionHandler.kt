@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.educationemploymentapi.config
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.BAD_REQUEST
+import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
@@ -45,14 +46,14 @@ class ExceptionHandler {
   }
   @ExceptionHandler(NotFoundException::class)
   fun handleNotFoundException(e: Exception): Mono<ResponseEntity<ErrorResponse>> {
-    log.info("Already exists exception: {}", e.message)
+    log.info("Not found exception: {}", e.message)
     return Mono.just(
       ResponseEntity
-        .status(BAD_REQUEST)
+        .status(NOT_FOUND)
         .body(
           ErrorResponse(
-            status = BAD_REQUEST,
-            userMessage = "Bad Request: ${e.message}",
+            status = NOT_FOUND,
+            userMessage = "Resource not found: ${e.message}",
             developerMessage = e.message
           )
         )

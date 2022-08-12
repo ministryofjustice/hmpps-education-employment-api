@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.educationemploymentapi.persistence.model
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import io.r2dbc.postgresql.codec.Json
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.annotation.CreatedBy
@@ -16,7 +15,7 @@ import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.Prof
 import java.time.LocalDateTime
 
 @Table("work_readiness")
-data class ReadinessProfile(
+class ReadinessProfile(
   @Id
   var offenderId: String,
 
@@ -42,7 +41,6 @@ data class ReadinessProfile(
 
   @Transient
   @Value("false")
-  @JsonIgnore
   val new: Boolean
 ) : Persistable<String> {
 
@@ -59,19 +57,7 @@ data class ReadinessProfile(
     new = isNew
   )
 
-  override fun equals(other: Any?): Boolean {
-    if (this === other) return true
-    if (other !is ReadinessProfile) return false
-
-    if (id != other.id) return false
-
-    return true
-  }
   override fun isNew(): Boolean = new
-
-  override fun hashCode(): Int {
-    return id.hashCode()
-  }
 
   override fun getId(): String? = offenderId
 }

@@ -17,7 +17,7 @@ import java.time.LocalDateTime
 
 @Service
 class ProfileService(
-  private val readinessProfileRepository: ReadinessProfileRespository
+  private val readinessProfileRepository: ReadinessProfileRespository,
 ) {
   suspend fun createProfileForOffender(userId: String, offenderId: String, bookingId: Long, profile: Profile): ReadinessProfile {
     if (readinessProfileRepository.existsById(offenderId)) {
@@ -26,15 +26,32 @@ class ProfileService(
     return readinessProfileRepository.save(ReadinessProfile(userId, offenderId, bookingId, profile, true))
   }
 
-  suspend fun updateProfileForOffender(userId: String, offenderId: String, bookingId: Long, profile: Profile): ReadinessProfile {
-    var storedProfile: ReadinessProfile = readinessProfileRepository.findById(offenderId) ?: throw NotFoundException(offenderId)
+  suspend fun updateProfileForOffender(
+    userId: String,
+    offenderId: String,
+    bookingId: Long,
+    profile: Profile
+  ): ReadinessProfile {
+    var storedProfile: ReadinessProfile =
+      readinessProfileRepository.findById(offenderId) ?: throw NotFoundException(offenderId)
     storedProfile.profileData = Json.of(CapturedSpringMapperConfiguration.OBJECT_MAPPER.writeValueAsString(profile))
     storedProfile.modifiedBy = userId
     return readinessProfileRepository.save(storedProfile)
   }
-  suspend fun getProfilesForOffenders(offenders: List<String>) = readinessProfileRepository.findForGivenOffenders(ReadinessProfileFilter(offenders))
 
-  suspend fun getProfileForOffender(offenderId: String): ReadinessProfile = readinessProfileRepository.findForGivenOffenders(ReadinessProfileFilter(listOf(offenderId))).first()
+  suspend fun getProfilesForOffenders(offenders: List<String>) =
+    readinessProfileRepository.findForGivenOffenders(ReadinessProfileFilter(offenders))
+
+  suspend fun getProfileForOffender(offenderId: String): ReadinessProfile {
+    var profile: ReadinessProfile? = null
+    kotlin.runCatching {
+      profile = readinessProfileRepository.findForGivenOffenders(ReadinessProfileFilter(listOf(offenderId))).first()
+    }.onFailure {
+      throw NotFoundException(offenderId)
+    }
+    return profile!!
+  }
+
   suspend fun addProfileNoteForOffender(userId: String, offenderId: String, attribute: ActionTodo, text: String): List<Note> {
     var storedProfile: ReadinessProfile = readinessProfileRepository.findById(offenderId) ?: throw NotFoundException(offenderId)
     var notesList: MutableList<Note> = CapturedSpringMapperConfiguration.OBJECT_MAPPER.readValue(

@@ -1,6 +1,6 @@
 create table work_readiness
 (
-    offender_id  varchar(6) PRIMARY KEY   not null,
+    offender_id  varchar(7) PRIMARY KEY   not null,
     booking_id   bigint                   not null,
     created_by       varchar(32)              not null,
     created_date_time timestamp with time zone not null default now(),
