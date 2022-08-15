@@ -33,6 +33,9 @@ generic-service:
       APPINSIGHTS_INSTRUMENTATIONKEY: "APPINSIGHTS_INSTRUMENTATIONKEY"
     rds-database:
       DATABASE_ENDPOINT: "rds_instance_endpoint"
+    edu-rds-instance-output:
+      DATABASE_NAME: "database_name"
+      DATABASE_ENDPOINT: "rds_instance_endpoint"
 
   allowlist:
     office: "217.33.148.210/32"
