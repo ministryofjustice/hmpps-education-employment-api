@@ -1,6 +1,6 @@
 [![CircleCI](https://circleci.com/gh/ministryofjustice/hmpps-education-employment-api/tree/main.svg?style=svg)](https://circleci.com/gh/ministryofjustice/hmpps-education-employment-api)
 [![Docker](https://quay.io/repository/hmpps/hmpps-education-employment-api/status)](https://quay.io/repository/hmpps/hmpps-education-employment-api/status)
-[![API docs](https://img.shields.io/badge/API_docs_-view-85EA2D.svg?logo=swagger)](https://hmpps-education-employment-api-dev.hmpps.service.justice.gov.uk/webjars/swagger-ui/index.html)
+[![API docs](https://img.shields.io/badge/API_docs_-view-85EA2D.svg?logo=swagger)](https://education-employment-api-dev.hmpps.service.justice.gov.uk/webjars/swagger-ui/index.html)
                                                                                   
 
 # hmpps-education-employment-api
