@@ -6,8 +6,6 @@ services:
     networks:
       - hmpps
     container_name: hmpps-education-employment-api
-    depends_on:
-      - hmpps-auth
     ports:
       - "8080:8080"
     healthcheck:
