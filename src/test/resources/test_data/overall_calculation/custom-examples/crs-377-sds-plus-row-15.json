@@ -1,0 +1,31 @@
+{
+  "offender": {
+    "reference": "ABC123D",
+    "dateOfBirth": "1970-03-03"
+  },
+  "sentences": [
+    {
+      "offence": {
+        "committedAt": "2019-12-17",
+        "isScheduleFifteenMaximumLife": true
+      },
+      "duration": {
+        "durationElements": {
+          "YEARS": 10,
+          "MONTHS": 6
+        }
+      },
+      "sentencedAt": "2020-04-22"
+    }
+  ],
+  "adjustments": {
+    "REMAND": [
+      {
+        "numberOfDays": 125,
+        "appliesToSentencesFrom": "2020-04-22",
+        "toDate": "2020-04-21",
+        "fromDate": "2019-12-18"
+      }
+    ]
+  }
+}
