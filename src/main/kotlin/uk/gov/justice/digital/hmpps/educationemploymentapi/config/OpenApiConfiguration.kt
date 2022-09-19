@@ -17,7 +17,7 @@ class OpenApiConfiguration(buildProperties: BuildProperties) {
       Info()
         .title("Hmpps Education Employment Api")
         .version(version)
-        .description("API for calculating a release date")
+        .description("API for employment education")
         .contact(
           Contact()
             .name("HMPPS Digital Studio")

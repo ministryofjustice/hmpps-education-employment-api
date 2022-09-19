@@ -53,9 +53,6 @@ dependencies {
   // Enable kotlin reflect
   implementation("org.jetbrains.kotlin:kotlin-reflect:1.6.20")
 
-  // Three Ten Date Calculations
-  implementation("org.threeten:threeten-extra:1.7.0")
-
   // Database dependencies
   runtimeOnly("org.flywaydb:flyway-core")
   runtimeOnly("org.postgresql:postgresql:42.4.0")

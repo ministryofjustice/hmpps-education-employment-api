@@ -12,9 +12,7 @@ import org.springframework.test.context.jdbc.Sql
 import org.springframework.test.context.jdbc.SqlMergeMode
 import org.springframework.test.web.reactive.server.WebTestClient
 import uk.gov.justice.digital.hmpps.educationemploymentapi.helpers.JwtAuthHelper
-import uk.gov.justice.digital.hmpps.educationemploymentapi.integration.wiremock.BankHolidayApiExtension
 import uk.gov.justice.digital.hmpps.educationemploymentapi.integration.wiremock.OAuthExtension
-import uk.gov.justice.digital.hmpps.educationemploymentapi.integration.wiremock.PrisonApiExtension
 /*
 ** The abstract parent class for integration tests.
 **
@@ -34,7 +32,7 @@ import uk.gov.justice.digital.hmpps.educationemploymentapi.integration.wiremock.
   "classpath:test_data/reset-base-data.sql",
   "classpath:test_data/load-base-data.sql"
 )
-@ExtendWith(OAuthExtension::class, PrisonApiExtension::class, BankHolidayApiExtension::class)
+@ExtendWith(OAuthExtension::class)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("test")
 class IntegrationTestBase internal constructor() {

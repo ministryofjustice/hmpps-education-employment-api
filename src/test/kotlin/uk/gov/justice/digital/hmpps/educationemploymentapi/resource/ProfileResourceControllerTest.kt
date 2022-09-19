@@ -26,11 +26,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import uk.gov.justice.digital.hmpps.educationemploymentapi.config.ControllerAdvice
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.ActionTodo
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.Note
-import uk.gov.justice.digital.hmpps.educationemploymentapi.model.external.BookingAndSentenceAdjustments
-import uk.gov.justice.digital.hmpps.educationemploymentapi.model.external.PrisonerDetails
-import uk.gov.justice.digital.hmpps.educationemploymentapi.model.external.SentenceAndOffences
 import uk.gov.justice.digital.hmpps.educationemploymentapi.service.ProfileService
-import java.time.LocalDate
 import javax.validation.Validator
 
 @ExtendWith(SpringExtension::class)
@@ -53,9 +49,6 @@ class ProfileResourceControllerTest {
   @Autowired
   private lateinit var mapper: ObjectMapper
 
-  private val sentences: List<SentenceAndOffences> = emptyList()
-  private val prisonerDetails = PrisonerDetails(offenderNo = "", bookingId = 1, dateOfBirth = LocalDate.of(1, 2, 3))
-  private val adjustments = BookingAndSentenceAdjustments(emptyList(), emptyList())
   private val noteListJson = "[\n" +
     "    {\n" +
     "        \"createdBy\": \"sacintha-raj\",\n" +
