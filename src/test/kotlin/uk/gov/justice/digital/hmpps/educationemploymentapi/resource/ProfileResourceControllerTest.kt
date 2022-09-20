@@ -81,7 +81,7 @@ class ProfileResourceControllerTest {
     var notesList: MutableList<Note> = mapper.readValue(noteListJson, object : TypeReference<MutableList<Note>>() {})
     whenever(profileService.getProfileNotesForOffender(prisonerId, ActionTodo.BANK_ACCOUNT)).thenReturn(notesList)
 
-    val result = mvc.perform(get("/readiness-profiles//$prisonerId/notes/$bankAccount").accept(APPLICATION_JSON))
+    val result = mvc.perform(get("/readiness-profiles/A1234AB/notes/$bankAccount").accept(APPLICATION_JSON))
       .andExpect(status().isOk)
       .andExpect(content().contentType(APPLICATION_JSON))
       .andReturn()

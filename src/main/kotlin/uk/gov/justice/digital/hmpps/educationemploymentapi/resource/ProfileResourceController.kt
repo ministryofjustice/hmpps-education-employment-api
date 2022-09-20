@@ -25,7 +25,11 @@ import uk.gov.justice.digital.hmpps.educationemploymentapi.data.ReadinessProfile
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.ActionTodo
 import uk.gov.justice.digital.hmpps.educationemploymentapi.exceptions.ErrorResponse
 import uk.gov.justice.digital.hmpps.educationemploymentapi.service.ProfileService
-import javax.validation.*
+import javax.validation.ConstraintViolation
+import javax.validation.ConstraintViolationException
+import javax.validation.Valid
+import javax.validation.ValidationException
+import javax.validation.Validator
 import javax.validation.constraints.Pattern
 
 @Validated
@@ -208,7 +212,7 @@ class ProfileResourceController(
     @PathVariable offenderId: String
   ): ReadinessProfileDTO {
 
-//    validateOffenderId(offenderId)
+    validateOffenderId(offenderId)
 
     return ReadinessProfileDTO(profileService.getProfileForOffender(offenderId), objectMapper)
   }
@@ -300,7 +304,7 @@ class ProfileResourceController(
   }
 
   private fun validateOffenderId(offenderId: String) {
-    if (!offenderId.matches(Regex("^[A-Z]\\d{5}[A-Z]{2}\$"))) {
+    if (!offenderId.matches(Regex("^[A-Z]\\d{4}[A-Z]{2}\$"))) {
       throw ValidationException("OffenderId provided ($offenderId) does not match pattern ie 'A1111AA'")
     }
   }
