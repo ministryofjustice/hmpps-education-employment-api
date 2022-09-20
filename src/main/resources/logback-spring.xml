@@ -68,6 +68,10 @@
         <appender-ref ref="logAppender"/>
         <appender-ref ref="consoleAppender"/>
     </logger>
+     <logger name="org.apache.coyote" additivity="false" level="TRACE">
+        <appender-ref ref="logAppender"/>
+        <appender-ref ref="consoleAppender"/>
+    </logger>
     <logger name="org.springframework.web.reactive" additivity="false" level="TRACE">
         <appender-ref ref="logAppender"/>
         <appender-ref ref="consoleAppender"/>
