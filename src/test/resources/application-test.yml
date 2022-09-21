@@ -42,23 +42,3 @@ server:
 management.endpoint:
   health.cache.time-to-live: 0
   info.cache.time-to-live: 0
-
-# Wiremock auth server
-hmpps:
-  auth:
-    url: http://localhost:8090/auth
-
-# Wiremock prison-api
-prison:
-  api:
-    url: http://localhost:8332
-
-bank-holiday:
-  api:
-    url: http://localhost:8333
-
-domain-events-sns:
-  provider: localstack
-
-feature-toggles:
-  sopc: true
