@@ -10,12 +10,6 @@ api:
     url:
       oauth: https://sign-in-dev.hmpps.service.justice.gov.uk/auth
 
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          public-key-location: classpath:local-public-key.pub
-
   datasource:
     url: 'jdbc:h2:mem:release-dates-db;MODE=PostgreSQL;INIT=create domain if not exists jsonb as json'
     username: create_vary

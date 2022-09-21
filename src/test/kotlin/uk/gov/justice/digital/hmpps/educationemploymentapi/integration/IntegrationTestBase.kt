@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.educationemploymentapi.integration
 
-import org.junit.jupiter.api.extension.ExtendWith
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -12,7 +11,7 @@ import org.springframework.test.context.jdbc.Sql
 import org.springframework.test.context.jdbc.SqlMergeMode
 import org.springframework.test.web.reactive.server.WebTestClient
 import uk.gov.justice.digital.hmpps.educationemploymentapi.helpers.JwtAuthHelper
-import uk.gov.justice.digital.hmpps.educationemploymentapi.integration.wiremock.OAuthExtension
+// import uk.gov.justice.digital.hmpps.educationemploymentapi.integration.wiremock.OAuthExtension
 /*
 ** The abstract parent class for integration tests.
 **
@@ -32,7 +31,7 @@ import uk.gov.justice.digital.hmpps.educationemploymentapi.integration.wiremock.
   "classpath:test_data/reset-base-data.sql",
   "classpath:test_data/load-base-data.sql"
 )
-@ExtendWith(OAuthExtension::class)
+// @ExtendWith(OAuthExtension::class)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("test")
 class IntegrationTestBase internal constructor() {

@@ -18,12 +18,12 @@ import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import uk.gov.justice.digital.hmpps.educationemploymentapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.NoteDTO
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.NoteRequestDTO
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.ReadinessProfileDTO
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.ReadinessProfileRequestDTO
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.ActionTodo
-import uk.gov.justice.digital.hmpps.educationemploymentapi.exceptions.ErrorResponse
 import uk.gov.justice.digital.hmpps.educationemploymentapi.service.ProfileService
 import javax.validation.ConstraintViolation
 import javax.validation.ConstraintViolationException

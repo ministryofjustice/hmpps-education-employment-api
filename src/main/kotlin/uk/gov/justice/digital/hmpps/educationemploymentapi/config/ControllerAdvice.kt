@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.client.RestClientException
 import org.springframework.web.client.RestClientResponseException
 import uk.gov.justice.digital.hmpps.educationemploymentapi.exceptions.CrdWebException
-import javax.persistence.EntityNotFoundException
+import uk.gov.justice.digital.hmpps.educationemploymentapi.exceptions.NotFoundException
 import javax.validation.ValidationException
 
 @RestControllerAdvice
@@ -74,21 +74,6 @@ class ControllerAdvice {
         )
       )
   }
-
-  @ExceptionHandler(EntityNotFoundException::class)
-  fun handleEntityNotFoundException(e: EntityNotFoundException): ResponseEntity<ErrorResponse> {
-    log.info("Entity not found exception: ${e.message}", e)
-    return ResponseEntity
-      .status(HttpStatus.NOT_FOUND)
-      .body(
-        ErrorResponse(
-          status = HttpStatus.NOT_FOUND.value(),
-          userMessage = "Not found: ${e.message}",
-          developerMessage = e.message
-        )
-      )
-  }
-
   @ExceptionHandler(ValidationException::class)
   fun handleValidationException(e: ValidationException): ResponseEntity<ErrorResponse> {
     log.info("Validation exception: ${e.message}", e)
@@ -103,6 +88,19 @@ class ControllerAdvice {
       )
   }
 
+  @ExceptionHandler(NotFoundException::class)
+  fun handleNotFoundException(e: NotFoundException): ResponseEntity<ErrorResponse> {
+    log.info("NotFoundException: ${e.message}", e)
+    return ResponseEntity
+      .status(HttpStatus.BAD_REQUEST)
+      .body(
+        ErrorResponse(
+          status = HttpStatus.BAD_REQUEST.value(),
+          userMessage = "${e.message}",
+          developerMessage = e.message
+        )
+      )
+  }
   @ExceptionHandler(CrdWebException::class)
   fun handleCustomWebException(e: CrdWebException): ResponseEntity<ErrorResponse> {
     log.error("Exception ${e.javaClass.simpleName} ${e.message}", e)
