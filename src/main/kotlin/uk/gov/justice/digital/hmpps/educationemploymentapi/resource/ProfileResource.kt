@@ -34,7 +34,7 @@ import javax.validation.constraints.Pattern
 @Validated
 @RestController
 @RequestMapping("/readiness-profiles", produces = [MediaType.APPLICATION_JSON_VALUE])
-class ProfileResourceController(
+class ProfileResource(
   private val profileService: ProfileService,
   private val validator: Validator,
 ) {
@@ -240,6 +240,7 @@ class ProfileResourceController(
     @Valid @Pattern(regexp = "^[A-Z]\\d{4}[A-Z]{2}\$")
     @PathVariable offenderId: String,
     @Schema(description = "attribute", example = "DISCLOSURE_LETTER", required = true)
+    @Valid
     @PathVariable attribute: ActionTodo,
     @RequestBody requestDTO: NoteRequestDTO,
     @AuthenticationPrincipal oauth2User: String

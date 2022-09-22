@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.client.RestClientException
 import org.springframework.web.client.RestClientResponseException
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
-import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.educationemploymentapi.exceptions.NotFoundException
 import javax.validation.ValidationException
 
@@ -89,6 +88,20 @@ class ControllerAdvice {
       )
   }
 
+  @ExceptionHandler(MethodArgumentTypeMismatchException::class)
+  fun handleMethodArgumentTypeMismatchException(e: MethodArgumentTypeMismatchException): ResponseEntity<ErrorResponse> {
+    log.info("Validation exception: ${e.message}", e)
+    return ResponseEntity
+      .status(HttpStatus.BAD_REQUEST)
+      .body(
+        ErrorResponse(
+          status = HttpStatus.BAD_REQUEST.value(),
+          userMessage = "Validation failure: ${e.message}",
+          developerMessage = e.message
+        )
+      )
+  }
+
   @ExceptionHandler(NotFoundException::class)
   fun handleNotFoundException(e: NotFoundException): ResponseEntity<ErrorResponse> {
     log.info("NotFoundException: ${e.message}", e)
@@ -102,22 +115,6 @@ class ControllerAdvice {
         )
       )
   }
-  @ExceptionHandler(MethodArgumentTypeMismatchException::class)
-  fun handleMethodArgumentTypeMismatchException(e: Exception): Mono<ResponseEntity<ErrorResponse>> {
-    log.info("Validation exception: {}", e.message)
-    return Mono.just(
-      ResponseEntity
-        .status(HttpStatus.BAD_REQUEST)
-        .body(
-          ErrorResponse(
-            status = HttpStatus.BAD_REQUEST,
-            userMessage = "Invalid Argument: ${e.cause?.message}",
-            developerMessage = e.message
-          )
-        )
-    )
-  }
-
   @ExceptionHandler(java.lang.Exception::class)
   fun handleException(e: java.lang.Exception): ResponseEntity<ErrorResponse?>? {
     log.error("Unexpected exception: ${e.message}", e)
