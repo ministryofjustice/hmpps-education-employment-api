@@ -34,7 +34,7 @@ import javax.validation.constraints.Pattern
 @Validated
 @RestController
 @RequestMapping("/readiness-profiles", produces = [MediaType.APPLICATION_JSON_VALUE])
-class ProfileResource(
+class ProfileResourceController(
   private val profileService: ProfileService,
   private val validator: Validator,
 ) {

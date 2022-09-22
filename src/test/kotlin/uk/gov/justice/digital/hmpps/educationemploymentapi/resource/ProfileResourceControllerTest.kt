@@ -31,9 +31,9 @@ import javax.validation.Validator
 
 @ExtendWith(SpringExtension::class)
 @ActiveProfiles("test")
-@WebMvcTest(controllers = [ProfileResource::class])
+@WebMvcTest(controllers = [ProfileResourceController::class])
 @AutoConfigureMockMvc(addFilters = false)
-@ContextConfiguration(classes = [ProfileResource::class])
+@ContextConfiguration(classes = [ProfileResourceController::class])
 @WebAppConfiguration
 class ProfileResourceControllerTest {
 
@@ -69,7 +69,7 @@ class ProfileResourceControllerTest {
     reset(profileService)
 
     mvc = MockMvcBuilders
-      .standaloneSetup(ProfileResource(profileService, validator))
+      .standaloneSetup(ProfileResourceController(profileService, validator))
       .setControllerAdvice(ControllerAdvice())
       .build()
   }
