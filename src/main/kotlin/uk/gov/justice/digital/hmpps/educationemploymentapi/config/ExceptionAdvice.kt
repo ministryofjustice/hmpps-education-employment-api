@@ -13,7 +13,7 @@ import org.springframework.web.client.RestClientException
 import org.springframework.web.client.RestClientResponseException
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
 import uk.gov.justice.digital.hmpps.educationemploymentapi.exceptions.NotFoundException
-import java.util.*
+import java.util.Arrays
 import javax.validation.ValidationException
 
 @RestControllerAdvice
@@ -85,8 +85,8 @@ class ControllerAdvice {
       .body(
         ErrorResponse(
           status = HttpStatus.BAD_REQUEST.value(),
-          userMessage = "Validation failure: ${e.message?.let { e.message!!.substring(it.indexOf(":")+2) }}",
-          developerMessage = e.message?.let { e.message!!.substring(it.indexOf(":")+2) }
+          userMessage = "Validation failure: ${e.message?.let { e.message!!.substring(it.indexOf(":") + 2) }}",
+          developerMessage = e.message?.let { e.message!!.substring(it.indexOf(":") + 2) }
         )
       )
   }
@@ -113,7 +113,7 @@ class ControllerAdvice {
       .body(
         ErrorResponse(
           status = HttpStatus.BAD_REQUEST.value(),
-          userMessage = "Validation failure: ${errorDetails}",
+          userMessage = "Validation failure: $errorDetails",
           developerMessage = errorDetails
         )
       )

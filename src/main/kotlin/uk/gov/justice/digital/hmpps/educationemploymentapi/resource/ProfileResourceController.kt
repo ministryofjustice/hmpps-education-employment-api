@@ -25,8 +25,6 @@ import uk.gov.justice.digital.hmpps.educationemploymentapi.data.ReadinessProfile
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.ActionTodo
 import uk.gov.justice.digital.hmpps.educationemploymentapi.service.ProfileService
 import uk.gov.justice.digital.hmpps.educationemploymentapi.validator.OffenderIdConstraint
-import javax.validation.ConstraintViolation
-import javax.validation.ConstraintViolationException
 import javax.validation.Valid
 import javax.validation.Validator
 import javax.validation.constraints.Pattern
@@ -68,7 +66,7 @@ class ProfileResourceController(
   )
   fun getOffenderProfiles(
     @Schema(description = "List of offender Ids", example = "[\"A1234BC\", \"B1234DE\"]", required = true)
-    @RequestBody @OffenderIdConstraint(message= "Invalid Offender Id") offenderIds: List<@Valid String>
+    @RequestBody @OffenderIdConstraint(message = "Invalid Offender Id") offenderIds: List<@Valid String>
   ): List<ReadinessProfileDTO> {
 
     val profiles = ArrayList<ReadinessProfileDTO>()
@@ -107,7 +105,7 @@ class ProfileResourceController(
     ]
   )
   fun createOffenderProfile(
-    @Valid @Pattern(regexp = "^[A-Z]\\d{4}[A-Z]{2}\$", message= "Invalid Offender Id")
+    @Valid @Pattern(regexp = "^[A-Z]\\d{4}[A-Z]{2}\$", message = "Invalid Offender Id")
     @PathVariable offenderId: String,
 //    @Valid
     @RequestBody requestDTO: ReadinessProfileRequestDTO,
@@ -152,7 +150,7 @@ class ProfileResourceController(
     ]
   )
   fun updateOffenderProfile(
-    @Valid @Pattern(regexp = "^[A-Z]\\d{4}[A-Z]{2}\$", message= "Invalid Offender Id")
+    @Valid @Pattern(regexp = "^[A-Z]\\d{4}[A-Z]{2}\$", message = "Invalid Offender Id")
     @PathVariable offenderId: String,
     @Valid
     @RequestBody @Parameter requestDTO: ReadinessProfileRequestDTO,
@@ -279,7 +277,7 @@ class ProfileResourceController(
   )
   fun getOffenderProfileNotes(
     @Schema(description = "offenderId", example = "A1234BC", required = true)
-    @Valid @Pattern(regexp = "^[A-Z]\\d{4}[A-Z]{2}\$", message= "Invalid Offender Id")
+    @Valid @Pattern(regexp = "^[A-Z]\\d{4}[A-Z]{2}\$", message = "Invalid Offender Id")
     @PathVariable offenderId: String,
     @Schema(description = "attribute", example = "DISCLOSURE_LETTER", required = true)
     @PathVariable attribute: ActionTodo

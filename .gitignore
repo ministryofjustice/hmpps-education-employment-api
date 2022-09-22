@@ -70,3 +70,6 @@ sonar-project.properties
 
 #Helm
 **/Chart.lock
+
+#ds store
+**/.DS_store
