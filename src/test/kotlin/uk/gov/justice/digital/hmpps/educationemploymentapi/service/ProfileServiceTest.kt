@@ -100,7 +100,7 @@ class ProfileServiceTest {
 
   @BeforeEach
   fun beforeEach() {
-    profileService = ProfileService(readinessProfileRepository, TestUtil.objectMapper())
+    profileService = ProfileService(readinessProfileRepository)
   }
   @Test
   fun `makes a call to the repository to save the readiness profile`() {

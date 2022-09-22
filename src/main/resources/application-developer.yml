@@ -33,7 +33,7 @@ spring:
       validationTimeout: 500
 
   flyway:
-    locations: classpath:/migration/postgres,classpath:/migration/common
-    url: ${spring.datasource.url}
+    enabled: true
+    url: jdbc:postgresql://localhost:5432/education-employment?sslmode=prefer
     user: education-employment
     password: education-employment

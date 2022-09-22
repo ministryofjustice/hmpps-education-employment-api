@@ -1,8 +1,8 @@
 package uk.gov.justice.digital.hmpps.educationemploymentapi.data
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.vladmihalcea.hibernate.type.json.internal.JacksonUtil
 import io.swagger.v3.oas.annotations.media.Schema
+import uk.gov.justice.digital.hmpps.educationemploymentapi.config.CapturedSpringMapperConfiguration
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.Profile
 import uk.gov.justice.digital.hmpps.educationemploymentapi.entity.ReadinessProfile
 import java.time.LocalDateTime
@@ -32,7 +32,7 @@ data class ReadinessProfileDTO(
   @Schema(description = "Work readiness profile JSON data", example = "{...}")
   val profileData: Profile?
 ) {
-  constructor(profileEntity: ReadinessProfile, objectMapper: ObjectMapper) : this(
+  constructor(profileEntity: ReadinessProfile) : this(
     offenderId = profileEntity.offenderId,
     bookingId = profileEntity.bookingId,
     createdBy = profileEntity.createdBy,
@@ -40,6 +40,6 @@ data class ReadinessProfileDTO(
     modifiedBy = profileEntity.modifiedBy,
     modifiedDateTime = profileEntity.modifiedDateTime,
     schemaVersion = profileEntity.schemaVersion,
-    profileData = objectMapper.readValue(JacksonUtil.toString(profileEntity.profileData), Profile::class.java)
+    profileData = CapturedSpringMapperConfiguration.OBJECT_MAPPER.readValue(JacksonUtil.toString(profileEntity.profileData), Profile::class.java)
   )
 }

@@ -1,9 +1,9 @@
 package uk.gov.justice.digital.hmpps.educationemploymentapi.service
 
 import com.fasterxml.jackson.core.type.TypeReference
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.vladmihalcea.hibernate.type.json.internal.JacksonUtil
 import org.springframework.stereotype.Service
+import uk.gov.justice.digital.hmpps.educationemploymentapi.config.CapturedSpringMapperConfiguration
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.ActionTodo
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.Note
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.Profile
@@ -15,14 +15,13 @@ import java.time.LocalDateTime
 
 @Service
 class ProfileService(
-  private val readinessProfileRepository: ReadinessProfileRepository,
-  private val objectMapper: ObjectMapper
+  private val readinessProfileRepository: ReadinessProfileRepository
 ) {
   fun createProfileForOffender(userId: String, offenderId: String, bookingId: Long, profile: Profile): ReadinessProfile {
     if (readinessProfileRepository.existsById(offenderId)) {
       throw AlreadyExistsException(offenderId)
     }
-    return readinessProfileRepository.save(ReadinessProfile(offenderId, bookingId, userId, LocalDateTime.now(), userId, LocalDateTime.now(), "1.0", JacksonUtil.toJsonNode(objectMapper.writeValueAsString(profile)), JacksonUtil.toJsonNode("[]"), true))
+    return readinessProfileRepository.save(ReadinessProfile(offenderId, bookingId, userId, LocalDateTime.now(), userId, LocalDateTime.now(), "1.0", JacksonUtil.toJsonNode(CapturedSpringMapperConfiguration.OBJECT_MAPPER.writeValueAsString(profile)), JacksonUtil.toJsonNode("[]"), true))
   }
 
   fun updateProfileForOffender(
@@ -33,7 +32,7 @@ class ProfileService(
   ): ReadinessProfile {
     var storedProfile: ReadinessProfile =
       readinessProfileRepository.findById(offenderId).orElseThrow(NotFoundException(offenderId))
-    storedProfile.profileData = JacksonUtil.toJsonNode(objectMapper.writeValueAsString(profile))
+    storedProfile.profileData = JacksonUtil.toJsonNode(CapturedSpringMapperConfiguration.OBJECT_MAPPER.writeValueAsString(profile))
     storedProfile.modifiedBy = userId
     return readinessProfileRepository.save(storedProfile)
   }
@@ -48,11 +47,11 @@ class ProfileService(
 
   fun addProfileNoteForOffender(userId: String, offenderId: String, attribute: ActionTodo, text: String): List<Note> {
     var storedProfile: ReadinessProfile = readinessProfileRepository.findById(offenderId).orElseThrow(NotFoundException(offenderId))
-    var notesList: MutableList<Note> = objectMapper.readValue(
+    var notesList: MutableList<Note> = CapturedSpringMapperConfiguration.OBJECT_MAPPER.readValue(
       JacksonUtil.toString(storedProfile.notesData), object : TypeReference<MutableList<Note>>() {}
     )
     notesList.add(Note(userId, LocalDateTime.now(), attribute, text))
-    storedProfile.notesData = JacksonUtil.toJsonNode(objectMapper.writeValueAsString(notesList))
+    storedProfile.notesData = JacksonUtil.toJsonNode(CapturedSpringMapperConfiguration.OBJECT_MAPPER.writeValueAsString(notesList))
     storedProfile.modifiedBy = userId
     readinessProfileRepository.save(storedProfile)
     return notesList.filter { n -> n.attribute == attribute }
@@ -60,7 +59,7 @@ class ProfileService(
 
   fun getProfileNotesForOffender(offenderId: String, attribute: ActionTodo): List<Note> {
     var storedProfile: ReadinessProfile = readinessProfileRepository.findById(offenderId).orElseThrow(NotFoundException(offenderId))
-    var notesList: List<Note> = objectMapper.readValue(
+    var notesList: List<Note> = CapturedSpringMapperConfiguration.OBJECT_MAPPER.readValue(
       JacksonUtil.toString(storedProfile.notesData), object : TypeReference<List<Note>>() {}
     )
     return notesList.filter { n -> n.attribute == attribute }

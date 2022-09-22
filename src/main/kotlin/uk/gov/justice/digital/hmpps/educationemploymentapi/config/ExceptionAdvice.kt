@@ -9,7 +9,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.client.RestClientException
 import org.springframework.web.client.RestClientResponseException
-import uk.gov.justice.digital.hmpps.educationemploymentapi.exceptions.CrdWebException
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
+import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.educationemploymentapi.exceptions.NotFoundException
 import javax.validation.ValidationException
 
@@ -101,19 +102,20 @@ class ControllerAdvice {
         )
       )
   }
-  @ExceptionHandler(CrdWebException::class)
-  fun handleCustomWebException(e: CrdWebException): ResponseEntity<ErrorResponse> {
-    log.error("Exception ${e.javaClass.simpleName} ${e.message}", e)
-    return ResponseEntity
-      .status(e.status)
-      .body(
-        ErrorResponse(
-          status = e.status,
-          errorCode = e.code,
-          userMessage = e.message,
-          developerMessage = e.message
+  @ExceptionHandler(MethodArgumentTypeMismatchException::class)
+  fun handleMethodArgumentTypeMismatchException(e: Exception): Mono<ResponseEntity<ErrorResponse>> {
+    log.info("Validation exception: {}", e.message)
+    return Mono.just(
+      ResponseEntity
+        .status(HttpStatus.BAD_REQUEST)
+        .body(
+          ErrorResponse(
+            status = HttpStatus.BAD_REQUEST,
+            userMessage = "Invalid Argument: ${e.cause?.message}",
+            developerMessage = e.message
+          )
         )
-      )
+    )
   }
 
   @ExceptionHandler(java.lang.Exception::class)

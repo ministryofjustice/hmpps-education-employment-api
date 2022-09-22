@@ -26,7 +26,7 @@
     </springProfile>
 
     <logger name="uk.gov.justice.digital.hmpps.educationemploymentapi.HmppsEducationEmploymentApiKt" additivity="false"
-            level="TRACE">
+            level="DEBUG">
         <appender-ref ref="logAppender"/>
         <appender-ref ref="consoleAppender"/>
     </logger>
@@ -48,59 +48,13 @@
         <appender-ref ref="consoleAppender"/>
     </logger>
 
-    <logger name="org.springframework" additivity="false" level="INFO">
-        <appender-ref ref="logAppender"/>
-        <appender-ref ref="consoleAppender"/>
-    </logger>
-    <logger name="org.springframework.http.codec.json " additivity="false" level="TRACE">
-        <appender-ref ref="logAppender"/>
-        <appender-ref ref="consoleAppender"/>
-    </logger>
-    <logger name="org.springframework.r2dbc.core" additivity="false" level="TRACE">
-        <appender-ref ref="logAppender"/>
-        <appender-ref ref="consoleAppender"/>
-    </logger>
-    <logger name="org.springframework.beans" additivity="false" level="TRACE">
-        <appender-ref ref="logAppender"/>
-        <appender-ref ref="consoleAppender"/>
-    </logger>
-    <logger name="org.springframework.web.server" additivity="false" level="TRACE">
+    <logger name="org.springframework.boot" additivity="false" level="INFO">
         <appender-ref ref="logAppender"/>
         <appender-ref ref="consoleAppender"/>
     </logger>
 
-     <logger name="org.apache.coyote" additivity="false" level="TRACE">
+    <root level="INFO">
         <appender-ref ref="logAppender"/>
-        <appender-ref ref="consoleAppender"/>
-    </logger>
-
-
-    <logger name="io.netty" additivity="false" level="INFO">
-        <appender-ref ref="logAppender"/>
-        <appender-ref ref="consoleAppender"/>
-    </logger>
-    <logger name="reactor" additivity="false" level="INFO">
-       <appender-ref ref="logAppender"/>
-        <appender-ref ref="consoleAppender"/>
-    </logger>
-
-
-    <logger name="java.io" additivity="false" level="INFO">
-        <appender-ref ref="logAppender"/>
-        <appender-ref ref="consoleAppender"/>
-    </logger>
-
-    <logger name="sun.rmi" additivity="false" level="INFO">
-        <appender-ref ref="logAppender"/>
-        <appender-ref ref="consoleAppender"/>
-    </logger>
-    <logger name="javax.management" additivity="false" level="INFO">
-        <appender-ref ref="logAppender"/>
-        <appender-ref ref="consoleAppender"/>
-    </logger>
-    <root level="TRACE">
-        <appender-ref ref="logAppender"/>
-        <appender-ref ref="consoleAppender"/>
     </root>
 
 </configuration>

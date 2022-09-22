@@ -69,7 +69,7 @@ class ProfileResourceControllerTest {
     reset(profileService)
 
     mvc = MockMvcBuilders
-      .standaloneSetup(ProfileResourceController(profileService, validator, mapper))
+      .standaloneSetup(ProfileResourceController(profileService, validator))
       .setControllerAdvice(ControllerAdvice())
       .build()
   }
