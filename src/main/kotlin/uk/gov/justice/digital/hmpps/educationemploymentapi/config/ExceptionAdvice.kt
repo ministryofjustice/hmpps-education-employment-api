@@ -1,8 +1,10 @@
 package uk.gov.justice.digital.hmpps.educationemploymentapi.config
 
+import com.fasterxml.jackson.databind.exc.InvalidFormatException
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.access.AuthorizationServiceException
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -11,6 +13,7 @@ import org.springframework.web.client.RestClientException
 import org.springframework.web.client.RestClientResponseException
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
 import uk.gov.justice.digital.hmpps.educationemploymentapi.exceptions.NotFoundException
+import java.util.*
 import javax.validation.ValidationException
 
 @RestControllerAdvice
@@ -82,8 +85,36 @@ class ControllerAdvice {
       .body(
         ErrorResponse(
           status = HttpStatus.BAD_REQUEST.value(),
-          userMessage = "Validation failure: ${e.message}",
-          developerMessage = e.message
+          userMessage = "Validation failure: ${e.message?.let { e.message!!.substring(it.indexOf(":")+2) }}",
+          developerMessage = e.message?.let { e.message!!.substring(it.indexOf(":")+2) }
+        )
+      )
+  }
+
+  @ExceptionHandler(HttpMessageNotReadableException::class)
+  fun handleHttpMessageNotReadableException(e: HttpMessageNotReadableException): ResponseEntity<ErrorResponse> {
+    log.info("Validation exception: ${e.message}", e)
+    val genericMessage = "Unacceptable JSON " + e.message
+    var errorDetails: String? = genericMessage
+
+    if (e.cause is InvalidFormatException) {
+      val ifx: InvalidFormatException = e.cause as InvalidFormatException
+      if (ifx.getTargetType() != null && ifx.getTargetType().isEnum()) {
+        errorDetails = java.lang.String.format(
+          "Invalid enum value: '%s' for the field: '%s'. The value must be one of: %s.",
+          ifx.getValue(),
+          ifx.getPath().get(ifx.getPath().size - 1).getFieldName(),
+          Arrays.toString(ifx.getTargetType().getEnumConstants())
+        )
+      }
+    }
+    return ResponseEntity
+      .status(HttpStatus.BAD_REQUEST)
+      .body(
+        ErrorResponse(
+          status = HttpStatus.BAD_REQUEST.value(),
+          userMessage = "Validation failure: ${errorDetails}",
+          developerMessage = errorDetails
         )
       )
   }

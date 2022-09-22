@@ -68,7 +68,7 @@ class ProfileResourceController(
   )
   fun getOffenderProfiles(
     @Schema(description = "List of offender Ids", example = "[\"A1234BC\", \"B1234DE\"]", required = true)
-    @RequestBody @OffenderIdConstraint offenderIds: List<@Valid String>
+    @RequestBody @OffenderIdConstraint(message= "Invalid Offender Id") offenderIds: List<@Valid String>
   ): List<ReadinessProfileDTO> {
 
     val profiles = ArrayList<ReadinessProfileDTO>()
@@ -107,13 +107,12 @@ class ProfileResourceController(
     ]
   )
   fun createOffenderProfile(
-    @Valid @Pattern(regexp = "^[A-Z]\\d{4}[A-Z]{2}\$")
+    @Valid @Pattern(regexp = "^[A-Z]\\d{4}[A-Z]{2}\$", message= "Invalid Offender Id")
     @PathVariable offenderId: String,
+//    @Valid
     @RequestBody requestDTO: ReadinessProfileRequestDTO,
     @AuthenticationPrincipal oauth2User: String
   ): ReadinessProfileDTO {
-    validateReadinessProfileRequest(requestDTO)
-
     return ReadinessProfileDTO(
       profileService.createProfileForOffender(
         oauth2User,
@@ -153,14 +152,12 @@ class ProfileResourceController(
     ]
   )
   fun updateOffenderProfile(
-    @Valid @Pattern(regexp = "^[A-Z]\\d{4}[A-Z]{2}\$")
+    @Valid @Pattern(regexp = "^[A-Z]\\d{4}[A-Z]{2}\$", message= "Invalid Offender Id")
     @PathVariable offenderId: String,
+    @Valid
     @RequestBody @Parameter requestDTO: ReadinessProfileRequestDTO,
     @AuthenticationPrincipal oauth2User: String
   ): ReadinessProfileDTO {
-
-    validateReadinessProfileRequest(requestDTO)
-
     return ReadinessProfileDTO(
       profileService.updateProfileForOffender(
         oauth2User,
@@ -282,18 +279,11 @@ class ProfileResourceController(
   )
   fun getOffenderProfileNotes(
     @Schema(description = "offenderId", example = "A1234BC", required = true)
-    @Valid @Pattern(regexp = "^[A-Z]\\d{4}[A-Z]{2}\$")
+    @Valid @Pattern(regexp = "^[A-Z]\\d{4}[A-Z]{2}\$", message= "Invalid Offender Id")
     @PathVariable offenderId: String,
     @Schema(description = "attribute", example = "DISCLOSURE_LETTER", required = true)
     @PathVariable attribute: ActionTodo
   ): List<NoteDTO> {
     return profileService.getProfileNotesForOffender(offenderId, attribute).map { note -> NoteDTO(note) }
-  }
-
-  private fun validateReadinessProfileRequest(requestDTO: ReadinessProfileRequestDTO) {
-    val violations: Set<ConstraintViolation<ReadinessProfileRequestDTO>> = validator.validate(requestDTO)
-    if (violations.isNotEmpty()) {
-      throw ConstraintViolationException(violations)
-    }
   }
 }
