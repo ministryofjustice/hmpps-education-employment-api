@@ -27,7 +27,6 @@ import uk.gov.justice.digital.hmpps.educationemploymentapi.config.ControllerAdvi
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.ActionTodo
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.Note
 import uk.gov.justice.digital.hmpps.educationemploymentapi.service.ProfileService
-import javax.validation.Validator
 
 @ExtendWith(SpringExtension::class)
 @ActiveProfiles("test")
@@ -42,9 +41,6 @@ class ProfileResourceControllerTest {
 
   @Autowired
   private lateinit var mvc: MockMvc
-
-  @Autowired
-  private lateinit var validator: Validator
 
   @Autowired
   private lateinit var mapper: ObjectMapper
@@ -69,7 +65,7 @@ class ProfileResourceControllerTest {
     reset(profileService)
 
     mvc = MockMvcBuilders
-      .standaloneSetup(ProfileResourceController(profileService, validator))
+      .standaloneSetup(ProfileResourceController(profileService))
       .setControllerAdvice(ControllerAdvice())
       .build()
   }

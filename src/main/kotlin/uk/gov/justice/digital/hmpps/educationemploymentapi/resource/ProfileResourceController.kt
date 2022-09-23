@@ -26,7 +26,6 @@ import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.Acti
 import uk.gov.justice.digital.hmpps.educationemploymentapi.service.ProfileService
 import uk.gov.justice.digital.hmpps.educationemploymentapi.validator.OffenderIdConstraint
 import javax.validation.Valid
-import javax.validation.Validator
 import javax.validation.constraints.Pattern
 
 @Validated
@@ -34,7 +33,6 @@ import javax.validation.constraints.Pattern
 @RequestMapping("/readiness-profiles", produces = [MediaType.APPLICATION_JSON_VALUE])
 class ProfileResourceController(
   private val profileService: ProfileService,
-  private val validator: Validator,
 ) {
   @PreAuthorize("hasRole('ROLE_VIEW_PRISONER_DATA')")
   @PostMapping("/search")
