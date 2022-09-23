@@ -30,7 +30,7 @@ data class ReadinessProfileDTO(
   val schemaVersion: String,
 
   @Schema(description = "Work readiness profile JSON data", example = "{...}")
-  val profileData: Profile?
+  val profileData: Profile
 ) {
   constructor(profileEntity: ReadinessProfile) : this(
     offenderId = profileEntity.offenderId,

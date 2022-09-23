@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.educationemploymentapi.config
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException
+import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -90,13 +91,29 @@ class ControllerAdvice {
         )
       )
   }
-
+  @ExceptionHandler(value = [MissingKotlinParameterException::class])
+  fun handleMissingKotlinParameter(exception: MissingKotlinParameterException): ResponseEntity<ErrorResponse> {
+    val fieldName = exception.path.joinToString(separator = ".") { it.fieldName }
+    return ResponseEntity
+      .status(HttpStatus.BAD_REQUEST)
+      .body(
+        ErrorResponse(
+          status = HttpStatus.BAD_REQUEST.value(),
+          userMessage = "Validation failure: $fieldName",
+          developerMessage = "Missing $fieldName"
+        )
+      )
+  }
   @ExceptionHandler(HttpMessageNotReadableException::class)
   fun handleHttpMessageNotReadableException(e: HttpMessageNotReadableException): ResponseEntity<ErrorResponse> {
     log.info("Validation exception: ${e.message}", e)
     val genericMessage = "Unacceptable JSON " + e.message
     var errorDetails: String? = genericMessage
-
+    if (e.cause is MissingKotlinParameterException) {
+      val mkpx: MissingKotlinParameterException = e.cause as MissingKotlinParameterException
+      val fieldName = mkpx.path.joinToString(separator = ".") { it.fieldName }
+      errorDetails = "Missing $fieldName"
+    }
     if (e.cause is InvalidFormatException) {
       val ifx: InvalidFormatException = e.cause as InvalidFormatException
       if (ifx.getTargetType() != null && ifx.getTargetType().isEnum()) {

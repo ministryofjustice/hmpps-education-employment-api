@@ -107,7 +107,7 @@ class ProfileResourceController(
   fun createOffenderProfile(
     @Valid @Pattern(regexp = "^[A-Z]\\d{4}[A-Z]{2}\$", message = "Invalid Offender Id")
     @PathVariable offenderId: String,
-//    @Valid
+    @Valid
     @RequestBody requestDTO: ReadinessProfileRequestDTO,
     @AuthenticationPrincipal oauth2User: String
   ): ReadinessProfileDTO {
