@@ -43,24 +43,35 @@ spring:
       test:
         - "stdout"
 
-  r2dbc:
-    url: r2dbc:postgresql://${DATABASE_ENDPOINT}/${DATABASE_NAME}
+  jpa:
+    open-in-view: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: false
+    generate-ddl: false
+    hibernate:
+      ddl-auto: none
+
+  datasource:
+    url: 'jdbc:postgresql://${DATABASE_ENDPOINT}/${DATABASE_NAME}?sslmode=prefer'
     username: ${DATABASE_USERNAME}
     password: ${DATABASE_PASSWORD}
-    pool:
-      max-life-time: -1
-    properties:
-      ssl: true
-      sslRootCert: /home/appuser/.postgresql/root.crt
+    hikari:
+      pool-name: Hmpps-Education-Employment
+      connectionTimeout: 1000
+      validationTimeout: 500
 
   flyway:
+    initOnMigrate: true
     enabled: true
-    url: jdbc:postgresql://${DATABASE_ENDPOINT}/${DATABASE_NAME}?sslmode=verify-full
+    url: ${spring.datasource.url}
     user: ${DATABASE_USERNAME}
     password: ${DATABASE_PASSWORD}
 
-api:
-  health-timeout-ms: 1000
+  sql:
+    init:
+      continue-on-error: true
 
 server:
   port: 8080

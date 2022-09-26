@@ -10,18 +10,27 @@ api:
 management.endpoint:
   health.cache.time-to-live: 0
   info.cache.time-to-live: 0
-
 spring:
   devtools:
     add-properties: true
+  jpa:
+    open-in-view: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: false
+    generate-ddl: false
+    hibernate:
+      ddl-auto: none
 
-  r2dbc:
-    url: r2dbc:postgresql://localhost:5432/education-employment?sslmode=prefer
+  datasource:
+    url: 'jdbc:postgresql://localhost:5432/education-employment?sslmode=prefer'
     username: education-employment
     password: education-employment
-    properties:
-      sslMode: DISABLE
-      sslRootCert:
+    hikari:
+      pool-name: Hmpps-Education-Employment
+      connectionTimeout: 1000
+      validationTimeout: 500
 
   flyway:
     enabled: true

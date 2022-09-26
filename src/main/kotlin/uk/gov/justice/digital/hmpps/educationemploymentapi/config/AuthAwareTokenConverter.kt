@@ -1,28 +1,29 @@
 package uk.gov.justice.digital.hmpps.educationemploymentapi.config
+
 import org.springframework.core.convert.converter.Converter
+import org.springframework.security.authentication.AbstractAuthenticationToken
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter
-import reactor.core.publisher.Mono
+import org.springframework.stereotype.Component
 
-class ReactiveAuthAwareTokenConverter : Converter<Jwt, Mono<AuthAwareAuthenticationToken>> {
-  private val jwtGrantedAuthoritiesConverter: Converter<Jwt, Collection<GrantedAuthority>> =
-    JwtGrantedAuthoritiesConverter()
+@Component
+class AuthAwareTokenConverter : Converter<Jwt, AbstractAuthenticationToken> {
+  private val jwtGrantedAuthoritiesConverter:
+    Converter<Jwt, Collection<GrantedAuthority>> = JwtGrantedAuthoritiesConverter()
 
-  override fun convert(jwt: Jwt): Mono<AuthAwareAuthenticationToken> {
+  override fun convert(jwt: Jwt): AbstractAuthenticationToken {
     val claims = jwt.claims
     val principal = findPrincipal(claims)
     val authorities = extractAuthorities(jwt)
-    return Mono.just(AuthAwareAuthenticationToken(jwt, principal, authorities))
+    return AuthAwareAuthenticationToken(jwt, principal, authorities)
   }
 
   private fun findPrincipal(claims: Map<String, Any?>): String {
     return if (claims.containsKey("user_name")) {
       claims["user_name"] as String
-    } else if (claims.containsKey("user_id")) {
-      claims["user_id"] as String
     } else {
       claims["client_id"] as String
     }
@@ -41,10 +42,10 @@ class ReactiveAuthAwareTokenConverter : Converter<Jwt, Mono<AuthAwareAuthenticat
 
 class AuthAwareAuthenticationToken(
   jwt: Jwt,
-  private val aPrincipal: String,
+  private val principal: String,
   authorities: Collection<GrantedAuthority>
 ) : JwtAuthenticationToken(jwt, authorities) {
   override fun getPrincipal(): String {
-    return aPrincipal
+    return principal
   }
 }

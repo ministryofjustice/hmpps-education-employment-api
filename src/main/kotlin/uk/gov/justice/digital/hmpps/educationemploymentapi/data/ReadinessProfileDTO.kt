@@ -1,9 +1,10 @@
 package uk.gov.justice.digital.hmpps.educationemploymentapi.data
 
+import com.vladmihalcea.hibernate.type.json.internal.JacksonUtil
 import io.swagger.v3.oas.annotations.media.Schema
 import uk.gov.justice.digital.hmpps.educationemploymentapi.config.CapturedSpringMapperConfiguration
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.Profile
-import uk.gov.justice.digital.hmpps.educationemploymentapi.persistence.model.ReadinessProfile
+import uk.gov.justice.digital.hmpps.educationemploymentapi.entity.ReadinessProfile
 import java.time.LocalDateTime
 
 data class ReadinessProfileDTO(
@@ -39,6 +40,6 @@ data class ReadinessProfileDTO(
     modifiedBy = profileEntity.modifiedBy,
     modifiedDateTime = profileEntity.modifiedDateTime,
     schemaVersion = profileEntity.schemaVersion,
-    profileData = CapturedSpringMapperConfiguration.OBJECT_MAPPER.readValue(profileEntity.profileData.asString(), Profile::class.java)
+    profileData = CapturedSpringMapperConfiguration.OBJECT_MAPPER.readValue(JacksonUtil.toString(profileEntity.profileData), Profile::class.java)
   )
 }

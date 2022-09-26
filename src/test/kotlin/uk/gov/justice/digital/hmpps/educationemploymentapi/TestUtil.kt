@@ -1,22 +1,17 @@
-package uk.gov.justice.digital.hmpps.educationemploymentapi.config
+package uk.gov.justice.digital.hmpps.educationemploymentapi
 
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import org.springframework.context.annotation.Configuration
+import java.text.SimpleDateFormat
 
-/**
- * This class is used as a way to capture the Spring Jackson mapper in a way that
- * data classes etc may use it as they cannot have it auto injected
- */
-@Configuration
-class CapturedSpringMapperConfiguration {
+class TestUtil private constructor() {
   companion object {
-    var OBJECT_MAPPER: ObjectMapper = this.configObjectMapper()
-    fun configObjectMapper(): ObjectMapper {
+    fun objectMapper(): ObjectMapper {
       val mapper = ObjectMapper()
       mapper.registerModule(JavaTimeModule())
+      mapper.dateFormat = SimpleDateFormat("yyyy-MM-dd")
       mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
       return mapper.registerKotlinModule()
     }
