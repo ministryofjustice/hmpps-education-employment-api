@@ -34,7 +34,7 @@ import javax.validation.constraints.Pattern
 class ProfileResourceController(
   private val profileService: ProfileService,
 ) {
-  @PreAuthorize("hasRole('ROLE_VIEW_PRISONER_DATA')")
+  @PreAuthorize("hasAnyRole('WORK_READINESS_VIEW','WORK_READINESS_EDIT')")
   @PostMapping("/search")
   @Operation(
     summary = "Fetch work readiness profile summaries for a set of offenders",
@@ -74,7 +74,7 @@ class ProfileResourceController(
     return profiles
   }
 
-  @PreAuthorize("hasRole('ROLE_VIEW_PRISONER_DATA')")
+  @PreAuthorize("hasRole('WORK_READINESS_EDIT')")
   @PostMapping("/{offenderId}")
   @Operation(
     summary = "Create the work readiness profile for an offender",
@@ -119,7 +119,7 @@ class ProfileResourceController(
     )
   }
 
-  @PreAuthorize("hasRole('ROLE_VIEW_PRISONER_DATA')")
+  @PreAuthorize("hasRole('WORK_READINESS_EDIT')")
   @PutMapping("/{offenderId}")
   @Operation(
     summary = "Update the work readiness profile for an offender",
@@ -164,7 +164,7 @@ class ProfileResourceController(
     )
   }
 
-  @PreAuthorize("hasRole('ROLE_VIEW_PRISONER_DATA')")
+  @PreAuthorize("hasAnyRole('WORK_READINESS_VIEW','WORK_READINESS_EDIT')")
   @GetMapping("/{offenderId}")
   @Operation(
     summary = "Fetch the work readiness profile for a given offender",
@@ -200,7 +200,7 @@ class ProfileResourceController(
     return ReadinessProfileDTO(profileService.getProfileForOffender(offenderId))
   }
 
-  @PreAuthorize("hasRole('ROLE_VIEW_PRISONER_DATA')")
+  @PreAuthorize("hasRole('WORK_READINESS_EDIT')")
   @PostMapping("/{offenderId}/notes/{attribute}")
   @Operation(
     summary = "Create a note against the offenders profile for the given attribute",
@@ -244,7 +244,7 @@ class ProfileResourceController(
       .map { note -> NoteDTO(note) }
   }
 
-  @PreAuthorize("hasRole('ROLE_VIEW_PRISONER_DATA')")
+  @PreAuthorize("hasAnyRole('WORK_READINESS_VIEW','WORK_READINESS_EDIT')")
   @GetMapping("/{offenderId}/notes/{attribute}")
   @Operation(
     summary = "Get all notes against the offenders profile for the given attribute",
