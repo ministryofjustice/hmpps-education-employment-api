@@ -38,110 +38,84 @@ class ProfileServiceTest {
   private val readinessProfileRepository: ReadinessProfileRepository = mock()
   private lateinit var profileService: ProfileService
 
-  val modifiedTime = LocalDateTime.now()
-
-  val booleanTrue = true
-  val booleanFalse = false
-
-  val createdBy = "sacintha-raj"
-  val updatedBy = "phil-whils"
-  val workTypesOfInterestOther = "freelance"
-  val jobOfParticularInterests = "architect"
-  val previousWorkOrVolunteering_NONE = "NONE"
-  val qualificationAndTrainingOther = "MBA"
-  val newOffenderId = "A1245BC"
-  val updatedOffenderId = "A1245BC"
-  val emptyString = ""
-  val createdByString = "createdBy"
-  val offenderIdString = "offenderId"
-  val bookingIdString = "bookingId"
-  val newNotes = "new notes"
-
-  val newBookingId = 123456L
-  val updatedBookingId = 123457L
-
-  val action = Action(ActionTodo.BANK_ACCOUNT, ActionStatus.COMPLETED)
-
-  val profileStatus_NO_RIGHT_TO_WORK = ProfileStatus.NO_RIGHT_TO_WORK
-
-  val supportDeclinedReasonList = listOf(SupportToWorkDeclinedReason.FULL_TIME_CARER)
-  val circumstanceChangesRequiredToWorkList = listOf(CircumstanceChangesRequiredToWork.DEPENDENCY_SUPPORT)
-  val actionList = listOf(action)
-  val abilityToWorkImpactedByList = listOf(AbilityToWorkImpactedBy.CARING_RESPONSIBILITIES)
-  val workTypesOfInterestList = listOf(WorkTypesOfInterest.CONSTRUCTION)
-  val qualificationsAndTrainingList = listOf(QualificationsAndTraining.ADVANCED_EDUCATION)
-
-  val actionsRequired = ActionsRequired(
-    updatedBy, modifiedTime, actionList
-  )
-  val workImpacts = WorkImpacts(
-    updatedBy, modifiedTime, abilityToWorkImpactedByList, booleanTrue, booleanTrue, booleanTrue
-  )
-  val workInterests = WorkInterests(
-    updatedBy, modifiedTime, workTypesOfInterestList, workTypesOfInterestOther, jobOfParticularInterests
-  )
-  val workExperience = WorkExperience(
-    updatedBy,
-    modifiedTime,
-    previousWorkOrVolunteering_NONE,
-    qualificationsAndTrainingList,
-    qualificationAndTrainingOther
-  )
-
-  val supportDeclined: SupportDeclined = SupportDeclined(
-    createdBy, modifiedTime, supportDeclinedReasonList, emptyString, circumstanceChangesRequiredToWorkList, emptyString
-  )
-  val supportAccepted: SupportAccepted = SupportAccepted(
-    actionsRequired, workImpacts, workInterests, workExperience
-  )
-  val profile: Profile = Profile(profileStatus_NO_RIGHT_TO_WORK, supportDeclined, supportAccepted)
-  val readinessProfile = ReadinessProfile(newOffenderId, newBookingId, createdBy, modifiedTime, createdBy, modifiedTime, "1.0", JacksonUtil.toJsonNode(TestUtil.objectMapper().writeValueAsString(profile)), JacksonUtil.toJsonNode("{}"), booleanTrue)
-  val updatedReadinessProfile = Optional.of(ReadinessProfile(newOffenderId, updatedBookingId, updatedBy, modifiedTime, updatedBy, modifiedTime, "1.0", JacksonUtil.toJsonNode(TestUtil.objectMapper().writeValueAsString(profile)), JacksonUtil.toJsonNode("{}"), booleanTrue))
-
   @BeforeEach
   fun beforeEach() {
     profileService = ProfileService(readinessProfileRepository)
   }
   @Test
   fun `makes a call to the repository to save the readiness profile`() {
-    whenever(readinessProfileRepository.save(any())).thenReturn(readinessProfile)
-    whenever(readinessProfileRepository.existsById(any())).thenReturn(booleanFalse)
+    whenever(readinessProfileRepository.save(any())).thenReturn(TestData.readinessProfile)
+    whenever(readinessProfileRepository.existsById(any())).thenReturn(TestData.booleanFalse)
 
-    val rProfile = profileService.createProfileForOffender(createdBy, newOffenderId, newBookingId, profile)
+    val rProfile = profileService.createProfileForOffender(TestData.createdBy, TestData.newOffenderId, TestData.newBookingId, TestData.profile)
     val argumentCaptor = ArgumentCaptor.forClass(ReadinessProfile::class.java)
     verify(readinessProfileRepository).save(argumentCaptor.capture())
-    assertThat(rProfile).extracting(createdByString, offenderIdString, bookingIdString)
-      .contains(createdBy, newOffenderId, newBookingId)
+    assertThat(rProfile).extracting(TestData.createdByString, TestData.offenderIdString, TestData.bookingIdString)
+      .contains(TestData.createdBy, TestData.newOffenderId, TestData.newBookingId)
   }
 
-  @Test
-  fun `throws an exception when a call is made to the repository to save the readiness profile`() {
-    assertThatExceptionOfType(AlreadyExistsException::class.java).isThrownBy {
-      whenever(readinessProfileRepository.save(any())).thenReturn(readinessProfile)
-      whenever(readinessProfileRepository.existsById(any())).thenReturn(booleanTrue)
-
-      profileService.createProfileForOffender(createdBy, newOffenderId, newBookingId, profile)
-    }.withMessageContaining("Readiness profile already exists for offender")
-  }
 
   @Test
   fun `makes a call to the repository to update the readiness profile`() {
-    whenever(readinessProfileRepository.save(any())).thenReturn(updatedReadinessProfile.get())
-    whenever(readinessProfileRepository.findById(any())).thenReturn(updatedReadinessProfile)
+    whenever(readinessProfileRepository.save(any())).thenReturn(TestData.updatedReadinessProfile.get())
+    whenever(readinessProfileRepository.findById(any())).thenReturn(TestData.updatedReadinessProfile)
 
-    val rProfile = profileService.updateProfileForOffender(createdBy, newOffenderId, newBookingId, profile)
+    val rProfile = profileService.updateProfileForOffender(TestData.createdBy, TestData.newOffenderId, TestData.newBookingId, TestData.profile)
     val argumentCaptor = ArgumentCaptor.forClass(ReadinessProfile::class.java)
     verify(readinessProfileRepository).save(argumentCaptor.capture())
-    assertThat(rProfile).extracting(createdByString, offenderIdString, bookingIdString)
-      .contains(updatedBy, newOffenderId, updatedBookingId)
+    assertThat(rProfile).extracting(TestData.createdByString, TestData.offenderIdString, TestData.bookingIdString)
+      .contains(TestData.updatedBy, TestData.newOffenderId, TestData.updatedBookingId)
+  }
+
+  @Test
+  fun `makes a call to the repository to save a readiness profile note`() {
+    whenever(readinessProfileRepository.save(any())).thenReturn(TestData.updatedReadinessProfile.get())
+    whenever(readinessProfileRepository.findById(any())).thenReturn(TestData.updatedReadinessProfile)
+
+    val listNote = profileService.addProfileNoteForOffender(TestData.createdBy, TestData.newOffenderId, TestData.actionToDoCV, TestData.noteString)
+    val argumentCaptor = ArgumentCaptor.forClass(ReadinessProfile::class.java)
+    verify(readinessProfileRepository).save(argumentCaptor.capture())
+    assert(listNote[0].text.equals(TestData.noteString))
+  }
+
+  @Test
+  fun `makes a call to the repository to retreive a readiness profile note`() {
+    whenever(readinessProfileRepository.save(any())).thenReturn(TestData.updatedReadinessProfileNotes.get())
+    whenever(readinessProfileRepository.findById(any())).thenReturn(TestData.updatedReadinessProfileNotes)
+
+    val listNote = profileService.getProfileNotesForOffender( TestData.newOffenderId, TestData.actionToDoCV)
+    assert(listNote[0].text.equals(TestData.noteString))
+  }
+
+  @Test
+  fun `makes a call to the repository to retreive a readiness profile for an offender id`() {
+    whenever(readinessProfileRepository.findById(any())).thenReturn(TestData.updatedReadinessProfileNotes)
+    val profile = profileService.getProfileForOffender(TestData.newOffenderId)
+    assert(profile.equals(TestData.updatedReadinessProfileNotes.get()))
+  }
+
+  @Test
+  fun `makes a call to the repository to retreive a list ofreadiness profiles for list offender ids`() {
+    whenever(readinessProfileRepository.findAllById(any())).thenReturn(TestData.profileList)
+    val profileList = profileService.getProfilesForOffenders(TestData.offenderIdList)
+    assert(profileList.containsAll(TestData.profileList))
+  }
+  @Test
+  fun `throws an exception when a call is made to the repository to save the readiness profile`() {
+    assertThatExceptionOfType(AlreadyExistsException::class.java).isThrownBy {
+      whenever(readinessProfileRepository.save(any())).thenReturn(TestData.readinessProfile)
+      whenever(readinessProfileRepository.existsById(any())).thenReturn(TestData.booleanTrue)
+
+      profileService.createProfileForOffender(TestData.createdBy, TestData.newOffenderId, TestData.newBookingId, TestData.profile)
+    }.withMessageContaining("Readiness profile already exists for offender")
   }
 
   @Test
   fun `throws an exception when a call is made to the repository to update the readiness profile`() {
     assertThatExceptionOfType(NotFoundException::class.java).isThrownBy {
-      whenever(readinessProfileRepository.save(any())).thenReturn(readinessProfile)
+      whenever(readinessProfileRepository.save(any())).thenReturn(TestData.readinessProfile)
       whenever(readinessProfileRepository.findById(any())).thenReturn(Optional.empty())
-      profileService.updateProfileForOffender(createdBy, newOffenderId, newBookingId, profile)
+      profileService.updateProfileForOffender(TestData.createdBy, TestData.newOffenderId, TestData.newBookingId, TestData.profile)
     }.withMessageContaining("Readiness profile does not exist for offender")
   }
 
@@ -149,14 +123,14 @@ class ProfileServiceTest {
   fun `throws an exception when a call is made to the repository to add a note to an non existing readiness profile`() {
     assertThatExceptionOfType(NotFoundException::class.java).isThrownBy {
       whenever(readinessProfileRepository.findById(any())).thenReturn(Optional.empty())
-      profileService.addProfileNoteForOffender(createdBy, newOffenderId, ActionTodo.BANK_ACCOUNT, newNotes)
+      profileService.addProfileNoteForOffender(TestData.createdBy, TestData.newOffenderId, ActionTodo.BANK_ACCOUNT, TestData.newNotes)
     }.withMessageContaining("Readiness profile does not exist for offender")
   }
   @Test
   fun `throws an exception when a call is made to the repository to retreive a note from a non existing readiness profile`() {
     assertThatExceptionOfType(NotFoundException::class.java).isThrownBy {
       whenever(readinessProfileRepository.findById(any())).thenReturn(Optional.empty())
-      profileService.getProfileNotesForOffender(createdBy, ActionTodo.BANK_ACCOUNT)
+      profileService.getProfileNotesForOffender(TestData.createdBy, ActionTodo.BANK_ACCOUNT)
     }.withMessageContaining("Readiness profile does not exist for offender")
   }
 }
