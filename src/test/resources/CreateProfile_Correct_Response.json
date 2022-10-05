@@ -1,0 +1,26 @@
+{
+    "offenderId": "G6377UF",
+    "bookingId": 123456,
+    "createdBy": "sacintha-raj",
+    "createdDateTime": "2022-10-03T08:59:43.413158",
+    "modifiedBy": "sacintha-raj",
+    "modifiedDateTime": "2022-10-03T08:59:43.413692",
+    "schemaVersion": "1.0",
+    "profileData": {
+        "status": "SUPPORT_DECLINED",
+        "supportDeclined": {
+            "modifiedBy": "me",
+            "modifiedDateTime": "2022-07-06T12:00:00",
+            "supportToWorkDeclinedReason": [
+                "FULL_TIME_CARER"
+            ],
+            "supportToWorkDeclinedReasonOther": "Wants to read the Beano",
+            "circumstanceChangesRequiredToWork": [
+                "HOUSING_ON_RELEASE",
+                "OTHER"
+            ],
+            "circumstanceChangesRequiredToWorkOther": "Will need socks"
+        },
+        "supportAccepted": null
+    }
+}
