@@ -1,15 +1,7 @@
 package uk.gov.justice.digital.hmpps.educationemploymentapi.service
 
 import com.vladmihalcea.hibernate.type.json.internal.JacksonUtil
-import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-import org.mockito.ArgumentCaptor
-import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
-import org.mockito.kotlin.verify
-import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.educationemploymentapi.TestUtil
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.AbilityToWorkImpactedBy
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.Action
@@ -28,14 +20,15 @@ import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.Work
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.WorkInterests
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.WorkTypesOfInterest
 import uk.gov.justice.digital.hmpps.educationemploymentapi.entity.ReadinessProfile
-import uk.gov.justice.digital.hmpps.educationemploymentapi.exceptions.AlreadyExistsException
-import uk.gov.justice.digital.hmpps.educationemploymentapi.exceptions.NotFoundException
 import uk.gov.justice.digital.hmpps.educationemploymentapi.repository.ReadinessProfileRepository
+import java.io.File
 import java.time.LocalDateTime
 import java.util.Optional
 
 class TestData {
   companion object {
+    val createProfileJsonRequest = File("src/test/resources/CreateProfile_correct.json").inputStream().readBytes().toString(Charsets.UTF_8)
+    val createProfileJsonResponse = File("src/test/resources/CreateProfile_Correct_Response.json").inputStream().readBytes().toString(Charsets.UTF_8)
     val noteString: String = "Mary had another little lamb"
     private val readinessProfileRepository: ReadinessProfileRepository = mock()
     private lateinit var profileService: ProfileService
@@ -53,7 +46,8 @@ class TestData {
     val qualificationAndTrainingOther = "MBA"
     val newOffenderId = "A1245BC"
     val updatedOffenderId = "A1245BD"
-    val offenderIdList = listOf<String>(newOffenderId,updatedOffenderId)
+    val offenderIdList = listOf<String>(newOffenderId, updatedOffenderId)
+    val offenderIdListjson = "[\"".plus(newOffenderId).plus("\",\"").plus(updatedOffenderId).plus("\"]")
     val emptyString = ""
     val createdByString = "createdBy"
     val offenderIdString = "offenderId"
@@ -130,7 +124,6 @@ class TestData {
         booleanTrue
       )
     )
-
     val updatedReadinessProfileNotes = Optional.of(
       ReadinessProfile(
         newOffenderId,
@@ -141,16 +134,36 @@ class TestData {
         modifiedTime,
         "1.0",
         JacksonUtil.toJsonNode(TestUtil.objectMapper().writeValueAsString(profile)),
-        JacksonUtil.toJsonNode("[{\n" +
-          "        \"createdBy\": \"sacintha-raj\",\n" +
-          "        \"createdDateTime\": \"2022-09-22T09:52:53.422898\",\n" +
-          "        \"attribute\": \"CV_AND_COVERING_LETTER\",\n" +
-          "        \"text\": \"Mary had another little lamb\"\n" +
-          "    }]"),
+        JacksonUtil.toJsonNode(
+          "[{\n" +
+            "        \"createdBy\": \"sacintha-raj\",\n" +
+            "        \"createdDateTime\": \"2022-09-22T09:52:53.422898\",\n" +
+            "        \"attribute\": \"CV_AND_COVERING_LETTER\",\n" +
+            "        \"text\": \"Mary had another little lamb\"\n" +
+            "    }]"
+        ),
         booleanTrue
       )
     )
 
-    var profileList = listOf<ReadinessProfile>(readinessProfile,updatedReadinessProfileNotes.get())
+    var profileList = listOf<ReadinessProfile>(readinessProfile, updatedReadinessProfileNotes.get())
+    var noteFreeText = "Mary had another little lamb"
+    var noteFreeTextJson = "{\n" +
+      "    \"text\": \"Mary had another little lamb\"\n" +
+      "}"
+    val noteListJson = "[\n" +
+      "    {\n" +
+      "        \"createdBy\": \"sacintha-raj\",\n" +
+      "        \"createdDateTime\": \"2022-09-19T15:39:17.114676\",\n" +
+      "        \"attribute\": \"DISCLOSURE_LETTER\",\n" +
+      "        \"text\": \"Mary had another little lamb\"\n" +
+      "    },\n" +
+      "    {\n" +
+      "        \"createdBy\": \"sacintha-raj\",\n" +
+      "        \"createdDateTime\": \"2022-09-19T15:39:20.873604\",\n" +
+      "        \"attribute\": \"DISCLOSURE_LETTER\",\n" +
+      "        \"text\": \"Mary had another little lamb\"\n" +
+      "    }\n" +
+      "]"
   }
 }

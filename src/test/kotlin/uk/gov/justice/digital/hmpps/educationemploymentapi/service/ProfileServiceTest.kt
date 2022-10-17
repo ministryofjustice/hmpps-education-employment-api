@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.educationemploymentapi.service
 
-import com.vladmihalcea.hibernate.type.json.internal.JacksonUtil
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType
 import org.junit.jupiter.api.BeforeEach
@@ -10,28 +9,11 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import uk.gov.justice.digital.hmpps.educationemploymentapi.TestUtil
-import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.AbilityToWorkImpactedBy
-import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.Action
-import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.ActionStatus
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.ActionTodo
-import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.ActionsRequired
-import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.CircumstanceChangesRequiredToWork
-import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.Profile
-import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.ProfileStatus
-import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.QualificationsAndTraining
-import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.SupportAccepted
-import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.SupportDeclined
-import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.SupportToWorkDeclinedReason
-import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.WorkExperience
-import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.WorkImpacts
-import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.WorkInterests
-import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.WorkTypesOfInterest
 import uk.gov.justice.digital.hmpps.educationemploymentapi.entity.ReadinessProfile
 import uk.gov.justice.digital.hmpps.educationemploymentapi.exceptions.AlreadyExistsException
 import uk.gov.justice.digital.hmpps.educationemploymentapi.exceptions.NotFoundException
 import uk.gov.justice.digital.hmpps.educationemploymentapi.repository.ReadinessProfileRepository
-import java.time.LocalDateTime
 import java.util.Optional
 
 class ProfileServiceTest {
@@ -53,7 +35,6 @@ class ProfileServiceTest {
     assertThat(rProfile).extracting(TestData.createdByString, TestData.offenderIdString, TestData.bookingIdString)
       .contains(TestData.createdBy, TestData.newOffenderId, TestData.newBookingId)
   }
-
 
   @Test
   fun `makes a call to the repository to update the readiness profile`() {
@@ -83,7 +64,7 @@ class ProfileServiceTest {
     whenever(readinessProfileRepository.save(any())).thenReturn(TestData.updatedReadinessProfileNotes.get())
     whenever(readinessProfileRepository.findById(any())).thenReturn(TestData.updatedReadinessProfileNotes)
 
-    val listNote = profileService.getProfileNotesForOffender( TestData.newOffenderId, TestData.actionToDoCV)
+    val listNote = profileService.getProfileNotesForOffender(TestData.newOffenderId, TestData.actionToDoCV)
     assert(listNote[0].text.equals(TestData.noteString))
   }
 

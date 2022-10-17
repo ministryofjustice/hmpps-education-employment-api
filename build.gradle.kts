@@ -18,13 +18,13 @@ val integrationTest = task<Test>("integrationTest") {
 tasks.named<Test>("integrationTest") {
   useJUnitPlatform()
   filter {
-    includeTestsMatching("*.integration.*")
+    includeTestsMatching("*.Int.*")
   }
 }
 
 tasks.named<Test>("test") {
   filter {
-    excludeTestsMatching("*.integration.*")
+    excludeTestsMatching("*.Int.*")
   }
 }
 
