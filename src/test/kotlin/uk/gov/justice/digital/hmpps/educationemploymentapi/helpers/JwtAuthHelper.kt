@@ -40,7 +40,21 @@ class JwtAuthHelper() {
     )
     return { it.set(HttpHeaders.AUTHORIZATION, "Bearer $token") }
   }
-
+  fun setAuthorisationForUnitTests(
+    user: String = "AUTH_ADM",
+    roles: List<String> = listOf(),
+    scopes: List<String> = listOf()
+  ): HttpHeaders {
+    val token = createJwt(
+      subject = user,
+      scope = scopes,
+      expiryTime = Duration.ofHours(1L),
+      roles = roles
+    )
+    val hhtphander: HttpHeaders = HttpHeaders()
+    hhtphander.set(HttpHeaders.AUTHORIZATION, "Bearer $token")
+    return hhtphander
+  }
   internal fun createJwt(
     subject: String?,
     scope: List<String>? = listOf(),
