@@ -46,11 +46,6 @@ class IntegrationTestBase internal constructor() {
   ): (HttpHeaders) {
     return jwtAuthHelper.setAuthorisationForUnitTests(user, roles)
   }
-  /*internal fun setAuthorisation(
-    user: String = "test-client",
-    roles: List<String> = listOf()
-  ): (HttpHeaders) -> Unit = jwtAuthHelper.setAuthorisation(user, roles)
-*/
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
