@@ -10,6 +10,7 @@ generic-service:
     port: 8080
 
   ingress:
+    v1_2_enabled: true
     enabled: true
     host: app-hostname.local    # override per environment
     tlsSecretName: hmpps-education-employment-api-cert
