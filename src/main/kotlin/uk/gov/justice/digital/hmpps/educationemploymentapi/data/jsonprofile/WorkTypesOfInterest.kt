@@ -1,7 +1,6 @@
 package uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile
 
 enum class WorkTypesOfInterest {
-  ANY,
   CONSTRUCTION,
   DRIVING,
   BEAUTY,
@@ -13,5 +12,6 @@ enum class WorkTypesOfInterest {
   TECHNICAL,
   SPORTS,
   WAREHOUSING,
+  WASTE_MANAGEMENT,
   OTHER
 }
