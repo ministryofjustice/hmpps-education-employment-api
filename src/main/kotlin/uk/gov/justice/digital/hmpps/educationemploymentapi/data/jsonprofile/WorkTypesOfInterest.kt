@@ -13,5 +13,6 @@ enum class WorkTypesOfInterest {
   SPORTS,
   WAREHOUSING,
   WASTE_MANAGEMENT,
+  EDUCATION_TRAINING,
   OTHER
 }
