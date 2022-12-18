@@ -1,0 +1,147 @@
+{
+  "status": "NO_RIGHT_TO_WORK",
+  "statusChange": false,
+  "statusChangeDate": null,
+  "statusChangeType": "NEW",
+  "supportDeclined": [
+    {
+      "modifiedBy": "sacintha-raj",
+      "modifiedDateTime": [
+        2022,
+        12,
+        18,
+        9,
+        15,
+        56,
+        460988000
+      ],
+      "supportToWorkDeclinedReason": [
+        "FULL_TIME_CARER"
+      ],
+      "supportToWorkDeclinedReasonOther": "",
+      "circumstanceChangesRequiredToWork": [
+        "DEPENDENCY_SUPPORT"
+      ],
+      "circumstanceChangesRequiredToWorkOther": ""
+    },
+    {
+      "modifiedBy": "sacintha-raj",
+      "modifiedDateTime": [
+        2022,
+        12,
+        18,
+        9,
+        15,
+        56,
+        460988000
+      ],
+      "supportToWorkDeclinedReason": [
+        "FULL_TIME_CARER"
+      ],
+      "supportToWorkDeclinedReasonOther": "",
+      "circumstanceChangesRequiredToWork": [
+        "DEPENDENCY_SUPPORT"
+      ],
+      "circumstanceChangesRequiredToWorkOther": ""
+    }
+  ],
+  "supportAccepted": [
+    {
+      "modifiedBy": null,
+      "modifiedDateTime": null,
+      "actionsRequired": {
+        "modifiedBy": "phil-whils",
+        "modifiedDateTime": [
+          2022,
+          12,
+          18,
+          9,
+          15,
+          56,
+          460988000
+        ],
+        "actions": [
+          {
+            "todoItem": "BANK_ACCOUNT",
+            "status": "COMPLETED"
+          }
+        ]
+      },
+      "workImpacts": {
+        "modifiedBy": "phil-whils",
+        "modifiedDateTime": [
+          2022,
+          12,
+          18,
+          9,
+          15,
+          56,
+          460988000
+        ],
+        "abilityToWorkImpactedBy": [
+          "CARING_RESPONSIBILITIES"
+        ],
+        "caringResponsibilitiesFullTime": true,
+        "ableToManageMentalHealth": true,
+        "ableToManageDependencies": true
+      },
+      "workInterests": {
+        "modifiedBy": "phil-whils",
+        "modifiedDateTime": [
+          2022,
+          12,
+          18,
+          9,
+          15,
+          56,
+          460988000
+        ],
+        "workTypesOfInterest": [
+          "CONSTRUCTION"
+        ],
+        "workTypesOfInterestOther": "freelance",
+        "jobOfParticularInterest": "architect"
+      },
+      "workExperience": {
+        "modifiedBy": "phil-whils",
+        "modifiedDateTime": [
+          2022,
+          12,
+          18,
+          9,
+          15,
+          56,
+          460988000
+        ],
+        "previousWorkOrVolunteering": "NONE",
+        "qualificationsAndTraining": [
+          "ADVANCED_EDUCATION"
+        ],
+        "qualificationsAndTrainingOther": "MBA"
+      }
+    }
+  ],
+  "currentSupportState": {
+    "supportDeclined": {
+      "modifiedBy": "sacintha-raj",
+      "modifiedDateTime": [
+        2022,
+        12,
+        18,
+        9,
+        16,
+        24,
+        581204000
+      ],
+      "supportToWorkDeclinedReason": [
+        "FULL_TIME_CARER"
+      ],
+      "supportToWorkDeclinedReasonOther": "",
+      "circumstanceChangesRequiredToWork": [
+        "DEPENDENCY_SUPPORT"
+      ],
+      "circumstanceChangesRequiredToWorkOther": ""
+    },
+    "supportAccepted": null
+  }
+}
