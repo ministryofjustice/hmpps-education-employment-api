@@ -30,9 +30,7 @@ import java.util.Optional
 class TestData {
   companion object {
     val createProfileJsonRequest = File("src/test/resources/CreateProfile_correct.json").inputStream().readBytes().toString(Charsets.UTF_8)
-    // val createProfileJsonResponse = File("src/test/resources/CreateProfile_Correct_Response.json").inputStream().readBytes().toString(Charsets.UTF_8)
     val noteString: String = "Mary had another little lamb"
-    // private val readinessProfileRepository: ReadinessProfileRepository = mock()
     private lateinit var profileService: ProfileService
 
     val modifiedTime = LocalDateTime.now()
@@ -216,28 +214,12 @@ class TestData {
         booleanTrue
       )
     )
-
-    /*val profile_declined_Declined_History: Profile = Profile(profileStatus_NO_RIGHT_TO_WORK,false,null,StatusChange.NEW, mutableListOf( supportDeclined), null,currentSupportState_Declined)
-    val profile_declined_Accepted_History: Profile = Profile(profileStatus_NO_RIGHT_TO_WORK,false,null,StatusChange.NEW, null, mutableListOf( supportAccepted),currentSupportState_Declined)
-    val profile_declined_Both_History: Profile = Profile(profileStatus_NO_RIGHT_TO_WORK,false,null,StatusChange.NEW, mutableListOf( supportDeclined), mutableListOf( supportAccepted),currentSupportState_Declined)
-
-    val profile_accpeted_Declined_History: Profile = Profile(profileStatus_SUPPORT_NEEDED,false,null,StatusChange.NEW, mutableListOf( supportDeclined), null,currentSupportState_Accepted)
-    val profile_accpeted_Accepted_History: Profile = Profile(profileStatus_SUPPORT_NEEDED,false,null,StatusChange.NEW, null, mutableListOf( supportAccepted),currentSupportState_Accepted)
-    val profile_accpeted_Both_History: Profile = Profile(profileStatus_SUPPORT_NEEDED,false,null,StatusChange.NEW, mutableListOf( supportDeclined), mutableListOf( supportAccepted),currentSupportState_Accepted)
-*/
     val profile_IncorrectStatus: Profile = Profile(
       profileStatus_SUPPORT_NEEDED, false, null, StatusChange.NEW, mutableListOf(supportDeclined), mutableListOf(supportAccepted),
       currentSupportState_Declined
     )
     val profile_NEW_BOTHSTATE_INCOORECT: Profile = Profile(profileStatus_NO_RIGHT_TO_WORK, false, null, StatusChange.NEW, mutableListOf(supportDeclined), mutableListOf(supportAccepted), currentSupportState_Both)
-   /* val profile_Update_BOTHSTATE_COORECT_declined: Profile = Profile(profileStatus_NO_RIGHT_TO_WORK,false,null,StatusChange.NEW, mutableListOf( supportDeclined), mutableListOf( supportAccepted),currentSupportState_Both)
-    val profile_Update_COORECT_declined: Profile = Profile(profileStatus_NO_RIGHT_TO_WORK,false,null,StatusChange.NEW, mutableListOf( supportDeclined), mutableListOf( supportAccepted),currentSupportState_Declined)
-    val profile_Update_declined_Incorrect_Status: Profile = Profile(profileStatus_SUPPORT_NEEDED,false,null,StatusChange.NEW, mutableListOf( supportDeclined), mutableListOf( supportAccepted),currentSupportState_Declined)
 
-    val profile_Update_BOTHSTATE_COORECT_accepted: Profile = Profile(profileStatus_SUPPORT_NEEDED,false,null,StatusChange.NEW, mutableListOf( supportDeclined), mutableListOf( supportAccepted),currentSupportState_Both)
-    val profile_Update_COORECT_accepted: Profile = Profile(profileStatus_SUPPORT_NEEDED,false,null,StatusChange.NEW, mutableListOf( supportDeclined), mutableListOf( supportAccepted),currentSupportState_Accepted)
-    val profile_Update_accepted_IncorrectStatus: Profile = Profile(profileStatus_NO_RIGHT_TO_WORK,false,null,StatusChange.NEW, mutableListOf( supportDeclined), mutableListOf( supportAccepted),currentSupportState_Accepted)
-*/
     val readinessProfile = ReadinessProfile(
       newOffenderId,
       newBookingId,
@@ -251,110 +233,6 @@ class TestData {
       booleanTrue
     )
 
-  /*  val readinessProfile_declined = ReadinessProfile(
-      newOffenderId,
-      newBookingId,
-      createdBy,
-      modifiedTime,
-      createdBy,
-      modifiedTime,
-      "1.0",
-      JacksonUtil.toJsonNode(TestUtil.objectMapper().writeValueAsString(profile_declined)),
-      JacksonUtil.toJsonNode("{}"),
-      booleanTrue
-    )*/
-
-   /* val readinessProfile_accepted = Optional.of(ReadinessProfile(
-      newOffenderId,
-      newBookingId,
-      createdBy,
-      modifiedTime,
-      createdBy,
-      modifiedTime,
-      "1.0",
-      JacksonUtil.toJsonNode(TestUtil.objectMapper().writeValueAsString(profile_accpeted)),
-      JacksonUtil.toJsonNode("{}"),
-      booleanTrue
-    )
-    )*/
-/*
-    val readinessProfile_accepted_BothList = ReadinessProfile(
-      newOffenderId,
-      newBookingId,
-      createdBy,
-      modifiedTime,
-      createdBy,
-      modifiedTime,
-      "1.0",
-      JacksonUtil.toJsonNode(TestUtil.objectMapper().writeValueAsString(profile_accpeted_Both_History)),
-      JacksonUtil.toJsonNode("{}"),
-      booleanTrue
-    )*/
-/*
-    val readinessProfile_accepted_Declined_List = ReadinessProfile(
-      newOffenderId,
-      newBookingId,
-      createdBy,
-      modifiedTime,
-      createdBy,
-      modifiedTime,
-      "1.0",
-      JacksonUtil.toJsonNode(TestUtil.objectMapper().writeValueAsString(profile_accpeted_Declined_History)),
-      JacksonUtil.toJsonNode("{}"),
-      booleanTrue
-    )*/
-
-   /* val readinessProfile_accepted_Accepted_List = ReadinessProfile(
-      newOffenderId,
-      newBookingId,
-      createdBy,
-      modifiedTime,
-      createdBy,
-      modifiedTime,
-      "1.0",
-      JacksonUtil.toJsonNode(TestUtil.objectMapper().writeValueAsString(profile_accpeted_Accepted_History)),
-      JacksonUtil.toJsonNode("{}"),
-      booleanTrue
-    )*/
-
-   /* val readinessProfile_declined_BothList = ReadinessProfile(
-      newOffenderId,
-      newBookingId,
-      createdBy,
-      modifiedTime,
-      createdBy,
-      modifiedTime,
-      "1.0",
-      JacksonUtil.toJsonNode(TestUtil.objectMapper().writeValueAsString(profile_declined_Both_History)),
-      JacksonUtil.toJsonNode("{}"),
-      booleanTrue
-    )*/
-
-    /*val readinessProfile_declined_Declined_List = ReadinessProfile(
-      newOffenderId,
-      newBookingId,
-      createdBy,
-      modifiedTime,
-      createdBy,
-      modifiedTime,
-      "1.0",
-      JacksonUtil.toJsonNode(TestUtil.objectMapper().writeValueAsString(profile_declined_Declined_History)),
-      JacksonUtil.toJsonNode("{}"),
-      booleanTrue
-    )*/
-
-   /* val readinessProfile_declined_Accepted_List = ReadinessProfile(
-      newOffenderId,
-      newBookingId,
-      createdBy,
-      modifiedTime,
-      createdBy,
-      modifiedTime,
-      "1.0",
-      JacksonUtil.toJsonNode(TestUtil.objectMapper().writeValueAsString(profile_declined_Accepted_History)),
-      JacksonUtil.toJsonNode("{}"),
-      booleanTrue
-    )*/
     val updatedReadinessProfile = Optional.of(
       ReadinessProfile(
         newOffenderId,
@@ -369,93 +247,6 @@ class TestData {
         booleanTrue
       )
     )
-   /* val updatedReadinessProfile_declined = Optional.of(
-      ReadinessProfile(
-        newOffenderId,
-        updatedBookingId,
-        updatedBy,
-        modifiedTime,
-        updatedBy,
-        modifiedTime,
-        "1.0",
-        JacksonUtil.toJsonNode(TestUtil.objectMapper().writeValueAsString(profile_Update_COORECT_declined)),
-        JacksonUtil.toJsonNode("[]"),
-        booleanTrue
-      )
-    )*/
-
-   /* val updatedReadinessProfile_declined_Incorrect_Status = Optional.of(
-      ReadinessProfile(
-        newOffenderId,
-        updatedBookingId,
-        updatedBy,
-        modifiedTime,
-        updatedBy,
-        modifiedTime,
-        "1.0",
-        JacksonUtil.toJsonNode(TestUtil.objectMapper().writeValueAsString(profile_Update_declined_Incorrect_Status)),
-        JacksonUtil.toJsonNode("[]"),
-        booleanTrue
-      )
-    )*/
-
-   /* val updatedReadinessProfile_accepted = Optional.of(
-      ReadinessProfile(
-        newOffenderId,
-        updatedBookingId,
-        updatedBy,
-        modifiedTime,
-        updatedBy,
-        modifiedTime,
-        "1.0",
-        JacksonUtil.toJsonNode(TestUtil.objectMapper().writeValueAsString(profile_Update_COORECT_accepted)),
-        JacksonUtil.toJsonNode("[]"),
-        booleanTrue
-      )
-    )*/
-    /*val updatedReadinessProfile_accepted_Incorrect_Status = Optional.of(
-      ReadinessProfile(
-        newOffenderId,
-        updatedBookingId,
-        updatedBy,
-        modifiedTime,
-        updatedBy,
-        modifiedTime,
-        "1.0",
-        JacksonUtil.toJsonNode(TestUtil.objectMapper().writeValueAsString(profile_Update_accepted_IncorrectStatus)),
-        JacksonUtil.toJsonNode("[]"),
-        booleanTrue
-      )
-    )*/
-   /* val updatedReadinessProfile_Both_accpeted = Optional.of(
-      ReadinessProfile(
-        newOffenderId,
-        updatedBookingId,
-        updatedBy,
-        modifiedTime,
-        updatedBy,
-        modifiedTime,
-        "1.0",
-        JacksonUtil.toJsonNode(TestUtil.objectMapper().writeValueAsString(profile_Update_BOTHSTATE_COORECT_accepted)),
-        JacksonUtil.toJsonNode("[]"),
-        booleanTrue
-      )
-    )*/
-
- /*   val updatedReadinessProfile_both_declined = Optional.of(
-      ReadinessProfile(
-        newOffenderId,
-        updatedBookingId,
-        updatedBy,
-        modifiedTime,
-        updatedBy,
-        modifiedTime,
-        "1.0",
-        JacksonUtil.toJsonNode(TestUtil.objectMapper().writeValueAsString(profile_Update_BOTHSTATE_COORECT_declined)),
-        JacksonUtil.toJsonNode("[]"),
-        booleanTrue
-      )
-    )*/
     val updatedReadinessProfileNotes = Optional.of(
       ReadinessProfile(
         newOffenderId,
@@ -479,7 +270,6 @@ class TestData {
     )
 
     var profileList = listOf<ReadinessProfile>(readinessProfile, updatedReadinessProfileNotes.get())
-    // var noteFreeText = "Mary had another little lamb"
     var noteFreeTextJson = "{\n" +
       "    \"text\": \"Mary had another little lamb\"\n" +
       "}"
