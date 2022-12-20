@@ -1,7 +1,6 @@
 package uk.gov.justice.digital.hmpps.educationemploymentapi.service
 
 import com.vladmihalcea.hibernate.type.json.internal.JacksonUtil
-// import org.mockito.kotlin.mock
 import uk.gov.justice.digital.hmpps.educationemploymentapi.TestUtil
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.AbilityToWorkImpactedBy
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.Action
@@ -22,7 +21,6 @@ import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.Work
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.WorkInterests
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.WorkTypesOfInterest
 import uk.gov.justice.digital.hmpps.educationemploymentapi.entity.ReadinessProfile
-// import uk.gov.justice.digital.hmpps.educationemploymentapi.repository.ReadinessProfileRepository
 import java.io.File
 import java.time.LocalDateTime
 import java.util.Optional
