@@ -22,6 +22,7 @@ import uk.gov.justice.digital.hmpps.educationemploymentapi.data.NoteDTO
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.NoteRequestDTO
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.ReadinessProfileDTO
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.ReadinessProfileRequestDTO
+import uk.gov.justice.digital.hmpps.educationemploymentapi.data.StatusChangeUpdateRequestDTO
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.ActionTodo
 import uk.gov.justice.digital.hmpps.educationemploymentapi.service.ProfileService
 import uk.gov.justice.digital.hmpps.educationemploymentapi.validator.OffenderIdConstraint
@@ -160,6 +161,50 @@ class ProfileResourceController(
         offenderId,
         requestDTO.bookingId,
         requestDTO.profileData
+      )
+    )
+  }
+
+  @PreAuthorize("hasRole('WORK_READINESS_EDIT')")
+  @PutMapping("/statuschange/{offenderId}")
+  @Operation(
+    summary = "Update the work readiness profile for an offender",
+    description = "Called to modify an offenders work readiness profile. Currently requires role <b>ROLE_VIEW_PRISONER_DATA</b>",
+    responses = [
+      ApiResponse(
+        responseCode = "200",
+        description = "Work readiness profile modified",
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = ReadinessProfileDTO::class)
+          )
+        ],
+      ),
+      ApiResponse(
+        responseCode = "401",
+        description = "Unauthorized to access this endpoint",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))]
+      ),
+      ApiResponse(
+        responseCode = "403",
+        description = "Incorrect permissions to access this endpoint",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))]
+      )
+    ]
+  )
+  fun chnageStatusOfOffender(
+    @Valid @Pattern(regexp = "^[A-Z]\\d{4}[A-Z]{2}\$", message = "Invalid Offender Id")
+    @PathVariable offenderId: String,
+    @Valid
+    @RequestBody @Parameter statusChangeUpdateRequestDTO: StatusChangeUpdateRequestDTO,
+    @AuthenticationPrincipal oauth2User: String
+  ): ReadinessProfileDTO {
+    return ReadinessProfileDTO(
+      profileService.changeStatusForOffender(
+        oauth2User,
+        offenderId,
+        statusChangeUpdateRequestDTO
       )
     )
   }

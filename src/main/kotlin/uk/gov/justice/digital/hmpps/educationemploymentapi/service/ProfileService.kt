@@ -4,8 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.vladmihalcea.hibernate.type.json.internal.JacksonUtil
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.educationemploymentapi.config.CapturedSpringMapperConfiguration
-import uk.gov.justice.digital.hmpps.educationemploymentapi.data.AcceptStatusUpdateRequestDTO
-import uk.gov.justice.digital.hmpps.educationemploymentapi.data.DeclinedStatusUpdateRequestDTO
+import uk.gov.justice.digital.hmpps.educationemploymentapi.data.StatusChangeUpdateRequestDTO
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.ActionTodo
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.Note
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.Profile
@@ -159,7 +158,7 @@ class ProfileService(
   fun changeStatusToAcceptedForOffender(
     userId: String,
     offenderId: String,
-    acceptStatusUpdateRequestDTO: AcceptStatusUpdateRequestDTO,
+    statusChangeUpdateRequestDTO: StatusChangeUpdateRequestDTO,
     storedProfile: ReadinessProfile
   ): Profile {
     var profile: Profile = CapturedSpringMapperConfiguration.OBJECT_MAPPER.readValue(
@@ -174,10 +173,10 @@ class ProfileService(
       profile.supportDeclined!!.add(profile.currentSupportState.supportDeclined!!)
     }
     profile.currentSupportState.supportDeclined = null
-    acceptStatusUpdateRequestDTO.supportAccepted.modifiedBy = userId
-    acceptStatusUpdateRequestDTO.supportAccepted.modifiedDateTime = LocalDateTime.now()
-    profile.currentSupportState.supportAccepted = acceptStatusUpdateRequestDTO.supportAccepted
-    profile.status = acceptStatusUpdateRequestDTO.status
+    statusChangeUpdateRequestDTO.supportAccepted!!.modifiedBy = userId
+    statusChangeUpdateRequestDTO.supportAccepted.modifiedDateTime = LocalDateTime.now()
+    profile.currentSupportState.supportAccepted = statusChangeUpdateRequestDTO.supportAccepted
+    profile.status = statusChangeUpdateRequestDTO.status
     checkAcceptedProfileStatus(profile, offenderId)
 
     return profile
@@ -191,11 +190,41 @@ class ProfileService(
     profileToBeModified.statusChange = true
     profileToBeModified.statusChangeType = profileReference.statusChangeType
   }
+  fun changeStatusForOffender(
+    userId: String,
+    offenderId: String,
+    statusChangeUpdateRequestDTO: StatusChangeUpdateRequestDTO
+  ): ReadinessProfile {
+    var storedProfile: ReadinessProfile =
+      readinessProfileRepository.findById(offenderId).orElseThrow(NotFoundException(offenderId))
+    var storedCoreProfile: Profile? = null
+    if (statusChangeUpdateRequestDTO != null && statusChangeUpdateRequestDTO.supportDeclined != null) {
+      storedCoreProfile =
+        changeStatusToDeclinedForOffender(userId, offenderId, statusChangeUpdateRequestDTO, storedProfile)
+      storedCoreProfile.status = statusChangeUpdateRequestDTO.status
+      checkDeclinedProfileStatus(storedCoreProfile, offenderId)
+    } else if (statusChangeUpdateRequestDTO != null && statusChangeUpdateRequestDTO.supportAccepted != null) {
+      storedCoreProfile =
+        changeStatusToAcceptedForOffender(userId, offenderId, statusChangeUpdateRequestDTO, storedProfile)
+      storedCoreProfile.status = statusChangeUpdateRequestDTO.status
+      checkAcceptedProfileStatus(storedCoreProfile, offenderId)
+    } else {
+      throw InvalidStateException(offenderId)
+    }
 
+    storedCoreProfile.statusChangeDate = LocalDateTime.now()
+    storedCoreProfile.statusChange = true
+    storedProfile.profileData =
+      JacksonUtil.toJsonNode(CapturedSpringMapperConfiguration.OBJECT_MAPPER.writeValueAsString(storedCoreProfile))
+    storedProfile.modifiedBy = userId
+    storedProfile.modifiedDateTime = LocalDateTime.now()
+    readinessProfileRepository.save(storedProfile)
+    return storedProfile
+  }
   fun changeStatusToDeclinedForOffender(
     userId: String,
     offenderId: String,
-    declinedStatusUpdateRequestDTO: DeclinedStatusUpdateRequestDTO,
+    statusChangeUpdateRequestDTO: StatusChangeUpdateRequestDTO,
     storedProfile: ReadinessProfile
   ): Profile {
     var profile: Profile = CapturedSpringMapperConfiguration.OBJECT_MAPPER.readValue(
@@ -210,10 +239,10 @@ class ProfileService(
       profile.supportAccepted!!.add(profile.currentSupportState.supportAccepted!!)
     }
     profile.currentSupportState.supportAccepted = null
-    declinedStatusUpdateRequestDTO.supportDeclined.modifiedBy = userId
-    declinedStatusUpdateRequestDTO.supportDeclined.modifiedDateTime = LocalDateTime.now()
-    profile.currentSupportState.supportDeclined = declinedStatusUpdateRequestDTO.supportDeclined
-    profile.status = declinedStatusUpdateRequestDTO.status
+    statusChangeUpdateRequestDTO.supportDeclined!!.modifiedBy = userId
+    statusChangeUpdateRequestDTO.supportDeclined.modifiedDateTime = LocalDateTime.now()
+    profile.currentSupportState.supportDeclined = statusChangeUpdateRequestDTO.supportDeclined
+    profile.status = statusChangeUpdateRequestDTO.status
     checkDeclinedProfileStatus(profile, offenderId)
 
     return profile
@@ -225,10 +254,10 @@ class ProfileService(
     offenderId: String,
     storedProfile: ReadinessProfile
   ) {
-    val acceptStatusUpdateRequestDTO: AcceptStatusUpdateRequestDTO =
-      AcceptStatusUpdateRequestDTO(profile.currentSupportState.supportAccepted!!, profile.status)
+    val statusChangeUpdateRequestDTO: StatusChangeUpdateRequestDTO =
+      StatusChangeUpdateRequestDTO(profile.currentSupportState.supportAccepted!!, null, profile.status)
     val storedCoreProfile: Profile =
-      changeStatusToAcceptedForOffender(userId, offenderId, acceptStatusUpdateRequestDTO, storedProfile)
+      changeStatusToAcceptedForOffender(userId, offenderId, statusChangeUpdateRequestDTO, storedProfile)
     setProfileValues(profile, storedCoreProfile)
     checkAcceptedProfileStatus(profile, offenderId)
   }
@@ -239,10 +268,10 @@ class ProfileService(
     offenderId: String,
     storedProfile: ReadinessProfile
   ) {
-    val declinedStatusUpdateRequestDTO: DeclinedStatusUpdateRequestDTO =
-      DeclinedStatusUpdateRequestDTO(profile.currentSupportState.supportDeclined!!, profile.status)
+    val statusChangeUpdateRequestDTO: StatusChangeUpdateRequestDTO =
+      StatusChangeUpdateRequestDTO(null, profile.currentSupportState.supportDeclined!!, profile.status)
     val storedCoreProfile: Profile =
-      changeStatusToDeclinedForOffender(userId, offenderId, declinedStatusUpdateRequestDTO, storedProfile)
+      changeStatusToDeclinedForOffender(userId, offenderId, statusChangeUpdateRequestDTO, storedProfile)
     setProfileValues(profile, storedCoreProfile)
     checkDeclinedProfileStatus(profile, offenderId)
   }
