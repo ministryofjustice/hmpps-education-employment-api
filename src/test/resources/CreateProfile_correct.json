@@ -5,7 +5,7 @@
     "statusChange": false,
     "statusChangeDate": null,
     "statusChangeType": "NEW",
-    "supportDeclined": [
+    "supportDeclined_history": [
       {
         "modifiedBy": "sacintha-raj",
         "modifiedDateTime": [
@@ -47,7 +47,7 @@
         "circumstanceChangesRequiredToWorkOther": ""
       }
     ],
-    "supportAccepted": [
+    "supportAccepted_history": [
       {
         "modifiedBy": null,
         "modifiedDateTime": null,
@@ -123,7 +123,7 @@
         }
       }
     ],
-    "currentSupportState": {
+
       "supportDeclined": {
         "modifiedBy": "sacintha-raj",
         "modifiedDateTime": [
@@ -146,5 +146,5 @@
       },
       "supportAccepted": null
     }
-  }
+
 }
