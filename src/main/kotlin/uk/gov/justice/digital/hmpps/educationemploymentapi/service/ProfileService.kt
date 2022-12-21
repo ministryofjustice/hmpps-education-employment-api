@@ -32,14 +32,14 @@ class ProfileService(
     if (readinessProfileRepository.existsById(offenderId)) {
       throw AlreadyExistsException(offenderId)
     }
-    if (profile.currentSupportState.supportAccepted != null && profile.currentSupportState.supportDeclined != null) {
+    if (profile.supportAccepted != null && profile.supportDeclined != null) {
       throw InvalidStateException(offenderId)
     }
     setMiscellaneousAttributesOnSupportState(profile, userId, offenderId)
     profile.statusChange = false
     profile.statusChangeType = StatusChange.NEW
-    profile.supportAccepted = mutableListOf<SupportAccepted>()
-    profile.supportDeclined = mutableListOf<SupportDeclined>()
+    profile.supportAccepted_history = mutableListOf<SupportAccepted>()
+    profile.supportDeclined_history = mutableListOf<SupportDeclined>()
     return readinessProfileRepository.save(
       ReadinessProfile(
         offenderId,
@@ -67,23 +67,23 @@ class ProfileService(
     var storedCoreProfile: Profile = CapturedSpringMapperConfiguration.OBJECT_MAPPER.readValue(
       JacksonUtil.toString(storedProfile.profileData), object : TypeReference<Profile>() {}
     )
-    profile.supportAccepted = storedCoreProfile.supportAccepted
-    profile.supportDeclined = storedCoreProfile.supportDeclined
-    if (storedCoreProfile.currentSupportState.supportAccepted == null && storedCoreProfile.currentSupportState.supportDeclined == null && profile.currentSupportState.supportAccepted != null && profile.currentSupportState.supportDeclined != null) {
+    profile.supportAccepted_history = storedCoreProfile.supportAccepted_history
+    profile.supportDeclined_history = storedCoreProfile.supportDeclined_history
+    if (storedCoreProfile.supportAccepted == null && storedCoreProfile.supportDeclined == null && profile.supportAccepted != null && profile.supportDeclined != null) {
       throw InvalidStateException(offenderId)
-    } else if (storedCoreProfile.currentSupportState.supportAccepted != null && profile.currentSupportState.supportAccepted != null && !profile.currentSupportState.supportAccepted?.equals(
-        storedCoreProfile.currentSupportState.supportAccepted
+    } else if (storedCoreProfile.supportAccepted != null && profile.supportAccepted != null && !profile.supportAccepted?.equals(
+        storedCoreProfile.supportAccepted
       )!!
     ) {
       updateAcceptedStatusList(profile, storedCoreProfile, userId, offenderId)
-    } else if (storedCoreProfile.currentSupportState.supportDeclined != null && profile.currentSupportState.supportDeclined != null && !profile.currentSupportState.supportDeclined?.equals(
-        storedCoreProfile.currentSupportState.supportDeclined
+    } else if (storedCoreProfile.supportDeclined != null && profile.supportDeclined != null && !profile.supportDeclined?.equals(
+        storedCoreProfile.supportDeclined
       )!!
     ) {
       updateDeclinedStatusList(profile, storedCoreProfile, userId, offenderId)
-    } else if (storedCoreProfile.currentSupportState.supportAccepted != null && profile.currentSupportState.supportDeclined != null) {
+    } else if (storedCoreProfile.supportAccepted != null && profile.supportDeclined != null) {
       updateProfileDeclinedStatusChange(profile, userId, offenderId, storedProfile)
-    } else if (storedCoreProfile.currentSupportState.supportDeclined != null && profile.currentSupportState.supportAccepted != null) {
+    } else if (storedCoreProfile.supportDeclined != null && profile.supportAccepted != null) {
       updateProfileAcceptStatusChange(profile, userId, offenderId, storedProfile)
     }
 
@@ -135,22 +135,22 @@ class ProfileService(
   }
 
   fun checkDeclinedProfileStatus(profile: Profile, offenderId: String): Boolean {
-    if (profile.status.equals(ProfileStatus.READY_TO_WORK) || profile.status.equals(ProfileStatus.SUPPORT_NEEDED)) {
+    if (profile.status.equals(ProfileStatus.SUPPORT_NEEDED)) {
       throw InvalidStateException(offenderId)
     }
     return true
   }
 
   fun setMiscellaneousAttributesOnSupportState(profile: Profile, userId: String, offenderId: String) {
-    if (profile.currentSupportState.supportAccepted != null) {
-      profile.currentSupportState.supportAccepted?.modifiedBy = userId
-      profile.currentSupportState.supportAccepted?.modifiedDateTime = LocalDateTime.now()
+    if (profile.supportAccepted != null) {
+      profile.supportAccepted?.modifiedBy = userId
+      profile.supportAccepted?.modifiedDateTime = LocalDateTime.now()
       checkAcceptedProfileStatus(profile, offenderId)
     }
 
-    if (profile.currentSupportState.supportDeclined != null) {
-      profile.currentSupportState.supportDeclined?.modifiedBy = userId
-      profile.currentSupportState.supportDeclined?.modifiedDateTime = LocalDateTime.now()
+    if (profile.supportDeclined != null) {
+      profile.supportDeclined?.modifiedBy = userId
+      profile.supportDeclined?.modifiedDateTime = LocalDateTime.now()
       checkDeclinedProfileStatus(profile, offenderId)
     }
   }
@@ -168,14 +168,14 @@ class ProfileService(
     profile.statusChangeDate = LocalDateTime.now()
     profile.statusChangeType = StatusChange.DECLINED_TO_ACCEPTED
 
-    profile.supportDeclined?.let { it.add(profile.currentSupportState.supportDeclined!!) } ?: run {
-      profile.supportDeclined = mutableListOf<SupportDeclined>()
-      profile.supportDeclined!!.add(profile.currentSupportState.supportDeclined!!)
+    profile.supportDeclined_history?.let { it.add(profile.supportDeclined!!) } ?: run {
+      profile.supportDeclined_history = mutableListOf<SupportDeclined>()
+      profile.supportDeclined_history!!.add(profile.supportDeclined!!)
     }
-    profile.currentSupportState.supportDeclined = null
+    profile.supportDeclined = null
     statusChangeUpdateRequestDTO.supportAccepted!!.modifiedBy = userId
     statusChangeUpdateRequestDTO.supportAccepted.modifiedDateTime = LocalDateTime.now()
-    profile.currentSupportState.supportAccepted = statusChangeUpdateRequestDTO.supportAccepted
+    profile.supportAccepted = statusChangeUpdateRequestDTO.supportAccepted
     profile.status = statusChangeUpdateRequestDTO.status
     checkAcceptedProfileStatus(profile, offenderId)
 
@@ -183,9 +183,10 @@ class ProfileService(
   }
 
   fun setProfileValues(profileToBeModified: Profile, profileReference: Profile) {
-    profileToBeModified.currentSupportState = profileReference.currentSupportState
-    profileToBeModified.supportAccepted = profileReference.supportAccepted
     profileToBeModified.supportDeclined = profileReference.supportDeclined
+    profileToBeModified.supportAccepted = profileReference.supportAccepted
+    profileToBeModified.supportAccepted_history = profileReference.supportAccepted_history
+    profileToBeModified.supportDeclined_history = profileReference.supportDeclined_history
     profileToBeModified.statusChangeDate = LocalDateTime.now()
     profileToBeModified.statusChange = true
     profileToBeModified.statusChangeType = profileReference.statusChangeType
@@ -208,6 +209,8 @@ class ProfileService(
         changeStatusToAcceptedForOffender(userId, offenderId, statusChangeUpdateRequestDTO, storedProfile)
       storedCoreProfile.status = statusChangeUpdateRequestDTO.status
       checkAcceptedProfileStatus(storedCoreProfile, offenderId)
+    } else if (statusChangeUpdateRequestDTO.status.equals(ProfileStatus.READY_TO_WORK) || statusChangeUpdateRequestDTO.status.equals(ProfileStatus.NO_RIGHT_TO_WORK)) {
+      storedCoreProfile!!.status = statusChangeUpdateRequestDTO.status
     } else {
       throw InvalidStateException(offenderId)
     }
@@ -234,14 +237,14 @@ class ProfileService(
     profile.statusChangeDate = LocalDateTime.now()
     profile.statusChangeType = StatusChange.ACCEPTED_TO_DECLINED
 
-    profile.supportAccepted?.let { it.add(profile.currentSupportState.supportAccepted!!) } ?: run {
-      profile.supportAccepted = mutableListOf<SupportAccepted>()
-      profile.supportAccepted!!.add(profile.currentSupportState.supportAccepted!!)
+    profile.supportAccepted_history?.let { it.add(profile.supportAccepted!!) } ?: run {
+      profile.supportAccepted_history = mutableListOf<SupportAccepted>()
+      profile.supportAccepted_history!!.add(profile.supportAccepted!!)
     }
-    profile.currentSupportState.supportAccepted = null
+    // profile.supportAccepted = null
     statusChangeUpdateRequestDTO.supportDeclined!!.modifiedBy = userId
     statusChangeUpdateRequestDTO.supportDeclined.modifiedDateTime = LocalDateTime.now()
-    profile.currentSupportState.supportDeclined = statusChangeUpdateRequestDTO.supportDeclined
+    profile.supportDeclined = statusChangeUpdateRequestDTO.supportDeclined
     profile.status = statusChangeUpdateRequestDTO.status
     checkDeclinedProfileStatus(profile, offenderId)
 
@@ -255,7 +258,7 @@ class ProfileService(
     storedProfile: ReadinessProfile
   ) {
     val statusChangeUpdateRequestDTO: StatusChangeUpdateRequestDTO =
-      StatusChangeUpdateRequestDTO(profile.currentSupportState.supportAccepted!!, null, profile.status)
+      StatusChangeUpdateRequestDTO(profile.supportAccepted!!, null, profile.status)
     val storedCoreProfile: Profile =
       changeStatusToAcceptedForOffender(userId, offenderId, statusChangeUpdateRequestDTO, storedProfile)
     setProfileValues(profile, storedCoreProfile)
@@ -269,7 +272,7 @@ class ProfileService(
     storedProfile: ReadinessProfile
   ) {
     val statusChangeUpdateRequestDTO: StatusChangeUpdateRequestDTO =
-      StatusChangeUpdateRequestDTO(null, profile.currentSupportState.supportDeclined!!, profile.status)
+      StatusChangeUpdateRequestDTO(null, profile.supportDeclined!!, profile.status)
     val storedCoreProfile: Profile =
       changeStatusToDeclinedForOffender(userId, offenderId, statusChangeUpdateRequestDTO, storedProfile)
     setProfileValues(profile, storedCoreProfile)
@@ -277,23 +280,23 @@ class ProfileService(
   }
 
   fun updateAcceptedStatusList(profile: Profile, storedCoreProfile: Profile, userId: String, offenderId: String) {
-    profile.currentSupportState.supportAccepted?.modifiedBy = userId
-    profile.currentSupportState.supportAccepted?.modifiedBy = userId
-    profile.currentSupportState.supportAccepted?.modifiedDateTime = LocalDateTime.now()
-    profile.supportAccepted?.let { it.add(storedCoreProfile.currentSupportState.supportAccepted!!) } ?: run {
-      profile.supportAccepted = mutableListOf<SupportAccepted>()
-      profile.supportAccepted!!.add(storedCoreProfile.currentSupportState.supportAccepted!!)
+    profile.supportAccepted?.modifiedBy = userId
+    profile.supportAccepted?.modifiedBy = userId
+    profile.supportAccepted?.modifiedDateTime = LocalDateTime.now()
+    profile.supportAccepted_history?.let { it.add(storedCoreProfile.supportAccepted!!) } ?: run {
+      profile.supportAccepted_history = mutableListOf<SupportAccepted>()
+      profile.supportAccepted_history!!.add(storedCoreProfile.supportAccepted!!)
     }
     checkAcceptedProfileStatus(profile, offenderId)
   }
 
   fun updateDeclinedStatusList(profile: Profile, storedCoreProfile: Profile, userId: String, offenderId: String) {
-    profile.currentSupportState.supportAccepted?.modifiedBy = userId
-    profile.currentSupportState.supportDeclined?.modifiedBy = userId
-    profile.currentSupportState.supportDeclined?.modifiedDateTime = LocalDateTime.now()
-    profile.supportDeclined?.let { it.add(storedCoreProfile.currentSupportState.supportDeclined!!) } ?: run {
-      profile.supportDeclined = mutableListOf<SupportDeclined>()
-      profile.supportDeclined!!.add(storedCoreProfile.currentSupportState.supportDeclined!!)
+    profile.supportAccepted?.modifiedBy = userId
+    profile.supportDeclined?.modifiedBy = userId
+    profile.supportDeclined?.modifiedDateTime = LocalDateTime.now()
+    profile.supportDeclined_history?.let { it.add(storedCoreProfile.supportDeclined!!) } ?: run {
+      profile.supportDeclined_history = mutableListOf<SupportDeclined>()
+      profile.supportDeclined_history!!.add(storedCoreProfile.supportDeclined!!)
     }
 
     checkDeclinedProfileStatus(profile, offenderId)
