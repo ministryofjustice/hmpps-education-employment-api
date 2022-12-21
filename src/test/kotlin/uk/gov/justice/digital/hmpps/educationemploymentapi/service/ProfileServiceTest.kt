@@ -65,7 +65,7 @@ class ProfileServiceTest {
     var storedCoreProfile: Profile = CapturedSpringMapperConfiguration.OBJECT_MAPPER.readValue(
       JacksonUtil.toString(rProfile.profileData), object : TypeReference<Profile>() {}
     )
-    assertThat(storedCoreProfile.supportDeclined!!.size == 1)
+    assertThat(storedCoreProfile.supportDeclined_history!!.size == 1)
   }
 
   @Test
@@ -79,7 +79,7 @@ class ProfileServiceTest {
     var storedCoreProfile: Profile = CapturedSpringMapperConfiguration.OBJECT_MAPPER.readValue(
       JacksonUtil.toString(rProfile.profileData), object : TypeReference<Profile>() {}
     )
-    assertThat(storedCoreProfile.supportDeclined!!.size == 1)
+    assertThat(storedCoreProfile.supportDeclined_history!!.size == 1)
     assertThat(storedCoreProfile.statusChangeType!!.equals(StatusChange.DECLINED_TO_ACCEPTED))
   }
 
@@ -94,7 +94,7 @@ class ProfileServiceTest {
     var storedCoreProfile: Profile = CapturedSpringMapperConfiguration.OBJECT_MAPPER.readValue(
       JacksonUtil.toString(rProfile.profileData), object : TypeReference<Profile>() {}
     )
-    assertThat(storedCoreProfile.supportAccepted!!.size == 1)
+    assertThat(storedCoreProfile.supportAccepted_history!!.size == 1)
     assertThat(storedCoreProfile.statusChangeType!!.equals(StatusChange.ACCEPTED_TO_DECLINED))
   }
 
@@ -109,7 +109,7 @@ class ProfileServiceTest {
     var storedCoreProfile: Profile = CapturedSpringMapperConfiguration.OBJECT_MAPPER.readValue(
       JacksonUtil.toString(rProfile.profileData), object : TypeReference<Profile>() {}
     )
-    assertThat(storedCoreProfile.supportAccepted!!.size == 1)
+    assertThat(storedCoreProfile.supportAccepted_history!!.size == 1)
   }
 
   @Test
@@ -123,7 +123,7 @@ class ProfileServiceTest {
     var storedCoreProfile: Profile = CapturedSpringMapperConfiguration.OBJECT_MAPPER.readValue(
       JacksonUtil.toString(rProfile.profileData), object : TypeReference<Profile>() {}
     )
-    assertThat(storedCoreProfile.supportDeclined!!.size == 2)
+    assertThat(storedCoreProfile.supportDeclined_history!!.size == 2)
   }
 
   @Test
@@ -137,7 +137,7 @@ class ProfileServiceTest {
     var storedCoreProfile: Profile = CapturedSpringMapperConfiguration.OBJECT_MAPPER.readValue(
       JacksonUtil.toString(rProfile.profileData), object : TypeReference<Profile>() {}
     )
-    assertThat(storedCoreProfile.supportDeclined!!.size == 0)
+    assertThat(storedCoreProfile.supportDeclined_history!!.size == 0)
   }
 
   @Test

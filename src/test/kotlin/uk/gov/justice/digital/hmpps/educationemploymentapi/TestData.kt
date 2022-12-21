@@ -8,7 +8,6 @@ import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.Acti
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.ActionTodo
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.ActionsRequired
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.CircumstanceChangesRequiredToWork
-import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.CurrentSupportState
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.Profile
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.ProfileStatus
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.QualificationsAndTraining
@@ -123,23 +122,16 @@ class TestData {
     val supportAcceptedModified: SupportAccepted = SupportAccepted(
       null, null, actionsModifedRequired, workImpacts, workInterests, workExperience
     )
-    var currentSupportState_Declined: CurrentSupportState = CurrentSupportState(supportDeclined, null)
-    var currentSupportState_Accepted: CurrentSupportState = CurrentSupportState(null, supportAccepted)
-    var currentSupportState_Declined_modified: CurrentSupportState = CurrentSupportState(supportDeclinedModified, null)
-    var currentSupportState_Accepted_modified: CurrentSupportState = CurrentSupportState(null, supportAcceptedModified)
-
-    var currentSupportState_Both: CurrentSupportState = CurrentSupportState(supportDeclinedModified, supportAcceptedModified)
-
-    val profile: Profile = Profile(profileStatus_NO_RIGHT_TO_WORK, false, null, StatusChange.NEW, mutableListOf(supportDeclined), mutableListOf(supportAccepted), currentSupportState_Declined)
-    val profile_declined: Profile = Profile(profileStatus_NO_RIGHT_TO_WORK, false, null, StatusChange.NEW, null, null, currentSupportState_Declined)
-    val profile_declined_declined_list: Profile = Profile(profileStatus_NO_RIGHT_TO_WORK, false, null, StatusChange.NEW, mutableListOf(supportDeclinedModifiedOther), null, currentSupportState_Declined)
+    val profile: Profile = Profile(profileStatus_NO_RIGHT_TO_WORK, false, null, StatusChange.NEW, mutableListOf(supportDeclined), mutableListOf(supportAccepted), supportDeclined, null)
+    val profile_declined: Profile = Profile(profileStatus_NO_RIGHT_TO_WORK, false, null, StatusChange.NEW, null, null, supportDeclined, null)
+    val profile_declined_declined_list: Profile = Profile(profileStatus_NO_RIGHT_TO_WORK, false, null, StatusChange.NEW, mutableListOf(supportDeclinedModifiedOther), null, supportDeclined, null)
     val profile_declinedModified: Profile = Profile(
       profileStatus_NO_RIGHT_TO_WORK, false, null, StatusChange.NEW, mutableListOf(supportDeclined), null,
-      currentSupportState_Declined_modified
+      supportDeclinedModified, null
     )
 
-    val profile_accpeted: Profile = Profile(profileStatus_SUPPORT_NEEDED, false, null, StatusChange.NEW, null, null, currentSupportState_Accepted)
-    val profile_accpeted_modified: Profile = Profile(profileStatus_SUPPORT_NEEDED, false, null, StatusChange.NEW, null, null, currentSupportState_Accepted_modified)
+    val profile_accpeted: Profile = Profile(profileStatus_SUPPORT_NEEDED, false, null, StatusChange.NEW, null, null, null, supportAccepted)
+    val profile_accpeted_modified: Profile = Profile(profileStatus_SUPPORT_NEEDED, false, null, StatusChange.NEW, null, null, null, supportAcceptedModified)
 
     val readinessProfile_accepted_1 = Optional.of(
       ReadinessProfile(
@@ -214,9 +206,9 @@ class TestData {
     )
     val profile_IncorrectStatus: Profile = Profile(
       profileStatus_SUPPORT_NEEDED, false, null, StatusChange.NEW, mutableListOf(supportDeclined), mutableListOf(supportAccepted),
-      currentSupportState_Declined
+      supportDeclined, null
     )
-    val profile_NEW_BOTHSTATE_INCOORECT: Profile = Profile(profileStatus_NO_RIGHT_TO_WORK, false, null, StatusChange.NEW, mutableListOf(supportDeclined), mutableListOf(supportAccepted), currentSupportState_Both)
+    val profile_NEW_BOTHSTATE_INCOORECT: Profile = Profile(profileStatus_NO_RIGHT_TO_WORK, false, null, StatusChange.NEW, mutableListOf(supportDeclined), mutableListOf(supportAccepted), supportDeclined, supportAccepted)
 
     val readinessProfile = ReadinessProfile(
       newOffenderId,

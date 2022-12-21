@@ -7,7 +7,8 @@ data class Profile(
   var statusChange: Boolean?,
   var statusChangeDate: LocalDateTime?,
   var statusChangeType: StatusChange?,
-  var supportDeclined: MutableList<SupportDeclined>?,
-  var supportAccepted: MutableList<SupportAccepted>?,
-  var currentSupportState: CurrentSupportState
+  var supportDeclined_history: MutableList<SupportDeclined>?,
+  var supportAccepted_history: MutableList<SupportAccepted>?,
+  var supportDeclined: SupportDeclined?,
+  var supportAccepted: SupportAccepted?,
 )
