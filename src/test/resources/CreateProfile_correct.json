@@ -123,28 +123,26 @@
         }
       }
     ],
-
-      "supportDeclined": {
-        "modifiedBy": "sacintha-raj",
-        "modifiedDateTime": [
-          2022,
-          12,
-          18,
-          9,
-          16,
-          24,
-          581204000
-        ],
-        "supportToWorkDeclinedReason": [
-          "FULL_TIME_CARER"
-        ],
-        "supportToWorkDeclinedReasonOther": "",
-        "circumstanceChangesRequiredToWork": [
-          "DEPENDENCY_SUPPORT"
-        ],
-        "circumstanceChangesRequiredToWorkOther": ""
-      },
-      "supportAccepted": null
-    }
-
+    "supportDeclined": {
+      "modifiedBy": "sacintha-raj",
+      "modifiedDateTime": [
+        2022,
+        12,
+        18,
+        9,
+        16,
+        24,
+        581204000
+      ],
+      "supportToWorkDeclinedReason": [
+        "FULL_TIME_CARER"
+      ],
+      "supportToWorkDeclinedReasonOther": "",
+      "circumstanceChangesRequiredToWork": [
+        "DEPENDENCY_SUPPORT"
+      ],
+      "circumstanceChangesRequiredToWorkOther": ""
+    },
+    "supportAccepted": null
+  }
 }
