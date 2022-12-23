@@ -13,5 +13,6 @@ enum class QualificationsAndTraining {
   MANUAL,
   TRADE,
   SCHOOL_EDUCATION,
+  NONE,
   OTHER
 }

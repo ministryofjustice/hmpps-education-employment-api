@@ -1,0 +1,317 @@
+{
+	"info": {
+		"_postman_id": "0aac0a05-b978-4589-bab2-6fdc0ed2824e",
+		"name": "Work readiness",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "signin",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"postman.setGlobalVariable(\"token\", jsonData.access_token);",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": {
+						"password": "{{PASSWORD}}",
+						"username": "{{USERNAME}}"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{OAUTH_HOST}}/auth/oauth/token?grant_type=client_credentials",
+					"host": [
+						"{{OAUTH_HOST}}"
+					],
+					"path": [
+						"auth",
+						"oauth",
+						"token"
+					],
+					"query": [
+						{
+							"key": "grant_type",
+							"value": "client_credentials"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "findProfile",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[\"Z4028YY\", \"A1245BC\",\"G0495UG\",\"G6190UD\",\"G5336UH\",\"A8291DY\",\"A7880DY\",\"G3607UQ\"]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{HOST}}/readiness-profiles/search"
+			},
+			"response": []
+		},
+		{
+			"name": "health",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{HOST}}/health/"
+			},
+			"response": []
+		},
+		{
+			"name": "getProfile",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": "{{HOST}}/readiness-profiles/A1245BJ"
+			},
+			"response": []
+		},
+		{
+			"name": "getProfileNotes",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"url": "{{HOST}}/readiness-profiles/Z4028VY/notes/DISCLOSURE_LETTER"
+			},
+			"response": []
+		},
+		{
+			"name": "Add Profile Note",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"text\": \"Mary had another little lamb\"\n}"
+				},
+				"url": "{{HOST}}/readiness-profiles/Z4028VY/notes/DISCLOSURE_LETTER"
+			},
+			"response": []
+		},
+		{
+			"name": "Update Profile-Support Accpeted",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"bookingId\": \"123456\",\n    \"profileData\": {\n        \"status\": \"SUPPORT_NEEDED\",\n        \"supportAccepted\": {\n            \"actionsRequired\": {\n                \"modifiedBy\": \"fredsmith\",\n                \"modifiedDateTime\": \"2022-07-06T12:00:00\",\n                \"actions\": [\n                    {\n                        \"todoItem\": \"DISCLOSURE_LETTER\",\n                        \"status\": \"NOT_STARTED\"\n                    },\n                    {\n                        \"todoItem\": \"ID\",\n                        \"status\": \"NOT_STARTED\"\n                    },\n                    {\n                        \"todoItem\": \"BANK_ACCOUNT\",\n                        \"status\": \"NOT_STARTED\"\n                    }\n                ]\n            },\n            \"workImpacts\": {\n                \"modifiedBy\": \"whilesp\",\n                \"modifiedDateTime\": \"2022-07-06T12:00:00\",\n                \"abilityToWorkImpactedBy\": [\n                    \"CARING_RESPONSIBILITIES\"\n                ],\n                \"caringResponsibilitiesFullTime\": false,\n                \"ableToManageMentalHealth\": true,\n                \"ableToManageDependencies\": true\n            },\n            \"workInterests\": {\n                \"modifiedBy\": \"whilesp\",\n                \"modifiedDateTime\": \"2022-07-06T12:00:00\",\n                \"workTypesOfInterest\": [\n                    \"CONSTRUCTION\",\n                    \"DRIVING\",\n                    \"OTHER\"\n                ],\n                \"workTypesOfInterestOther\": \"Goose juggler\",\n                \"jobOfParticularInterest\": \"Goose jugglerGoose juggler\"\n            },\n            \"workExperience\": {\n                \"modifiedBy\": \"whilesp\",\n                \"modifiedDateTime\": \"2022-07-06T12:00:00\",\n                \"previousWorkOrVolunteering\": \"Goose herder\",\n                \"qualificationsAndTraining\": [\n                    \"DRIVING_LICENSE\",\n                    \"FIRST_AID\",\n                    \"FOOD_HYGIENE\",\n                    \"OTHER\"\n                ],\n                \"qualificationsAndTrainingOther\": \"Worked on a farm\"\n            }\n        }\n    \n}\n}"
+				},
+				"url": "{{HOST}}/readiness-profiles/Z4028YT"
+			},
+			"response": []
+		},
+		{
+			"name": "change Status ofProile-accpeted",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{token}}"
+					}
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"status\": \"SUPPORT_NEEDED\",\n    \"supportAccepted\": {\n        \"actionsRequired\": {\n            \"modifiedBy\": \"fredsmith\",\n            \"modifiedDateTime\": \"2022-07-06T12:00:00\",\n            \"actions\": [\n                {\n                    \"todoItem\": \"DISCLOSURE_LETTER\",\n                    \"status\": \"NOT_STARTED\"\n                },\n                {\n                    \"todoItem\": \"ID\",\n                    \"status\": \"NOT_STARTED\"\n                },\n                {\n                    \"todoItem\": \"BANK_ACCOUNT\",\n                    \"status\": \"NOT_STARTED\"\n                }\n            ]\n        },\n        \"workImpacts\": {\n            \"modifiedBy\": \"whilesp\",\n            \"modifiedDateTime\": \"2022-07-06T12:00:00\",\n            \"abilityToWorkImpactedBy\": [\n                \"CARING_RESPONSIBILITIES\"\n            ],\n            \"caringResponsibilitiesFullTime\": false,\n            \"ableToManageMentalHealth\": true,\n            \"ableToManageDependencies\": true\n        },\n        \"workInterests\": {\n            \"modifiedBy\": \"whilesp\",\n            \"modifiedDateTime\": \"2022-07-06T12:00:00\",\n            \"workTypesOfInterest\": [\n                \"CONSTRUCTION\",\n                \"DRIVING\",\n                \"OTHER\"\n            ],\n            \"workTypesOfInterestOther\": \"Goose juggler\",\n            \"jobOfParticularInterest\": \"Goose jugglerGoose juggler\"\n        },\n        \"workExperience\": {\n            \"modifiedBy\": \"whilesp\",\n            \"modifiedDateTime\": \"2022-07-06T12:00:00\",\n            \"previousWorkOrVolunteering\": \"Goose herder\",\n            \"qualificationsAndTraining\": [\n                \"DRIVING_LICENSE\",\n                \"FIRST_AID\",\n                \"FOOD_HYGIENE\",\n                \"OTHER\"\n            ],\n            \"qualificationsAndTrainingOther\": \"Worked on a farm\"\n        }\n    }\n}"
+				},
+				"url": "{{HOST}}/readiness-profiles/status-change/Z4028YT"
+			},
+			"response": []
+		},
+		{
+			"name": "change Status ofProile-accpeted Copy",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{token}}"
+					}
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"status\": \" READY_TO_WORK\"\n}"
+				},
+				"url": "{{HOST}}/readiness-profiles/statuschange/Z4028YT"
+			},
+			"response": []
+		},
+		{
+			"name": "change Status ofProile-declined",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"status\": \"SUPPORT_DECLINED\",\n    \"supportAccepted\": null,\n    \"supportDeclined\": {\n        \"modifiedBy\": \"me\",\n        \"modifiedDateTime\": \"2022-07-06T12:00:00\",\n        \"supportToWorkDeclinedReason\": [\n            \"OTHER\"\n        ],\n        \"supportToWorkDeclinedReasonOther\": \"Wants to read the Beano\",\n        \"circumstanceChangesRequiredToWork\": [\n            \"HOUSING_ON_RELEASE\",\n            \"OTHER\"\n        ],\n        \"circumstanceChangesRequiredToWorkOther\": \"Will need warm socks\"\n    }\n}\n}"
+				},
+				"url": "{{HOST}}/readiness-profiles/status-change/Z4028YT"
+			},
+			"response": []
+		},
+		{
+			"name": "Update Profile-Support Accpeted Copy",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"bookingId\": \"123456\",\n    \"profileData\": {\n        \"status\": \"SUPPORT_NEEDED\",\n        \"supportAccepted\": {\n            \"actionsRequired\": {\n                \"modifiedBy\": \"fredsmith\",\n                \"modifiedDateTime\": \"2022-07-06T12:00:00\",\n                \"actions\": [\n                    {\n                        \"todoItem\": \"DISCLOSURE_LETTER\",\n                        \"status\": \"COMPLETED\"\n                    },\n                    {\n                        \"todoItem\": \"ID\",\n                        \"status\": \"NOT_STARTED\"\n                    },\n                    {\n                        \"todoItem\": \"BANK_ACCOUNT\",\n                        \"status\": \"NOT_STARTED\"\n                    }\n                ]\n            },\n            \"workImpacts\": {\n                \"modifiedBy\": \"whilesp\",\n                \"modifiedDateTime\": \"2022-07-06T12:00:00\",\n                \"abilityToWorkImpactedBy\": [\n                    \"CARING_RESPONSIBILITIES\"\n                ],\n                \"caringResponsibilitiesFullTime\": false,\n                \"ableToManageMentalHealth\": true,\n                \"ableToManageDependencies\": true\n            },\n            \"workInterests\": {\n                \"modifiedBy\": \"whilesp\",\n                \"modifiedDateTime\": \"2022-07-06T12:00:00\",\n                \"workTypesOfInterest\": [\n                    \"CONSTRUCTION\",\n                    \"DRIVING\",\n                    \"OTHER\"\n                ],\n                \"workTypesOfInterestOther\": \"Goose juggler\",\n                \"jobOfParticularInterest\": \"Goose jugglerGoose juggler\"\n            },\n            \"workExperience\": {\n                \"modifiedBy\": \"whilesp\",\n                \"modifiedDateTime\": \"2022-07-06T12:00:00\",\n                \"previousWorkOrVolunteering\": \"Goose herder\",\n                \"qualificationsAndTraining\": [\n                    \"DRIVING_LICENSE\",\n                    \"FIRST_AID\",\n                    \"FOOD_HYGIENE\",\n                    \"OTHER\"\n                ],\n                \"qualificationsAndTrainingOther\": \"Worked on a farm\"\n            }\n        }\n    }\n}"
+				},
+				"url": "{{HOST}}/readiness-profiles/Z4028YT"
+			},
+			"response": []
+		},
+		{
+			"name": "Create Profile-Support declined",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "default"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"bookingId\": \"123456\",\n    \"profileData\": {\n        \"status\": \"SUPPORT_DECLINED\",\n        \"supportDeclined\": {\n            \"modifiedBy\": \"me\",\n            \"modifiedDateTime\": \"2022-07-06T12:00:00\",\n            \"supportToWorkDeclinedReason\": [\n                \"OTHER\"\n            ],\n            \"supportToWorkDeclinedReasonOther\": \"Wants to read the Beano\",\n            \"circumstanceChangesRequiredToWork\": [\n                \"HOUSING_ON_RELEASE\",\n                \"OTHER\"\n            ],\n            \"circumstanceChangesRequiredToWorkOther\": \"Will need socks\"\n        }\n    }\n}"
+				},
+				"url": "{{HOST}}/readiness-profiles/Z4028YT"
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": {
+			"token": "{{token}}"
+		}
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

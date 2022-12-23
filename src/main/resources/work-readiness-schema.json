@@ -4,151 +4,7 @@
   "title": "WorkReadiness",
   "description": "Data representing an offenders readiness to re-enter the workplace",
   "definitions": {
-    "statusEnumType": {
-      "type": "string",
-      "enum": [
-        "SUPPORT_NEEDED",
-        "READY_TO_WORK",
-        "SUPPORT_DECLINED",
-        "NO_RIGHT_TO_WORK"
-      ]
-    },
-    "supportToWorkDeclinedReasonEnumType": {
-      "type": "string",
-      "enum": [
-        "FULL_TIME_CARER",
-        "LACKS_CONFIDENCE",
-        "LACKS_MOTIVATION",
-        "HEALTH",
-        "RETIRED",
-        "RETURNING_TO_JOB",
-        "SELF_EMPLOYED",
-        "OTHER"
-      ]
-    },
-    "circumstanceChangesRequiredToWorkEnumType": {
-      "type": "string",
-      "enum": [
-        "HOUSING_ON_RELEASE",
-        "ID_ON_RELEASE",
-        "DEPENDENCY_SUPPORT",
-        "MENTAL_HEALTH_SUPPORT",
-        "OTHER"
-      ]
-    },
-    "todoItemEnumType": {
-      "type": "string",
-      "enum": [
-        "BANK_ACCOUNT",
-        "CV_AND_COVERING_LETTER",
-        "DISCLOSURE_LETTER",
-        "EMAIL_OR_PHONE",
-        "HOUSING",
-        "ID",
-        "INTERVIEW_CLOTHING"
-      ]
-    },
-    "taskStatusEnum": {
-      "type": "string",
-      "enum": [
-        "NOT_STARTED",
-        "IN_PROGRESS",
-        "COMPLETED"
-      ]
-    },
-    "abilityToWorkImpactedByEnum": {
-      "type": "string",
-      "enum": [
-        "CARING_RESPONSIBILITIES",
-        "EDUCATION_ENROLLMENT",
-        "FAMILY_ISSUES",
-        "MENTAL_HEALTH_ISSUES",
-        "PHYSICAL_HEALTH_ISSUES",
-        "DEPENDENCY_ISSUES"
-      ]
-    },
-    "workTypesOfInterestEnum": {
-      "type": "string",
-      "enum": [
-        "ANY",
-        "CONSTRUCTION",
-        "DRIVING",
-        "BEAUTY",
-        "HOSPITALITY",
-        "MANUFACTURING",
-        "OFFICE",
-        "OUTDOOR",
-        "RETAIL",
-        "TECHNICAL",
-        "SPORTS",
-        "WAREHOUSING",
-        "OTHER"
-      ]
-    },
-    "qualificationsAndTrainingEnum": {
-      "type": "string",
-      "enum": [
-        "ADVANCED_EDUCATION",
-        "CSCS",
-        "DRIVING_LICENSE",
-        "FIRST_AID",
-        "FOOD_HYGIENE",
-        "HEALTH_AND_SAFETY",
-        "HGV_LICENSE",
-        "HIGHER_EDUCATION",
-        "MACHINERY",
-        "MANUAL",
-        "TRADE",
-        "SCHOOL_EDUCATION",
-        "OTHER"
-      ]
-    },
-    "dateTime": {
-      "type": "string",
-      "format": "date-time"
-    },
-    "string32": {
-      "type": "string",
-      "maxLength": 32
-    },
-    "string200": {
-      "type": "string",
-      "maxLength": 200
-    },
-    "note": {
-      "type": "object",
-      "properties": {
-        "text": {
-          "$ref": "#/definitions/string200"
-        },
-        "createdBy": {
-          "$ref": "#/definitions/string32"
-        },
-        "createdDateTime": {
-          "$ref": "#/definitions/dateTime"
-        },
-        "attribute": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "text"
-      ]
-    }
-  },
-  "type": "object",
-  "additionalProperties": false,
-  "properties": {
-    "modifiedBy": {
-      "$ref": "#/definitions/string32"
-    },
-    "modifiedDateTime": {
-      "$ref": "#/definitions/dateTime"
-    },
-    "status": {
-      "$ref": "#/definitions/statusEnumType"
-    },
-    "supportDeclined": {
+    "supportDeclinedType": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -192,7 +48,7 @@
         "circumstanceChangesRequiredToWork"
       ]
     },
-    "supportAccepted": {
+    "supportAcceptedType": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -349,16 +205,206 @@
         "workExperience"
       ]
     },
-    "notes": {
-      "type": "array",
-      "items": {
-        "$ref": "#/definitions/note"
-      }
+    "statusChangeEnumType": {
+      "type": "string",
+      "enum": [
+        "NEW",
+        "ACCEPTED_TO_DECLINED",
+        "DECLINED_TO_ACCEPTED"
+      ]
+    },
+    "statusEnumType": {
+      "type": "string",
+      "enum": [
+        "SUPPORT_NEEDED",
+        "READY_TO_WORK",
+        "SUPPORT_DECLINED",
+        "NO_RIGHT_TO_WORK"
+      ]
+    },
+    "supportToWorkDeclinedReasonEnumType": {
+      "type": "string",
+      "enum": [
+        "FULL_TIME_CARER",
+        "LACKS_CONFIDENCE",
+        "LACKS_MOTIVATION",
+        "HEALTH",
+        "RETIRED",
+        "RETURNING_TO_JOB",
+        "SELF_EMPLOYED",
+        "LIMIT_THEIR_ABILITY",
+        "OTHER"
+      ]
+    },
+    "circumstanceChangesRequiredToWorkEnumType": {
+      "type": "string",
+      "enum": [
+        "HOUSING_ON_RELEASE",
+        "ID_ON_RELEASE",
+        "DEPENDENCY_SUPPORT",
+        "MENTAL_HEALTH_SUPPORT",
+        "OTHER"
+      ]
+    },
+    "todoItemEnumType": {
+      "type": "string",
+      "enum": [
+        "BANK_ACCOUNT",
+        "CV_AND_COVERING_LETTER",
+        "DISCLOSURE_LETTER",
+        "EMAIL_OR_PHONE",
+        "HOUSING",
+        "INTERVIEW_CLOTHING",
+        "BIRTH_CERTIFICATE",
+        "DRIVING_LICENCE",
+        "PASSPORT"
+      ]
+    },
+    "taskStatusEnum": {
+      "type": "string",
+      "enum": [
+        "NOT_STARTED",
+        "IN_PROGRESS",
+        "COMPLETED"
+      ]
+    },
+    "abilityToWorkImpactedByEnum": {
+      "type": "string",
+      "enum": [
+        "CARING_RESPONSIBILITIES",
+        "EDUCATION_ENROLLMENT",
+        "FAMILY_ISSUES",
+        "MENTAL_HEALTH_ISSUES",
+        "PHYSICAL_HEALTH_ISSUES",
+        "DEPENDENCY_ISSUES",
+        "NONE"
+      ]
+    },
+    "workTypesOfInterestEnum": {
+      "type": "string",
+      "enum": [
+        "CONSTRUCTION",
+        "DRIVING",
+        "BEAUTY",
+        "HOSPITALITY",
+        "MANUFACTURING",
+        "OFFICE",
+        "OUTDOOR",
+        "RETAIL",
+        "TECHNICAL",
+        "SPORTS",
+        "WAREHOUSING",
+        "WASTE_MANAGEMENT",
+        "EDUCATION_TRAINING",
+        "OTHER"
+      ]
+    },
+    "qualificationsAndTrainingEnum": {
+      "type": "string",
+      "enum": [
+        "ADVANCED_EDUCATION",
+        "CSCS",
+        "DRIVING_LICENSE",
+        "FIRST_AID",
+        "FOOD_HYGIENE",
+        "HEALTH_AND_SAFETY",
+        "HGV_LICENSE",
+        "HIGHER_EDUCATION",
+        "MACHINERY",
+        "MANUAL",
+        "TRADE",
+        "SCHOOL_EDUCATION",
+        "NONE",
+        "OTHER"
+      ]
+    },
+    "dateTime": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "string32": {
+      "type": "string",
+      "maxLength": 32
+    },
+    "string200": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "note": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "$ref": "#/definitions/string200"
+        },
+        "createdBy": {
+          "$ref": "#/definitions/string32"
+        },
+        "createdDateTime": {
+          "$ref": "#/definitions/dateTime"
+        },
+        "attribute": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "text"
+      ]
     }
   },
-  "required": [
-    "status",
-    "modifiedBy",
-    "modifiedDateTime"
-  ]
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "modifiedBy": {
+      "$ref": "#/definitions/string32"
+    },
+    "modifiedDateTime": {
+      "$ref": "#/definitions/dateTime"
+    },
+    "status": {
+      "$ref": "#/definitions/statusEnumType"
+    },
+    "statusChange": {
+      "description": "has there been a status chnage?",
+      "type": "boolean"
+    },
+    "statusChangeDate": {
+      "$ref": "#/definitions/dateTime"
+    },
+    "statusChangeType": {
+      "$ref": "#/definitions/statusChangeEnumType"
+    },
+    "supportDeclined_history": {
+      "description": "History of declined status",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/supportDeclinedType"
+      }
+    },
+    "supportAccepted_history": {
+      "description": "History of declined status",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/supportAcceptedType"
+      },
+      "supportDeclined": {
+        "type": "object",
+        "$ref": "#/definitions/supportDeclinedType"
+      },
+      "supportAccepted": {
+        "type": "object",
+        "$ref": "#/definitions/supportAcceptedType"
+      },
+      "notes": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/note"
+        }
+      }
+    },
+    "required": [
+      "status",
+      "modifiedBy",
+      "modifiedDateTime"
+    ]
+  }
 }

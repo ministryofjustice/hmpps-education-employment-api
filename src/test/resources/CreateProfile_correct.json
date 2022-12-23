@@ -1,59 +1,148 @@
 {
   "bookingId": "123456",
   "profileData": {
-    "status": "READY_TO_WORK",
-    "supportAccepted": {
-      "actionsRequired": {
-        "modifiedBy": "whilesp",
-        "modifiedDateTime": "2022-07-06T12:00:00",
-        "actions": [
-          {
-            "todoItem": "BANK_ACCOUNT",
-            "status": "NOT_STARTED"
-          },
-          {
-            "todoItem": "HOUSING",
-            "status": "NOT_STARTED"
-          },
-          {
-            "todoItem": "INTERVIEW_CLOTHING",
-            "status": "NOT_STARTED"
-          }
-        ]
-      },
-      "workImpacts": {
-        "modifiedBy": "whilesp",
-        "modifiedDateTime": "2022-07-06T12:00:00",
-        "abilityToWorkImpactedBy": [
-          "CARING_RESPONSIBILITIES"
+    "status": "NO_RIGHT_TO_WORK",
+    "statusChange": false,
+    "statusChangeDate": null,
+    "statusChangeType": "NEW",
+    "supportDeclined_history": [
+      {
+        "modifiedBy": "sacintha-raj",
+        "modifiedDateTime": [
+          2022,
+          12,
+          18,
+          9,
+          15,
+          56,
+          460988000
         ],
-        "caringResponsibilitiesFullTime": false,
-        "ableToManageMentalHealth": true,
-        "ableToManageDependencies": true
-      },
-      "workInterests": {
-        "modifiedBy": "whilesp",
-        "modifiedDateTime": "2022-07-06T12:00:00",
-        "workTypesOfInterest": [
-          "CONSTRUCTION",
-          "OUTDOOR",
-          "RETAIL"
+        "supportToWorkDeclinedReason": [
+          "FULL_TIME_CARER"
         ],
-        "workTypesOfInterestOther": "Goose juggler",
-        "jobOfParticularInterest": "Goose juggler"
-      },
-      "workExperience": {
-        "modifiedBy": "whilesp",
-        "modifiedDateTime": "2022-07-06T12:00:00",
-        "previousWorkOrVolunteering": "Goose herder",
-        "qualificationsAndTraining": [
-          "DRIVING_LICENSE",
-          "FIRST_AID",
-          "FOOD_HYGIENE",
-          "OTHER"
+        "supportToWorkDeclinedReasonOther": "",
+        "circumstanceChangesRequiredToWork": [
+          "DEPENDENCY_SUPPORT"
         ],
-        "qualificationsAndTrainingOther": "Worked on a farm"
+        "circumstanceChangesRequiredToWorkOther": ""
+      },
+      {
+        "modifiedBy": "sacintha-raj",
+        "modifiedDateTime": [
+          2022,
+          12,
+          18,
+          9,
+          15,
+          56,
+          460988000
+        ],
+        "supportToWorkDeclinedReason": [
+          "FULL_TIME_CARER"
+        ],
+        "supportToWorkDeclinedReasonOther": "",
+        "circumstanceChangesRequiredToWork": [
+          "DEPENDENCY_SUPPORT"
+        ],
+        "circumstanceChangesRequiredToWorkOther": ""
       }
-    }
+    ],
+    "supportAccepted_history": [
+      {
+        "modifiedBy": null,
+        "modifiedDateTime": null,
+        "actionsRequired": {
+          "modifiedBy": "phil-whils",
+          "modifiedDateTime": [
+            2022,
+            12,
+            18,
+            9,
+            15,
+            56,
+            460988000
+          ],
+          "actions": [
+            {
+              "todoItem": "BANK_ACCOUNT",
+              "status": "COMPLETED"
+            }
+          ]
+        },
+        "workImpacts": {
+          "modifiedBy": "phil-whils",
+          "modifiedDateTime": [
+            2022,
+            12,
+            18,
+            9,
+            15,
+            56,
+            460988000
+          ],
+          "abilityToWorkImpactedBy": [
+            "CARING_RESPONSIBILITIES"
+          ],
+          "caringResponsibilitiesFullTime": true,
+          "ableToManageMentalHealth": true,
+          "ableToManageDependencies": true
+        },
+        "workInterests": {
+          "modifiedBy": "phil-whils",
+          "modifiedDateTime": [
+            2022,
+            12,
+            18,
+            9,
+            15,
+            56,
+            460988000
+          ],
+          "workTypesOfInterest": [
+            "CONSTRUCTION"
+          ],
+          "workTypesOfInterestOther": "freelance",
+          "jobOfParticularInterest": "architect"
+        },
+        "workExperience": {
+          "modifiedBy": "phil-whils",
+          "modifiedDateTime": [
+            2022,
+            12,
+            18,
+            9,
+            15,
+            56,
+            460988000
+          ],
+          "previousWorkOrVolunteering": "NONE",
+          "qualificationsAndTraining": [
+            "ADVANCED_EDUCATION"
+          ],
+          "qualificationsAndTrainingOther": "MBA"
+        }
+      }
+    ],
+    "supportDeclined": {
+      "modifiedBy": "sacintha-raj",
+      "modifiedDateTime": [
+        2022,
+        12,
+        18,
+        9,
+        16,
+        24,
+        581204000
+      ],
+      "supportToWorkDeclinedReason": [
+        "FULL_TIME_CARER"
+      ],
+      "supportToWorkDeclinedReasonOther": "",
+      "circumstanceChangesRequiredToWork": [
+        "DEPENDENCY_SUPPORT"
+      ],
+      "circumstanceChangesRequiredToWorkOther": ""
+    },
+    "supportAccepted": null
   }
 }
