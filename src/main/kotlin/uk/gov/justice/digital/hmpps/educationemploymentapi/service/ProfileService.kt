@@ -210,6 +210,9 @@ class ProfileService(
       storedCoreProfile.status = statusChangeUpdateRequestDTO.status
       checkAcceptedProfileStatus(storedCoreProfile, offenderId)
     } else if (statusChangeUpdateRequestDTO.status.equals(ProfileStatus.READY_TO_WORK) || statusChangeUpdateRequestDTO.status.equals(ProfileStatus.NO_RIGHT_TO_WORK)) {
+      storedCoreProfile = CapturedSpringMapperConfiguration.OBJECT_MAPPER.readValue(
+        JacksonUtil.toString(storedProfile.profileData), object : TypeReference<Profile>() {}
+      )
       storedCoreProfile!!.status = statusChangeUpdateRequestDTO.status
     } else {
       throw InvalidStateException(offenderId)

@@ -166,7 +166,7 @@ class ProfileResourceController(
   }
 
   @PreAuthorize("hasRole('WORK_READINESS_EDIT')")
-  @PutMapping("/statuschange/{offenderId}")
+  @PutMapping("/status-change/{offenderId}")
   @Operation(
     summary = "Update the work readiness profile for an offender",
     description = "Called to modify an offenders work readiness profile. Currently requires role <b>ROLE_VIEW_PRISONER_DATA</b>",
