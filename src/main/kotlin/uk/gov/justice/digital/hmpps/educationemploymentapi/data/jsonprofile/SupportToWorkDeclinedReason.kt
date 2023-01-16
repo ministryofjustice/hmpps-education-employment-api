@@ -9,5 +9,6 @@ enum class SupportToWorkDeclinedReason {
   RETURNING_TO_JOB,
   SELF_EMPLOYED,
   LIMIT_THEIR_ABILITY,
+  NO_REASON,
   OTHER
 }
