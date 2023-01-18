@@ -128,9 +128,9 @@ class ProfileService(
   }
 
   fun checkAcceptedProfileStatus(profile: Profile, offenderId: String): Boolean {
-    if (profile.status.equals(ProfileStatus.NO_RIGHT_TO_WORK) || profile.status.equals(ProfileStatus.SUPPORT_DECLINED)) {
+    /*if (profile.status.equals(ProfileStatus.NO_RIGHT_TO_WORK) || profile.status.equals(ProfileStatus.SUPPORT_DECLINED)) {
       throw InvalidStateException(offenderId)
-    }
+    }*/
     return true
   }
 
@@ -194,7 +194,7 @@ class ProfileService(
   fun changeStatusForOffender(
     userId: String,
     offenderId: String,
-    statusChangeUpdateRequestDTO: StatusChangeUpdateRequestDTO
+    statusChangeUpdateRequestDTO: StatusChangeUpdateRequestDTO?
   ): ReadinessProfile {
     var storedProfile: ReadinessProfile =
       readinessProfileRepository.findById(offenderId).orElseThrow(NotFoundException(offenderId))
@@ -209,11 +209,11 @@ class ProfileService(
         changeStatusToAcceptedForOffender(userId, offenderId, statusChangeUpdateRequestDTO, storedProfile)
       storedCoreProfile.status = statusChangeUpdateRequestDTO.status
       checkAcceptedProfileStatus(storedCoreProfile, offenderId)
-    } else if (statusChangeUpdateRequestDTO.status.equals(ProfileStatus.READY_TO_WORK) || statusChangeUpdateRequestDTO.status.equals(ProfileStatus.NO_RIGHT_TO_WORK)) {
+    } else if (statusChangeUpdateRequestDTO!!.status.equals(ProfileStatus.READY_TO_WORK) || statusChangeUpdateRequestDTO.status.equals(ProfileStatus.NO_RIGHT_TO_WORK)) {
       storedCoreProfile = CapturedSpringMapperConfiguration.OBJECT_MAPPER.readValue(
         JacksonUtil.toString(storedProfile.profileData), object : TypeReference<Profile>() {}
       )
-      storedCoreProfile!!.status = statusChangeUpdateRequestDTO.status
+      storedCoreProfile!!.status = statusChangeUpdateRequestDTO!!.status
     } else {
       throw InvalidStateException(offenderId)
     }
