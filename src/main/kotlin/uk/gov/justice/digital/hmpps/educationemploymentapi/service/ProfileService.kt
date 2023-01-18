@@ -71,9 +71,9 @@ class ProfileService(
     profile.supportDeclined_history = storedCoreProfile.supportDeclined_history
     if (storedCoreProfile.supportAccepted == null && storedCoreProfile.supportDeclined == null && profile.supportAccepted != null && profile.supportDeclined != null) {
       throw InvalidStateException(offenderId)
-    } else if (storedCoreProfile.supportAccepted != null && profile.supportAccepted != null && !profile.supportAccepted?.equals(
+    } else if (storedCoreProfile.supportAccepted != null && profile.supportAccepted != null && !profile.supportAccepted!!.equals(
         storedCoreProfile.supportAccepted
-      )!!
+      )
     ) {
       updateAcceptedStatusList(profile, storedCoreProfile, userId, offenderId)
     } else if (storedCoreProfile.supportDeclined != null && profile.supportDeclined != null && !profile.supportDeclined?.equals(
