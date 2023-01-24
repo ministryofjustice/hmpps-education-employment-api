@@ -71,9 +71,9 @@ class ProfileService(
     profile.supportDeclined_history = storedCoreProfile.supportDeclined_history
     if (storedCoreProfile.supportAccepted == null && storedCoreProfile.supportDeclined == null && profile.supportAccepted != null && profile.supportDeclined != null) {
       throw InvalidStateException(offenderId)
-    } else if (storedCoreProfile.supportAccepted != null && profile.supportAccepted != null && !profile.supportAccepted?.equals(
+    } else if (storedCoreProfile.supportAccepted != null && profile.supportAccepted != null && !profile.supportAccepted!!.equals(
         storedCoreProfile.supportAccepted
-      )!!
+      )
     ) {
       updateAcceptedStatusList(profile, storedCoreProfile, userId, offenderId)
     } else if (storedCoreProfile.supportDeclined != null && profile.supportDeclined != null && !profile.supportDeclined?.equals(
@@ -127,13 +127,6 @@ class ProfileService(
     return notesList.filter { n -> n.attribute == attribute }
   }
 
-  fun checkAcceptedProfileStatus(profile: Profile, offenderId: String): Boolean {
-    if (profile.status.equals(ProfileStatus.NO_RIGHT_TO_WORK) || profile.status.equals(ProfileStatus.SUPPORT_DECLINED)) {
-      throw InvalidStateException(offenderId)
-    }
-    return true
-  }
-
   fun checkDeclinedProfileStatus(profile: Profile, offenderId: String): Boolean {
     if (profile.status.equals(ProfileStatus.SUPPORT_NEEDED)) {
       throw InvalidStateException(offenderId)
@@ -145,7 +138,6 @@ class ProfileService(
     if (profile.supportAccepted != null) {
       profile.supportAccepted?.modifiedBy = userId
       profile.supportAccepted?.modifiedDateTime = LocalDateTime.now()
-      checkAcceptedProfileStatus(profile, offenderId)
     }
 
     if (profile.supportDeclined != null) {
@@ -177,7 +169,6 @@ class ProfileService(
     statusChangeUpdateRequestDTO.supportAccepted.modifiedDateTime = LocalDateTime.now()
     profile.supportAccepted = statusChangeUpdateRequestDTO.supportAccepted
     profile.status = statusChangeUpdateRequestDTO.status
-    checkAcceptedProfileStatus(profile, offenderId)
 
     return profile
   }
@@ -194,7 +185,7 @@ class ProfileService(
   fun changeStatusForOffender(
     userId: String,
     offenderId: String,
-    statusChangeUpdateRequestDTO: StatusChangeUpdateRequestDTO
+    statusChangeUpdateRequestDTO: StatusChangeUpdateRequestDTO?
   ): ReadinessProfile {
     var storedProfile: ReadinessProfile =
       readinessProfileRepository.findById(offenderId).orElseThrow(NotFoundException(offenderId))
@@ -208,12 +199,11 @@ class ProfileService(
       storedCoreProfile =
         changeStatusToAcceptedForOffender(userId, offenderId, statusChangeUpdateRequestDTO, storedProfile)
       storedCoreProfile.status = statusChangeUpdateRequestDTO.status
-      checkAcceptedProfileStatus(storedCoreProfile, offenderId)
-    } else if (statusChangeUpdateRequestDTO.status.equals(ProfileStatus.READY_TO_WORK) || statusChangeUpdateRequestDTO.status.equals(ProfileStatus.NO_RIGHT_TO_WORK)) {
+    } else if (statusChangeUpdateRequestDTO!!.status.equals(ProfileStatus.READY_TO_WORK) || statusChangeUpdateRequestDTO.status.equals(ProfileStatus.NO_RIGHT_TO_WORK)) {
       storedCoreProfile = CapturedSpringMapperConfiguration.OBJECT_MAPPER.readValue(
         JacksonUtil.toString(storedProfile.profileData), object : TypeReference<Profile>() {}
       )
-      storedCoreProfile!!.status = statusChangeUpdateRequestDTO.status
+      storedCoreProfile!!.status = statusChangeUpdateRequestDTO!!.status
     } else {
       throw InvalidStateException(offenderId)
     }
@@ -236,7 +226,6 @@ class ProfileService(
     var profile: Profile = CapturedSpringMapperConfiguration.OBJECT_MAPPER.readValue(
       JacksonUtil.toString(storedProfile.profileData), object : TypeReference<Profile>() {}
     )
-    checkAcceptedProfileStatus(profile, offenderId)
     profile.statusChangeDate = LocalDateTime.now()
     profile.statusChangeType = StatusChange.ACCEPTED_TO_DECLINED
 
@@ -265,7 +254,6 @@ class ProfileService(
     val storedCoreProfile: Profile =
       changeStatusToAcceptedForOffender(userId, offenderId, statusChangeUpdateRequestDTO, storedProfile)
     setProfileValues(profile, storedCoreProfile)
-    checkAcceptedProfileStatus(profile, offenderId)
   }
 
   fun updateProfileDeclinedStatusChange(
@@ -290,7 +278,6 @@ class ProfileService(
       profile.supportAccepted_history = mutableListOf<SupportAccepted>()
       profile.supportAccepted_history!!.add(storedCoreProfile.supportAccepted!!)
     }
-    checkAcceptedProfileStatus(profile, offenderId)
   }
 
   fun updateDeclinedStatusList(profile: Profile, storedCoreProfile: Profile, userId: String, offenderId: String) {

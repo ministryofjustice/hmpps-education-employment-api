@@ -55,8 +55,8 @@ class TestData {
     val updatedBookingId = 123457L
     var actionToDoCV = ActionTodo.CV_AND_COVERING_LETTER
 
-    val action = Action(ActionTodo.BANK_ACCOUNT, ActionStatus.COMPLETED)
-    val actionModified = Action(ActionTodo.CV_AND_COVERING_LETTER, ActionStatus.IN_PROGRESS)
+    val action = Action(ActionTodo.BANK_ACCOUNT, ActionStatus.COMPLETED, null)
+    val actionModified = Action(ActionTodo.CV_AND_COVERING_LETTER, ActionStatus.IN_PROGRESS, null)
 
     val profileStatus_NO_RIGHT_TO_WORK = ProfileStatus.NO_RIGHT_TO_WORK
     val profileStatus_SUPPORT_NEEDED = ProfileStatus.SUPPORT_NEEDED
