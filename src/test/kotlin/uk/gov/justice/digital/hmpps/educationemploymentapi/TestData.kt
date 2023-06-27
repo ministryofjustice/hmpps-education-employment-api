@@ -49,6 +49,7 @@ class TestData {
     val createdByString = "createdBy"
     val offenderIdString = "offenderId"
     val bookingIdString = "bookingId"
+    val prisonNameString = "prisonName"
     val newNotes = "new notes"
 
     val newBookingId = 123456L
@@ -122,16 +123,16 @@ class TestData {
     val supportAcceptedModified: SupportAccepted = SupportAccepted(
       null, null, actionsModifedRequired, workImpacts, workInterests, workExperience
     )
-    val profile: Profile = Profile(profileStatus_NO_RIGHT_TO_WORK, false, null, StatusChange.NEW, mutableListOf(supportDeclined), mutableListOf(supportAccepted), supportDeclined, null)
-    val profile_declined: Profile = Profile(profileStatus_NO_RIGHT_TO_WORK, false, null, StatusChange.NEW, null, null, supportDeclined, null)
-    val profile_declined_declined_list: Profile = Profile(profileStatus_NO_RIGHT_TO_WORK, false, null, StatusChange.NEW, mutableListOf(supportDeclinedModifiedOther), null, supportDeclined, null)
+    val profile: Profile = Profile(profileStatus_NO_RIGHT_TO_WORK, false, null, "prison2", StatusChange.NEW, mutableListOf(supportDeclined), mutableListOf(supportAccepted), supportDeclined, null)
+    val profile_declined: Profile = Profile(profileStatus_NO_RIGHT_TO_WORK, false, null, "prison2", StatusChange.NEW, null, null, supportDeclined, null)
+    val profile_declined_declined_list: Profile = Profile(profileStatus_NO_RIGHT_TO_WORK, false, null, "prison2", StatusChange.NEW, mutableListOf(supportDeclinedModifiedOther), null, supportDeclined, null)
     val profile_declinedModified: Profile = Profile(
-      profileStatus_NO_RIGHT_TO_WORK, false, null, StatusChange.NEW, mutableListOf(supportDeclined), null,
+      profileStatus_NO_RIGHT_TO_WORK, false, null, "prison2", StatusChange.NEW, mutableListOf(supportDeclined), null,
       supportDeclinedModified, null
     )
 
-    val profile_accpeted: Profile = Profile(profileStatus_SUPPORT_NEEDED, false, null, StatusChange.NEW, null, null, null, supportAccepted)
-    val profile_accpeted_modified: Profile = Profile(profileStatus_SUPPORT_NEEDED, false, null, StatusChange.NEW, null, null, null, supportAcceptedModified)
+    val profile_accpeted: Profile = Profile(profileStatus_SUPPORT_NEEDED, false, null, "prison2", StatusChange.NEW, null, null, null, supportAccepted)
+    val profile_accpeted_modified: Profile = Profile(profileStatus_SUPPORT_NEEDED, false, null, "prison2", StatusChange.NEW, null, null, null, supportAcceptedModified)
 
     val readinessProfile_accepted_1 = Optional.of(
       ReadinessProfile(
@@ -205,10 +206,10 @@ class TestData {
       )
     )
     val profile_IncorrectStatus: Profile = Profile(
-      profileStatus_SUPPORT_NEEDED, false, null, StatusChange.NEW, mutableListOf(supportDeclined), mutableListOf(supportAccepted),
+      profileStatus_SUPPORT_NEEDED, false, null, "prison1", StatusChange.NEW, mutableListOf(supportDeclined), mutableListOf(supportAccepted),
       supportDeclined, null
     )
-    val profile_NEW_BOTHSTATE_INCOORECT: Profile = Profile(profileStatus_NO_RIGHT_TO_WORK, false, null, StatusChange.NEW, mutableListOf(supportDeclined), mutableListOf(supportAccepted), supportDeclined, supportAccepted)
+    val profile_NEW_BOTHSTATE_INCOORECT: Profile = Profile(profileStatus_NO_RIGHT_TO_WORK, false, null, "prison2", StatusChange.NEW, mutableListOf(supportDeclined), mutableListOf(supportAccepted), supportDeclined, supportAccepted)
 
     val readinessProfile = ReadinessProfile(
       newOffenderId,

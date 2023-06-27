@@ -2,6 +2,7 @@
   "status": "NO_RIGHT_TO_WORK",
   "statusChange": false,
   "statusChangeDate": null,
+  "prisonName":"prison2",
   "statusChangeType": "NEW",
   "supportDeclined": [
     {
