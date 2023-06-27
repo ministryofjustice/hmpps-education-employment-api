@@ -55,6 +55,23 @@ class ProfileServiceTest {
   }
 
   @Test
+  fun `makes a call to the repository to update the readiness profile Prison location`() {
+    whenever(readinessProfileRepository.save(any())).thenReturn(TestData.updatedReadinessProfile.get())
+    whenever(readinessProfileRepository.findById(any())).thenReturn(TestData.updatedReadinessProfile)
+
+    val rProfile = profileService.updateProfileForOffender(TestData.createdBy, TestData.newOffenderId, TestData.newBookingId, TestData.profile)
+    val argumentCaptor = ArgumentCaptor.forClass(ReadinessProfile::class.java)
+    verify(readinessProfileRepository).save(argumentCaptor.capture())
+    assertThat(rProfile).extracting(TestData.createdByString, TestData.offenderIdString, TestData.bookingIdString)
+      .contains(TestData.updatedBy, TestData.newOffenderId, TestData.updatedBookingId)
+    var storedCoreProfile: Profile = CapturedSpringMapperConfiguration.OBJECT_MAPPER.readValue(
+      JacksonUtil.toString(rProfile.profileData), object : TypeReference<Profile>() {}
+    )
+    assertThat(storedCoreProfile.prisonName)
+      .isEqualTo(TestData.profile.prisonName)
+  }
+
+  @Test
   fun `makes a call to the repository to add supportDeclined to empty supportDeclined List on Update of declined State in readiness profile`() {
     whenever(readinessProfileRepository.save(any())).thenReturn(TestData.updatedReadinessProfile_declined_1.get())
     whenever(readinessProfileRepository.findById(any())).thenReturn(TestData.readinessProfile_declined_1)
