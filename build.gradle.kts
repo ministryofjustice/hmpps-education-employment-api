@@ -1,8 +1,11 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
   id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.5.1"
   kotlin("plugin.spring") version "1.7.10"
   kotlin("plugin.jpa") version "1.7.10"
   id("jacoco")
+  kotlin("jvm") version "1.8.22"
 }
 
 configurations {
@@ -74,6 +77,7 @@ dependencies {
   testImplementation("org.mockito:mockito-inline:4.6.1")
   testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
   testImplementation("com.h2database:h2")
+  implementation(kotlin("stdlib-jdk8"))
 }
 repositories {
   mavenCentral()
@@ -96,4 +100,12 @@ java {
 
 dependencyCheck {
   suppressionFiles.add("$rootDir/dependencyCheck/suppression.xml")
+}
+val compileKotlin: KotlinCompile by tasks
+compileKotlin.kotlinOptions {
+  jvmTarget = "1.8"
+}
+val compileTestKotlin: KotlinCompile by tasks
+compileTestKotlin.kotlinOptions {
+  jvmTarget = "1.8"
 }
