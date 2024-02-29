@@ -8,6 +8,7 @@ import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.Acti
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.ActionTodo
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.ActionsRequired
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.CircumstanceChangesRequiredToWork
+import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.Note
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.Profile
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.ProfileStatus
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.QualificationsAndTraining
@@ -21,7 +22,9 @@ import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.Work
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.WorkTypesOfInterest
 import uk.gov.justice.digital.hmpps.educationemploymentapi.entity.ReadinessProfile
 import java.io.File
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.util.Optional
 
 class TestData {
@@ -49,6 +52,7 @@ class TestData {
     val createdByString = "createdBy"
     val offenderIdString = "offenderId"
     val bookingIdString = "bookingId"
+    val noteDataString = "noteData"
     val prisonNameString = "prisonName"
     val newNotes = "new notes"
 
@@ -124,6 +128,8 @@ class TestData {
       null, null, actionsModifedRequired, workImpacts, workInterests, workExperience
     )
     val profile: Profile = Profile(profileStatus_NO_RIGHT_TO_WORK, false, null, "prison2", StatusChange.NEW, mutableListOf(supportDeclined), mutableListOf(supportAccepted), supportDeclined, null)
+    val note: Note = Note("sacintha", LocalDateTime.of(LocalDate.of(2024, 1, 1), LocalTime.of(0, 0)), ActionTodo.DISCLOSURE_LETTER, "test comment")
+
     val profile_declined: Profile = Profile(profileStatus_NO_RIGHT_TO_WORK, false, null, "prison2", StatusChange.NEW, null, null, supportDeclined, null)
     val profile_declined_declined_list: Profile = Profile(profileStatus_NO_RIGHT_TO_WORK, false, null, "prison2", StatusChange.NEW, mutableListOf(supportDeclinedModifiedOther), null, supportDeclined, null)
     val profile_declinedModified: Profile = Profile(
@@ -278,5 +284,18 @@ class TestData {
       "        \"text\": \"Mary had another little lamb\"\n" +
       "    }\n" +
       "]"
+
+    val readinessProfileForSAR = ReadinessProfile(
+      newOffenderId,
+      newBookingId,
+      createdBy,
+      modifiedTime,
+      createdBy,
+      modifiedTime,
+      "1.0",
+      JacksonUtil.toJsonNode(TestUtil.objectMapper().writeValueAsString(profile)),
+      JacksonUtil.toJsonNode(TestUtil.objectMapper().writeValueAsString(note)),
+      booleanTrue
+    )
   }
 }

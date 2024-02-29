@@ -26,6 +26,7 @@ import uk.gov.justice.digital.hmpps.educationemploymentapi.data.StatusChangeUpda
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.ActionTodo
 import uk.gov.justice.digital.hmpps.educationemploymentapi.service.ProfileService
 import uk.gov.justice.digital.hmpps.educationemploymentapi.validator.OffenderIdConstraint
+import java.util.ArrayList
 import javax.validation.Valid
 import javax.validation.constraints.Pattern
 
