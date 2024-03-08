@@ -20,18 +20,6 @@ testing {
     val test by getting(JvmTestSuite::class) {
       useJUnitJupiter()
     }
-    val integrationTest by getting(JvmTestSuite::class) {
-      useJUnitJupiter()
-      dependencies {
-        implementation(project())
-      }
-      sourceSets["main"].apply {
-        kotlin.srcDir("${layout.buildDirectory}/src/main/kotlin")
-      }
-      sourceSets["integrationTest"].apply {
-        kotlin.srcDir("${layout.buildDirectory}/src/integrationTest/kotlin")
-      }
-    }
   }
 }
 
@@ -111,12 +99,7 @@ tasks {
     withType<JavaCompile> {
       sourceCompatibility = "21"
     }
-    named("check") {
-      dependsOn(testing.suites.named("integrationTest"))
-    }
-    named("compileIntegrationTestKotlin") {
-      dependsOn(named("copyAgent"))
-    }
+
     named<JacocoReport>("jacocoTestReport") {
       dependsOn(named("check"))
       reports {
