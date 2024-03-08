@@ -9,7 +9,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.http.HttpHeaders
 import org.springframework.test.context.ActiveProfiles
 import uk.gov.justice.digital.hmpps.educationemploymentapi.HmppsEducationEmploymentApi
-import uk.gov.justice.digital.hmpps.educationemploymentapi.integration.helpers.JwtAuthHelper
+import uk.gov.justice.digital.hmpps.educationemploymentapi.helpers.JwtAuthHelper
 
 // import uk.gov.justice.digital.hmpps.educationemploymentapi.integration.wiremock.OAuthExtension
 /*
