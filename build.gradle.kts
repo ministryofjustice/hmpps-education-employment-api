@@ -129,7 +129,7 @@ tasks {
       doFirst {
         delete(
           fileTree(project.layout.buildDirectory.get())
-            .include("libs/*-plain.jar")
+            .include("libs/*.jar")
         )
       }
     }
