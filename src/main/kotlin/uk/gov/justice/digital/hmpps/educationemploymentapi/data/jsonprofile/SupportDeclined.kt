@@ -9,7 +9,7 @@ data class SupportDeclined(
   val supportToWorkDeclinedReason: List<SupportToWorkDeclinedReason>,
   val supportToWorkDeclinedReasonOther: String,
   val circumstanceChangesRequiredToWork: List<CircumstanceChangesRequiredToWork>,
-  val circumstanceChangesRequiredToWorkOther: String
+  val circumstanceChangesRequiredToWorkOther: String,
 ) {
   override fun equals(other: Any?): Boolean {
     if (this === other) return true

@@ -8,7 +8,7 @@ data class SupportAccepted(
   val actionsRequired: ActionsRequired,
   val workImpacts: WorkImpacts,
   val workInterests: WorkInterests,
-  val workExperience: WorkExperience
+  val workExperience: WorkExperience,
 ) {
   override fun equals(other: Any?): Boolean {
     if (this === other) return true

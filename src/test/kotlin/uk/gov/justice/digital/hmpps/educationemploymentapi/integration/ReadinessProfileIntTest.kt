@@ -27,7 +27,6 @@ class ReadinessProfileIntTest : IntegrationTestBase() {
 
   @Test
   fun `Get the exception for profile for a unknown offender`() {
-
     val result = restTemplate.exchange("/readiness-profiles/A1234AB", HttpMethod.GET, HttpEntity<HttpHeaders>(setAuthorisation(roles = listOf("ROLE_WORK_READINESS_EDIT", "ROLE_WORK_READINESS_VIEW"))), ErrorResponse::class.java)
     assertThat(result).isNotNull
     val erroResponse = result.body
@@ -38,7 +37,8 @@ class ReadinessProfileIntTest : IntegrationTestBase() {
   @Test
   fun `Post a profile for an offender`() {
     val actualReadinessProfileRequestDTO = objectMapper.readValue(
-      TestData.createProfileJsonRequest, object : TypeReference<ReadinessProfileRequestDTO>() {}
+      TestData.createProfileJsonRequest,
+      object : TypeReference<ReadinessProfileRequestDTO>() {},
     )
     val result = restTemplate.exchange("/readiness-profiles/A1234AB", HttpMethod.POST, HttpEntity<ReadinessProfileRequestDTO>(actualReadinessProfileRequestDTO, setAuthorisation(roles = listOf("ROLE_WORK_READINESS_EDIT", "ROLE_WORK_READINESS_VIEW"))), ReadinessProfileDTO::class.java)
     assertThat(result).isNotNull
@@ -47,7 +47,8 @@ class ReadinessProfileIntTest : IntegrationTestBase() {
   @Test
   fun `Update a profile for an offender`() {
     val actualReadinessProfileRequestDTO = objectMapper.readValue(
-      TestData.createProfileJsonRequest, object : TypeReference<ReadinessProfileRequestDTO>() {}
+      TestData.createProfileJsonRequest,
+      object : TypeReference<ReadinessProfileRequestDTO>() {},
     )
     restTemplate.exchange("/readiness-profiles/A1234AC", HttpMethod.POST, HttpEntity<ReadinessProfileRequestDTO>(actualReadinessProfileRequestDTO, setAuthorisation(roles = listOf("ROLE_WORK_READINESS_EDIT", "ROLE_WORK_READINESS_VIEW"))), ReadinessProfileDTO::class.java)
 
@@ -59,7 +60,8 @@ class ReadinessProfileIntTest : IntegrationTestBase() {
   @Test
   fun `Get a profile for an offender`() {
     val actualReadinessProfileRequestDTO = objectMapper.readValue(
-      TestData.createProfileJsonRequest, object : TypeReference<ReadinessProfileRequestDTO>() {}
+      TestData.createProfileJsonRequest,
+      object : TypeReference<ReadinessProfileRequestDTO>() {},
     )
     val result = restTemplate.exchange("/readiness-profiles/A1234AB", HttpMethod.GET, HttpEntity<ReadinessProfileRequestDTO>(actualReadinessProfileRequestDTO, setAuthorisation(roles = listOf("ROLE_WORK_READINESS_EDIT", "ROLE_WORK_READINESS_VIEW"))), ReadinessProfileDTO::class.java)
     assertThat(result).isNotNull
@@ -69,7 +71,8 @@ class ReadinessProfileIntTest : IntegrationTestBase() {
   @Test
   fun `Get an empty list when a profile note is not present for an offender`() {
     val actualReadinessProfileRequestDTO = objectMapper.readValue(
-      TestData.createProfileJsonRequest, object : TypeReference<ReadinessProfileRequestDTO>() {}
+      TestData.createProfileJsonRequest,
+      object : TypeReference<ReadinessProfileRequestDTO>() {},
     )
     restTemplate.exchange("/readiness-profiles/A1234AE", HttpMethod.POST, HttpEntity<ReadinessProfileRequestDTO>(actualReadinessProfileRequestDTO, setAuthorisation(roles = listOf("ROLE_WORK_READINESS_EDIT", "ROLE_WORK_READINESS_VIEW"))), ReadinessProfileDTO::class.java)
 
@@ -82,35 +85,39 @@ class ReadinessProfileIntTest : IntegrationTestBase() {
   @Test
   fun `Post a profile note for an offender`() {
     val actualReadinessProfileRequestDTO = objectMapper.readValue(
-      TestData.createProfileJsonRequest, object : TypeReference<ReadinessProfileRequestDTO>() {}
+      TestData.createProfileJsonRequest,
+      object : TypeReference<ReadinessProfileRequestDTO>() {},
     )
     restTemplate.exchange("/readiness-profiles/A1234AT", HttpMethod.POST, HttpEntity<ReadinessProfileRequestDTO>(actualReadinessProfileRequestDTO, setAuthorisation(roles = listOf("ROLE_WORK_READINESS_EDIT", "ROLE_WORK_READINESS_VIEW"))), ReadinessProfileDTO::class.java)
     val noteRequestDTO = objectMapper.readValue(
-      TestData.noteFreeTextJson, object : TypeReference<NoteRequestDTO>() {}
+      TestData.noteFreeTextJson,
+      object : TypeReference<NoteRequestDTO>() {},
     )
     val result = restTemplate.exchange("/readiness-profiles/A1234AT/notes/DISCLOSURE_LETTER", HttpMethod.POST, HttpEntity<NoteRequestDTO>(noteRequestDTO, setAuthorisation("lest", roles = listOf("ROLE_WORK_READINESS_EDIT"))), List::class.java)
     assertThat(result).isNotNull
     assert(result.statusCode.is2xxSuccessful)
-    assert(result.body.size> 0)
+    assert(result.body.size > 0)
   }
 
   @Test
   fun `Retrieve a profile note for an offender`() {
     val actualReadinessProfileRequestDTO = objectMapper.readValue(
-      TestData.createProfileJsonRequest, object : TypeReference<ReadinessProfileRequestDTO>() {}
+      TestData.createProfileJsonRequest,
+      object : TypeReference<ReadinessProfileRequestDTO>() {},
     )
     restTemplate.exchange("/readiness-profiles/A1234AZ", HttpMethod.POST, HttpEntity<ReadinessProfileRequestDTO>(actualReadinessProfileRequestDTO, setAuthorisation(roles = listOf("ROLE_WORK_READINESS_EDIT", "ROLE_WORK_READINESS_VIEW"))), ReadinessProfileDTO::class.java)
     val noteRequestDTO = objectMapper.readValue(
-      TestData.noteFreeTextJson, object : TypeReference<NoteRequestDTO>() {}
+      TestData.noteFreeTextJson,
+      object : TypeReference<NoteRequestDTO>() {},
     )
     val result = restTemplate.exchange("/readiness-profiles/A1234AZ/notes/DISCLOSURE_LETTER", HttpMethod.POST, HttpEntity<NoteRequestDTO>(noteRequestDTO, setAuthorisation("lest", roles = listOf("ROLE_WORK_READINESS_EDIT"))), List::class.java)
     assertThat(result).isNotNull
     assert(result.statusCode.is2xxSuccessful)
-    assert(result.body.size> 0)
+    assert(result.body.size > 0)
 
     val noteList = restTemplate.exchange("/readiness-profiles/A1234AZ/notes/DISCLOSURE_LETTER", HttpMethod.GET, HttpEntity<HttpHeaders>(setAuthorisation("lest", roles = listOf("ROLE_WORK_READINESS_EDIT"))), List::class.java)
     assertThat(result).isNotNull
     assert(result.statusCode.is2xxSuccessful)
-    assert(result.body.size> 0)
+    assert(result.body.size > 0)
   }
 }

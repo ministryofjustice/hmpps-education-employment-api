@@ -8,5 +8,5 @@ data class WorkExperience(
 
   val previousWorkOrVolunteering: String,
   val qualificationsAndTraining: List<QualificationsAndTraining>,
-  val qualificationsAndTrainingOther: String
+  val qualificationsAndTrainingOther: String,
 )

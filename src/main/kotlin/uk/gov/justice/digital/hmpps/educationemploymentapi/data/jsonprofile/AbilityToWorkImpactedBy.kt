@@ -7,5 +7,5 @@ enum class AbilityToWorkImpactedBy {
   MENTAL_HEALTH_ISSUES,
   PHYSICAL_HEALTH_ISSUES,
   DEPENDENCY_ISSUES,
-  NONE
+  NONE,
 }

@@ -34,7 +34,7 @@ data class SARReadinessProfileDTO(
   val profileData: Profile,
 
   @Schema(description = "Work readiness profile JSON data", example = "{...}")
-  val noteData: Note?
+  val noteData: Note?,
 ) {
   constructor(profileEntity: ReadinessProfile) : this(
     offenderId = profileEntity.offenderId,

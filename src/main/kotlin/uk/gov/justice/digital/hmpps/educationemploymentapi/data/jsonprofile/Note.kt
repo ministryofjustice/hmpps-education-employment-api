@@ -7,5 +7,5 @@ data class Note(
   val createdDateTime: LocalDateTime,
 
   val attribute: ActionTodo,
-  val text: String
+  val text: String,
 )

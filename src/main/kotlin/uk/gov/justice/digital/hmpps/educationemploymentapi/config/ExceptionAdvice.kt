@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.educationemploymentapi.config
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException
 import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
+import jakarta.validation.ValidationException
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -15,7 +16,6 @@ import org.springframework.web.client.RestClientResponseException
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
 import uk.gov.justice.digital.hmpps.educationemploymentapi.exceptions.NotFoundException
 import java.util.Arrays
-import javax.validation.ValidationException
 
 @RestControllerAdvice
 class ControllerAdvice {
@@ -32,8 +32,8 @@ class ControllerAdvice {
         ErrorResponse(
           status = HttpStatus.FORBIDDEN.value(),
           userMessage = "Authentication problem. Check token and roles - ${e.message}",
-          developerMessage = e.message
-        )
+          developerMessage = e.message,
+        ),
       )
   }
 
@@ -46,8 +46,8 @@ class ControllerAdvice {
         ErrorResponse(
           status = HttpStatus.UNAUTHORIZED.value(),
           userMessage = "Authentication problem. Check token and roles - ${e.message}",
-          developerMessage = e.message
-        )
+          developerMessage = e.message,
+        ),
       )
   }
 
@@ -60,8 +60,8 @@ class ControllerAdvice {
         ErrorResponse(
           status = e.rawStatusCode,
           userMessage = "Rest client exception ${e.message}",
-          developerMessage = e.message
-        )
+          developerMessage = e.message,
+        ),
       )
   }
 
@@ -74,10 +74,11 @@ class ControllerAdvice {
         ErrorResponse(
           status = HttpStatus.INTERNAL_SERVER_ERROR.value(),
           userMessage = "Rest client exception ${e.message}",
-          developerMessage = e.message
-        )
+          developerMessage = e.message,
+        ),
       )
   }
+
   @ExceptionHandler(ValidationException::class)
   fun handleValidationException(e: ValidationException): ResponseEntity<ErrorResponse> {
     log.info("Validation exception: ${e.message}", e)
@@ -87,10 +88,11 @@ class ControllerAdvice {
         ErrorResponse(
           status = HttpStatus.BAD_REQUEST.value(),
           userMessage = "Validation failure: ${e.message?.let { e.message!!.substring(it.indexOf(":") + 2) }}",
-          developerMessage = e.message?.let { e.message!!.substring(it.indexOf(":") + 2) }
-        )
+          developerMessage = e.message?.let { e.message!!.substring(it.indexOf(":") + 2) },
+        ),
       )
   }
+
   @ExceptionHandler(value = [MissingKotlinParameterException::class])
   fun handleMissingKotlinParameter(exception: MissingKotlinParameterException): ResponseEntity<ErrorResponse> {
     val fieldName = exception.path.joinToString(separator = ".") { it.fieldName }
@@ -100,10 +102,11 @@ class ControllerAdvice {
         ErrorResponse(
           status = HttpStatus.BAD_REQUEST.value(),
           userMessage = "Validation failure: $fieldName",
-          developerMessage = "Missing $fieldName"
-        )
+          developerMessage = "Missing $fieldName",
+        ),
       )
   }
+
   @ExceptionHandler(HttpMessageNotReadableException::class)
   fun handleHttpMessageNotReadableException(e: HttpMessageNotReadableException): ResponseEntity<ErrorResponse> {
     log.info("Validation exception: ${e.message}", e)
@@ -121,7 +124,7 @@ class ControllerAdvice {
           "Invalid enum value: '%s' for the field: '%s'. The value must be one of: %s.",
           ifx.getValue(),
           ifx.getPath().get(ifx.getPath().size - 1).getFieldName(),
-          Arrays.toString(ifx.getTargetType().getEnumConstants())
+          Arrays.toString(ifx.getTargetType().getEnumConstants()),
         )
       }
     }
@@ -131,8 +134,8 @@ class ControllerAdvice {
         ErrorResponse(
           status = HttpStatus.BAD_REQUEST.value(),
           userMessage = "Validation failure: $errorDetails",
-          developerMessage = errorDetails
-        )
+          developerMessage = errorDetails,
+        ),
       )
   }
 
@@ -145,8 +148,8 @@ class ControllerAdvice {
         ErrorResponse(
           status = HttpStatus.BAD_REQUEST.value(),
           userMessage = "Validation failure: ${e.message}",
-          developerMessage = e.message
-        )
+          developerMessage = e.message,
+        ),
       )
   }
 
@@ -159,10 +162,11 @@ class ControllerAdvice {
         ErrorResponse(
           status = HttpStatus.BAD_REQUEST.value(),
           userMessage = "${e.message}",
-          developerMessage = e.message
-        )
+          developerMessage = e.message,
+        ),
       )
   }
+
   @ExceptionHandler(java.lang.Exception::class)
   fun handleException(e: java.lang.Exception): ResponseEntity<ErrorResponse?>? {
     log.error("Unexpected exception: ${e.message}", e)
@@ -172,8 +176,8 @@ class ControllerAdvice {
         ErrorResponse(
           status = HttpStatus.INTERNAL_SERVER_ERROR,
           userMessage = "Unexpected error: ${e.message}",
-          developerMessage = e.message
-        )
+          developerMessage = e.message,
+        ),
       )
   }
 }
@@ -190,7 +194,7 @@ data class ErrorResponse(
     errorCode: String? = null,
     userMessage: String? = null,
     developerMessage: String? = null,
-    moreInfo: String? = null
+    moreInfo: String? = null,
   ) :
     this(status.value(), errorCode, userMessage, developerMessage, moreInfo)
 }

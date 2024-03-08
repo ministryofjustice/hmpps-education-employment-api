@@ -9,5 +9,5 @@ data class WorkImpacts(
   val abilityToWorkImpactedBy: List<AbilityToWorkImpactedBy>,
   val caringResponsibilitiesFullTime: Boolean,
   val ableToManageMentalHealth: Boolean,
-  val ableToManageDependencies: Boolean
+  val ableToManageDependencies: Boolean,
 )

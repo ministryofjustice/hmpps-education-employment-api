@@ -41,7 +41,6 @@ import uk.gov.justice.digital.hmpps.educationemploymentapi.service.TestData
 @WebMvcTest(controllers = [ProfileResourceController::class])
 @AutoConfigureMockMvc(addFilters = false)
 @ContextConfiguration(classes = [ProfileResourceController::class])
-
 @WebAppConfiguration
 class ProfileResourceControllerTest {
 
@@ -106,7 +105,8 @@ class ProfileResourceControllerTest {
       .andExpect(content().contentType(APPLICATION_JSON))
       .andReturn()
     val actualReadinessProfileDTO = mapper.readValue(
-      result.response.contentAsString, object : TypeReference<ReadinessProfileDTO>() {}
+      result.response.contentAsString,
+      object : TypeReference<ReadinessProfileDTO>() {},
     )
     Assertions.assertThat(actualReadinessProfileDTO).extracting(TestData.createdByString, TestData.offenderIdString, TestData.bookingIdString)
       .contains(TestData.createdBy, TestData.newOffenderId, TestData.newBookingId)
@@ -121,7 +121,8 @@ class ProfileResourceControllerTest {
       .andExpect(content().contentType(APPLICATION_JSON))
       .andReturn()
     val actualReadinessProfileDTO = mapper.readValue(
-      result.response.contentAsString, object : TypeReference<ReadinessProfileDTO>() {}
+      result.response.contentAsString,
+      object : TypeReference<ReadinessProfileDTO>() {},
     )
     Assertions.assertThat(actualReadinessProfileDTO).extracting(TestData.createdByString, TestData.offenderIdString, TestData.bookingIdString)
       .contains(TestData.createdBy, TestData.newOffenderId, TestData.newBookingId)
@@ -136,7 +137,8 @@ class ProfileResourceControllerTest {
       .andExpect(content().contentType(APPLICATION_JSON))
       .andReturn()
     val actualReadinessProfileDTO = mapper.readValue(
-      result.response.contentAsString, object : TypeReference<ReadinessProfileDTO>() {}
+      result.response.contentAsString,
+      object : TypeReference<ReadinessProfileDTO>() {},
     )
     Assertions.assertThat(actualReadinessProfileDTO).extracting(TestData.createdByString, TestData.offenderIdString, TestData.bookingIdString)
       .contains(TestData.createdBy, TestData.newOffenderId, TestData.newBookingId)
@@ -151,7 +153,8 @@ class ProfileResourceControllerTest {
       .andExpect(content().contentType(APPLICATION_JSON))
       .andReturn()
     val readinessProfileDTOList = mapper.readValue(
-      result.response.contentAsString, object : TypeReference<List<ReadinessProfileDTO>>() {}
+      result.response.contentAsString,
+      object : TypeReference<List<ReadinessProfileDTO>>() {},
     )
     Assertions.assertThat(readinessProfileDTOList[0]).extracting(TestData.createdByString, TestData.offenderIdString, TestData.bookingIdString)
       .contains(TestData.createdBy, TestData.newOffenderId, TestData.newBookingId)
@@ -160,7 +163,7 @@ class ProfileResourceControllerTest {
 
   internal fun setAuthorisation(
     user: String = "test-client",
-    roles: List<String> = listOf()
+    roles: List<String> = listOf(),
   ): (HttpHeaders) {
     return jwtAuthHelper.setAuthorisationForUnitTests(user, roles)
   }

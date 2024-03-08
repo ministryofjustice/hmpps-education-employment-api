@@ -6,6 +6,8 @@ import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
+import jakarta.validation.Valid
+import jakarta.validation.constraints.Pattern
 import org.springframework.http.MediaType
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.annotation.AuthenticationPrincipal
@@ -27,8 +29,6 @@ import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.Acti
 import uk.gov.justice.digital.hmpps.educationemploymentapi.service.ProfileService
 import uk.gov.justice.digital.hmpps.educationemploymentapi.validator.OffenderIdConstraint
 import java.util.ArrayList
-import javax.validation.Valid
-import javax.validation.constraints.Pattern
 
 @Validated
 @RestController
@@ -48,27 +48,28 @@ class ProfileResourceController(
         content = [
           Content(
             mediaType = "application/json",
-            array = ArraySchema(schema = Schema(implementation = ReadinessProfileDTO::class))
-          )
+            array = ArraySchema(schema = Schema(implementation = ReadinessProfileDTO::class)),
+          ),
         ],
       ),
       ApiResponse(
         responseCode = "401",
         description = "Unauthorized to access this endpoint",
-        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))]
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
       ),
       ApiResponse(
         responseCode = "403",
         description = "Incorrect permissions to access this endpoint",
-        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))]
-      )
-    ]
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+    ],
   )
   fun getOffenderProfiles(
     @Schema(description = "List of offender Ids", example = "[\"A1234BC\", \"B1234DE\"]", required = true)
-    @RequestBody @OffenderIdConstraint(message = "Invalid Offender Id") offenderIds: List<@Valid String>
+    @RequestBody
+    @OffenderIdConstraint(message = "Invalid Offender Id")
+    offenderIds: List<@Valid String>,
   ): List<ReadinessProfileDTO> {
-
     val profiles = ArrayList<ReadinessProfileDTO>()
     profileService.getProfilesForOffenders(offenderIds).forEach {
       profiles.add(ReadinessProfileDTO(it))
@@ -88,36 +89,39 @@ class ProfileResourceController(
         content = [
           Content(
             mediaType = "application/json",
-            schema = Schema(implementation = ReadinessProfileDTO::class)
-          )
+            schema = Schema(implementation = ReadinessProfileDTO::class),
+          ),
         ],
       ),
       ApiResponse(
         responseCode = "401",
         description = "Unauthorized to access this endpoint",
-        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))]
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
       ),
       ApiResponse(
         responseCode = "403",
         description = "Incorrect permissions to access this endpoint",
-        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))]
-      )
-    ]
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+    ],
   )
   fun createOffenderProfile(
-    @Valid @Pattern(regexp = "^[A-Z]\\d{4}[A-Z]{2}\$", message = "Invalid Offender Id")
-    @PathVariable offenderId: String,
     @Valid
-    @RequestBody requestDTO: ReadinessProfileRequestDTO,
-    @AuthenticationPrincipal oauth2User: String
+    @Pattern(regexp = "^[A-Z]\\d{4}[A-Z]{2}\$", message = "Invalid Offender Id")
+    @PathVariable
+    offenderId: String,
+    @Valid
+    @RequestBody
+    requestDTO: ReadinessProfileRequestDTO,
+    @AuthenticationPrincipal oauth2User: String,
   ): ReadinessProfileDTO {
     return ReadinessProfileDTO(
       profileService.createProfileForOffender(
         oauth2User,
         offenderId,
         requestDTO.bookingId,
-        requestDTO.profileData
-      )
+        requestDTO.profileData,
+      ),
     )
   }
 
@@ -133,36 +137,40 @@ class ProfileResourceController(
         content = [
           Content(
             mediaType = "application/json",
-            schema = Schema(implementation = ReadinessProfileDTO::class)
-          )
+            schema = Schema(implementation = ReadinessProfileDTO::class),
+          ),
         ],
       ),
       ApiResponse(
         responseCode = "401",
         description = "Unauthorized to access this endpoint",
-        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))]
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
       ),
       ApiResponse(
         responseCode = "403",
         description = "Incorrect permissions to access this endpoint",
-        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))]
-      )
-    ]
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+    ],
   )
   fun updateOffenderProfile(
-    @Valid @Pattern(regexp = "^[A-Z]\\d{4}[A-Z]{2}\$", message = "Invalid Offender Id")
-    @PathVariable offenderId: String,
     @Valid
-    @RequestBody @Parameter requestDTO: ReadinessProfileRequestDTO,
-    @AuthenticationPrincipal oauth2User: String
+    @Pattern(regexp = "^[A-Z]\\d{4}[A-Z]{2}\$", message = "Invalid Offender Id")
+    @PathVariable
+    offenderId: String,
+    @Valid
+    @RequestBody
+    @Parameter
+    requestDTO: ReadinessProfileRequestDTO,
+    @AuthenticationPrincipal oauth2User: String,
   ): ReadinessProfileDTO {
     return ReadinessProfileDTO(
       profileService.updateProfileForOffender(
         oauth2User,
         offenderId,
         requestDTO.bookingId,
-        requestDTO.profileData
-      )
+        requestDTO.profileData,
+      ),
     )
   }
 
@@ -178,35 +186,39 @@ class ProfileResourceController(
         content = [
           Content(
             mediaType = "application/json",
-            schema = Schema(implementation = ReadinessProfileDTO::class)
-          )
+            schema = Schema(implementation = ReadinessProfileDTO::class),
+          ),
         ],
       ),
       ApiResponse(
         responseCode = "401",
         description = "Unauthorized to access this endpoint",
-        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))]
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
       ),
       ApiResponse(
         responseCode = "403",
         description = "Incorrect permissions to access this endpoint",
-        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))]
-      )
-    ]
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+    ],
   )
   fun chnageStatusOfOffender(
-    @Valid @Pattern(regexp = "^[A-Z]\\d{4}[A-Z]{2}\$", message = "Invalid Offender Id")
-    @PathVariable offenderId: String,
     @Valid
-    @RequestBody @Parameter statusChangeUpdateRequestDTO: StatusChangeUpdateRequestDTO,
-    @AuthenticationPrincipal oauth2User: String
+    @Pattern(regexp = "^[A-Z]\\d{4}[A-Z]{2}\$", message = "Invalid Offender Id")
+    @PathVariable
+    offenderId: String,
+    @Valid
+    @RequestBody
+    @Parameter
+    statusChangeUpdateRequestDTO: StatusChangeUpdateRequestDTO,
+    @AuthenticationPrincipal oauth2User: String,
   ): ReadinessProfileDTO {
     return ReadinessProfileDTO(
       profileService.changeStatusForOffender(
         oauth2User,
         offenderId,
-        statusChangeUpdateRequestDTO
-      )
+        statusChangeUpdateRequestDTO,
+      ),
     )
   }
 
@@ -222,26 +234,28 @@ class ProfileResourceController(
         content = [
           Content(
             mediaType = "application/json",
-            schema = Schema(implementation = ReadinessProfileDTO::class)
-          )
+            schema = Schema(implementation = ReadinessProfileDTO::class),
+          ),
         ],
       ),
       ApiResponse(
         responseCode = "401",
         description = "Unauthorized to access this endpoint",
-        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))]
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
       ),
       ApiResponse(
         responseCode = "403",
         description = "Incorrect permissions to access this endpoint",
-        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))]
-      )
-    ]
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+    ],
   )
   fun getOffenderProfile(
     @Schema(description = "offenderId", example = "A1234BC", required = true)
-    @Valid @Pattern(regexp = "^[A-Z]\\d{4}[A-Z]{2}\$")
-    @PathVariable offenderId: String
+    @Valid
+    @Pattern(regexp = "^[A-Z]\\d{4}[A-Z]{2}\$")
+    @PathVariable
+    offenderId: String,
   ): ReadinessProfileDTO {
     return ReadinessProfileDTO(profileService.getProfileForOffender(offenderId))
   }
@@ -258,31 +272,34 @@ class ProfileResourceController(
         content = [
           Content(
             mediaType = "application/json",
-            array = ArraySchema(schema = Schema(implementation = NoteDTO::class))
-          )
+            array = ArraySchema(schema = Schema(implementation = NoteDTO::class)),
+          ),
         ],
       ),
       ApiResponse(
         responseCode = "401",
         description = "Unauthorized to access this endpoint",
-        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))]
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
       ),
       ApiResponse(
         responseCode = "403",
         description = "Incorrect permissions to access this endpoint",
-        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))]
-      )
-    ]
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+    ],
   )
   fun createOffenderProfileNote(
     @Schema(description = "offenderId", example = "A1234BC", required = true)
-    @Valid @Pattern(regexp = "^[A-Z]\\d{4}[A-Z]{2}\$")
-    @PathVariable offenderId: String,
+    @Valid
+    @Pattern(regexp = "^[A-Z]\\d{4}[A-Z]{2}\$")
+    @PathVariable
+    offenderId: String,
     @Schema(description = "attribute", example = "DISCLOSURE_LETTER", required = true)
     @Valid
-    @PathVariable attribute: ActionTodo,
+    @PathVariable
+    attribute: ActionTodo,
     @RequestBody requestDTO: NoteRequestDTO,
-    @AuthenticationPrincipal oauth2User: String
+    @AuthenticationPrincipal oauth2User: String,
   ): List<NoteDTO> {
     // TODO: validate the NoteRequestDTO - field length
 
@@ -303,28 +320,31 @@ class ProfileResourceController(
         content = [
           Content(
             mediaType = "application/json",
-            array = ArraySchema(schema = Schema(implementation = NoteDTO::class))
-          )
+            array = ArraySchema(schema = Schema(implementation = NoteDTO::class)),
+          ),
         ],
       ),
       ApiResponse(
         responseCode = "401",
         description = "Unauthorized to access this endpoint",
-        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))]
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
       ),
       ApiResponse(
         responseCode = "403",
         description = "Incorrect permissions to access this endpoint",
-        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))]
-      )
-    ]
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+    ],
   )
   fun getOffenderProfileNotes(
     @Schema(description = "offenderId", example = "A1234BC", required = true)
-    @Valid @Pattern(regexp = "^[A-Z]\\d{4}[A-Z]{2}\$", message = "Invalid Offender Id")
-    @PathVariable offenderId: String,
+    @Valid
+    @Pattern(regexp = "^[A-Z]\\d{4}[A-Z]{2}\$", message = "Invalid Offender Id")
+    @PathVariable
+    offenderId: String,
     @Schema(description = "attribute", example = "DISCLOSURE_LETTER", required = true)
-    @PathVariable attribute: ActionTodo
+    @PathVariable
+    attribute: ActionTodo,
   ): List<NoteDTO> {
     return profileService.getProfileNotesForOffender(offenderId, attribute).map { note -> NoteDTO(note) }
   }

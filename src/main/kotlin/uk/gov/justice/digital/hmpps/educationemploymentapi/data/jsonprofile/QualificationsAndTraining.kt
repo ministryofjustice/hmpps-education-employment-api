@@ -14,5 +14,5 @@ enum class QualificationsAndTraining {
   TRADE,
   SCHOOL_EDUCATION,
   NONE,
-  OTHER
+  OTHER,
 }

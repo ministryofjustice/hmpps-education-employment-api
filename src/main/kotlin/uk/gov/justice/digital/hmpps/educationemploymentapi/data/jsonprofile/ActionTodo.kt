@@ -8,5 +8,5 @@ enum class ActionTodo {
   PHONE,
   HOUSING,
   ID,
-  INTERVIEW_CLOTHING
+  INTERVIEW_CLOTHING,
 }

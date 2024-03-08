@@ -21,13 +21,13 @@ import java.time.LocalDateTime
 
 @Service
 class ProfileService(
-  private val readinessProfileRepository: ReadinessProfileRepository
+  private val readinessProfileRepository: ReadinessProfileRepository,
 ) {
   fun createProfileForOffender(
     userId: String,
     offenderId: String,
     bookingId: Long,
-    profile: Profile
+    profile: Profile,
   ): ReadinessProfile {
     if (readinessProfileRepository.existsById(offenderId)) {
       throw AlreadyExistsException(offenderId)
@@ -51,8 +51,8 @@ class ProfileService(
         "1.0",
         JacksonUtil.toJsonNode(CapturedSpringMapperConfiguration.OBJECT_MAPPER.writeValueAsString(profile)),
         JacksonUtil.toJsonNode("[]"),
-        true
-      )
+        true,
+      ),
     )
   }
 
@@ -60,24 +60,25 @@ class ProfileService(
     userId: String,
     offenderId: String,
     bookingId: Long,
-    profile: Profile
+    profile: Profile,
   ): ReadinessProfile {
     var storedProfile: ReadinessProfile =
       readinessProfileRepository.findById(offenderId).orElseThrow(NotFoundException(offenderId))
     var storedCoreProfile: Profile = CapturedSpringMapperConfiguration.OBJECT_MAPPER.readValue(
-      JacksonUtil.toString(storedProfile.profileData), object : TypeReference<Profile>() {}
+      JacksonUtil.toString(storedProfile.profileData),
+      object : TypeReference<Profile>() {},
     )
     profile.supportAccepted_history = storedCoreProfile.supportAccepted_history
     profile.supportDeclined_history = storedCoreProfile.supportDeclined_history
     if (storedCoreProfile.supportAccepted == null && storedCoreProfile.supportDeclined == null && profile.supportAccepted != null && profile.supportDeclined != null) {
       throw InvalidStateException(offenderId)
     } else if (storedCoreProfile.supportAccepted != null && profile.supportAccepted != null && !profile.supportAccepted!!.equals(
-        storedCoreProfile.supportAccepted
+        storedCoreProfile.supportAccepted,
       )
     ) {
       updateAcceptedStatusList(profile, storedCoreProfile, userId, offenderId)
     } else if (storedCoreProfile.supportDeclined != null && profile.supportDeclined != null && !profile.supportDeclined?.equals(
-        storedCoreProfile.supportDeclined
+        storedCoreProfile.supportDeclined,
       )!!
     ) {
       updateDeclinedStatusList(profile, storedCoreProfile, userId, offenderId)
@@ -108,7 +109,8 @@ class ProfileService(
     var storedProfile: ReadinessProfile =
       readinessProfileRepository.findById(offenderId).orElseThrow(NotFoundException(offenderId))
     var notesList: MutableList<Note> = CapturedSpringMapperConfiguration.OBJECT_MAPPER.readValue(
-      JacksonUtil.toString(storedProfile.notesData), object : TypeReference<MutableList<Note>>() {}
+      JacksonUtil.toString(storedProfile.notesData),
+      object : TypeReference<MutableList<Note>>() {},
     )
     notesList.add(Note(userId, LocalDateTime.now(), attribute, text))
     storedProfile.notesData =
@@ -122,7 +124,8 @@ class ProfileService(
     var storedProfile: ReadinessProfile =
       readinessProfileRepository.findById(offenderId).orElseThrow(NotFoundException(offenderId))
     var notesList: List<Note> = CapturedSpringMapperConfiguration.OBJECT_MAPPER.readValue(
-      JacksonUtil.toString(storedProfile.notesData), object : TypeReference<List<Note>>() {}
+      JacksonUtil.toString(storedProfile.notesData),
+      object : TypeReference<List<Note>>() {},
     )
     return notesList.filter { n -> n.attribute == attribute }
   }
@@ -151,10 +154,11 @@ class ProfileService(
     userId: String,
     offenderId: String,
     statusChangeUpdateRequestDTO: StatusChangeUpdateRequestDTO,
-    storedProfile: ReadinessProfile
+    storedProfile: ReadinessProfile,
   ): Profile {
     var profile: Profile = CapturedSpringMapperConfiguration.OBJECT_MAPPER.readValue(
-      JacksonUtil.toString(storedProfile.profileData), object : TypeReference<Profile>() {}
+      JacksonUtil.toString(storedProfile.profileData),
+      object : TypeReference<Profile>() {},
     )
     checkDeclinedProfileStatus(profile, offenderId)
     profile.statusChangeDate = LocalDateTime.now()
@@ -185,7 +189,7 @@ class ProfileService(
   fun changeStatusForOffender(
     userId: String,
     offenderId: String,
-    statusChangeUpdateRequestDTO: StatusChangeUpdateRequestDTO?
+    statusChangeUpdateRequestDTO: StatusChangeUpdateRequestDTO?,
   ): ReadinessProfile {
     var storedProfile: ReadinessProfile =
       readinessProfileRepository.findById(offenderId).orElseThrow(NotFoundException(offenderId))
@@ -201,7 +205,8 @@ class ProfileService(
       storedCoreProfile.status = statusChangeUpdateRequestDTO.status
     } else if (statusChangeUpdateRequestDTO!!.status.equals(ProfileStatus.READY_TO_WORK) || statusChangeUpdateRequestDTO.status.equals(ProfileStatus.NO_RIGHT_TO_WORK)) {
       storedCoreProfile = CapturedSpringMapperConfiguration.OBJECT_MAPPER.readValue(
-        JacksonUtil.toString(storedProfile.profileData), object : TypeReference<Profile>() {}
+        JacksonUtil.toString(storedProfile.profileData),
+        object : TypeReference<Profile>() {},
       )
       storedCoreProfile!!.status = statusChangeUpdateRequestDTO!!.status
     } else {
@@ -221,10 +226,11 @@ class ProfileService(
     userId: String,
     offenderId: String,
     statusChangeUpdateRequestDTO: StatusChangeUpdateRequestDTO,
-    storedProfile: ReadinessProfile
+    storedProfile: ReadinessProfile,
   ): Profile {
     var profile: Profile = CapturedSpringMapperConfiguration.OBJECT_MAPPER.readValue(
-      JacksonUtil.toString(storedProfile.profileData), object : TypeReference<Profile>() {}
+      JacksonUtil.toString(storedProfile.profileData),
+      object : TypeReference<Profile>() {},
     )
     profile.statusChangeDate = LocalDateTime.now()
     profile.statusChangeType = StatusChange.ACCEPTED_TO_DECLINED
@@ -247,7 +253,7 @@ class ProfileService(
     profile: Profile,
     userId: String,
     offenderId: String,
-    storedProfile: ReadinessProfile
+    storedProfile: ReadinessProfile,
   ) {
     val statusChangeUpdateRequestDTO: StatusChangeUpdateRequestDTO =
       StatusChangeUpdateRequestDTO(profile.supportAccepted!!, null, profile.status)
@@ -260,7 +266,7 @@ class ProfileService(
     profile: Profile,
     userId: String,
     offenderId: String,
-    storedProfile: ReadinessProfile
+    storedProfile: ReadinessProfile,
   ) {
     val statusChangeUpdateRequestDTO: StatusChangeUpdateRequestDTO =
       StatusChangeUpdateRequestDTO(null, profile.supportDeclined!!, profile.status)

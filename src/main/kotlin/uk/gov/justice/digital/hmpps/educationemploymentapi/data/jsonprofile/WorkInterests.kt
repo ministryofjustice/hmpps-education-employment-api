@@ -8,5 +8,5 @@ data class WorkInterests(
 
   val workTypesOfInterest: List<WorkTypesOfInterest>,
   val workTypesOfInterestOther: String,
-  val jobOfParticularInterest: String
+  val jobOfParticularInterest: String,
 )

@@ -39,7 +39,6 @@ import uk.gov.justice.digital.hmpps.educationemploymentapi.service.TestData
 @WebMvcTest(controllers = [SARResourceController::class])
 @AutoConfigureMockMvc(addFilters = false)
 @ContextConfiguration(classes = [SARResourceController::class])
-
 @WebAppConfiguration
 class SARResourceControllerTest {
 
@@ -73,7 +72,8 @@ class SARResourceControllerTest {
       .andExpect(content().contentType(APPLICATION_JSON))
       .andReturn()
     val actualSARReadinessProfileDTO = mapper.readValue(
-      result.response.contentAsString, object : TypeReference<SARReadinessProfileDTO>() {}
+      result.response.contentAsString,
+      object : TypeReference<SARReadinessProfileDTO>() {},
     )
     Assertions.assertThat(actualSARReadinessProfileDTO).extracting(TestData.createdByString, TestData.offenderIdString, TestData.bookingIdString, TestData.noteDataString)
       .contains(TestData.createdBy, TestData.newOffenderId, TestData.newBookingId, TestData.note)
@@ -82,7 +82,7 @@ class SARResourceControllerTest {
 
   internal fun setAuthorisation(
     user: String = "test-client",
-    roles: List<String> = listOf()
+    roles: List<String> = listOf(),
   ): (HttpHeaders) {
     return jwtAuthHelper.setAuthorisationForUnitTests(user, roles)
   }
