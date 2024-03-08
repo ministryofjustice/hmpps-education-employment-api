@@ -14,7 +14,7 @@ import uk.gov.justice.digital.hmpps.educationemploymentapi.data.NoteRequestDTO
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.ReadinessProfileDTO
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.ReadinessProfileRequestDTO
 import uk.gov.justice.digital.hmpps.educationemploymentapi.repository.ReadinessProfileRepository
-import uk.gov.justice.digital.hmpps.educationemploymentapi.service.TestData
+import uk.gov.justice.digital.hmpps.hmppscandidatematchingapi.integration.TestData
 
 @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 class ReadinessProfileIntTest : IntegrationTestBase() {

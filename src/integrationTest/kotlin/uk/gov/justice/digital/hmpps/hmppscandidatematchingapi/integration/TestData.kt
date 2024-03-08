@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.educationemploymentapi
+package uk.gov.justice.digital.hmpps.hmppscandidatematchingapi.integration
 
 import com.vladmihalcea.hibernate.type.json.internal.JacksonUtil
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.AbilityToWorkImpactedBy
