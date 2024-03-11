@@ -9,11 +9,11 @@ import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
+import uk.gov.justice.digital.hmpps.educationemploymentapi.TestData
 import uk.gov.justice.digital.hmpps.educationemploymentapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.ReadinessProfileDTO
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.ReadinessProfileRequestDTO
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.SARReadinessProfileDTO
-import uk.gov.justice.digital.hmpps.educationemploymentapi.service.TestData
 
 @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 class SARReadinessProfileIntTest : IntegrationTestBase() {
@@ -22,7 +22,6 @@ class SARReadinessProfileIntTest : IntegrationTestBase() {
 
   @Test
   fun `Get the exception for profile for a unknown offender when requesting  a SAR `() {
-
     val result = restTemplate.exchange("/subject-access-request/A1234BD", HttpMethod.GET, HttpEntity<HttpHeaders>(setAuthorisation(roles = listOf("ROLE_SAR_DATA_ACCESS"))), ErrorResponse::class.java)
     assertThat(result).isNotNull
     val erroResponse = result.body
@@ -33,7 +32,8 @@ class SARReadinessProfileIntTest : IntegrationTestBase() {
   @Test
   fun `Get a profile for an offender For SAR`() {
     val actualReadinessProfileRequestDTO = objectMapper.readValue(
-      TestData.createProfileJsonRequest, object : TypeReference<ReadinessProfileRequestDTO>() {}
+      TestData.createProfileJsonRequest,
+      object : TypeReference<ReadinessProfileRequestDTO>() {},
     )
     val result = restTemplate.exchange("/readiness-profiles/A1234BB", HttpMethod.POST, HttpEntity<ReadinessProfileRequestDTO>(actualReadinessProfileRequestDTO, setAuthorisation(roles = listOf("ROLE_WORK_READINESS_EDIT", "ROLE_WORK_READINESS_VIEW"))), ReadinessProfileDTO::class.java)
     assertThat(result).isNotNull

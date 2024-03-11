@@ -6,5 +6,5 @@ data class ActionsRequired(
   val modifiedBy: String,
   val modifiedDateTime: LocalDateTime,
 
-  val actions: List<Action>
+  val actions: List<Action>,
 )

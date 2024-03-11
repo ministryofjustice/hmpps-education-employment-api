@@ -5,5 +5,5 @@ enum class CircumstanceChangesRequiredToWork {
   ID_ON_RELEASE,
   DEPENDENCY_SUPPORT,
   MENTAL_HEALTH_SUPPORT,
-  OTHER
+  OTHER,
 }

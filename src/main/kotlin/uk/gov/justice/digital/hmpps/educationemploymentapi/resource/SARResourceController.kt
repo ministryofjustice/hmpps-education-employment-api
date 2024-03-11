@@ -4,6 +4,8 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
+import jakarta.validation.Valid
+import jakarta.validation.constraints.Pattern
 import org.springframework.http.MediaType
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
@@ -14,8 +16,6 @@ import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.educationemploymentapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.SARReadinessProfileDTO
 import uk.gov.justice.digital.hmpps.educationemploymentapi.service.ProfileService
-import javax.validation.Valid
-import javax.validation.constraints.Pattern
 
 @Validated
 @RestController
@@ -35,26 +35,28 @@ class SARResourceController(
         content = [
           Content(
             mediaType = "application/json",
-            schema = Schema(implementation = SARReadinessProfileDTO::class)
-          )
+            schema = Schema(implementation = SARReadinessProfileDTO::class),
+          ),
         ],
       ),
       ApiResponse(
         responseCode = "401",
         description = "Unauthorized to access this endpoint",
-        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))]
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
       ),
       ApiResponse(
         responseCode = "403",
         description = "Incorrect permissions to access this endpoint",
-        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))]
-      )
-    ]
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+    ],
   )
   fun getOffenderProfile(
     @Schema(description = "offenderId", example = "A1234BC", required = true)
-    @Valid @Pattern(regexp = "^[A-Z]\\d{4}[A-Z]{2}\$")
-    @PathVariable offenderId: String
+    @Valid
+    @Pattern(regexp = "^[A-Z]\\d{4}[A-Z]{2}\$")
+    @PathVariable
+    offenderId: String,
   ): SARReadinessProfileDTO {
     return SARReadinessProfileDTO(profileService.getProfileForOffender(offenderId))
   }

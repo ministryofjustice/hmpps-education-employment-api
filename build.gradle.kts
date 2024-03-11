@@ -1,111 +1,120 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.5.1"
-  kotlin("plugin.spring") version "1.7.10"
-  kotlin("plugin.jpa") version "1.7.10"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "5.10.1"
+  kotlin("plugin.spring") version "1.9.21"
+  kotlin("plugin.jpa") version "1.9.21"
+  id("name.remal.integration-tests") version "4.0.2"
+  id("jvm-test-suite")
   id("jacoco")
-  kotlin("jvm") version "1.8.22"
 }
 
 configurations {
+  implementation {
+    exclude(module = "commons-logging")
+    exclude(module = "log4j")
+  }
   testImplementation { exclude(group = "org.junit.vintage") }
 }
 
-val integrationTest = task<Test>("integrationTest") {
-  description = "Integration tests"
-  group = "verification"
-  shouldRunAfter("test")
-}
-
-tasks.named<Test>("integrationTest") {
-  useJUnitPlatform()
-  filter {
-    includeTestsMatching("*.Int.*")
-  }
-}
-
-tasks.named<Test>("test") {
-  filter {
-    excludeTestsMatching("*.Int.*")
-  }
-}
-
-tasks.named("check") {
-  setDependsOn(
-    dependsOn.filterNot {
-      it is TaskProvider<*> && it.name == "detekt"
+testing {
+  suites {
+    val test by getting(JvmTestSuite::class) {
+      useJUnitJupiter()
     }
-  )
+  }
 }
 
 dependencies {
   annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+  annotationProcessor("org.projectlombok:lombok:1.18.30")
+  testAnnotationProcessor("org.projectlombok:lombok:1.18.30")
 
-  // Spring boot dependencies
-  implementation("org.springframework.boot:spring-boot-starter-security")
-  implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
+  implementation("org.springframework.boot:spring-boot-starter-aop")
+  implementation("org.springframework.boot:spring-boot-starter-validation")
+  implementation("org.springframework.boot:spring-boot-starter-jdbc")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-  implementation("org.springframework.boot:spring-boot-starter-actuator")
+  implementation("org.springframework.boot:spring-boot-starter-security")
+  implementation("org.springframework.boot:spring-boot-starter-cache")
+  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:2.1.1")
+  implementation("com.vladmihalcea:hibernate-types-60:2.21.1")
+  implementation("io.opentelemetry.instrumentation:opentelemetry-instrumentation-annotations:1.29.0")
+  implementation("com.microsoft.azure:applicationinsights-logging-logback:2.6.4")
 
-  // GOVUK Notify:
-  implementation("uk.gov.service.notify:notifications-java-client:3.17.3-RELEASE")
+  developmentOnly("org.springframework.boot:spring-boot-devtools")
 
-  // Enable kotlin reflect
-  implementation("org.jetbrains.kotlin:kotlin-reflect:1.6.20")
+  implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
 
-  // Database dependencies
-  runtimeOnly("org.flywaydb:flyway-core")
+  implementation("commons-codec:commons-codec:1.16.0")
+  implementation("io.swagger:swagger-annotations:1.6.12")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0")
+
+  implementation("org.apache.commons:commons-lang3:3.14.0")
+  implementation("commons-io:commons-io:2.15.1")
+  implementation("com.google.guava:guava:32.1.3-jre")
+
+  implementation("org.ehcache:ehcache:3.10.8")
+  implementation("com.zaxxer:HikariCP:5.1.0")
+  implementation("com.oracle.database.jdbc:ojdbc10:19.21.0.0")
+  implementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
+  implementation("org.hibernate.orm:hibernate-community-dialects")
+
+// Database dependencies
+  implementation("org.flywaydb:flyway-core")
   runtimeOnly("org.postgresql:postgresql:42.4.0")
-
-  implementation("io.arrow-kt:arrow-core:1.1.2")
-  implementation("com.vladmihalcea:hibernate-types-52:2.16.2")
-
-  // OpenAPI
-  implementation("org.springdoc:springdoc-openapi-ui:1.6.9")
-  implementation("org.springdoc:springdoc-openapi-data-rest:1.6.9")
-  implementation("org.springdoc:springdoc-openapi-kotlin:1.6.9")
-
-  implementation("com.google.code.gson:gson:2.9.0")
-
-  // Test dependencies
-  testImplementation("com.github.tomakehurst:wiremock-standalone:2.27.2")
   testImplementation("org.springframework.security:spring-security-test")
-  testImplementation("io.jsonwebtoken:jjwt:0.9.1")
-  testImplementation("net.javacrumbs.json-unit:json-unit-assertj:2.35.0")
-  testImplementation("io.swagger.parser.v3:swagger-parser-v2-converter:2.0.33")
-  testImplementation("org.mockito:mockito-inline:4.6.1")
-  testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
-  testImplementation("com.h2database:h2")
-  implementation(kotlin("stdlib-jdk8"))
-}
-repositories {
-  mavenCentral()
-}
+  testImplementation("io.jsonwebtoken:jjwt-impl:0.12.3")
+  testImplementation("io.jsonwebtoken:jjwt-jackson:0.12.3")
+  testImplementation("org.mockito:mockito-inline:5.2.0")
+  testImplementation("io.mockk:mockk:1.13.9")
+  testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.0")
+  testImplementation("org.junit.jupiter:junit-jupiter")
+  testImplementation("org.testcontainers:localstack")
 
-jacoco {
-  // You may modify the Jacoco version here
-  toolVersion = "0.8.8"
+  testImplementation("io.kotest:kotest-runner-junit5:5.8.0")
+  testImplementation("io.kotest:kotest-assertions-core:5.8.0")
+  testImplementation("io.kotest:kotest-property:5.8.0")
+  testImplementation("com.h2database:h2")
 }
 
 kotlin {
-  jvmToolchain {
-    this.languageVersion.set(JavaLanguageVersion.of("18"))
+  jvmToolchain(21)
+}
+kotlin {
+  sourceSets["main"].apply {
+    kotlin.srcDir("${layout.buildDirectory}/generated/src/main/kotlin")
   }
 }
-
 java {
-  toolchain.languageVersion.set(JavaLanguageVersion.of(18))
+  sourceCompatibility = JavaVersion.VERSION_21
+  targetCompatibility = JavaVersion.VERSION_21
 }
 
-dependencyCheck {
-  suppressionFiles.add("$rootDir/dependencyCheck/suppression.xml")
+repositories {
+  mavenCentral()
 }
-val compileKotlin: KotlinCompile by tasks
-compileKotlin.kotlinOptions {
-  jvmTarget = "1.8"
-}
-val compileTestKotlin: KotlinCompile by tasks
-compileTestKotlin.kotlinOptions {
-  jvmTarget = "1.8"
+tasks {
+  withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+    kotlinOptions {
+      jvmTarget = "21"
+    }
+    withType<JavaCompile> {
+      sourceCompatibility = "21"
+    }
+
+    named<JacocoReport>("jacocoTestReport") {
+      dependsOn(named("check"))
+      reports {
+        html.required.set(true)
+        xml.required.set(true)
+      }
+    }
+    finalizedBy(named("jacocoTestReport"))
+    named("assemble") {
+      doFirst {
+        delete(
+          fileTree(project.layout.buildDirectory.get())
+            .include("libs/*.jar")
+        )
+      }
+    }
+  }
 }

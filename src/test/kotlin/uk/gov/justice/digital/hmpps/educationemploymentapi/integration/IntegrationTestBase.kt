@@ -29,8 +29,8 @@ import uk.gov.justice.digital.hmpps.educationemploymentapi.helpers.JwtAuthHelper
 @SpringBootTest(
   webEnvironment = RANDOM_PORT,
   classes = arrayOf(
-    HmppsEducationEmploymentApi::class
-  )
+    HmppsEducationEmploymentApi::class,
+  ),
 )
 @ActiveProfiles("test")
 class IntegrationTestBase internal constructor() {
@@ -42,7 +42,7 @@ class IntegrationTestBase internal constructor() {
   lateinit var jwtAuthHelper: JwtAuthHelper
   internal fun setAuthorisation(
     user: String = "test-client",
-    roles: List<String> = listOf()
+    roles: List<String> = listOf(),
   ): (HttpHeaders) {
     return jwtAuthHelper.setAuthorisationForUnitTests(user, roles)
   }

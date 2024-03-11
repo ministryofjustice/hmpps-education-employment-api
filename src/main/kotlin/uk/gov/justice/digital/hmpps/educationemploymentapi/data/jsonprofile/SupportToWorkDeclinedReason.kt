@@ -11,5 +11,5 @@ enum class SupportToWorkDeclinedReason {
   NO_REASON,
   ALREADY_HAS_WORK,
   HOUSING_NOT_IN_PLACE,
-  OTHER
+  OTHER,
 }

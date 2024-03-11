@@ -11,6 +11,7 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import uk.gov.justice.digital.hmpps.educationemploymentapi.TestData
 import uk.gov.justice.digital.hmpps.educationemploymentapi.config.CapturedSpringMapperConfiguration
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.ActionTodo
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.Profile
@@ -30,6 +31,7 @@ class ProfileServiceTest {
   fun beforeEach() {
     profileService = ProfileService(readinessProfileRepository)
   }
+
   @Test
   fun `makes a call to the repository to save the readiness profile`() {
     whenever(readinessProfileRepository.save(any())).thenReturn(TestData.readinessProfile)
@@ -65,7 +67,8 @@ class ProfileServiceTest {
     assertThat(rProfile).extracting(TestData.createdByString, TestData.offenderIdString, TestData.bookingIdString)
       .contains(TestData.updatedBy, TestData.newOffenderId, TestData.updatedBookingId)
     var storedCoreProfile: Profile = CapturedSpringMapperConfiguration.OBJECT_MAPPER.readValue(
-      JacksonUtil.toString(rProfile.profileData), object : TypeReference<Profile>() {}
+      JacksonUtil.toString(rProfile.profileData),
+      object : TypeReference<Profile>() {},
     )
     assertThat(storedCoreProfile.prisonName)
       .isEqualTo(TestData.profile.prisonName)
@@ -80,7 +83,8 @@ class ProfileServiceTest {
     val argumentCaptor = ArgumentCaptor.forClass(ReadinessProfile::class.java)
     verify(readinessProfileRepository).save(argumentCaptor.capture())
     var storedCoreProfile: Profile = CapturedSpringMapperConfiguration.OBJECT_MAPPER.readValue(
-      JacksonUtil.toString(rProfile.profileData), object : TypeReference<Profile>() {}
+      JacksonUtil.toString(rProfile.profileData),
+      object : TypeReference<Profile>() {},
     )
     assertThat(storedCoreProfile.supportDeclined_history!!.size == 1)
   }
@@ -94,7 +98,8 @@ class ProfileServiceTest {
     val argumentCaptor = ArgumentCaptor.forClass(ReadinessProfile::class.java)
     verify(readinessProfileRepository).save(argumentCaptor.capture())
     var storedCoreProfile: Profile = CapturedSpringMapperConfiguration.OBJECT_MAPPER.readValue(
-      JacksonUtil.toString(rProfile.profileData), object : TypeReference<Profile>() {}
+      JacksonUtil.toString(rProfile.profileData),
+      object : TypeReference<Profile>() {},
     )
     assertThat(storedCoreProfile.supportDeclined_history!!.size == 1)
     assertThat(storedCoreProfile.statusChangeType!!.equals(StatusChange.DECLINED_TO_ACCEPTED))
@@ -109,7 +114,8 @@ class ProfileServiceTest {
     val argumentCaptor = ArgumentCaptor.forClass(ReadinessProfile::class.java)
     verify(readinessProfileRepository).save(argumentCaptor.capture())
     var storedCoreProfile: Profile = CapturedSpringMapperConfiguration.OBJECT_MAPPER.readValue(
-      JacksonUtil.toString(rProfile.profileData), object : TypeReference<Profile>() {}
+      JacksonUtil.toString(rProfile.profileData),
+      object : TypeReference<Profile>() {},
     )
     assertThat(storedCoreProfile.supportAccepted_history!!.size == 1)
     assertThat(storedCoreProfile.statusChangeType!!.equals(StatusChange.ACCEPTED_TO_DECLINED))
@@ -124,7 +130,8 @@ class ProfileServiceTest {
     val argumentCaptor = ArgumentCaptor.forClass(ReadinessProfile::class.java)
     verify(readinessProfileRepository).save(argumentCaptor.capture())
     var storedCoreProfile: Profile = CapturedSpringMapperConfiguration.OBJECT_MAPPER.readValue(
-      JacksonUtil.toString(rProfile.profileData), object : TypeReference<Profile>() {}
+      JacksonUtil.toString(rProfile.profileData),
+      object : TypeReference<Profile>() {},
     )
     assertThat(storedCoreProfile.supportAccepted_history!!.size == 1)
   }
@@ -138,7 +145,8 @@ class ProfileServiceTest {
     val argumentCaptor = ArgumentCaptor.forClass(ReadinessProfile::class.java)
     verify(readinessProfileRepository).save(argumentCaptor.capture())
     var storedCoreProfile: Profile = CapturedSpringMapperConfiguration.OBJECT_MAPPER.readValue(
-      JacksonUtil.toString(rProfile.profileData), object : TypeReference<Profile>() {}
+      JacksonUtil.toString(rProfile.profileData),
+      object : TypeReference<Profile>() {},
     )
     assertThat(storedCoreProfile.supportDeclined_history!!.size == 2)
   }
@@ -152,7 +160,8 @@ class ProfileServiceTest {
     val argumentCaptor = ArgumentCaptor.forClass(ReadinessProfile::class.java)
     verify(readinessProfileRepository).save(argumentCaptor.capture())
     var storedCoreProfile: Profile = CapturedSpringMapperConfiguration.OBJECT_MAPPER.readValue(
-      JacksonUtil.toString(rProfile.profileData), object : TypeReference<Profile>() {}
+      JacksonUtil.toString(rProfile.profileData),
+      object : TypeReference<Profile>() {},
     )
     assertThat(storedCoreProfile.supportDeclined_history!!.size == 0)
   }
@@ -190,6 +199,7 @@ class ProfileServiceTest {
     val profileList = profileService.getProfilesForOffenders(TestData.offenderIdList)
     assert(profileList.containsAll(TestData.profileList))
   }
+
   @Test
   fun `throws an exception when a call is made to the repository to save the readiness profile`() {
     assertThatExceptionOfType(AlreadyExistsException::class.java).isThrownBy {
@@ -209,6 +219,7 @@ class ProfileServiceTest {
       profileService.createProfileForOffender(TestData.createdBy, TestData.newOffenderId, TestData.newBookingId, TestData.profile_IncorrectStatus)
     }.withMessageContaining("Readiness profile is in an invalid state for")
   }
+
   @Test
   fun `throws an exception when a call is made to the repository to save the readiness profile with both support state`() {
     assertThatExceptionOfType(InvalidStateException::class.java).isThrownBy {
@@ -235,6 +246,7 @@ class ProfileServiceTest {
       profileService.addProfileNoteForOffender(TestData.createdBy, TestData.newOffenderId, ActionTodo.BANK_ACCOUNT, TestData.newNotes)
     }.withMessageContaining("Readiness profile does not exist for offender")
   }
+
   @Test
   fun `throws an exception when a call is made to the repository to retreive a note from a non existing readiness profile`() {
     assertThatExceptionOfType(NotFoundException::class.java).isThrownBy {

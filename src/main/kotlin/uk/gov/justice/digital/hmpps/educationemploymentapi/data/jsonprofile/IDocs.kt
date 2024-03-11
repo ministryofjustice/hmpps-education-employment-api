@@ -5,5 +5,5 @@ enum class IDocs {
   BIRTH_CERTIFICATE,
   DRIVING_LICENCE,
   PASSPORT,
-  OTHER
+  OTHER,
 }

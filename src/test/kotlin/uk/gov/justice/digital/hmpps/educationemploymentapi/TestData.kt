@@ -1,7 +1,6 @@
-package uk.gov.justice.digital.hmpps.educationemploymentapi.service
+package uk.gov.justice.digital.hmpps.educationemploymentapi
 
 import com.vladmihalcea.hibernate.type.json.internal.JacksonUtil
-import uk.gov.justice.digital.hmpps.educationemploymentapi.TestUtil
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.AbilityToWorkImpactedBy
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.Action
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.ActionStatus
@@ -21,6 +20,7 @@ import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.Work
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.WorkInterests
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.WorkTypesOfInterest
 import uk.gov.justice.digital.hmpps.educationemploymentapi.entity.ReadinessProfile
+import uk.gov.justice.digital.hmpps.educationemploymentapi.service.ProfileService
 import java.io.File
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -76,24 +76,37 @@ class TestData {
     val qualificationsAndTrainingList = listOf(QualificationsAndTraining.ADVANCED_EDUCATION)
 
     val actionsRequired = ActionsRequired(
-      updatedBy, modifiedTime, actionList
+      updatedBy,
+      modifiedTime,
+      actionList,
     )
 
     val actionsModifedRequired = ActionsRequired(
-      updatedBy, modifiedTime, actionModifiedList
+      updatedBy,
+      modifiedTime,
+      actionModifiedList,
     )
     val workImpacts = WorkImpacts(
-      updatedBy, modifiedTime, abilityToWorkImpactedByList, booleanTrue, booleanTrue, booleanTrue
+      updatedBy,
+      modifiedTime,
+      abilityToWorkImpactedByList,
+      booleanTrue,
+      booleanTrue,
+      booleanTrue,
     )
     val workInterests = WorkInterests(
-      updatedBy, modifiedTime, workTypesOfInterestList, workTypesOfInterestOther, jobOfParticularInterests
+      updatedBy,
+      modifiedTime,
+      workTypesOfInterestList,
+      workTypesOfInterestOther,
+      jobOfParticularInterests,
     )
     val workExperience = WorkExperience(
       updatedBy,
       modifiedTime,
       previousWorkOrVolunteering_NONE,
       qualificationsAndTrainingList,
-      qualificationAndTrainingOther
+      qualificationAndTrainingOther,
     )
 
     val supportDeclined: SupportDeclined = SupportDeclined(
@@ -102,7 +115,7 @@ class TestData {
       supportDeclinedReasonList,
       emptyString,
       circumstanceChangesRequiredToWorkList,
-      emptyString
+      emptyString,
     )
 
     val supportDeclinedModified: SupportDeclined = SupportDeclined(
@@ -111,7 +124,7 @@ class TestData {
       supportDeclinedReasonModifiedList,
       emptyString,
       circumstanceChangesRequiredToWorkList,
-      emptyString
+      emptyString,
     )
     val supportDeclinedModifiedOther: SupportDeclined = SupportDeclined(
       createdBy,
@@ -119,22 +132,44 @@ class TestData {
       supportDeclinedReasonModifiedList,
       "ModifiedString",
       circumstanceChangesRequiredToWorkList,
-      emptyString
+      emptyString,
     )
     val supportAccepted: SupportAccepted = SupportAccepted(
-      null, null, actionsRequired, workImpacts, workInterests, workExperience
+      null,
+      null,
+      actionsRequired,
+      workImpacts,
+      workInterests,
+      workExperience,
     )
     val supportAcceptedModified: SupportAccepted = SupportAccepted(
-      null, null, actionsModifedRequired, workImpacts, workInterests, workExperience
+      null,
+      null,
+      actionsModifedRequired,
+      workImpacts,
+      workInterests,
+      workExperience,
     )
-    val profile: Profile = Profile(profileStatus_NO_RIGHT_TO_WORK, false, null, "prison2", StatusChange.NEW, mutableListOf(supportDeclined), mutableListOf(supportAccepted), supportDeclined, null)
+    val profile: Profile = Profile(
+      profileStatus_NO_RIGHT_TO_WORK, false, null, "prison2", StatusChange.NEW,
+      mutableListOf(
+        supportDeclined,
+      ),
+      mutableListOf(supportAccepted), supportDeclined, null,
+    )
     val note: Note = Note("sacintha", LocalDateTime.of(LocalDate.of(2024, 1, 1), LocalTime.of(0, 0)), ActionTodo.DISCLOSURE_LETTER, "test comment")
 
     val profile_declined: Profile = Profile(profileStatus_NO_RIGHT_TO_WORK, false, null, "prison2", StatusChange.NEW, null, null, supportDeclined, null)
-    val profile_declined_declined_list: Profile = Profile(profileStatus_NO_RIGHT_TO_WORK, false, null, "prison2", StatusChange.NEW, mutableListOf(supportDeclinedModifiedOther), null, supportDeclined, null)
+    val profile_declined_declined_list: Profile = Profile(
+      profileStatus_NO_RIGHT_TO_WORK, false, null, "prison2", StatusChange.NEW,
+      mutableListOf(
+        supportDeclinedModifiedOther,
+      ),
+      null, supportDeclined, null,
+    )
     val profile_declinedModified: Profile = Profile(
       profileStatus_NO_RIGHT_TO_WORK, false, null, "prison2", StatusChange.NEW, mutableListOf(supportDeclined), null,
-      supportDeclinedModified, null
+      supportDeclinedModified, null,
     )
 
     val profile_accpeted: Profile = Profile(profileStatus_SUPPORT_NEEDED, false, null, "prison2", StatusChange.NEW, null, null, null, supportAccepted)
@@ -151,8 +186,8 @@ class TestData {
         "1.0",
         JacksonUtil.toJsonNode(TestUtil.objectMapper().writeValueAsString(profile_accpeted)),
         JacksonUtil.toJsonNode("{}"),
-        booleanTrue
-      )
+        booleanTrue,
+      ),
     )
 
     val updatedReadinessProfile_accpeted_1 = Optional.of(
@@ -166,8 +201,8 @@ class TestData {
         "1.0",
         JacksonUtil.toJsonNode(TestUtil.objectMapper().writeValueAsString(profile_accpeted_modified)),
         JacksonUtil.toJsonNode("[]"),
-        booleanTrue
-      )
+        booleanTrue,
+      ),
     )
     val readinessProfile_declined_1 = Optional.of(
       ReadinessProfile(
@@ -180,8 +215,8 @@ class TestData {
         "1.0",
         JacksonUtil.toJsonNode(TestUtil.objectMapper().writeValueAsString(profile_declined)),
         JacksonUtil.toJsonNode("{}"),
-        booleanTrue
-      )
+        booleanTrue,
+      ),
     )
     val readinessProfile_declined_1_declined_list = Optional.of(
       ReadinessProfile(
@@ -194,8 +229,8 @@ class TestData {
         "1.0",
         JacksonUtil.toJsonNode(TestUtil.objectMapper().writeValueAsString(profile_declined_declined_list)),
         JacksonUtil.toJsonNode("{}"),
-        booleanTrue
-      )
+        booleanTrue,
+      ),
     )
     val updatedReadinessProfile_declined_1 = Optional.of(
       ReadinessProfile(
@@ -208,14 +243,23 @@ class TestData {
         "1.0",
         JacksonUtil.toJsonNode(TestUtil.objectMapper().writeValueAsString(profile_declinedModified)),
         JacksonUtil.toJsonNode("[]"),
-        booleanTrue
-      )
+        booleanTrue,
+      ),
     )
     val profile_IncorrectStatus: Profile = Profile(
-      profileStatus_SUPPORT_NEEDED, false, null, "prison1", StatusChange.NEW, mutableListOf(supportDeclined), mutableListOf(supportAccepted),
-      supportDeclined, null
+      profileStatus_SUPPORT_NEEDED, false, null, "prison1", StatusChange.NEW, mutableListOf(supportDeclined),
+      mutableListOf(
+        supportAccepted,
+      ),
+      supportDeclined, null,
     )
-    val profile_NEW_BOTHSTATE_INCOORECT: Profile = Profile(profileStatus_NO_RIGHT_TO_WORK, false, null, "prison2", StatusChange.NEW, mutableListOf(supportDeclined), mutableListOf(supportAccepted), supportDeclined, supportAccepted)
+    val profile_NEW_BOTHSTATE_INCOORECT: Profile = Profile(
+      profileStatus_NO_RIGHT_TO_WORK, false, null, "prison2", StatusChange.NEW,
+      mutableListOf(
+        supportDeclined,
+      ),
+      mutableListOf(supportAccepted), supportDeclined, supportAccepted,
+    )
 
     val readinessProfile = ReadinessProfile(
       newOffenderId,
@@ -227,7 +271,7 @@ class TestData {
       "1.0",
       JacksonUtil.toJsonNode(TestUtil.objectMapper().writeValueAsString(profile)),
       JacksonUtil.toJsonNode("{}"),
-      booleanTrue
+      booleanTrue,
     )
 
     val updatedReadinessProfile = Optional.of(
@@ -241,8 +285,8 @@ class TestData {
         "1.0",
         JacksonUtil.toJsonNode(TestUtil.objectMapper().writeValueAsString(profile)),
         JacksonUtil.toJsonNode("[]"),
-        booleanTrue
-      )
+        booleanTrue,
+      ),
     )
     val updatedReadinessProfileNotes = Optional.of(
       ReadinessProfile(
@@ -260,10 +304,10 @@ class TestData {
             "        \"createdDateTime\": \"2022-09-22T09:52:53.422898\",\n" +
             "        \"attribute\": \"CV_AND_COVERING_LETTER\",\n" +
             "        \"text\": \"Mary had another little lamb\"\n" +
-            "    }]"
+            "    }]",
         ),
-        booleanTrue
-      )
+        booleanTrue,
+      ),
     )
 
     var profileList = listOf<ReadinessProfile>(readinessProfile, updatedReadinessProfileNotes.get())
@@ -295,7 +339,7 @@ class TestData {
       "1.0",
       JacksonUtil.toJsonNode(TestUtil.objectMapper().writeValueAsString(profile)),
       JacksonUtil.toJsonNode(TestUtil.objectMapper().writeValueAsString(note)),
-      booleanTrue
+      booleanTrue,
     )
   }
 }

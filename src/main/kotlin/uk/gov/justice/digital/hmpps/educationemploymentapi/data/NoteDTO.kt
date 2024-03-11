@@ -15,12 +15,12 @@ data class NoteDTO(
   val attribute: String,
 
   @Schema(description = "The notes text", example = "Will call manager to arrange this")
-  val text: String
+  val text: String,
 ) {
   constructor(note: Note) : this(
     createdBy = note.createdBy,
     createdDateTime = note.createdDateTime,
     attribute = note.attribute.name,
-    text = note.text
+    text = note.text,
   )
 }
