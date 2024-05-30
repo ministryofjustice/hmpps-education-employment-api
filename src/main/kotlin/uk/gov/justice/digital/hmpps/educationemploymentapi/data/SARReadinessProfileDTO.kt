@@ -45,6 +45,10 @@ data class SARReadinessProfileDTO(
     modifiedDateTime = profileEntity.modifiedDateTime,
     schemaVersion = profileEntity.schemaVersion,
     profileData = CapturedSpringMapperConfiguration.OBJECT_MAPPER.readValue(JacksonUtil.toString(profileEntity.profileData), Profile::class.java),
-    noteData = if (profileEntity.notesData.isEmpty) null else { CapturedSpringMapperConfiguration.OBJECT_MAPPER.readValue(JacksonUtil.toString(profileEntity.notesData), Note::class.java) },
+    noteData = if (profileEntity.notesData.isEmpty) {
+      null
+    } else {
+      CapturedSpringMapperConfiguration.OBJECT_MAPPER.readValue(JacksonUtil.toString(profileEntity.notesData), Note::class.java)
+    },
   )
 }

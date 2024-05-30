@@ -2,10 +2,10 @@ package uk.gov.justice.digital.hmpps.educationemploymentapi.data
 
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.Valid
+import org.springframework.lang.Nullable
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.ProfileStatus
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.SupportAccepted
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.SupportDeclined
-import javax.annotation.Nullable
 
 data class StatusChangeUpdateRequestDTO(
 
