@@ -1,10 +1,11 @@
 package uk.gov.justice.digital.hmpps.educationemploymentapi.config
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException
-import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
+import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import jakarta.validation.ValidationException
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatusCode
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.security.access.AccessDeniedException
@@ -55,10 +56,10 @@ class ControllerAdvice {
   fun handleRestClientException(e: RestClientResponseException): ResponseEntity<ErrorResponse> {
     log.error("RestClientResponseException: ${e.message}", e)
     return ResponseEntity
-      .status(e.rawStatusCode)
+      .status(e.statusCode)
       .body(
         ErrorResponse(
-          status = e.rawStatusCode,
+          status = e.statusCode,
           userMessage = "Rest client exception ${e.message}",
           developerMessage = e.message,
         ),
@@ -93,8 +94,8 @@ class ControllerAdvice {
       )
   }
 
-  @ExceptionHandler(value = [MissingKotlinParameterException::class])
-  fun handleMissingKotlinParameter(exception: MissingKotlinParameterException): ResponseEntity<ErrorResponse> {
+  @ExceptionHandler(value = [MismatchedInputException::class])
+  fun handleMissingKotlinParameter(exception: MismatchedInputException): ResponseEntity<ErrorResponse> {
     val fieldName = exception.path.joinToString(separator = ".") { it.fieldName }
     return ResponseEntity
       .status(HttpStatus.BAD_REQUEST)
@@ -112,19 +113,19 @@ class ControllerAdvice {
     log.info("Validation exception: ${e.message}", e)
     val genericMessage = "Unacceptable JSON " + e.message
     var errorDetails: String? = genericMessage
-    if (e.cause is MissingKotlinParameterException) {
-      val mkpx: MissingKotlinParameterException = e.cause as MissingKotlinParameterException
+    if (e.cause is MismatchedInputException) {
+      val mkpx: MismatchedInputException = e.cause as MismatchedInputException
       val fieldName = mkpx.path.joinToString(separator = ".") { it.fieldName }
       errorDetails = "Missing $fieldName"
     }
     if (e.cause is InvalidFormatException) {
       val ifx: InvalidFormatException = e.cause as InvalidFormatException
-      if (ifx.getTargetType() != null && ifx.getTargetType().isEnum()) {
+      if (ifx.targetType != null && ifx.targetType.isEnum) {
         errorDetails = java.lang.String.format(
           "Invalid enum value: '%s' for the field: '%s'. The value must be one of: %s.",
-          ifx.getValue(),
-          ifx.getPath().get(ifx.getPath().size - 1).getFieldName(),
-          Arrays.toString(ifx.getTargetType().getEnumConstants()),
+          ifx.value,
+          ifx.path[ifx.path.size - 1].fieldName,
+          Arrays.toString(ifx.targetType.enumConstants),
         )
       }
     }
@@ -190,7 +191,7 @@ data class ErrorResponse(
   val moreInfo: String? = null,
 ) {
   constructor(
-    status: HttpStatus,
+    status: HttpStatusCode,
     errorCode: String? = null,
     userMessage: String? = null,
     developerMessage: String? = null,

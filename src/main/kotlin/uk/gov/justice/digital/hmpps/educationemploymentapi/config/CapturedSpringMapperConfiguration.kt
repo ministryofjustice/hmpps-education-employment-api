@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 class CapturedSpringMapperConfiguration {
   companion object {
-    var OBJECT_MAPPER: ObjectMapper = this.configObjectMapper()
+    val OBJECT_MAPPER: ObjectMapper = this.configObjectMapper()
     fun configObjectMapper(): ObjectMapper {
       val mapper = ObjectMapper()
       mapper.registerModule(JavaTimeModule())
