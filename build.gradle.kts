@@ -58,26 +58,25 @@ kotlin {
   jvmToolchain(21)
 }
 
+repositories {
+  mavenCentral()
+}
+
 tasks {
   withType<KotlinCompile> {
     compilerOptions.jvmTarget = JVM_21
     compilerOptions.freeCompilerArgs = listOf("-Xjvm-default=all")
+  }
+}
 
-    named<JacocoReport>("jacocoTestReport") {
-      dependsOn(named("check"))
-      reports {
-        html.required.set(true)
-        xml.required.set(true)
-      }
-    }
-    finalizedBy(named("jacocoTestReport"))
-    named("assemble") {
-      doFirst {
-        delete(
-          fileTree(project.layout.buildDirectory.get())
-            .include("libs/*.jar"),
-        )
-      }
-    }
+tasks.test {
+  finalizedBy(tasks.jacocoTestReport)
+}
+
+tasks.jacocoTestReport {
+  dependsOn(tasks.test)
+  reports {
+    html.required.set(true)
+    xml.required.set(true)
   }
 }
