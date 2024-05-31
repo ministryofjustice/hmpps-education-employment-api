@@ -1,7 +1,7 @@
 package uk.gov.justice.digital.hmpps.educationemploymentapi.service
 
 import com.fasterxml.jackson.core.type.TypeReference
-import com.vladmihalcea.hibernate.type.json.internal.JacksonUtil
+import io.hypersistence.utils.hibernate.type.json.internal.JacksonUtil
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.educationemploymentapi.config.CapturedSpringMapperConfiguration
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.StatusChangeUpdateRequestDTO

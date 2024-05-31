@@ -1,6 +1,6 @@
 package uk.gov.justice.digital.hmpps.educationemploymentapi
 
-import com.vladmihalcea.hibernate.type.json.internal.JacksonUtil
+import io.hypersistence.utils.hibernate.type.json.internal.JacksonUtil
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.AbilityToWorkImpactedBy
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.Action
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.ActionStatus
