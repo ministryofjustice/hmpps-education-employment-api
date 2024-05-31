@@ -1,7 +1,7 @@
 package uk.gov.justice.digital.hmpps.educationemploymentapi.service
 
 import com.fasterxml.jackson.core.type.TypeReference
-import com.vladmihalcea.hibernate.type.json.internal.JacksonUtil
+import io.hypersistence.utils.hibernate.type.json.internal.JacksonUtil
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType
 import org.junit.jupiter.api.BeforeEach

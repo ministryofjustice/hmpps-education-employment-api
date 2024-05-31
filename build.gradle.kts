@@ -24,7 +24,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-security")
   implementation("org.springframework.boot:spring-boot-starter-cache")
   implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:3.0.0")
-  implementation("com.vladmihalcea:hibernate-types-60:2.21.1")
+  implementation("io.hypersistence:hypersistence-utils-hibernate-63:3.7.5")
   implementation("io.opentelemetry.instrumentation:opentelemetry-instrumentation-annotations:2.4.0")
   implementation("com.microsoft.azure:applicationinsights-logging-logback:2.6.4")
 

@@ -1,6 +1,6 @@
 package uk.gov.justice.digital.hmpps.educationemploymentapi.integration.health
 
-import com.vladmihalcea.hibernate.type.json.internal.JacksonUtil
+import io.hypersistence.utils.hibernate.type.json.internal.JacksonUtil
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpEntity
