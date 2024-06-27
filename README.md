@@ -38,6 +38,6 @@ Architecture and Technical Design docs can be found decision records start [here
 
 There is a JSON schema in src/main/resources which describes the structure of the profile JSON that the client is expected to store and will subsequently get back. The schema is not currently used by the MVP - instead the JSON is serialized/deserialized on its way in and out of the API using a series of data classes in package:
 
-- uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile
+- uk.gov.justice.digital.hmpps.educationemployment.api.data.jsonprofile
 
 These classes have been built to represent the schema structure. The only validation performed currently is that the multi choice field values must conform to the enums with the data classes.
