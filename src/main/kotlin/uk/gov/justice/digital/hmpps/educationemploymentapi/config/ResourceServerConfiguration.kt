@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.educationemploymentapi.config
+package uk.gov.justice.digital.hmpps.jobsboard.api.config
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

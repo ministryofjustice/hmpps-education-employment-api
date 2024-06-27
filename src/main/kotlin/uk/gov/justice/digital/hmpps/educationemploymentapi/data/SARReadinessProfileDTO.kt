@@ -2,7 +2,6 @@ package uk.gov.justice.digital.hmpps.educationemploymentapi.data
 
 import io.hypersistence.utils.hibernate.type.json.internal.JacksonUtil
 import io.swagger.v3.oas.annotations.media.Schema
-import uk.gov.justice.digital.hmpps.educationemploymentapi.config.CapturedSpringMapperConfiguration
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.Note
 import uk.gov.justice.digital.hmpps.educationemploymentapi.data.jsonprofile.Profile
 import uk.gov.justice.digital.hmpps.educationemploymentapi.entity.ReadinessProfile
