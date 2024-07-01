@@ -10,7 +10,6 @@ plugins {
 dependencies {
   implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:2.1.1")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-  implementation("org.springframework.boot:spring-boot-starter-hateoas")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0")
   implementation("com.fasterxml.jackson.core:jackson-databind")
@@ -19,9 +18,9 @@ dependencies {
 
   runtimeOnly("org.flywaydb:flyway-database-postgresql")
   runtimeOnly("org.postgresql:postgresql:42.7.3")
-  implementation("org.testcontainers:localstack")
-  implementation("org.testcontainers:postgresql")
-  implementation("org.testcontainers:testcontainers")
+  testImplementation("org.testcontainers:localstack")
+  testImplementation("org.testcontainers:postgresql")
+  testImplementation("org.testcontainers:testcontainers")
   developmentOnly("org.springframework.boot:spring-boot-devtools")
   testImplementation("org.springframework.security:spring-security-test")
   testImplementation("io.jsonwebtoken:jjwt-impl:0.12.5")

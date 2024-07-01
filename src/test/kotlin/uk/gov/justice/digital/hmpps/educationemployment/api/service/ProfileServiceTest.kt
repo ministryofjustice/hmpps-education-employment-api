@@ -45,8 +45,8 @@ class ProfileServiceTest {
 
   @Test
   fun `makes a call to the repository to update the readiness profile`() {
-    whenever(readinessProfileRepository.save(any())).thenReturn(TestData.updatedReadinessProfile.get())
-    whenever(readinessProfileRepository.findById(any())).thenReturn(TestData.updatedReadinessProfile)
+    whenever(readinessProfileRepository.save(any())).thenReturn(TestData.updatedReadinessProfile)
+    whenever(readinessProfileRepository.findById(any())).thenReturn(Optional.of(TestData.updatedReadinessProfile))
 
     val rProfile = profileService.updateProfileForOffender(TestData.createdBy, TestData.newOffenderId, TestData.newBookingId, TestData.profile)
     val argumentCaptor = ArgumentCaptor.forClass(ReadinessProfile::class.java)
@@ -57,8 +57,8 @@ class ProfileServiceTest {
 
   @Test
   fun `makes a call to the repository to update the readiness profile Prison location`() {
-    whenever(readinessProfileRepository.save(any())).thenReturn(TestData.updatedReadinessProfile.get())
-    whenever(readinessProfileRepository.findById(any())).thenReturn(TestData.updatedReadinessProfile)
+    whenever(readinessProfileRepository.save(any())).thenReturn(TestData.updatedReadinessProfile)
+    whenever(readinessProfileRepository.findById(any())).thenReturn(Optional.of(TestData.updatedReadinessProfile))
 
     val rProfile = profileService.updateProfileForOffender(TestData.createdBy, TestData.newOffenderId, TestData.newBookingId, TestData.profile)
     val argumentCaptor = ArgumentCaptor.forClass(ReadinessProfile::class.java)
@@ -75,8 +75,8 @@ class ProfileServiceTest {
 
   @Test
   fun `makes a call to the repository to add supportDeclined to empty supportDeclined List on Update of declined State in readiness profile`() {
-    whenever(readinessProfileRepository.save(any())).thenReturn(TestData.updatedReadinessProfile_declined_1.get())
-    whenever(readinessProfileRepository.findById(any())).thenReturn(TestData.readinessProfile_declined_1)
+    whenever(readinessProfileRepository.save(any())).thenReturn(TestData.updatedReadinessProfile_declined_1)
+    whenever(readinessProfileRepository.findById(any())).thenReturn(Optional.of(TestData.readinessProfile_declined_1))
 
     val rProfile = profileService.updateProfileForOffender(TestData.createdBy, TestData.newOffenderId, TestData.newBookingId, TestData.profile_declinedModified)
     val argumentCaptor = ArgumentCaptor.forClass(ReadinessProfile::class.java)
@@ -90,8 +90,8 @@ class ProfileServiceTest {
 
   @Test
   fun `makes a call to the repository to add supportDeclined to empty supportDeclined List on Update of acceptedSupport  in readiness profile`() {
-    whenever(readinessProfileRepository.save(any())).thenReturn(TestData.updatedReadinessProfile_accpeted_1.get())
-    whenever(readinessProfileRepository.findById(any())).thenReturn(TestData.readinessProfile_declined_1)
+    whenever(readinessProfileRepository.save(any())).thenReturn(TestData.updatedReadinessProfile_accpeted_1)
+    whenever(readinessProfileRepository.findById(any())).thenReturn(Optional.of(TestData.readinessProfile_declined_1))
 
     val rProfile = profileService.updateProfileForOffender(TestData.createdBy, TestData.newOffenderId, TestData.newBookingId, TestData.profile_accpeted_modified)
     val argumentCaptor = ArgumentCaptor.forClass(ReadinessProfile::class.java)
@@ -106,8 +106,8 @@ class ProfileServiceTest {
 
   @Test
   fun `makes a call to the repository to add supportAccepted to empty supportAccepted List on Update of declinedSupport in readiness profile`() {
-    whenever(readinessProfileRepository.save(any())).thenReturn(TestData.updatedReadinessProfile_declined_1.get())
-    whenever(readinessProfileRepository.findById(any())).thenReturn(TestData.readinessProfile_accepted_1)
+    whenever(readinessProfileRepository.save(any())).thenReturn(TestData.updatedReadinessProfile_declined_1)
+    whenever(readinessProfileRepository.findById(any())).thenReturn(Optional.of(TestData.readinessProfile_accepted_1))
 
     val rProfile = profileService.updateProfileForOffender(TestData.createdBy, TestData.newOffenderId, TestData.newBookingId, TestData.profile_accpeted_modified)
     val argumentCaptor = ArgumentCaptor.forClass(ReadinessProfile::class.java)
@@ -122,8 +122,8 @@ class ProfileServiceTest {
 
   @Test
   fun `makes a call to the repository to add support accepted to empty supportAccpetedList on Update of declined in readiness profile`() {
-    whenever(readinessProfileRepository.save(any())).thenReturn(TestData.updatedReadinessProfile_accpeted_1.get())
-    whenever(readinessProfileRepository.findById(any())).thenReturn(TestData.readinessProfile_accepted_1)
+    whenever(readinessProfileRepository.save(any())).thenReturn(TestData.updatedReadinessProfile_accpeted_1)
+    whenever(readinessProfileRepository.findById(any())).thenReturn(Optional.of(TestData.readinessProfile_accepted_1))
 
     val rProfile = profileService.updateProfileForOffender(TestData.createdBy, TestData.newOffenderId, TestData.newBookingId, TestData.profile_accpeted_modified)
     val argumentCaptor = ArgumentCaptor.forClass(ReadinessProfile::class.java)
@@ -137,8 +137,8 @@ class ProfileServiceTest {
 
   @Test
   fun `makes a call to the repository to add supportDeclined to supportDeclineList on Update of declinedSupport in readiness profile`() {
-    whenever(readinessProfileRepository.save(any())).thenReturn(TestData.updatedReadinessProfile_declined_1.get())
-    whenever(readinessProfileRepository.findById(any())).thenReturn(TestData.readinessProfile_declined_1_declined_list)
+    whenever(readinessProfileRepository.save(any())).thenReturn(TestData.updatedReadinessProfile_declined_1)
+    whenever(readinessProfileRepository.findById(any())).thenReturn(Optional.of(TestData.readinessProfile_declined_1_declined_list))
 
     val rProfile = profileService.updateProfileForOffender(TestData.createdBy, TestData.newOffenderId, TestData.newBookingId, TestData.profile_declinedModified)
     val argumentCaptor = ArgumentCaptor.forClass(ReadinessProfile::class.java)
@@ -152,8 +152,8 @@ class ProfileServiceTest {
 
   @Test
   fun `makes a call to the repository to verify support declined is not added to supportDeclineList when declinedsupport has not chnaged in readiness profile`() {
-    whenever(readinessProfileRepository.save(any())).thenReturn(TestData.readinessProfile_declined_1.get())
-    whenever(readinessProfileRepository.findById(any())).thenReturn(TestData.readinessProfile_declined_1)
+    whenever(readinessProfileRepository.save(any())).thenReturn(TestData.readinessProfile_declined_1)
+    whenever(readinessProfileRepository.findById(any())).thenReturn(Optional.of(TestData.readinessProfile_declined_1))
 
     val rProfile = profileService.updateProfileForOffender(TestData.createdBy, TestData.newOffenderId, TestData.newBookingId, TestData.profile_declinedModified)
     val argumentCaptor = ArgumentCaptor.forClass(ReadinessProfile::class.java)
@@ -167,8 +167,8 @@ class ProfileServiceTest {
 
   @Test
   fun `makes a call to the repository to save a readiness profile note`() {
-    whenever(readinessProfileRepository.save(any())).thenReturn(TestData.updatedReadinessProfile.get())
-    whenever(readinessProfileRepository.findById(any())).thenReturn(TestData.updatedReadinessProfile)
+    whenever(readinessProfileRepository.save(any())).thenReturn(TestData.updatedReadinessProfile)
+    whenever(readinessProfileRepository.findById(any())).thenReturn(Optional.of(TestData.updatedReadinessProfile))
 
     val listNote = profileService.addProfileNoteForOffender(TestData.createdBy, TestData.newOffenderId, TestData.actionToDoCV, TestData.noteString)
     val argumentCaptor = ArgumentCaptor.forClass(ReadinessProfile::class.java)
@@ -178,8 +178,8 @@ class ProfileServiceTest {
 
   @Test
   fun `makes a call to the repository to retreive a readiness profile note`() {
-    whenever(readinessProfileRepository.save(any())).thenReturn(TestData.updatedReadinessProfileNotes.get())
-    whenever(readinessProfileRepository.findById(any())).thenReturn(TestData.updatedReadinessProfileNotes)
+    whenever(readinessProfileRepository.save(any())).thenReturn(TestData.updatedReadinessProfileNotes)
+    whenever(readinessProfileRepository.findById(any())).thenReturn(Optional.of(TestData.updatedReadinessProfileNotes))
 
     val listNote = profileService.getProfileNotesForOffender(TestData.newOffenderId, TestData.actionToDoCV)
     assert(listNote[0].text.equals(TestData.noteString))
@@ -187,9 +187,9 @@ class ProfileServiceTest {
 
   @Test
   fun `makes a call to the repository to retreive a readiness profile for an offender id`() {
-    whenever(readinessProfileRepository.findById(any())).thenReturn(TestData.updatedReadinessProfileNotes)
+    whenever(readinessProfileRepository.findById(any())).thenReturn(Optional.of(TestData.updatedReadinessProfileNotes))
     val profile = profileService.getProfileForOffender(TestData.newOffenderId)
-    assert(profile.equals(TestData.updatedReadinessProfileNotes.get()))
+    assert(profile.equals(TestData.updatedReadinessProfileNotes))
   }
 
   @Test

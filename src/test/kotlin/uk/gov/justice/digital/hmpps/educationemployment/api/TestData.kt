@@ -25,7 +25,6 @@ import java.io.File
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
-import java.util.Optional
 
 class TestData {
   companion object {
@@ -175,7 +174,7 @@ class TestData {
     val profile_accpeted: Profile = Profile(profileStatus_SUPPORT_NEEDED, false, null, "prison2", StatusChange.NEW, null, null, null, supportAccepted)
     val profile_accpeted_modified: Profile = Profile(profileStatus_SUPPORT_NEEDED, false, null, "prison2", StatusChange.NEW, null, null, null, supportAcceptedModified)
 
-    val readinessProfile_accepted_1 = Optional.of(
+    val readinessProfile_accepted_1 =
       ReadinessProfile(
         newOffenderId,
         newBookingId,
@@ -187,10 +186,10 @@ class TestData {
         CapturedSpringConfigValues.objectMapper.readTree(CapturedSpringConfigValues.objectMapper.writeValueAsString(profile_accpeted)),
         CapturedSpringConfigValues.objectMapper.readTree("{}"),
         booleanTrue,
-      ),
-    )
 
-    val updatedReadinessProfile_accpeted_1 = Optional.of(
+      )
+
+    val updatedReadinessProfile_accpeted_1 =
       ReadinessProfile(
         newOffenderId,
         updatedBookingId,
@@ -202,9 +201,9 @@ class TestData {
         CapturedSpringConfigValues.objectMapper.readTree(CapturedSpringConfigValues.objectMapper.writeValueAsString(profile_accpeted_modified)),
         CapturedSpringConfigValues.objectMapper.readTree("[]"),
         booleanTrue,
-      ),
-    )
-    val readinessProfile_declined_1 = Optional.of(
+
+      )
+    val readinessProfile_declined_1 =
       ReadinessProfile(
         newOffenderId,
         newBookingId,
@@ -216,9 +215,9 @@ class TestData {
         CapturedSpringConfigValues.objectMapper.readTree(CapturedSpringConfigValues.objectMapper.writeValueAsString(profile_declined)),
         CapturedSpringConfigValues.objectMapper.readTree("{}"),
         booleanTrue,
-      ),
-    )
-    val readinessProfile_declined_1_declined_list = Optional.of(
+
+      )
+    val readinessProfile_declined_1_declined_list =
       ReadinessProfile(
         newOffenderId,
         newBookingId,
@@ -230,9 +229,9 @@ class TestData {
         CapturedSpringConfigValues.objectMapper.readTree(CapturedSpringConfigValues.objectMapper.writeValueAsString(profile_declined_declined_list)),
         CapturedSpringConfigValues.objectMapper.readTree("{}"),
         booleanTrue,
-      ),
-    )
-    val updatedReadinessProfile_declined_1 = Optional.of(
+
+      )
+    val updatedReadinessProfile_declined_1 =
       ReadinessProfile(
         newOffenderId,
         updatedBookingId,
@@ -244,8 +243,8 @@ class TestData {
         CapturedSpringConfigValues.objectMapper.readTree(CapturedSpringConfigValues.objectMapper.writeValueAsString(profile_declinedModified)),
         CapturedSpringConfigValues.objectMapper.readTree("[]"),
         booleanTrue,
-      ),
-    )
+
+      )
     val profile_IncorrectStatus: Profile = Profile(
       profileStatus_SUPPORT_NEEDED, false, null, "prison1", StatusChange.NEW, mutableListOf(supportDeclined),
       mutableListOf(
@@ -274,7 +273,7 @@ class TestData {
       booleanTrue,
     )
 
-    val updatedReadinessProfile = Optional.of(
+    val updatedReadinessProfile =
       ReadinessProfile(
         newOffenderId,
         updatedBookingId,
@@ -286,9 +285,9 @@ class TestData {
         CapturedSpringConfigValues.objectMapper.readTree(CapturedSpringConfigValues.objectMapper.writeValueAsString(profile)),
         CapturedSpringConfigValues.objectMapper.readTree("[]"),
         booleanTrue,
-      ),
-    )
-    val updatedReadinessProfileNotes = Optional.of(
+
+      )
+    val updatedReadinessProfileNotes =
       ReadinessProfile(
         newOffenderId,
         updatedBookingId,
@@ -307,10 +306,10 @@ class TestData {
             "    }]",
         ),
         booleanTrue,
-      ),
-    )
 
-    var profileList = listOf<ReadinessProfile>(readinessProfile, updatedReadinessProfileNotes.get())
+      )
+
+    var profileList = listOf<ReadinessProfile>(readinessProfile, updatedReadinessProfileNotes)
     var noteFreeTextJson = "{\n" +
       "    \"text\": \"Mary had another little lamb\"\n" +
       "}"
