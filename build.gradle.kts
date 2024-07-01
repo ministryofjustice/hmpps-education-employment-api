@@ -23,8 +23,6 @@ dependencies {
   testImplementation("org.testcontainers:testcontainers")
   developmentOnly("org.springframework.boot:spring-boot-devtools")
   testImplementation("org.springframework.security:spring-security-test")
-  testImplementation("io.jsonwebtoken:jjwt-impl:0.12.5")
-  testImplementation("io.jsonwebtoken:jjwt-jackson:0.12.5")
   testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
   testRuntimeOnly("org.junit.platform:junit-platform-launcher")
   testImplementation("com.h2database:h2")
