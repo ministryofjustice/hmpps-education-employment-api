@@ -15,7 +15,7 @@ class ApplicationInsightsConfiguration {
   @Bean
   @ConditionalOnExpression("T(org.apache.commons.lang3.StringUtils).isBlank('\${applicationinsights.connection.string:}')")
   fun telemetryClient(): TelemetryClient {
-    uk.gov.justice.digital.hmpps.educationemployment.api.config.ApplicationInsightsConfiguration.Companion.log.warn("Application insights configuration missing, returning dummy bean instead")
+    log.warn("Application insights configuration missing, returning dummy bean instead")
 
     return TelemetryClient()
   }
