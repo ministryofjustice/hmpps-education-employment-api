@@ -1,0 +1,42 @@
+server:
+  shutdown: immediate
+build:
+  version=${project.version}
+management.endpoint:
+  health.cache.time-to-live: 0
+  info.cache.time-to-live: 0
+api:
+  base:
+    url:
+      oauth: http://localhost:9090/auth
+spring:
+  jpa:
+    open-in-view: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    generate-ddl: true
+    hibernate:
+      ddl-auto: none
+
+  datasource:
+    url: 'jdbc:postgresql://localhost:5432/education-employment?sslmode=prefer'
+    username: education-employment
+    password: education-employment
+    hikari:
+      pool-name: Hmpps-Education-Employment
+      connectionTimeout: 1000
+      validationTimeout: 500
+
+  flyway:
+    initOnMigrate: true
+    baselineOnMigrate: true
+    validateMigrationNaming: false
+    enabled: true
+    url: 'jdbc:postgresql://localhost:5432/education-employment?sslmode=prefer'
+    user: education-employment
+    password: education-employment
+
+
+
