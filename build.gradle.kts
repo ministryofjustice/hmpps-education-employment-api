@@ -81,3 +81,9 @@ tasks {
     finalizedBy(named("jacocoTestReport"))
   }
 }
+dependencyCheck {
+  failBuildOnCVSS = 5f
+  suppressionFiles = listOf("test-suppressions.xml")
+  format = "ALL"
+  analyzers.assemblyEnabled = false
+}
