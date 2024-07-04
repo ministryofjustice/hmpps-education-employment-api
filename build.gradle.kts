@@ -83,7 +83,7 @@ tasks {
 }
 dependencyCheck {
   failBuildOnCVSS = 5f
-  suppressionFiles = listOf("test-suppressions.xml")
+  suppressionFiles.add("test-suppressions.xml")
   format = "ALL"
   analyzers.assemblyEnabled = false
 }
