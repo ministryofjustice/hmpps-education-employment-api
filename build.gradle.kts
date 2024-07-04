@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
   id("uk.gov.justice.hmpps.gradle-spring-boot") version "6.0.0"
   kotlin("plugin.spring") version "2.0.0"
@@ -61,31 +59,31 @@ testing {
 }
 
 tasks {
-  withType<KotlinCompile> {
-    named("check") {
-      dependsOn(testing.suites.named("integrationTest"))
-    }
+  named("check") {
+    dependsOn(named("test"), named("integrationTest"))
+  }
 
-    named("compileIntegrationTestKotlin") {
-      dependsOn(named("copyAgent"))
-    }
+  named("test") {
+    finalizedBy("jacocoTestReport")
+  }
 
-    named<JacocoReport>("jacocoTestReport") {
-      dependsOn(named("check"))
-      reports {
-        html.required.set(true)
-        xml.required.set(true)
-      }
-    }
+  named("integrationTest") {
+    mustRunAfter(named("test"))
+  }
 
-    finalizedBy(named("jacocoTestReport"))
-    named("assemble") {
-      doFirst {
-        delete(
-          fileTree(project.layout.buildDirectory.get())
-            .include("libs/*-plain.jar"),
-        )
-      }
+  named<JacocoReport>("jacocoTestReport") {
+    reports {
+      html.required.set(true)
+      xml.required.set(true)
+    }
+  }
+
+  named("assemble") {
+    doFirst {
+      delete(
+        fileTree(project.layout.buildDirectory.get())
+          .include("libs/*-plain.jar"),
+      )
     }
   }
 }
