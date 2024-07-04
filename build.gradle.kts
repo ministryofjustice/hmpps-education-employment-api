@@ -79,6 +79,14 @@ tasks {
     }
 
     finalizedBy(named("jacocoTestReport"))
+    named("assemble") {
+      doFirst {
+        delete(
+          fileTree(project.layout.buildDirectory.get())
+            .include("libs/*-plain.jar"),
+        )
+      }
+    }
   }
 }
 dependencyCheck {
