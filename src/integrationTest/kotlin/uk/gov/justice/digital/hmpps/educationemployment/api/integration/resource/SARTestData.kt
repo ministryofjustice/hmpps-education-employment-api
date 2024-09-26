@@ -8,4 +8,4 @@ object SARTestData {
 }
 
 const val SAR_ROLE = "ROLE_SAR_DATA_ACCESS"
-const val INCORRECT_SAR_ROLE = "SAR_DATA_ACCESS"
+const val INCORRECT_SAR_ROLE = "WRONG_SAR_DATA_ACCESS"
