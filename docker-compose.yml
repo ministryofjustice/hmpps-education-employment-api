@@ -13,8 +13,9 @@ services:
     environment:
       - SERVER_PORT=8080
       - SPRING_PROFILES_ACTIVE=developer
+      - DATABASE_ENDPOINT=education-employment-db
 
-#  hmpps-auth:
+  #  hmpps-auth:
 #    image: quay.io/hmpps/hmpps-auth:latest
 #    networks:
 #      - hmpps

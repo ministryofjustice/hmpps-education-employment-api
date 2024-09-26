@@ -24,7 +24,7 @@ spring:
       ddl-auto: none
 
   datasource:
-    url: 'jdbc:postgresql://localhost:5432/education-employment?sslmode=prefer'
+    url: 'jdbc:postgresql://${DATABASE_ENDPOINT}/education-employment?sslmode=prefer'
     username: education-employment
     password: education-employment
     hikari:
@@ -34,6 +34,10 @@ spring:
 
   flyway:
     enabled: true
-    url: jdbc:postgresql://localhost:5432/education-employment?sslmode=prefer
+    url: 'jdbc:postgresql://${DATABASE_ENDPOINT}/education-employment?sslmode=prefer'
     user: education-employment
     password: education-employment
+
+hmpps:
+  sar:
+    additionalAccessRole: WORK_READINESS_VIEW

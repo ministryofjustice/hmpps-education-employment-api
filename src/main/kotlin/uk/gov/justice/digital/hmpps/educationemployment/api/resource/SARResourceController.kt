@@ -29,15 +29,15 @@ import java.time.LocalDate
 class SARResourceController(
   private val profileService: ProfileService,
 ) {
-  @PreAuthorize("hasAnyRole('SAR_DATA_ACCESS')")
+  @PreAuthorize("hasAnyRole('SAR_DATA_ACCESS', @environment.getProperty('hmpps.sar.additionalAccessRole', 'SAR_DATA_ACCESS'))")
   @GetMapping
   @Operation(
-    summary = "Fetch the work readiness profile for a given offender",
-    description = "Currently requires role <b>ROLE_VIEW_PRISONER_DATA</b>",
+    summary = "Provides content for a prisoner to satisfy the needs of a subject access request on their behalf",
+    description = "Requires role ROLE_SAR_DATA_ACCESS or additional role as specified by hmpps.sar.additionalAccessRole configuration.",
     responses = [
       ApiResponse(
         responseCode = "200",
-        description = "Work readiness profile for the requested offender",
+        description = "Request successfully processed - content found",
         content = [
           Content(
             mediaType = "application/json",
