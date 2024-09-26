@@ -6,6 +6,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 import uk.gov.justice.digital.hmpps.educationemployment.api.data.ReadinessProfileRequestDTO
+import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.bookingIdIfKnownPRN
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.knownCRN
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.knownPRN
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.unknownPRN
@@ -58,6 +59,21 @@ class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
     assertAddReadinessProfileIsOk(prisonNumber, makeRequestDTO())
 
     assertGetSARResponseIsOk(prn = prisonNumber, roles = listOf(SAR_ROLE, WR_VIEW_ROLE, WR_EDIT_ROLE))
+  }
+
+  @Test
+  fun `reply 200 (Ok) and data is put inside content, when requesting SAR with known prisoner's PRN`() {
+    val prisonNumber = knownPRN
+    assertAddReadinessProfileIsOk(prisonNumber, makeRequestDTO())
+
+    val sarResult = assertGetSARResponseIsOk(prn = prisonNumber)
+
+    assertThat(sarResult.body).isNotNull
+    val json = objectMapper.readTree(sarResult.body!!.asJson())
+    val jsonContent = json.findPath("content")
+    assertThat(jsonContent.isMissingNode).isFalse()
+    assertThat(jsonContent.get("offenderId").textValue()).isEqualTo(prisonNumber)
+    assertThat(jsonContent.get("bookingId").longValue()).isEqualTo(bookingIdIfKnownPRN)
   }
 
   private fun makeRequestDTO() = objectMapper.readValue(

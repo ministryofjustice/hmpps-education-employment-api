@@ -1,7 +1,11 @@
 package uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource
 
+import uk.gov.justice.digital.hmpps.educationemployment.api.integration.util.TestData
+
 object SARTestData {
   val knownPRN = "A1234BB"
+  val bookingIdIfKnownPRN = TestData.newBookingId
+
   val unknownPRN = "A1234BD"
 
   val knownCRN = "X08769"

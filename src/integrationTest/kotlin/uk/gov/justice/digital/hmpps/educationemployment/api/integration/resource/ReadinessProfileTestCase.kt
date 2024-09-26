@@ -12,7 +12,7 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.integration.Integrat
 
 abstract class ReadinessProfileTestCase : IntegrationTestBase() {
   @Autowired
-  lateinit var objectMapper: ObjectMapper
+  protected lateinit var objectMapper: ObjectMapper
 
   protected fun assertAddReadinessProfileIsOk(prisonNumber: String, request: ReadinessProfileRequestDTO) = assertAddReadinessProfileIsCreated(prisonNumber, request, HttpStatus.OK)
 
