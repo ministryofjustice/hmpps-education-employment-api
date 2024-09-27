@@ -66,7 +66,11 @@ class SARResourceControllerTest {
   @Test
   fun `Test Get  profile of an  Offender for SAR `() {
     whenever(profileService.getProfileForOffender(any())).thenReturn(TestData.readinessProfileForSAR)
-    val result = mvc.perform(get("/subject-access-request/A1234AB").accept(APPLICATION_JSON).content(TestData.createProfileJsonRequest).contentType(APPLICATION_JSON).param("oauth2User", "ssss").headers((setAuthorisation(roles = listOf("ROLE_SAR_DATA_ACCESS")))))
+    val result = mvc.perform(
+      get("/subject-access-request?prn=A1234AB").accept(APPLICATION_JSON).content(TestData.createProfileJsonRequest)
+        .contentType(APPLICATION_JSON).param("oauth2User", "ssss")
+        .headers((setAuthorisation(roles = listOf("ROLE_SAR_DATA_ACCESS")))),
+    )
       .andExpect(status().isOk)
       .andExpect(content().contentType(APPLICATION_JSON))
       .andReturn()
