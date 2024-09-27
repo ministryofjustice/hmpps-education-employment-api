@@ -28,6 +28,10 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.bind.annotation.ControllerAdvice
+import uk.gov.justice.digital.hmpps.educationemployment.api.SARTestData.bookingIdString
+import uk.gov.justice.digital.hmpps.educationemployment.api.SARTestData.createdByString
+import uk.gov.justice.digital.hmpps.educationemployment.api.SARTestData.noteDataString
+import uk.gov.justice.digital.hmpps.educationemployment.api.SARTestData.offenderIdString
 import uk.gov.justice.digital.hmpps.educationemployment.api.TestData
 import uk.gov.justice.digital.hmpps.educationemployment.api.data.SARReadinessProfileDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.helpers.JwtAuthHelper
@@ -78,7 +82,7 @@ class SARResourceControllerTest {
       result.response.contentAsString,
       object : TypeReference<SARReadinessProfileDTO>() {},
     )
-    Assertions.assertThat(actualSARReadinessProfileDTO).extracting(TestData.createdByString, TestData.offenderIdString, TestData.bookingIdString, TestData.noteDataString)
+    Assertions.assertThat(actualSARReadinessProfileDTO).extracting(createdByString, offenderIdString, bookingIdString, noteDataString)
       .contains(TestData.createdBy, TestData.newOffenderId, TestData.newBookingId, TestData.note)
     verify(profileService, times(1)).getProfileForOffender(any())
   }
