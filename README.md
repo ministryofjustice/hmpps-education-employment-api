@@ -24,6 +24,13 @@ To run the service locally with Docker, it is assumed that the developer will wi
 
 `docker-compose up`
 
+to run service with gradle
+- gradle bootRun with these environment variables: 
+  - with IntelliJ IDEA: `spring.profiles.active=local`
+- run via command line: <br> 
+  - `SPRING_PROFILES_ACTIVE=local ./gradlew bootRun`
+  - `gradle bootRun --args='--spring.profiles.active=local'`
+
 ## Purpose
 
 The API supports the [hmpps-education-employment-ui](https://github.com/ministryofjustice/hmpps-education-employment-ui), storing a collection of responses to questions provided by Prison Employment Leads (PEL), related to an offenders willingess and ability to seek and obtain employment on leaving prison.
