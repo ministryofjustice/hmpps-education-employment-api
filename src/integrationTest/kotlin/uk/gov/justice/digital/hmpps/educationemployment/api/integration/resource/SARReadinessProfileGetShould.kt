@@ -1,16 +1,15 @@
 package uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource
 
-import com.fasterxml.jackson.core.type.TypeReference
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
-import uk.gov.justice.digital.hmpps.educationemployment.api.data.ReadinessProfileRequestDTO
-import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.bookingIdIfKnownPRN
+import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.bookingIdOfKnownPRN
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.knownCRN
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.knownPRN
+import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.profileJsonOfKnownPRN
+import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.profileRequestOfKnownPRN
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.unknownPRN
-import uk.gov.justice.digital.hmpps.educationemployment.api.integration.util.TestData
 
 class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
   @AfterEach
@@ -26,7 +25,7 @@ class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
   @Test
   fun `reply 200 (Ok), when requesting SAR with a profile of known prisoner, and PRN is provided`() {
     val prisonNumber = knownPRN
-    assertAddReadinessProfileIsOk(prisonNumber, makeRequestDTO())
+    assertAddReadinessProfileIsOk(prisonNumber, profileRequestOfKnownPRN)
 
     val sarResult = assertGetSARResponseIsOk(prn = prisonNumber)
     assertThat(sarResult.body).isNotNull
@@ -56,7 +55,7 @@ class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
   @Test
   fun `reply 200 (OK), when requesting a SAR with required role and more irrelevant roles`() {
     val prisonNumber = knownPRN
-    assertAddReadinessProfileIsOk(prisonNumber, makeRequestDTO())
+    assertAddReadinessProfileIsOk(prisonNumber, profileRequestOfKnownPRN)
 
     assertGetSARResponseIsOk(prn = prisonNumber, roles = listOf(SAR_ROLE, WR_VIEW_ROLE, WR_EDIT_ROLE))
   }
@@ -64,7 +63,8 @@ class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
   @Test
   fun `reply 200 (Ok) and data is put inside content, when requesting SAR with known prisoner's PRN`() {
     val prisonNumber = knownPRN
-    assertAddReadinessProfileIsOk(prisonNumber, makeRequestDTO())
+    assertAddReadinessProfileIsOk(prisonNumber, profileRequestOfKnownPRN)
+    val expectedProfile = profileJsonOfKnownPRN
 
     val sarResult = assertGetSARResponseIsOk(prn = prisonNumber)
 
@@ -73,11 +73,10 @@ class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
     val jsonContent = json.findPath("content")
     assertThat(jsonContent.isMissingNode).isFalse()
     assertThat(jsonContent.get("offenderId").textValue()).isEqualTo(prisonNumber)
-    assertThat(jsonContent.get("bookingId").longValue()).isEqualTo(bookingIdIfKnownPRN)
+    assertThat(jsonContent.get("bookingId").longValue()).isEqualTo(bookingIdOfKnownPRN)
+    assertThat(jsonContent.get("profileData"))
+      .usingRecursiveComparison()
+      .ignoringFieldsMatchingRegexes(".*createdBy.*", ".*createdDateTime.*", ".*modifiedBy.*", ".*modifiedDateTime.*")
+      .isEqualTo(expectedProfile)
   }
-
-  private fun makeRequestDTO() = objectMapper.readValue(
-    TestData.createProfileJsonRequest,
-    object : TypeReference<ReadinessProfileRequestDTO>() {},
-  )
 }
