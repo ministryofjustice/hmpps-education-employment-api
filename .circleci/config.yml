@@ -17,7 +17,7 @@ jobs:
       name: hmpps/java_localstack_postgres
       jdk_tag: "21.0"
       localstack_tag: "0.14.0"
-      postgres_tag: "14"
+      postgres_tag: "16.2"
       postgres_username: "education-employment"
       postgres_password: "education-employment"
     steps:

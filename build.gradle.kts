@@ -32,7 +32,7 @@ testing {
       useJUnitJupiter()
     }
 
-    register<JvmTestSuite>("integrationTest") {
+    val integrationTest by registering(JvmTestSuite::class) {
       dependencies {
         testType.set(TestSuiteType.INTEGRATION_TEST)
         kotlin.target.compilations { named("integrationTest") { associateWith(getByName("main")) } }
@@ -45,6 +45,7 @@ testing {
         runtimeOnly("org.flywaydb:flyway-database-postgresql")
         implementation("com.zaxxer:HikariCP:5.1.0")
         implementation("com.h2database:h2")
+        implementation("org.testcontainers:postgresql")
       }
 
       targets {
