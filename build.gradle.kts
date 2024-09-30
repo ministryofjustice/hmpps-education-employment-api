@@ -45,7 +45,9 @@ testing {
         runtimeOnly("org.flywaydb:flyway-database-postgresql")
         implementation("com.zaxxer:HikariCP:5.1.0")
         implementation("com.h2database:h2")
-        implementation("org.testcontainers:postgresql")
+        implementation("org.testcontainers:postgresql") {
+          implementation("org.apache.commons:commons-compress:1.27.1")
+        }
       }
 
       targets {
