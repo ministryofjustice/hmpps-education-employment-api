@@ -16,6 +16,7 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.AlreadyEx
 import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.InvalidStateException
 import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.NotFoundException
 import uk.gov.justice.digital.hmpps.educationemployment.api.repository.ReadinessProfileRepository
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Service
@@ -102,6 +103,66 @@ class ProfileService(
     var profile: ReadinessProfile =
       readinessProfileRepository.findById(offenderId).orElseThrow(NotFoundException(offenderId))
     return profile
+  }
+
+  fun getProfileForOffenderFilterByPeriod(
+    prisonNumber: String,
+    fromDate: LocalDate? = null,
+    toDate: LocalDate? = null,
+  ): ReadinessProfile {
+    if (fromDate != null && toDate != null && fromDate.isAfter(toDate)) {
+      throw IllegalArgumentException("fromDate cannot be after toDate")
+    }
+
+    val readinessProfile = getProfileForOffender(prisonNumber)
+    val profile =
+      CapturedSpringConfigValues.objectMapper.treeToValue(
+        readinessProfile.profileData,
+        object : TypeReference<Profile>() {},
+      )
+    if (fromDate != null || toDate != null) {
+      toDate?.let {
+        if (readinessProfile.createdDateTime.toLocalDate().isAfter(it)) {
+          throw NotFoundException(prisonNumber)
+        }
+      }
+      fromDate?.run {
+        if (fromDate.isAfter(readinessProfile.modifiedDateTime.toLocalDate())) {
+          profile.supportAccepted_history?.clear()
+          profile.supportDeclined_history?.clear()
+        } else {
+          val recentAcceptedDateTimeAtBeginning =
+            profile.supportAccepted_history?.filter { it.modifiedDateTime?.toLocalDate()?.isBefore(fromDate) ?: false }
+              ?.maxByOrNull { it.modifiedDateTime!! }?.modifiedDateTime
+          profile.supportAccepted_history?.retainAll {
+            it.modifiedDateTime == null ||
+              !(it.modifiedDateTime!!.toLocalDate().isBefore(fromDate)) ||
+              it.modifiedDateTime!!.isEqual(recentAcceptedDateTimeAtBeginning)
+          }
+          val recentDeclinedDateTimeAtBeginning =
+            profile.supportDeclined_history?.filter { it.modifiedDateTime?.toLocalDate()?.isBefore(fromDate) ?: false }
+              ?.maxByOrNull { it.modifiedDateTime!! }?.modifiedDateTime
+          profile.supportDeclined_history?.retainAll {
+            it.modifiedDateTime == null ||
+              !(it.modifiedDateTime!!.toLocalDate().isBefore(fromDate)) ||
+              (recentDeclinedDateTimeAtBeginning != null && it.modifiedDateTime!!.isEqual(recentDeclinedDateTimeAtBeginning))
+          }
+        }
+      }
+      toDate?.run {
+        profile.supportAccepted_history?.retainAll {
+          it.modifiedDateTime == null || !(it.modifiedDateTime!!.toLocalDate().isAfter(toDate))
+        }
+        profile.supportDeclined_history?.retainAll {
+          it.modifiedDateTime == null || !(it.modifiedDateTime!!.toLocalDate().isAfter(toDate))
+        }
+      }
+    }
+    profile.supportAccepted_history?.sortByDescending { it.modifiedDateTime }
+    profile.supportDeclined_history?.sortByDescending { it.modifiedDateTime }
+
+    readinessProfile.profileData = CapturedSpringConfigValues.objectMapper.valueToTree(profile)
+    return readinessProfile
   }
 
   fun addProfileNoteForOffender(userId: String, offenderId: String, attribute: ActionTodo, text: String): List<Note> {
