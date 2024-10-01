@@ -14,6 +14,9 @@ object SARTestData {
   val profileRequestOfKnownPRN = makeProfileRequestDTO(TestData.createProfileJsonRequest)
   val profileJsonOfKnownPRN = objectMapper.valueToTree<JsonNode>(profileRequestOfKnownPRN).get("profileData")
 
+  val anotherPRN = "K9876BC"
+  val profileRequestOfAnotherPRN = makeProfileRequestDTO(TestData.createProfileJsonRequest)
+
   val unknownPRN = "A1234BD"
 
   val knownCRN = "X08769"

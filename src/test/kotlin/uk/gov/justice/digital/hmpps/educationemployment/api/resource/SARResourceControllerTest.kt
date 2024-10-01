@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mockito.reset
 import org.mockito.kotlin.any
+import org.mockito.kotlin.isNull
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
@@ -68,8 +69,8 @@ class SARResourceControllerTest {
   }
 
   @Test
-  fun `Test Get  profile of an  Offender for SAR `() {
-    whenever(profileService.getProfileForOffender(any())).thenReturn(TestData.readinessProfileForSAR)
+  fun `Test Get profile of an Offender for SAR`() {
+    whenever(profileService.getProfileForOffenderFilterByPeriod(any(), isNull(), isNull())).thenReturn(TestData.readinessProfileForSAR)
     val result = mvc.perform(
       get("/subject-access-request?prn=A1234AB").accept(APPLICATION_JSON).content(TestData.createProfileJsonRequest)
         .contentType(APPLICATION_JSON).param("oauth2User", "ssss")
@@ -84,7 +85,7 @@ class SARResourceControllerTest {
     )
     Assertions.assertThat(actualSARReadinessProfileDTO).extracting(createdByString, offenderIdString, bookingIdString, noteDataString)
       .contains(TestData.createdBy, TestData.newOffenderId, TestData.newBookingId, TestData.note)
-    verify(profileService, times(1)).getProfileForOffender(any())
+    verify(profileService, times(1)).getProfileForOffenderFilterByPeriod(any(), isNull(), isNull())
   }
 
   internal fun setAuthorisation(

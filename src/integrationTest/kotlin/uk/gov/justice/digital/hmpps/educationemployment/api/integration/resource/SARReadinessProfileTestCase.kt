@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource
 
+import com.fasterxml.jackson.databind.JsonNode
 import org.assertj.core.api.Assertions.assertThat
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
@@ -15,7 +16,7 @@ class SARReadinessProfileTestCase : ReadinessProfileTestCase() {
     prn: String,
     fromDate: LocalDate? = null,
     toDate: LocalDate? = null,
-    expectedBody: String? = null,
+    expectedProfileAsJson: JsonNode? = null,
     roles: List<String> = listOf(SAR_ROLE),
   ): ResponseEntity<SARReadinessProfileDTO> {
     val url = makeUrl(
@@ -28,8 +29,13 @@ class SARReadinessProfileTestCase : ReadinessProfileTestCase() {
     assertThat(result).isNotNull
     assertThat(result.statusCode).isEqualTo(HttpStatus.OK)
 
-    if (!expectedBody.isNullOrEmpty()) {
-      assertThat(result.body?.asJson()).isEqualTo(expectedBody)
+    expectedProfileAsJson?.let { expectedProfile ->
+
+      val jsonProfileData = objectMapper.readTree(result.body!!.content.profileData.asJson())
+      assertThat(jsonProfileData)
+        .usingRecursiveComparison()
+        .ignoringFieldsMatchingRegexes(".*createdBy.*", ".*createdDateTime.*", ".*modifiedBy.*", ".*modifiedDateTime.*")
+        .isEqualTo(expectedProfile)
     }
 
     return result
@@ -41,13 +47,15 @@ class SARReadinessProfileTestCase : ReadinessProfileTestCase() {
     expectedBody: String? = null,
     prn: String? = null,
     crn: String? = null,
+    fromDate: LocalDate? = null,
+    toDate: LocalDate? = null,
     authorised: Boolean = true,
     roles: List<String> = listOf(SAR_ROLE),
   ): ResponseEntity<Any> {
     val request = (if (authorised) setAuthorisation(roles = roles) else null)?.let { HttpEntity<HttpHeaders>(it) }
     val url = makeUrl(
       "/subject-access-request",
-      makeRequestParamsOfSAR(prn = prn, crn = crn),
+      makeRequestParamsOfSAR(prn = prn, crn = crn, fromDate = fromDate, toDate = toDate),
     )
     val result = restTemplate.exchange(url, HttpMethod.GET, request, Any::class.java)
 

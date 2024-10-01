@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import uk.gov.justice.digital.hmpps.educationemployment.api.data.ReadinessProfileDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.data.ReadinessProfileRequestDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.IntegrationTestBase
@@ -14,20 +15,39 @@ abstract class ReadinessProfileTestCase : IntegrationTestBase() {
   @Autowired
   protected lateinit var objectMapper: ObjectMapper
 
-  protected fun assertAddReadinessProfileIsOk(prisonNumber: String, request: ReadinessProfileRequestDTO) = assertAddReadinessProfileIsCreated(prisonNumber, request, HttpStatus.OK)
+  protected fun assertAddReadinessProfileIsOk(prisonNumber: String, request: ReadinessProfileRequestDTO) =
+    assertAddReadinessProfileIsCreated(prisonNumber, request, HttpStatus.OK)
 
-  protected fun assertAddReadinessProfileIsCreated(prisonNumber: String, request: ReadinessProfileRequestDTO, expectedStatus: HttpStatus = HttpStatus.CREATED) {
+  protected fun assertAddReadinessProfileIsCreated(
+    prisonNumber: String,
+    request: ReadinessProfileRequestDTO,
+    expectedStatus: HttpStatus = HttpStatus.CREATED,
+  ): ResponseEntity<ReadinessProfileDTO> {
     val result = restTemplate.exchange(
       "/readiness-profiles/$prisonNumber",
       HttpMethod.POST,
-      HttpEntity(
-        request,
-        setAuthorisation(roles = listOf(WR_EDIT_ROLE, WR_VIEW_ROLE)),
-      ),
+      HttpEntity(request, setAuthorisation(roles = listOf(WR_EDIT_ROLE, WR_VIEW_ROLE))),
       ReadinessProfileDTO::class.java,
     )
     assertThat(result).isNotNull
     assertThat(result.statusCode).isEqualTo(expectedStatus)
+    return result
+  }
+
+  protected fun assertUpdateReadinessProfileIsOk(
+    prisonNumber: String,
+    request: ReadinessProfileRequestDTO,
+  ): ResponseEntity<ReadinessProfileDTO> {
+    val result = restTemplate.exchange(
+      "/readiness-profiles/$prisonNumber",
+      HttpMethod.PUT,
+      HttpEntity(request, setAuthorisation(roles = listOf(WR_EDIT_ROLE, WR_VIEW_ROLE))),
+      ReadinessProfileDTO::class.java,
+    )
+    assertThat(result).isNotNull
+    assertThat(result.statusCode).isEqualTo(HttpStatus.OK)
+
+    return result
   }
 
   protected fun makeUrl(path: String, requestParams: Map<String, Any>) = "$path${

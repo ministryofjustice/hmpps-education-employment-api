@@ -4,12 +4,15 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
+import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.anotherPRN
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.bookingIdOfKnownPRN
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.knownCRN
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.knownPRN
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.profileJsonOfKnownPRN
+import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.profileRequestOfAnotherPRN
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.profileRequestOfKnownPRN
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.unknownPRN
+import java.time.LocalDate
 
 class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
   @AfterEach
@@ -66,7 +69,7 @@ class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
     assertAddReadinessProfileIsOk(prisonNumber, profileRequestOfKnownPRN)
     val expectedProfile = profileJsonOfKnownPRN
 
-    val sarResult = assertGetSARResponseIsOk(prn = prisonNumber)
+    val sarResult = assertGetSARResponseIsOk(expectedProfileAsJson = expectedProfile, prn = prisonNumber)
 
     assertThat(sarResult.body).isNotNull
     val json = objectMapper.readTree(sarResult.body!!.asJson())
@@ -74,9 +77,78 @@ class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
     assertThat(jsonContent.isMissingNode).isFalse()
     assertThat(jsonContent.get("offenderId").textValue()).isEqualTo(prisonNumber)
     assertThat(jsonContent.get("bookingId").longValue()).isEqualTo(bookingIdOfKnownPRN)
-    assertThat(jsonContent.get("profileData"))
-      .usingRecursiveComparison()
-      .ignoringFieldsMatchingRegexes(".*createdBy.*", ".*createdDateTime.*", ".*modifiedBy.*", ".*modifiedDateTime.*")
-      .isEqualTo(expectedProfile)
+  }
+
+  @Test
+  fun `reply 200(OK), when requesting a SAR with specified period`() {
+    val prisonNumber = knownPRN
+    assertAddReadinessProfileIsOk(prisonNumber, profileRequestOfKnownPRN)
+    val expectedProfile = profileJsonOfKnownPRN
+    val today = LocalDate.now()
+    val tomorrow = today.plusDays(1)
+
+    val sarResult = assertGetSARResponseIsOk(
+      expectedProfileAsJson = expectedProfile,
+      prn = prisonNumber,
+      fromDate = today,
+      toDate = tomorrow,
+    )
+    assertThat(sarResult.body).isNotNull
+  }
+
+  @Test
+  fun `reply 200(OK) with history, when requesting a SAR with specified period`() {
+    val prisonNumber = anotherPRN
+    val expectedHistorySize = 6
+    profileRequestOfAnotherPRN.let { request ->
+      assertAddReadinessProfileIsOk(prisonNumber, request)
+      repeat(expectedHistorySize) {
+        request.profileData.supportDeclined!!.let {
+          request.profileData.supportDeclined =
+            it.copy(supportToWorkDeclinedReasonOther = "modified the n-th ($it) times")
+        }
+        assertUpdateReadinessProfileIsOk(prisonNumber, request)
+      }
+    }
+    val today = LocalDate.now()
+    val tomorrow = today.plusDays(1)
+
+    val sarResult = assertGetSARResponseIsOk(prn = prisonNumber, fromDate = today, toDate = tomorrow)
+    sarResult.body!!.content.profileData.let {
+      assertThat(it.supportDeclined_history).isNotNull.hasSize(expectedHistorySize)
+    }
+  }
+
+  @Test
+  fun `reply 204(No Content), when requesting a SAR with specified period`() {
+    val prisonNumber = knownPRN
+    assertAddReadinessProfileIsOk(prisonNumber, profileRequestOfKnownPRN)
+    val yesterday = LocalDate.now().minusDays(1)
+
+    assertGetSARResponseStatusAndBody(
+      expectedStatusCode = HttpStatus.NO_CONTENT,
+      prn = prisonNumber,
+      fromDate = null,
+      toDate = yesterday,
+    )
+  }
+
+  @Test
+  fun `reply 400(Bad Request), when requesting a SAR with invalid date range`() {
+    val today = LocalDate.now()
+    val tomorrow = today.plusDays(1)
+    val expectedErrorBody = "fromDate ($tomorrow) cannot be after toDate ($today)".let { errorMessage ->
+      """
+        {"status":400,"errorCode":null,"userMessage":"$errorMessage","developerMessage":"$errorMessage","moreInfo":null}
+      """.trimIndent()
+    }
+
+    assertGetSARResponseStatusAndBody(
+      expectedStatusCode = HttpStatus.BAD_REQUEST,
+      expectedBody = expectedErrorBody,
+      fromDate = tomorrow,
+      toDate = today,
+      prn = knownPRN,
+    )
   }
 }
