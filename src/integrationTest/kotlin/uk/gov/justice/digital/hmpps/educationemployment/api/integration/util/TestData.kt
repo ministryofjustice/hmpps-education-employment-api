@@ -32,7 +32,8 @@ class TestData {
     val noteString: String = "Mary had another little lamb"
     private lateinit var profileService: ProfileService
 
-    val modifiedTime = LocalDateTime.now()
+    val createdTime = LocalDateTime.of(2024, 1, 1, 12, 10, 20)
+    val modifiedTime = createdTime.plusDays(1)
 
     val booleanTrue = true
     val booleanFalse = false
@@ -110,7 +111,7 @@ class TestData {
 
     val supportDeclined: SupportDeclined = SupportDeclined(
       createdBy,
-      modifiedTime,
+      createdTime,
       supportDeclinedReasonList,
       emptyString,
       circumstanceChangesRequiredToWorkList,
@@ -119,7 +120,7 @@ class TestData {
 
     val supportDeclinedModified: SupportDeclined = SupportDeclined(
       createdBy,
-      modifiedTime,
+      createdTime,
       supportDeclinedReasonModifiedList,
       emptyString,
       circumstanceChangesRequiredToWorkList,
@@ -127,7 +128,7 @@ class TestData {
     )
     val supportDeclinedModifiedOther: SupportDeclined = SupportDeclined(
       createdBy,
-      modifiedTime,
+      createdTime,
       supportDeclinedReasonModifiedList,
       "ModifiedString",
       circumstanceChangesRequiredToWorkList,
@@ -264,7 +265,7 @@ class TestData {
       newOffenderId,
       newBookingId,
       createdBy,
-      modifiedTime,
+      createdTime,
       createdBy,
       modifiedTime,
       "1.0",
@@ -277,8 +278,8 @@ class TestData {
       ReadinessProfile(
         newOffenderId,
         updatedBookingId,
-        updatedBy,
-        modifiedTime,
+        createdBy,
+        createdTime,
         updatedBy,
         modifiedTime,
         "1.0",
@@ -291,8 +292,8 @@ class TestData {
       ReadinessProfile(
         newOffenderId,
         updatedBookingId,
-        updatedBy,
-        modifiedTime,
+        createdBy,
+        createdTime,
         updatedBy,
         modifiedTime,
         "1.0",
@@ -332,8 +333,8 @@ class TestData {
       newOffenderId,
       newBookingId,
       createdBy,
-      modifiedTime,
-      createdBy,
+      createdTime,
+      updatedBy,
       modifiedTime,
       "1.0",
       CapturedSpringConfigValues.objectMapper.readTree(CapturedSpringConfigValues.objectMapper.writeValueAsString(profile)),

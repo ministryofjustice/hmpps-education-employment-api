@@ -91,19 +91,21 @@ class SARResourceController(
     @RequestParam
     toDate: LocalDate? = null,
   ): ResponseEntity<Any> {
-    if (prn.isNullOrBlank() && crn.isNullOrBlank()) {
+    when {
+      prn.isNullOrBlank() && crn.isNullOrBlank() -> "One of prn or crn must be supplied."
+      fromDate != null && toDate != null && fromDate.isAfter(toDate) -> "fromDate ($fromDate) cannot be after toDate ($toDate)"
+      else -> null
+    }?.let {
       return ResponseEntity.badRequest().body(
-        ErrorResponse(
-          status = HttpStatus.BAD_REQUEST,
-          userMessage = "One of prn or crn must be supplied.",
-          developerMessage = "One of prn or crn must be supplied.",
-        ),
+        ErrorResponse(status = HttpStatus.BAD_REQUEST, userMessage = it, developerMessage = it),
       )
     }
 
     if (!prn.isNullOrEmpty()) {
       return try {
-        SARReadinessProfileDTO(profileService.getProfileForOffender(prn)).let { ResponseEntity.ok(it) }
+        SARReadinessProfileDTO(
+          profileEntity = profileService.getProfileForOffenderFilterByPeriod(prn, fromDate, toDate),
+        ).let { ResponseEntity.ok(it) }
       } catch (ex: NotFoundException) {
         return ResponseEntity.noContent().build()
       }
