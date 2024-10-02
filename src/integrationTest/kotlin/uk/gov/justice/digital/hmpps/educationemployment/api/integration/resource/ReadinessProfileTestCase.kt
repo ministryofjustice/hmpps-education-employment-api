@@ -24,7 +24,7 @@ abstract class ReadinessProfileTestCase : IntegrationTestBase() {
     expectedStatus: HttpStatus = HttpStatus.CREATED,
   ): ResponseEntity<ReadinessProfileDTO> {
     val result = restTemplate.exchange(
-      "/readiness-profiles/$prisonNumber",
+      "$URL_PREFIX$prisonNumber",
       HttpMethod.POST,
       HttpEntity(request, setAuthorisation(roles = listOf(WR_EDIT_ROLE, WR_VIEW_ROLE))),
       ReadinessProfileDTO::class.java,
@@ -39,7 +39,7 @@ abstract class ReadinessProfileTestCase : IntegrationTestBase() {
     request: ReadinessProfileRequestDTO,
   ): ResponseEntity<ReadinessProfileDTO> {
     val result = restTemplate.exchange(
-      "/readiness-profiles/$prisonNumber",
+      "$URL_PREFIX$prisonNumber",
       HttpMethod.PUT,
       HttpEntity(request, setAuthorisation(roles = listOf(WR_EDIT_ROLE, WR_VIEW_ROLE))),
       ReadinessProfileDTO::class.java,
@@ -60,5 +60,6 @@ abstract class ReadinessProfileTestCase : IntegrationTestBase() {
   protected fun Any.asJson(): String = objectMapper.writeValueAsString(this)
 }
 
+private const val URL_PREFIX = "/readiness-profiles/"
 val WR_EDIT_ROLE = "ROLE_WORK_READINESS_EDIT"
 val WR_VIEW_ROLE = "ROLE_WORK_READINESS_VIEW"
