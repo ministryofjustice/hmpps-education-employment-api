@@ -4,5 +4,4 @@ object SARTestData {
   val createdByString = "content.createdBy"
   val offenderIdString = "content.offenderId"
   val bookingIdString = "content.bookingId"
-  val noteDataString = "content.noteData"
 }

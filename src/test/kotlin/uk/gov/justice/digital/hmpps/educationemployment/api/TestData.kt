@@ -363,12 +363,12 @@ object TestData {
     newBookingId,
     createdBy,
     createdTime,
-    createdBy,
+    modifiedBy = createdBy,
     modifiedTime,
-    "1.0",
-    CapturedSpringConfigValues.objectMapper.readTree(CapturedSpringConfigValues.objectMapper.writeValueAsString(profile)),
-    CapturedSpringConfigValues.objectMapper.readTree(CapturedSpringConfigValues.objectMapper.writeValueAsString(note)),
-    booleanTrue,
+    schemaVersion = "1.0",
+    profileData = objectMapper.valueToTree(profile),
+    notesData = objectMapper.valueToTree(listOf(note)),
+    new = booleanTrue,
   )
 }
 

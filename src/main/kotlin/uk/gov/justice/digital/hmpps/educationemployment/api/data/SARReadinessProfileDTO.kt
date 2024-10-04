@@ -1,7 +1,8 @@
 package uk.gov.justice.digital.hmpps.educationemployment.api.data
 
+import com.fasterxml.jackson.core.type.TypeReference
 import io.swagger.v3.oas.annotations.media.Schema
-import uk.gov.justice.digital.hmpps.educationemployment.api.config.CapturedSpringConfigValues
+import uk.gov.justice.digital.hmpps.educationemployment.api.config.CapturedSpringConfigValues.Companion.objectMapper
 import uk.gov.justice.digital.hmpps.educationemployment.api.data.jsonprofile.Note
 import uk.gov.justice.digital.hmpps.educationemployment.api.data.jsonprofile.Profile
 import uk.gov.justice.digital.hmpps.educationemployment.api.entity.ReadinessProfile
@@ -41,7 +42,7 @@ data class SARContent(
   val profileData: Profile,
 
   @Schema(description = "Work readiness profile JSON data", example = "{...}")
-  val noteData: Note?,
+  val noteData: List<Note>?,
 ) {
   constructor(profileEntity: ReadinessProfile) : this(
     offenderId = profileEntity.offenderId,
@@ -51,11 +52,11 @@ data class SARContent(
     modifiedBy = profileEntity.modifiedBy,
     modifiedDateTime = profileEntity.modifiedDateTime,
     schemaVersion = profileEntity.schemaVersion,
-    profileData = CapturedSpringConfigValues.objectMapper.readValue(CapturedSpringConfigValues.objectMapper.writeValueAsString(profileEntity.profileData), Profile::class.java),
+    profileData = objectMapper.treeToValue(profileEntity.profileData, object : TypeReference<Profile>() {}),
     noteData = if (profileEntity.notesData.isEmpty) {
       null
     } else {
-      CapturedSpringConfigValues.objectMapper.readValue(CapturedSpringConfigValues.objectMapper.writeValueAsString(profileEntity.notesData), Note::class.java)
+      objectMapper.treeToValue(profileEntity.notesData, object : TypeReference<List<Note>>() {})
     },
   )
 }
