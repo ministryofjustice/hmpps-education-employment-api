@@ -4,6 +4,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
+import uk.gov.justice.digital.hmpps.educationemployment.api.data.ReadinessProfileDTO
+import uk.gov.justice.digital.hmpps.educationemployment.api.data.jsonprofile.ActionTodo
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.anotherPrisonNumber
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.bookingIdOfKnownPrisonNumber
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.knownPrisonNumber
@@ -29,8 +31,7 @@ class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
 
   @Test
   fun `reply 200 (Ok), when requesting SAR with a profile of known prisoner, and PRN is provided`() {
-    val prisonNumber = knownPrisonNumber
-    assertAddReadinessProfileIsOk(prisonNumber, profileRequestOfKnownPrisonNumber)
+    val prisonNumber = givenTheKnownProfile().offenderId
 
     val sarResult = assertGetSARResponseIsOk(prn = prisonNumber)
     assertThat(sarResult.body).isNotNull
@@ -59,16 +60,14 @@ class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
 
   @Test
   fun `reply 200 (OK), when requesting a SAR with required role and more irrelevant roles`() {
-    val prisonNumber = knownPrisonNumber
-    assertAddReadinessProfileIsOk(prisonNumber, profileRequestOfKnownPrisonNumber)
+    val prisonNumber = givenTheKnownProfile().offenderId
 
     assertGetSARResponseIsOk(prn = prisonNumber, roles = listOf(SAR_ROLE, WR_VIEW_ROLE, WR_EDIT_ROLE))
   }
 
   @Test
   fun `reply 200 (Ok) and data is put inside content, when requesting SAR with known prisoner's PRN`() {
-    val prisonNumber = knownPrisonNumber
-    assertAddReadinessProfileIsOk(prisonNumber, profileRequestOfKnownPrisonNumber)
+    val prisonNumber = givenTheKnownProfile(withNotes = true).offenderId
     val expectedProfile = profileJsonOfKnownPrisonNumber
 
     val sarResult = assertGetSARResponseIsOk(expectedProfileAsJson = expectedProfile, prn = prisonNumber)
@@ -79,12 +78,19 @@ class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
     assertThat(jsonContent.isMissingNode).isFalse()
     assertThat(jsonContent.get("offenderId").textValue()).isEqualTo(prisonNumber)
     assertThat(jsonContent.get("bookingId").longValue()).isEqualTo(bookingIdOfKnownPrisonNumber)
+    jsonContent.findPath("profileData").let { jsonProfile ->
+      assertThat(jsonProfile.isMissingNode).isFalse()
+      assertThat(jsonProfile.get("supportDeclined")).isNotEmpty
+    }
+    jsonContent.findPath("noteData").let { jsonNotes ->
+      assertThat(jsonNotes.isMissingNode).isFalse()
+      assertThat(jsonNotes).hasSize(3)
+    }
   }
 
   @Test
   fun `reply 200(OK), when requesting a SAR with specified period`() {
-    val prisonNumber = anotherPrisonNumber
-    givenAnotherProfileWithDeclinedHistory()
+    val prisonNumber = givenAnotherProfileWithDeclinedHistory().offenderId
     val expectedProfile = profileJsonOfAnotherPrisonNumber
     val today = LocalDate.now()
     val tomorrow = today.plusDays(1)
@@ -100,9 +106,8 @@ class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
 
   @Test
   fun `reply 200(OK) with history, when requesting a SAR with specified period`() {
-    val prisonNumber = anotherPrisonNumber
+    val prisonNumber = givenAnotherProfileWithDeclinedHistory().offenderId
     val expectedHistorySize = profileOfAnotherPrisonNumber.supportDeclined_history!!.size
-    givenAnotherProfileWithDeclinedHistory()
     val today = LocalDate.now()
     val tomorrow = today.plusDays(1)
 
@@ -114,8 +119,7 @@ class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
 
   @Test
   fun `reply 204(No Content), when requesting a SAR with specified period`() {
-    val prisonNumber = anotherPrisonNumber
-    givenAnotherProfileWithDeclinedHistory()
+    val prisonNumber = givenAnotherProfileWithDeclinedHistory().offenderId
     val yesterday = LocalDate.now().minusDays(1)
 
     assertGetSARResponseStatusAndBody(
@@ -145,16 +149,28 @@ class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
     )
   }
 
-  private fun givenAnotherProfileWithDeclinedHistory() {
+  private fun givenTheKnownProfile(withNotes: Boolean = false): ReadinessProfileDTO {
+    val prisonNumber = knownPrisonNumber
+    val addProfileResult = assertAddReadinessProfileIsOk(prisonNumber, profileRequestOfKnownPrisonNumber)
+    if (withNotes) {
+      assertAddNoteIsOk(prisonNumber, ActionTodo.DISCLOSURE_LETTER, "disclosure letter is missing")
+      assertAddNoteIsOk(prisonNumber, ActionTodo.ID, "ID document is not yet ready")
+      assertAddNoteIsOk(prisonNumber, ActionTodo.INTERVIEW_CLOTHING, "Need to buy some clothes for interview")
+    }
+    return addProfileResult.body!!
+  }
+
+  private fun givenAnotherProfileWithDeclinedHistory(): ReadinessProfileDTO {
     val prisonNumber = anotherPrisonNumber
     val request = makeProfileRequestOfAnotherPrisonNumber()
-    assertAddReadinessProfileIsOk(prisonNumber, request)
+    var result = assertAddReadinessProfileIsOk(prisonNumber, request)
     repeat(6) { times ->
       request.profileData.supportDeclined!!.let {
         request.profileData.supportDeclined =
           it.copy(supportToWorkDeclinedReasonOther = "modified the n-th (${times + 1}) times")
       }
-      assertUpdateReadinessProfileIsOk(prisonNumber, request)
+      result = assertUpdateReadinessProfileIsOk(prisonNumber, request)
     }
+    return result.body!!
   }
 }

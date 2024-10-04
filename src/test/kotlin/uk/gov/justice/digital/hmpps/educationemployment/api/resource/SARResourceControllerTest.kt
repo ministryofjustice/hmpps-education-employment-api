@@ -2,7 +2,7 @@ package uk.gov.justice.digital.hmpps.educationemployment.api.resource
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -31,7 +31,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.bind.annotation.ControllerAdvice
 import uk.gov.justice.digital.hmpps.educationemployment.api.SARTestData.bookingIdString
 import uk.gov.justice.digital.hmpps.educationemployment.api.SARTestData.createdByString
-import uk.gov.justice.digital.hmpps.educationemployment.api.SARTestData.noteDataString
 import uk.gov.justice.digital.hmpps.educationemployment.api.SARTestData.offenderIdString
 import uk.gov.justice.digital.hmpps.educationemployment.api.TestData
 import uk.gov.justice.digital.hmpps.educationemployment.api.data.SARReadinessProfileDTO
@@ -83,8 +82,13 @@ class SARResourceControllerTest {
       result.response.contentAsString,
       object : TypeReference<SARReadinessProfileDTO>() {},
     )
-    Assertions.assertThat(actualSARReadinessProfileDTO).extracting(createdByString, offenderIdString, bookingIdString, noteDataString)
-      .contains(TestData.createdBy, TestData.newOffenderId, TestData.newBookingId, TestData.note)
+    assertThat(actualSARReadinessProfileDTO).extracting(createdByString, offenderIdString, bookingIdString)
+      .contains(TestData.createdBy, TestData.newOffenderId, TestData.newBookingId)
+    actualSARReadinessProfileDTO.content.noteData.let { noteData ->
+      assertThat(noteData).isNotNull.isNotEmpty.hasSize(1)
+      assertThat(noteData!![0]).isEqualTo(TestData.note)
+    }
+
     verify(profileService, times(1)).getProfileForOffenderFilterByPeriod(any(), isNull(), isNull())
   }
 
