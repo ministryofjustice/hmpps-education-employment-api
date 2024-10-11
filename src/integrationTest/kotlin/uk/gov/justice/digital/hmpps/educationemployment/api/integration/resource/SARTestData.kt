@@ -8,19 +8,25 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.integration.util.Tes
 import java.io.File
 
 object SARTestData {
+  private val objectMapperSAR = CapturedSpringConfigValues.objectMapperSAR
   private val objectMapper = CapturedSpringConfigValues.objectMapper
 
   val knownPrisonNumber = "A1234BB"
-  val bookingIdOfKnownPrisonNumber = TestData.newBookingId
   val profileRequestOfKnownPrisonNumber = makeProfileRequestDTO(TestData.createProfileJsonRequest)
-  val profileJsonOfKnownPrisonNumber = objectMapper.valueToTree<JsonNode>(profileRequestOfKnownPrisonNumber).get("profileData")
+  val profileJsonOfKnownPrisonNumber = objectMapperSAR.valueToTree<JsonNode>(profileRequestOfKnownPrisonNumber).get("profileData")
 
   val createProfileJsonRequestWithSupportDeclined =
     File("src/test/resources/CreateProfileDeclinedHistories.json").inputStream().readBytes().toString(Charsets.UTF_8)
   val anotherPrisonNumber = "K9876BC"
   val profileOfAnotherPrisonNumber =
     makeProfileRequestDTO(createProfileJsonRequestWithSupportDeclined, cleanHistory = false).profileData
-  val profileJsonOfAnotherPrisonNumber = objectMapper.valueToTree<JsonNode>(profileOfAnotherPrisonNumber)
+  val profileJsonOfAnotherPrisonNumber = objectMapperSAR.valueToTree<JsonNode>(profileOfAnotherPrisonNumber)
+
+  val createProfileJsonRequestWithSupportAccepted =
+    File("src/test/resources/CreateProfileAcceptedHistories.json").inputStream().readBytes().toString(Charsets.UTF_8)
+  val profileWithSupportAcceptedHistory =
+    makeProfileRequestDTO(createProfileJsonRequestWithSupportAccepted, cleanHistory = false).profileData
+  val profileJsonWithSupportAcceptedHistory = objectMapperSAR.valueToTree<JsonNode>(profileWithSupportAcceptedHistory)
 
   val unknownPrisonNumber = "A1234BD"
 
@@ -29,6 +35,12 @@ object SARTestData {
   fun makeProfileRequestOfAnotherPrisonNumber() = makeProfileRequestDTO(createProfileJsonRequestWithSupportDeclined).apply {
     profileData.supportDeclined!!.let {
       profileData.supportDeclined = it.copy(supportToWorkDeclinedReasonOther = "another reason to decline support")
+    }
+  }
+
+  fun makeProfileRequestWithSupportAccepted() = makeProfileRequestDTO(createProfileJsonRequestWithSupportAccepted).apply {
+    profileData.supportAccepted!!.let {
+      profileData.supportAccepted = it.copy(workExperience = it.workExperience.copy(previousWorkOrVolunteering = ""))
     }
   }
 

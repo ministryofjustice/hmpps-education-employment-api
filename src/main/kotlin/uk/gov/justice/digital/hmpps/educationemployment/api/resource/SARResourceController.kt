@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import uk.gov.justice.digital.hmpps.educationemployment.api.config.CapturedSpringConfigValues
 import uk.gov.justice.digital.hmpps.educationemployment.api.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.educationemployment.api.data.SARReadinessProfileDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.NotFoundException
@@ -29,6 +30,8 @@ import java.time.LocalDate
 class SARResourceController(
   private val profileService: ProfileService,
 ) {
+  private val objectMapperSAR = CapturedSpringConfigValues.objectMapperSAR
+
   @PreAuthorize("hasAnyRole('SAR_DATA_ACCESS', @environment.getProperty('hmpps.sar.additionalAccessRole', 'SAR_DATA_ACCESS'))")
   @GetMapping
   @Operation(
@@ -105,7 +108,7 @@ class SARResourceController(
       return try {
         SARReadinessProfileDTO(
           profileEntity = profileService.getProfileForOffenderFilterByPeriod(prn, fromDate, toDate),
-        ).let { ResponseEntity.ok(it) }
+        ).let { objectMapperSAR.writeValueAsString(it) }.let { ResponseEntity.ok(it) }
       } catch (ex: NotFoundException) {
         return ResponseEntity.noContent().build()
       }

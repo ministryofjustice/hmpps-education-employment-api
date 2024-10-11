@@ -1,7 +1,7 @@
 {
   "bookingId": "654321",
   "profileData": {
-    "status": "NO_RIGHT_TO_WORK",
+    "status": "SUPPORT_DECLINED",
     "statusChange": false,
     "statusChangeDate": null,
     "prisonName": "prison2",
