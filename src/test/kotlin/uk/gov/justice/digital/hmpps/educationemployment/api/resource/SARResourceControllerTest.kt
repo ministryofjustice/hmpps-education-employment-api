@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.educationemployment.api.resource
 
-import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -29,11 +28,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.bind.annotation.ControllerAdvice
-import uk.gov.justice.digital.hmpps.educationemployment.api.SARTestData.bookingIdString
-import uk.gov.justice.digital.hmpps.educationemployment.api.SARTestData.createdByString
-import uk.gov.justice.digital.hmpps.educationemployment.api.SARTestData.offenderIdString
 import uk.gov.justice.digital.hmpps.educationemployment.api.TestData
-import uk.gov.justice.digital.hmpps.educationemployment.api.data.SARReadinessProfileDTO
+import uk.gov.justice.digital.hmpps.educationemployment.api.config.CapturedSpringConfigValues
 import uk.gov.justice.digital.hmpps.educationemployment.api.helpers.JwtAuthHelper
 import uk.gov.justice.digital.hmpps.educationemployment.api.service.ProfileService
 
@@ -41,7 +37,7 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.service.ProfileServi
 @ActiveProfiles("test")
 @WebMvcTest(controllers = [SARResourceController::class])
 @AutoConfigureMockMvc(addFilters = false)
-@ContextConfiguration(classes = [SARResourceController::class])
+@ContextConfiguration(classes = [SARResourceController::class, CapturedSpringConfigValues::class])
 @WebAppConfiguration
 class SARResourceControllerTest {
 
@@ -70,6 +66,7 @@ class SARResourceControllerTest {
   @Test
   fun `Test Get profile of an Offender for SAR`() {
     whenever(profileService.getProfileForOffenderFilterByPeriod(any(), isNull(), isNull())).thenReturn(TestData.readinessProfileForSAR)
+
     val result = mvc.perform(
       get("/subject-access-request?prn=A1234AB").accept(APPLICATION_JSON).content(TestData.createProfileJsonRequest)
         .contentType(APPLICATION_JSON).param("oauth2User", "ssss")
@@ -78,17 +75,17 @@ class SARResourceControllerTest {
       .andExpect(status().isOk)
       .andExpect(content().contentType(APPLICATION_JSON))
       .andReturn()
-    val actualSARReadinessProfileDTO = mapper.readValue(
-      result.response.contentAsString,
-      object : TypeReference<SARReadinessProfileDTO>() {},
-    )
-    assertThat(actualSARReadinessProfileDTO).extracting(createdByString, offenderIdString, bookingIdString)
-      .contains(TestData.createdBy, TestData.newOffenderId, TestData.newBookingId)
-    actualSARReadinessProfileDTO.content.noteData.let { noteData ->
-      assertThat(noteData).isNotNull.isNotEmpty.hasSize(1)
-      assertThat(noteData!![0]).isEqualTo(TestData.note)
-    }
 
+    val jsonSARProfile = mapper.readTree(result.response.contentAsString)
+    val jsonContent = jsonSARProfile.findPath("content")
+    assertThat(jsonContent.isMissingNode).isFalse()
+    assertThat(jsonContent.get("offenderId").textValue()).isEqualTo(TestData.newOffenderId)
+    jsonContent.findPath("profileData").let { jsonProfile ->
+      assertThat(jsonProfile.isMissingNode).isFalse()
+      assertThat(jsonProfile.get("supportDeclined")).isNotEmpty
+      assertThat(jsonProfile.get("supportDeclined_history")).isNotEmpty
+      assertThat(jsonProfile.get("supportAccepted_history")).isNotEmpty
+    }
     verify(profileService, times(1)).getProfileForOffenderFilterByPeriod(any(), isNull(), isNull())
   }
 

@@ -12,12 +12,13 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.data.ReadinessProfil
 import uk.gov.justice.digital.hmpps.educationemployment.api.data.jsonprofile.ActionTodo
 import uk.gov.justice.digital.hmpps.educationemployment.api.data.jsonprofile.Profile
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.anotherPrisonNumber
-import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.bookingIdOfKnownPrisonNumber
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.knownPrisonNumber
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.knownnCaseReferenceNumber
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.makeProfileRequestOfAnotherPrisonNumber
+import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.makeProfileRequestWithSupportAccepted
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.profileJsonOfAnotherPrisonNumber
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.profileJsonOfKnownPrisonNumber
+import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.profileJsonWithSupportAcceptedHistory
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.profileOfAnotherPrisonNumber
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.profileRequestOfKnownPrisonNumber
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.unknownPrisonNumber
@@ -25,7 +26,7 @@ import java.time.LocalDate
 
 class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
   @AfterEach
-  fun tearDown() {
+  fun afterEach() {
     readinessProfileRepository.deleteAll()
   }
 
@@ -81,33 +82,52 @@ class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
       assertGetSARResponseIsOk(prn = prisonNumber, roles = listOf(SAR_ROLE, WR_VIEW_ROLE, WR_EDIT_ROLE))
     }
 
-    @Test
-    fun `reply 200 (Ok) and data is put inside content, when requesting SAR with known prisoner's PRN`() {
-      val prisonNumber = givenTheKnownProfile(withNotes = true).offenderId
-      val expectedProfile = profileJsonOfKnownPrisonNumber
-
-      val sarResult = assertGetSARResponseIsOk(expectedProfileAsJson = expectedProfile, prn = prisonNumber)
-
-      assertThat(sarResult.body).isNotNull
-      val json = objectMapper.readTree(sarResult.body!!.asJson())
-      val jsonContent = json.findPath("content")
-      assertThat(jsonContent.isMissingNode).isFalse()
-      assertThat(jsonContent.get("offenderId").textValue()).isEqualTo(prisonNumber)
-      assertThat(jsonContent.get("bookingId").longValue()).isEqualTo(bookingIdOfKnownPrisonNumber)
-      jsonContent.findPath("profileData").let { jsonProfile ->
-        assertThat(jsonProfile.isMissingNode).isFalse()
-        assertThat(jsonProfile.get("supportDeclined")).isNotEmpty
+    @Nested
+    @DisplayName("And some notes have been created")
+    inner class AndSomeNotesHaveBeenCreated {
+      @AfterEach
+      fun afterEach() {
+        readinessProfileRepository.deleteAll()
       }
-      jsonContent.findPath("noteData").let { jsonNotes ->
-        assertThat(jsonNotes.isMissingNode).isFalse()
-        assertThat(jsonNotes).hasSize(3)
+
+      @Test
+      fun `reply 200 (Ok) and data is put inside content, when requesting SAR with known prisoner's PRN`() {
+        val prisonNumber = givenTheKnownProfile(withNotes = true).offenderId
+        val expectedProfile = profileJsonOfKnownPrisonNumber
+
+        val sarResult = assertGetSARResponseIsOk(expectedProfileAsJson = expectedProfile, prn = prisonNumber)
+
+        assertThat(sarResult.body).isNotNull
+        val json = objectMapper.readTree(sarResult.body!!.asJson())
+        val jsonContent = json.findPath("content")
+
+        assertThat(jsonContent.isMissingNode).isFalse()
+        assertThat(jsonContent.get("offenderId").textValue()).isEqualTo(prisonNumber)
+        jsonContent.findPath("profileData").let { jsonProfile ->
+          assertThat(jsonProfile.isMissingNode).isFalse()
+          assertThat(jsonProfile.get("supportDeclined")).isNotEmpty
+        }
+      }
+
+      @Test
+      fun `reply 200 (OK) and no unexpected data exposed via SAR response`() {
+        val prisonNumber = givenTheKnownProfile(withNotes = true).offenderId
+        val expectedProfile = profileJsonOfKnownPrisonNumber
+
+        val sarResult = assertGetSARResponseIsOk(expectedProfileAsJson = expectedProfile, prn = prisonNumber)
+        val jsonContent = objectMapper.readTree(sarResult.body!!.asJson()).get("content")
+
+        listOf("bookingId", "createdBy", "modifiedBy", "noteData").forEach {
+          val node = jsonContent.findParent(it)
+          assertThat(node).withFailMessage { "$it was not excluded! Found at:\n $node" }.isNull()
+        }
       }
     }
   }
 
   @Nested
-  @DisplayName("Given another readiness profile")
-  inner class GivenAnotherProfile {
+  @DisplayName("Given another readiness profile with support declined history")
+  inner class GivenAnotherProfileWithSupportDeclinedHistory {
     private lateinit var expectedProfileDTO: ReadinessProfileDTO
     private lateinit var expectedPrisonNumber: String
     private lateinit var expectedProfileJson: JsonNode
@@ -119,6 +139,20 @@ class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
       expectedPrisonNumber = expectedProfileDTO.offenderId
       expectedProfileJson = profileJsonOfAnotherPrisonNumber
       expectedProfileData = profileOfAnotherPrisonNumber
+    }
+
+    @Test
+    fun `reply 200 (OK) and no unexpected data exposed via SAR response (supportDeclined, supportDeclined_history)`() {
+      val prisonNumber = expectedPrisonNumber
+      val expectedProfile = expectedProfileJson
+
+      val sarResult = assertGetSARResponseIsOk(expectedProfileAsJson = expectedProfile, prn = prisonNumber)
+      val jsonContent = objectMapper.readTree(sarResult.body!!.asJson()).get("content")
+
+      listOf("bookingId", "createdBy", "modifiedBy", "noteData").forEach {
+        val node = jsonContent.findParent(it)
+        assertThat(node).withFailMessage { "$it was not excluded! Found at:\n $node" }.isNull()
+      }
     }
 
     @Nested
@@ -184,6 +218,25 @@ class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
     }
   }
 
+  @Nested
+  @DisplayName("Given a readiness profile with support accepted")
+  inner class GivenAProfileWithSupportAccepted {
+    @Test
+    fun `reply 200 (OK) and no unexpected data exposed via SAR response (supportAccepted, supportAccepted_history)`() {
+      val profileDTO = givenAProfileWithAcceptedHistory()
+      val prisonNumber = profileDTO.offenderId
+      val expectedProfile = profileJsonWithSupportAcceptedHistory
+
+      val sarResult = assertGetSARResponseIsOk(expectedProfileAsJson = expectedProfile, prn = prisonNumber)
+      val jsonContent = objectMapper.readTree(sarResult.body!!.asJson()).get("content")
+
+      listOf("bookingId", "createdBy", "modifiedBy", "noteData").forEach {
+        val node = jsonContent.findParent(it)
+        assertThat(node).withFailMessage { "$it was not excluded! Found at:\n $node" }.isNull()
+      }
+    }
+  }
+
   private fun givenTheKnownProfile(withNotes: Boolean = false): ReadinessProfileDTO {
     val prisonNumber = knownPrisonNumber
     val addProfileResult = assertAddReadinessProfileIsOk(prisonNumber, profileRequestOfKnownPrisonNumber)
@@ -203,6 +256,20 @@ class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
       request.profileData.supportDeclined!!.let {
         request.profileData.supportDeclined =
           it.copy(supportToWorkDeclinedReasonOther = "modified the n-th (${times + 1}) times")
+      }
+      result = assertUpdateReadinessProfileIsOk(prisonNumber, request)
+    }
+    return result.body!!
+  }
+
+  private fun givenAProfileWithAcceptedHistory(): ReadinessProfileDTO {
+    val prisonNumber = "X1357YZ"
+    val request = makeProfileRequestWithSupportAccepted()
+    var result = assertAddReadinessProfileIsOk(prisonNumber, request)
+    repeat(6) { times ->
+      request.profileData.supportAccepted!!.let {
+        request.profileData.supportAccepted =
+          it.copy(workExperience = it.workExperience.copy(previousWorkOrVolunteering = "modified the n-th (${times + 1}) times"))
       }
       result = assertUpdateReadinessProfileIsOk(prisonNumber, request)
     }

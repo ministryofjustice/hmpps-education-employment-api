@@ -8,10 +8,13 @@ import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatusCode
 import org.springframework.http.ResponseEntity
+import uk.gov.justice.digital.hmpps.educationemployment.api.config.CapturedSpringConfigValues
 import uk.gov.justice.digital.hmpps.educationemployment.api.data.SARReadinessProfileDTO
 import java.time.LocalDate
 
 class SARReadinessProfileTestCase : ReadinessProfileTestCase() {
+  protected val objectMapperSAR = CapturedSpringConfigValues.objectMapperSAR
+
   protected fun assertGetSARResponseIsOk(
     prn: String,
     fromDate: LocalDate? = null,
@@ -30,11 +33,11 @@ class SARReadinessProfileTestCase : ReadinessProfileTestCase() {
     assertThat(result.statusCode).isEqualTo(HttpStatus.OK)
 
     expectedProfileAsJson?.let { expectedProfile ->
-
-      val jsonProfileData = objectMapper.readTree(result.body!!.content.profileData.asJson())
+      val jsonProfileData =
+        objectMapperSAR.readTree(result.body!!.content.profileData.let { objectMapperSAR.writeValueAsString(it) })
       assertThat(jsonProfileData)
         .usingRecursiveComparison()
-        .ignoringFieldsMatchingRegexes(".*createdBy.*", ".*createdDateTime.*", ".*modifiedBy.*", ".*modifiedDateTime.*")
+        .ignoringFieldsMatchingRegexes(".*createdBy", ".*createdDateTime", ".*modifiedBy", ".*modifiedDateTime")
         .isEqualTo(expectedProfile)
     }
 
