@@ -166,7 +166,5 @@ class ProfileResourceControllerTest {
   internal fun setAuthorisation(
     user: String = "test-client",
     roles: List<String> = listOf(),
-  ): (HttpHeaders) {
-    return jwtAuthHelper.setAuthorisationForUnitTests(user, roles)
-  }
+  ): (HttpHeaders) = jwtAuthHelper.setAuthorisationForUnitTests(user, roles)
 }

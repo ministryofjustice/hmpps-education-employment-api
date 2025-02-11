@@ -20,8 +20,7 @@ abstract class ReadinessProfileTestCase : IntegrationTestBase() {
   @Autowired
   protected lateinit var objectMapper: ObjectMapper
 
-  protected fun assertAddReadinessProfileIsOk(prisonNumber: String, request: ReadinessProfileRequestDTO) =
-    assertAddReadinessProfileIsCreated(prisonNumber, request, HttpStatus.OK)
+  protected fun assertAddReadinessProfileIsOk(prisonNumber: String, request: ReadinessProfileRequestDTO) = assertAddReadinessProfileIsCreated(prisonNumber, request, HttpStatus.OK)
 
   protected fun assertAddReadinessProfileIsCreated(
     prisonNumber: String,
@@ -55,8 +54,7 @@ abstract class ReadinessProfileTestCase : IntegrationTestBase() {
     return result
   }
 
-  protected fun assertAddNoteIsOk(prisonNumber: String, attribute: ActionTodo, noteText: String) =
-    assertAddNoteIsOk(prisonNumber, attribute.toString(), noteText)
+  protected fun assertAddNoteIsOk(prisonNumber: String, attribute: ActionTodo, noteText: String) = assertAddNoteIsOk(prisonNumber, attribute.toString(), noteText)
 
   protected fun assertAddNoteIsOk(
     prisonNumber: String,

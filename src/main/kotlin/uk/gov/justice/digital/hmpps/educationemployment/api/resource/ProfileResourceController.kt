@@ -115,16 +115,14 @@ class ProfileResourceController(
     @RequestBody
     requestDTO: ReadinessProfileRequestDTO,
     @AuthenticationPrincipal oauth2User: DpsPrincipal,
-  ): ReadinessProfileDTO {
-    return ReadinessProfileDTO(
-      profileService.createProfileForOffender(
-        oauth2User.name,
-        offenderId,
-        requestDTO.bookingId,
-        requestDTO.profileData,
-      ),
-    )
-  }
+  ): ReadinessProfileDTO = ReadinessProfileDTO(
+    profileService.createProfileForOffender(
+      oauth2User.name,
+      offenderId,
+      requestDTO.bookingId,
+      requestDTO.profileData,
+    ),
+  )
 
   @PreAuthorize("hasRole('WORK_READINESS_EDIT')")
   @PutMapping("/{offenderId}")
@@ -164,16 +162,14 @@ class ProfileResourceController(
     @Parameter
     requestDTO: ReadinessProfileRequestDTO,
     @AuthenticationPrincipal oauth2User: DpsPrincipal,
-  ): ReadinessProfileDTO {
-    return ReadinessProfileDTO(
-      profileService.updateProfileForOffender(
-        oauth2User.name,
-        offenderId,
-        requestDTO.bookingId,
-        requestDTO.profileData,
-      ),
-    )
-  }
+  ): ReadinessProfileDTO = ReadinessProfileDTO(
+    profileService.updateProfileForOffender(
+      oauth2User.name,
+      offenderId,
+      requestDTO.bookingId,
+      requestDTO.profileData,
+    ),
+  )
 
   @PreAuthorize("hasRole('WORK_READINESS_EDIT')")
   @PutMapping("/status-change/{offenderId}")
@@ -213,15 +209,13 @@ class ProfileResourceController(
     @Parameter
     statusChangeUpdateRequestDTO: StatusChangeUpdateRequestDTO,
     @AuthenticationPrincipal oauth2User: DpsPrincipal,
-  ): ReadinessProfileDTO {
-    return ReadinessProfileDTO(
-      profileService.changeStatusForOffender(
-        oauth2User.name,
-        offenderId,
-        statusChangeUpdateRequestDTO,
-      ),
-    )
-  }
+  ): ReadinessProfileDTO = ReadinessProfileDTO(
+    profileService.changeStatusForOffender(
+      oauth2User.name,
+      offenderId,
+      statusChangeUpdateRequestDTO,
+    ),
+  )
 
   @PreAuthorize("hasAnyRole('WORK_READINESS_VIEW','WORK_READINESS_EDIT')")
   @GetMapping("/{offenderId}")
@@ -257,9 +251,7 @@ class ProfileResourceController(
     @Pattern(regexp = "^[A-Z]\\d{4}[A-Z]{2}\$")
     @PathVariable
     offenderId: String,
-  ): ReadinessProfileDTO {
-    return ReadinessProfileDTO(profileService.getProfileForOffender(offenderId))
-  }
+  ): ReadinessProfileDTO = ReadinessProfileDTO(profileService.getProfileForOffender(offenderId))
 
   @PreAuthorize("hasRole('WORK_READINESS_EDIT')")
   @PostMapping("/{offenderId}/notes/{attribute}")
@@ -346,7 +338,5 @@ class ProfileResourceController(
     @Schema(description = "attribute", example = "DISCLOSURE_LETTER", required = true)
     @PathVariable
     attribute: ActionTodo,
-  ): List<NoteDTO> {
-    return profileService.getProfileNotesForOffender(offenderId, attribute).map { note -> NoteDTO(note) }
-  }
+  ): List<NoteDTO> = profileService.getProfileNotesForOffender(offenderId, attribute).map { note -> NoteDTO(note) }
 }

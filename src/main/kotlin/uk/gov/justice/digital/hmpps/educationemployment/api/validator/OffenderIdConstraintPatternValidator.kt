@@ -13,7 +13,5 @@ class OffenderIdConstraintPatternValidator : ConstraintValidator<OffenderIdConst
     return true
   }
 
-  private fun validateOffenderId(offenderId: String): Boolean {
-    return offenderId.matches(Regex("^[A-Z]\\d{4}[A-Z]{2}\$"))
-  }
+  private fun validateOffenderId(offenderId: String): Boolean = offenderId.matches(Regex("^[A-Z]\\d{4}[A-Z]{2}\$"))
 }
