@@ -37,9 +37,7 @@ class CapturedSpringConfigValues {
       ).forEach { this.addMixIn(it, ModifiedByExclusionMixIn::class.java) }
     }
 
-    fun getDPSPrincipal(): DpsPrincipal {
-      return SecurityContextHolder.getContext().authentication.principal as DpsPrincipal
-    }
+    fun getDPSPrincipal(): DpsPrincipal = SecurityContextHolder.getContext().authentication.principal as DpsPrincipal
     fun configObjectMapper() = JsonMapper.builder()
       .addModules(JavaTimeModule())
       .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)

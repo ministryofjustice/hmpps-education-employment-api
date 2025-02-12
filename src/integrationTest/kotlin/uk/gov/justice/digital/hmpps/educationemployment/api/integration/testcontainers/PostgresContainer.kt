@@ -29,14 +29,13 @@ object PostgresContainer {
     }
   }
 
-  private fun isPostgresRunning(): Boolean =
-    try {
-      val serverSocket = ServerSocket(5432)
-      serverSocket.localPort == 0
-    } catch (error: IOException) {
-      log.warn("A PostgreSQL database is running")
-      true
-    }
+  private fun isPostgresRunning(): Boolean = try {
+    val serverSocket = ServerSocket(5432)
+    serverSocket.localPort == 0
+  } catch (error: IOException) {
+    log.warn("A PostgreSQL database is running")
+    true
+  }
 
   private val log = LoggerFactory.getLogger(this::class.java)
 }

@@ -1,25 +1,25 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "6.1.2"
-  kotlin("plugin.spring") version "2.0.21"
-  kotlin("plugin.jpa") version "2.0.21"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "7.1.1"
+  kotlin("plugin.spring") version "2.1.10"
+  kotlin("plugin.jpa") version "2.1.10"
   id("jacoco")
 }
 
-ext["logback.version"] = "1.5.15"
+ext["logback.version"] = "1.5.16"
 
 dependencies {
-  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:5.1.1") {
+  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:5.3.0") {
     implementation("org.apache.commons:commons-compress:1.27.1")
   }
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.4")
   implementation("com.fasterxml.jackson.core:jackson-databind")
-  implementation("io.jsonwebtoken:jjwt-impl:0.12.5")
-  implementation("io.jsonwebtoken:jjwt-jackson:0.12.5")
+  implementation("io.jsonwebtoken:jjwt-impl:0.12.6")
+  implementation("io.jsonwebtoken:jjwt-jackson:0.12.6")
 
   runtimeOnly("org.flywaydb:flyway-database-postgresql")
-  runtimeOnly("org.postgresql:postgresql:42.7.3")
+  runtimeOnly("org.postgresql:postgresql:42.7.5")
   testImplementation("org.testcontainers:localstack")
   testImplementation("org.testcontainers:postgresql")
   testImplementation("org.testcontainers:testcontainers")
@@ -42,8 +42,8 @@ testing {
         kotlin.target.compilations { named("integrationTest") { associateWith(getByName("main")) } }
         implementation("org.springframework.boot:spring-boot-starter-test")
         implementation("org.springframework.security:spring-security-test")
-        implementation("io.jsonwebtoken:jjwt-impl:0.12.5")
-        implementation("io.jsonwebtoken:jjwt-jackson:0.12.5")
+        implementation("io.jsonwebtoken:jjwt-impl:0.12.6")
+        implementation("io.jsonwebtoken:jjwt-jackson:0.12.6")
         implementation("com.microsoft.azure:applicationinsights-logging-logback:2.6.4")
         implementation("com.microsoft.azure:applicationinsights-logging-logback")
         runtimeOnly("org.flywaydb:flyway-database-postgresql")

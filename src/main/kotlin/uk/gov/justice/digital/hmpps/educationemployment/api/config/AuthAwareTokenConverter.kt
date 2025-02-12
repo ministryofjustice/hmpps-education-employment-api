@@ -23,22 +23,16 @@ class AuthAwareTokenConverter : Converter<Jwt, AbstractAuthenticationToken> {
     val authorities = extractAuthorities(jwt)
     return AuthAwareAuthenticationToken(jwt, principal, authorities)
   }
-  private fun findUsername(claims: Map<String, Any?>): String {
-    return if (claims.containsKey("user_name")) {
-      claims["user_name"] as String
-    } else {
-      claims["client_id"] as String
-    }
+  private fun findUsername(claims: Map<String, Any?>): String = if (claims.containsKey("user_name")) {
+    claims["user_name"] as String
+  } else {
+    claims["client_id"] as String
   }
-  private fun findDisplayName(claims: Map<String, Any?>): String? {
-    return claims["name"] as String?
-  }
-  private fun findPrincipal(claims: Map<String, Any?>): String {
-    return if (claims.containsKey("user_name")) {
-      claims["user_name"] as String
-    } else {
-      claims["client_id"] as String
-    }
+  private fun findDisplayName(claims: Map<String, Any?>): String? = claims["name"] as String?
+  private fun findPrincipal(claims: Map<String, Any?>): String = if (claims.containsKey("user_name")) {
+    claims["user_name"] as String
+  } else {
+    claims["client_id"] as String
   }
 
   private fun extractAuthorities(jwt: Jwt): Collection<GrantedAuthority> {
@@ -57,9 +51,7 @@ class AuthAwareAuthenticationToken(
   private val principal: DpsPrincipal,
   authorities: Collection<GrantedAuthority>,
 ) : JwtAuthenticationToken(jwt, authorities) {
-  override fun getPrincipal(): DpsPrincipal {
-    return principal
-  }
+  override fun getPrincipal(): DpsPrincipal = principal
 }
 
 class DpsPrincipal(

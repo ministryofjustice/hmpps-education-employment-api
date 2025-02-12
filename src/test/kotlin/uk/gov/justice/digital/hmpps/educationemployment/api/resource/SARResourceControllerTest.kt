@@ -14,12 +14,12 @@ import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.context.web.WebAppConfiguration
 import org.springframework.test.web.servlet.MockMvc
@@ -41,7 +41,7 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.service.ProfileServi
 @WebAppConfiguration
 class SARResourceControllerTest {
 
-  @MockBean
+  @MockitoBean
   private lateinit var profileService: ProfileService
 
   @Autowired
@@ -92,7 +92,5 @@ class SARResourceControllerTest {
   internal fun setAuthorisation(
     user: String = "test-client",
     roles: List<String> = listOf(),
-  ): (HttpHeaders) {
-    return jwtAuthHelper.setAuthorisationForUnitTests(user, roles)
-  }
+  ): (HttpHeaders) = jwtAuthHelper.setAuthorisationForUnitTests(user, roles)
 }
