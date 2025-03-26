@@ -10,6 +10,7 @@ import jakarta.persistence.NamedNativeQuery
 import jakarta.persistence.SqlResultSetMapping
 import jakarta.persistence.Table
 import org.hibernate.annotations.JdbcTypeCode
+import org.hibernate.envers.Audited
 import org.hibernate.type.SqlTypes
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.annotation.CreatedBy
@@ -44,6 +45,7 @@ import java.time.LocalDateTime
     ),
   ],
 )
+@Audited
 @Entity
 @Table(name = "work_readiness")
 data class ReadinessProfile(
