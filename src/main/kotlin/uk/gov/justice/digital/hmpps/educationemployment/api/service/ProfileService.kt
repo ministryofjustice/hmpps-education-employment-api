@@ -16,12 +16,13 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.AlreadyEx
 import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.InvalidStateException
 import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.NotFoundException
 import uk.gov.justice.digital.hmpps.educationemployment.api.repository.ReadinessProfileRepository
+import uk.gov.justice.digital.hmpps.educationemployment.api.shared.domain.TimeProvider
 import java.time.LocalDate
-import java.time.LocalDateTime
 
 @Service
 class ProfileService(
   private val readinessProfileRepository: ReadinessProfileRepository,
+  private val timeProvider: TimeProvider,
 ) {
   fun createProfileForOffender(
     userId: String,
@@ -45,9 +46,9 @@ class ProfileService(
         offenderId,
         bookingId,
         userId,
-        LocalDateTime.now(),
+        timeProvider.now(),
         userId,
-        LocalDateTime.now(),
+        timeProvider.now(),
         "1.0",
         CapturedSpringConfigValues.objectMapper.readTree(CapturedSpringConfigValues.objectMapper.writeValueAsString(profile)),
         CapturedSpringConfigValues.objectMapper.readTree("[]"),
@@ -95,7 +96,7 @@ class ProfileService(
     storedProfile.profileData =
       CapturedSpringConfigValues.objectMapper.readTree(CapturedSpringConfigValues.objectMapper.writeValueAsString(profile))
     storedProfile.modifiedBy = userId
-    storedProfile.modifiedDateTime = LocalDateTime.now()
+    storedProfile.modifiedDateTime = timeProvider.now()
     readinessProfileRepository.save(storedProfile)
     return storedProfile
   }
@@ -175,7 +176,7 @@ class ProfileService(
       CapturedSpringConfigValues.objectMapper.writeValueAsString(storedProfile.notesData),
       object : TypeReference<MutableList<Note>>() {},
     )
-    notesList.add(Note(userId, LocalDateTime.now(), attribute, text))
+    notesList.add(Note(userId, timeProvider.now(), attribute, text))
     storedProfile.notesData =
       CapturedSpringConfigValues.objectMapper.readTree(CapturedSpringConfigValues.objectMapper.writeValueAsString(notesList))
     storedProfile.modifiedBy = userId
@@ -203,12 +204,12 @@ class ProfileService(
   fun setMiscellaneousAttributesOnSupportState(profile: Profile, userId: String, offenderId: String) {
     if (profile.supportAccepted != null) {
       profile.supportAccepted?.modifiedBy = userId
-      profile.supportAccepted?.modifiedDateTime = LocalDateTime.now()
+      profile.supportAccepted?.modifiedDateTime = timeProvider.now()
     }
 
     if (profile.supportDeclined != null) {
       profile.supportDeclined?.modifiedBy = userId
-      profile.supportDeclined?.modifiedDateTime = LocalDateTime.now()
+      profile.supportDeclined?.modifiedDateTime = timeProvider.now()
       checkDeclinedProfileStatus(profile, offenderId)
     }
   }
@@ -224,7 +225,7 @@ class ProfileService(
       object : TypeReference<Profile>() {},
     )
     checkDeclinedProfileStatus(profile, offenderId)
-    profile.statusChangeDate = LocalDateTime.now()
+    profile.statusChangeDate = timeProvider.now()
     profile.statusChangeType = StatusChange.DECLINED_TO_ACCEPTED
 
     profile.supportDeclined_history?.let { it.add(profile.supportDeclined!!) } ?: run {
@@ -233,7 +234,7 @@ class ProfileService(
     }
     profile.supportDeclined = null
     statusChangeUpdateRequestDTO.supportAccepted!!.modifiedBy = userId
-    statusChangeUpdateRequestDTO.supportAccepted.modifiedDateTime = LocalDateTime.now()
+    statusChangeUpdateRequestDTO.supportAccepted.modifiedDateTime = timeProvider.now()
     profile.supportAccepted = statusChangeUpdateRequestDTO.supportAccepted
     profile.status = statusChangeUpdateRequestDTO.status
 
@@ -245,7 +246,7 @@ class ProfileService(
     profileToBeModified.supportAccepted = profileReference.supportAccepted
     profileToBeModified.supportAccepted_history = profileReference.supportAccepted_history
     profileToBeModified.supportDeclined_history = profileReference.supportDeclined_history
-    profileToBeModified.statusChangeDate = LocalDateTime.now()
+    profileToBeModified.statusChangeDate = timeProvider.now()
     profileToBeModified.statusChange = true
     profileToBeModified.statusChangeType = profileReference.statusChangeType
   }
@@ -276,12 +277,12 @@ class ProfileService(
       throw InvalidStateException(offenderId)
     }
 
-    storedCoreProfile.statusChangeDate = LocalDateTime.now()
+    storedCoreProfile.statusChangeDate = timeProvider.now()
     storedCoreProfile.statusChange = true
     storedProfile.profileData =
       CapturedSpringConfigValues.objectMapper.readTree(CapturedSpringConfigValues.objectMapper.writeValueAsString(storedCoreProfile))
     storedProfile.modifiedBy = userId
-    storedProfile.modifiedDateTime = LocalDateTime.now()
+    storedProfile.modifiedDateTime = timeProvider.now()
     readinessProfileRepository.save(storedProfile)
     return storedProfile
   }
@@ -295,7 +296,7 @@ class ProfileService(
       CapturedSpringConfigValues.objectMapper.writeValueAsString(storedProfile.profileData),
       object : TypeReference<Profile>() {},
     )
-    profile.statusChangeDate = LocalDateTime.now()
+    profile.statusChangeDate = timeProvider.now()
     profile.statusChangeType = StatusChange.ACCEPTED_TO_DECLINED
 
     profile.supportAccepted_history?.let { it.add(profile.supportAccepted!!) } ?: run {
@@ -304,7 +305,7 @@ class ProfileService(
     }
     // profile.supportAccepted = null
     statusChangeUpdateRequestDTO.supportDeclined!!.modifiedBy = userId
-    statusChangeUpdateRequestDTO.supportDeclined.modifiedDateTime = LocalDateTime.now()
+    statusChangeUpdateRequestDTO.supportDeclined.modifiedDateTime = timeProvider.now()
     profile.supportDeclined = statusChangeUpdateRequestDTO.supportDeclined
     profile.status = statusChangeUpdateRequestDTO.status
     checkDeclinedProfileStatus(profile, offenderId)
@@ -342,7 +343,7 @@ class ProfileService(
   fun updateAcceptedStatusList(profile: Profile, storedCoreProfile: Profile, userId: String, offenderId: String) {
     profile.supportAccepted?.modifiedBy = userId
     profile.supportAccepted?.modifiedBy = userId
-    profile.supportAccepted?.modifiedDateTime = LocalDateTime.now()
+    profile.supportAccepted?.modifiedDateTime = timeProvider.now()
     profile.supportAccepted_history?.let { it.add(storedCoreProfile.supportAccepted!!) } ?: run {
       profile.supportAccepted_history = mutableListOf<SupportAccepted>()
       profile.supportAccepted_history!!.add(storedCoreProfile.supportAccepted!!)
@@ -352,7 +353,7 @@ class ProfileService(
   fun updateDeclinedStatusList(profile: Profile, storedCoreProfile: Profile, userId: String, offenderId: String) {
     profile.supportAccepted?.modifiedBy = userId
     profile.supportDeclined?.modifiedBy = userId
-    profile.supportDeclined?.modifiedDateTime = LocalDateTime.now()
+    profile.supportDeclined?.modifiedDateTime = timeProvider.now()
     profile.supportDeclined_history?.let { it.add(storedCoreProfile.supportDeclined!!) } ?: run {
       profile.supportDeclined_history = mutableListOf<SupportDeclined>()
       profile.supportDeclined_history!!.add(storedCoreProfile.supportDeclined!!)

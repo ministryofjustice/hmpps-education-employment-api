@@ -6,8 +6,10 @@ import org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentCaptor
+import org.mockito.InjectMocks
+import org.mockito.Mock
+import org.mockito.Mockito.lenient
 import org.mockito.kotlin.any
-import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.educationemployment.api.TestData
@@ -22,16 +24,20 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.AlreadyEx
 import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.InvalidStateException
 import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.NotFoundException
 import uk.gov.justice.digital.hmpps.educationemployment.api.repository.ReadinessProfileRepository
-import java.util.Optional
+import uk.gov.justice.digital.hmpps.educationemployment.api.shared.application.UnitTestBase
+import java.util.*
 import kotlin.test.assertFailsWith
 
-class ProfileServiceTest {
-  private val readinessProfileRepository: ReadinessProfileRepository = mock()
+class ProfileServiceTest : UnitTestBase() {
+  @Mock
+  private lateinit var readinessProfileRepository: ReadinessProfileRepository
+
+  @InjectMocks
   private lateinit var profileService: ProfileService
 
   @BeforeEach
   fun beforeEach() {
-    profileService = ProfileService(readinessProfileRepository)
+    profileService = ProfileService(readinessProfileRepository, timeProvider)
   }
 
   @Test
@@ -181,7 +187,6 @@ class ProfileServiceTest {
 
   @Test
   fun `makes a call to the repository to retrieve a readiness profile note`() {
-    whenever(readinessProfileRepository.save(any())).thenReturn(TestData.updatedReadinessProfileNotes)
     whenever(readinessProfileRepository.findById(any())).thenReturn(Optional.of(TestData.updatedReadinessProfileNotes))
 
     val listNote = profileService.getProfileNotesForOffender(TestData.newOffenderId, TestData.actionToDoCV)
@@ -205,7 +210,6 @@ class ProfileServiceTest {
   @Test
   fun `throws an exception when a call is made to the repository to save the readiness profile`() {
     assertThatExceptionOfType(AlreadyExistsException::class.java).isThrownBy {
-      whenever(readinessProfileRepository.save(any())).thenReturn(TestData.readinessProfile)
       whenever(readinessProfileRepository.existsById(any())).thenReturn(TestData.booleanTrue)
 
       profileService.createProfileForOffender(TestData.createdBy, TestData.newOffenderId, TestData.newBookingId, TestData.profile)
@@ -215,7 +219,6 @@ class ProfileServiceTest {
   @Test
   fun `throws an exception when a call is made to the repository to save the readiness profile with incorrect status`() {
     assertThatExceptionOfType(InvalidStateException::class.java).isThrownBy {
-      whenever(readinessProfileRepository.save(any())).thenReturn(TestData.readinessProfile)
       whenever(readinessProfileRepository.existsById(any())).thenReturn(TestData.booleanFalse)
 
       profileService.createProfileForOffender(TestData.createdBy, TestData.newOffenderId, TestData.newBookingId, TestData.profile_IncorrectStatus)
@@ -225,7 +228,6 @@ class ProfileServiceTest {
   @Test
   fun `throws an exception when a call is made to the repository to save the readiness profile with both support state`() {
     assertThatExceptionOfType(InvalidStateException::class.java).isThrownBy {
-      whenever(readinessProfileRepository.save(any())).thenReturn(TestData.readinessProfile)
       whenever(readinessProfileRepository.existsById(any())).thenReturn(TestData.booleanFalse)
 
       profileService.createProfileForOffender(TestData.createdBy, TestData.newOffenderId, TestData.newBookingId, TestData.profile_NEW_BOTHSTATE_INCOORECT)
@@ -235,7 +237,6 @@ class ProfileServiceTest {
   @Test
   fun `throws an exception when a call is made to the repository to update the readiness profile`() {
     assertThatExceptionOfType(NotFoundException::class.java).isThrownBy {
-      whenever(readinessProfileRepository.save(any())).thenReturn(TestData.readinessProfile)
       whenever(readinessProfileRepository.findById(any())).thenReturn(Optional.empty())
       profileService.updateProfileForOffender(TestData.createdBy, TestData.newOffenderId, TestData.newBookingId, TestData.profile)
     }.withMessageContaining("Readiness profile does not exist for offender")
@@ -371,6 +372,6 @@ class ProfileServiceTest {
   }
 
   private fun givenProfileWithSupportDeclinedTwiceInHistory() = TestData.readinessProfileWithSupportDeclinedTwiceAndThenAccepted.also {
-    whenever(readinessProfileRepository.findById(any())).thenReturn(Optional.of(it.deepCopy()))
+    lenient().whenever(readinessProfileRepository.findById(any())).thenReturn(Optional.of(it.deepCopy()))
   }
 }
