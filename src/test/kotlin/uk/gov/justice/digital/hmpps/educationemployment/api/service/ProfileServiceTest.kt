@@ -3,7 +3,6 @@ package uk.gov.justice.digital.hmpps.educationemployment.api.service
 import com.fasterxml.jackson.core.type.TypeReference
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentCaptor
 import org.mockito.InjectMocks
@@ -34,11 +33,6 @@ class ProfileServiceTest : UnitTestBase() {
 
   @InjectMocks
   private lateinit var profileService: ProfileService
-
-  @BeforeEach
-  fun beforeEach() {
-    profileService = ProfileService(readinessProfileRepository, timeProvider)
-  }
 
   @Test
   fun `makes a call to the repository to save the readiness profile`() {
