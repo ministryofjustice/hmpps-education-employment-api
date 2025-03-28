@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.educationemployment.api.config.DpsPrincipal
 import uk.gov.justice.digital.hmpps.educationemployment.api.config.ErrorResponse
-import uk.gov.justice.digital.hmpps.educationemployment.api.data.jsonprofile.ActionTodo
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ActionTodo
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.NoteDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.NoteRequestDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.ProfileService

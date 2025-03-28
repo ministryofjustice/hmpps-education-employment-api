@@ -7,14 +7,14 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.core.context.SecurityContextHolder
-import uk.gov.justice.digital.hmpps.educationemployment.api.data.jsonprofile.ActionsRequired
-import uk.gov.justice.digital.hmpps.educationemployment.api.data.jsonprofile.SupportAccepted
-import uk.gov.justice.digital.hmpps.educationemployment.api.data.jsonprofile.SupportDeclined
-import uk.gov.justice.digital.hmpps.educationemployment.api.data.jsonprofile.WorkExperience
-import uk.gov.justice.digital.hmpps.educationemployment.api.data.jsonprofile.WorkImpacts
-import uk.gov.justice.digital.hmpps.educationemployment.api.data.jsonprofile.WorkInterests
-import uk.gov.justice.digital.hmpps.educationemployment.api.data.sarprofile.ModifiedByExclusionMixIn
-import uk.gov.justice.digital.hmpps.educationemployment.api.data.sarprofile.OptionalModifiedByExclusionMixIn
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ActionsRequired
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.SupportAccepted
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.SupportDeclined
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.WorkExperience
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.WorkImpacts
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.WorkInterests
+import uk.gov.justice.digital.hmpps.educationemployment.api.sardata.domain.ModifiedByExclusionMixIn
+import uk.gov.justice.digital.hmpps.educationemployment.api.sardata.domain.OptionalModifiedByExclusionMixIn
 
 /**
  * This class is used as a way to capture the Spring Jackson mapper in a way that

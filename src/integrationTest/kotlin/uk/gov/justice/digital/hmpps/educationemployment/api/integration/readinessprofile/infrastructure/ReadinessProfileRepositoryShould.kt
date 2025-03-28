@@ -13,9 +13,9 @@ import org.springframework.data.history.RevisionMetadata.RevisionType
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
 import uk.gov.justice.digital.hmpps.educationemployment.api.audit.domain.RevisionInfo
-import uk.gov.justice.digital.hmpps.educationemployment.api.data.jsonprofile.ActionTodo
-import uk.gov.justice.digital.hmpps.educationemployment.api.data.jsonprofile.Note
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.shared.infrastructure.RepositoryTestCase
+import uk.gov.justice.digital.hmpps.educationemployment.api.notesdata.domain.Note
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ActionTodo
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.profileOfKnownPrisoner
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ReadinessProfile

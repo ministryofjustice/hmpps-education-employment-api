@@ -3,16 +3,16 @@ package uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.ap
 import com.fasterxml.jackson.core.type.TypeReference
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.educationemployment.api.config.CapturedSpringConfigValues
-import uk.gov.justice.digital.hmpps.educationemployment.api.data.jsonprofile.ActionTodo
-import uk.gov.justice.digital.hmpps.educationemployment.api.data.jsonprofile.Note
-import uk.gov.justice.digital.hmpps.educationemployment.api.data.jsonprofile.Profile
-import uk.gov.justice.digital.hmpps.educationemployment.api.data.jsonprofile.ProfileStatus
-import uk.gov.justice.digital.hmpps.educationemployment.api.data.jsonprofile.StatusChange
-import uk.gov.justice.digital.hmpps.educationemployment.api.data.jsonprofile.SupportAccepted
-import uk.gov.justice.digital.hmpps.educationemployment.api.data.jsonprofile.SupportDeclined
 import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.AlreadyExistsException
 import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.InvalidStateException
 import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.NotFoundException
+import uk.gov.justice.digital.hmpps.educationemployment.api.notesdata.domain.Note
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ActionTodo
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.Profile
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ProfileStatus
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.StatusChange
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.SupportAccepted
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.SupportDeclined
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ReadinessProfile
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ReadinessProfileRepository
 import uk.gov.justice.digital.hmpps.educationemployment.api.shared.domain.TimeProvider
@@ -267,11 +267,8 @@ class ProfileService(
         changeStatusToAcceptedForOffender(userId, offenderId, statusChangeUpdateRequestDTO, storedProfile)
       storedCoreProfile.status = statusChangeUpdateRequestDTO.status
     } else if (statusChangeUpdateRequestDTO!!.status.equals(ProfileStatus.READY_TO_WORK) || statusChangeUpdateRequestDTO.status.equals(ProfileStatus.NO_RIGHT_TO_WORK)) {
-      storedCoreProfile = CapturedSpringConfigValues.objectMapper.readValue(
-        CapturedSpringConfigValues.objectMapper.writeValueAsString(storedProfile.profileData),
-        object : TypeReference<Profile>() {},
-      )
-      storedCoreProfile!!.status = statusChangeUpdateRequestDTO!!.status
+      storedCoreProfile = CapturedSpringConfigValues.objectMapper.readValue(CapturedSpringConfigValues.objectMapper.writeValueAsString(storedProfile.profileData), object : TypeReference<Profile>() {})
+      storedCoreProfile!!.status = statusChangeUpdateRequestDTO.status
     } else {
       throw InvalidStateException(offenderId)
     }

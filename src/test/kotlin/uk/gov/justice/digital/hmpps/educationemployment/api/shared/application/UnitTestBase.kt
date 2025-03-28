@@ -9,7 +9,7 @@ import org.mockito.Mockito.lenient
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.educationemployment.api.config.CapturedSpringConfigValues
-import uk.gov.justice.digital.hmpps.educationemployment.api.data.jsonprofile.Profile
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.Profile
 import uk.gov.justice.digital.hmpps.educationemployment.api.shared.domain.TimeProvider
 import java.time.Instant
 import java.time.LocalDateTime

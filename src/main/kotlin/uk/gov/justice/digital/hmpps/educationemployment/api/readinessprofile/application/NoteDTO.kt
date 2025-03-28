@@ -1,7 +1,7 @@
 package uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application
 
 import io.swagger.v3.oas.annotations.media.Schema
-import uk.gov.justice.digital.hmpps.educationemployment.api.data.jsonprofile.Note
+import uk.gov.justice.digital.hmpps.educationemployment.api.notesdata.domain.Note
 import java.time.LocalDateTime
 
 data class NoteDTO(

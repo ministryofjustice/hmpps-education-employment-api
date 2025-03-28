@@ -2,7 +2,7 @@ package uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.ap
 
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.Valid
-import uk.gov.justice.digital.hmpps.educationemployment.api.data.jsonprofile.Profile
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.Profile
 
 data class ReadinessProfileRequestDTO(
 
