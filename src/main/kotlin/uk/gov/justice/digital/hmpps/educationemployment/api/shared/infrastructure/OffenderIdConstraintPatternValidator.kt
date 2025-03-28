@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.educationemployment.api.validator
+package uk.gov.justice.digital.hmpps.educationemployment.api.shared.infrastructure
 
 import jakarta.validation.ConstraintValidator
 import jakarta.validation.ConstraintValidatorContext

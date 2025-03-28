@@ -1,9 +1,8 @@
-package uk.gov.justice.digital.hmpps.educationemployment.api.service
+package uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application
 
 import com.fasterxml.jackson.core.type.TypeReference
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.educationemployment.api.config.CapturedSpringConfigValues
-import uk.gov.justice.digital.hmpps.educationemployment.api.data.StatusChangeUpdateRequestDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.data.jsonprofile.ActionTodo
 import uk.gov.justice.digital.hmpps.educationemployment.api.data.jsonprofile.Note
 import uk.gov.justice.digital.hmpps.educationemployment.api.data.jsonprofile.Profile
@@ -11,11 +10,11 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.data.jsonprofile.Pro
 import uk.gov.justice.digital.hmpps.educationemployment.api.data.jsonprofile.StatusChange
 import uk.gov.justice.digital.hmpps.educationemployment.api.data.jsonprofile.SupportAccepted
 import uk.gov.justice.digital.hmpps.educationemployment.api.data.jsonprofile.SupportDeclined
-import uk.gov.justice.digital.hmpps.educationemployment.api.entity.ReadinessProfile
 import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.AlreadyExistsException
 import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.InvalidStateException
 import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.NotFoundException
-import uk.gov.justice.digital.hmpps.educationemployment.api.repository.ReadinessProfileRepository
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ReadinessProfile
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ReadinessProfileRepository
 import uk.gov.justice.digital.hmpps.educationemployment.api.shared.domain.TimeProvider
 import java.time.LocalDate
 

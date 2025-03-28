@@ -19,7 +19,7 @@ import org.springframework.test.context.DynamicPropertySource
 import uk.gov.justice.digital.hmpps.educationemployment.api.audit.domain.AuditObjects
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.config.TestJpaConfig
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.testcontainers.PostgresContainer
-import uk.gov.justice.digital.hmpps.educationemployment.api.repository.ReadinessProfileRepository
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ReadinessProfileRepository
 import java.time.Instant
 import java.time.LocalDateTime
 import java.util.*

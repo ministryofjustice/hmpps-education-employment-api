@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.educationemployment.api.entity
+package uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain
 
 import com.fasterxml.jackson.databind.JsonNode
 import jakarta.persistence.Column
@@ -19,7 +19,7 @@ import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedBy
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
-import uk.gov.justice.digital.hmpps.educationemployment.api.data.SARReadinessProfileDTO
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.SARReadinessProfileDTO
 import java.time.LocalDateTime
 
 @NamedNativeQuery(

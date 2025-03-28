@@ -3,7 +3,7 @@ package uk.gov.justice.digital.hmpps.educationemployment.api.integration.resourc
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import uk.gov.justice.digital.hmpps.educationemployment.api.config.CapturedSpringConfigValues
-import uk.gov.justice.digital.hmpps.educationemployment.api.data.ReadinessProfileRequestDTO
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.ReadinessProfileRequestDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.createProfileJsonRequest
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.createProfileJsonRequestWithSupportAccepted
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.createProfileJsonRequestWithSupportDeclined

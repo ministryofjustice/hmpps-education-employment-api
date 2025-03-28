@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.educationemployment.api.health
+package uk.gov.justice.digital.hmpps.educationemployment.api.shared.infrastructure
 
 import org.slf4j.LoggerFactory
 import org.springframework.boot.context.event.ApplicationReadyEvent

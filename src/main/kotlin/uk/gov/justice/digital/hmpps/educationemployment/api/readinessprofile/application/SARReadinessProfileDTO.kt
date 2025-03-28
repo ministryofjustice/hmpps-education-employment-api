@@ -1,10 +1,10 @@
-package uk.gov.justice.digital.hmpps.educationemployment.api.data
+package uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application
 
 import com.fasterxml.jackson.core.type.TypeReference
 import io.swagger.v3.oas.annotations.media.Schema
 import uk.gov.justice.digital.hmpps.educationemployment.api.config.CapturedSpringConfigValues.Companion.objectMapperSAR
 import uk.gov.justice.digital.hmpps.educationemployment.api.data.sarprofile.Profile
-import uk.gov.justice.digital.hmpps.educationemployment.api.entity.ReadinessProfile
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ReadinessProfile
 import java.time.LocalDateTime
 
 data class SARReadinessProfileDTO(

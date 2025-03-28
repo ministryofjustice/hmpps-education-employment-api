@@ -15,10 +15,10 @@ import org.springframework.transaction.annotation.Transactional
 import uk.gov.justice.digital.hmpps.educationemployment.api.audit.domain.RevisionInfo
 import uk.gov.justice.digital.hmpps.educationemployment.api.data.jsonprofile.ActionTodo
 import uk.gov.justice.digital.hmpps.educationemployment.api.data.jsonprofile.Note
-import uk.gov.justice.digital.hmpps.educationemployment.api.entity.ReadinessProfile
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.shared.infrastructure.RepositoryTestCase
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.profileOfKnownPrisoner
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ReadinessProfile
 
 class ReadinessProfileRepositoryShould : RepositoryTestCase() {
   private val firstAuditor = ProfileObjects.createdBy

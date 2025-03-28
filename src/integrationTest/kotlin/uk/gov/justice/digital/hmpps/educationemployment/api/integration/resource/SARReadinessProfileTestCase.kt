@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatusCode
 import org.springframework.http.ResponseEntity
 import uk.gov.justice.digital.hmpps.educationemployment.api.config.CapturedSpringConfigValues
-import uk.gov.justice.digital.hmpps.educationemployment.api.data.SARReadinessProfileDTO
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.SARReadinessProfileDTO
 import java.time.LocalDate
 
 class SARReadinessProfileTestCase : ReadinessProfileTestCase() {

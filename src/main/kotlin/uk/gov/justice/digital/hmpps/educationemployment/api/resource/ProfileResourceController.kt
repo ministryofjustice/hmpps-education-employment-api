@@ -21,15 +21,14 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.educationemployment.api.config.DpsPrincipal
 import uk.gov.justice.digital.hmpps.educationemployment.api.config.ErrorResponse
-import uk.gov.justice.digital.hmpps.educationemployment.api.data.NoteDTO
-import uk.gov.justice.digital.hmpps.educationemployment.api.data.NoteRequestDTO
-import uk.gov.justice.digital.hmpps.educationemployment.api.data.ReadinessProfileDTO
-import uk.gov.justice.digital.hmpps.educationemployment.api.data.ReadinessProfileRequestDTO
-import uk.gov.justice.digital.hmpps.educationemployment.api.data.StatusChangeUpdateRequestDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.data.jsonprofile.ActionTodo
-import uk.gov.justice.digital.hmpps.educationemployment.api.service.ProfileService
-import uk.gov.justice.digital.hmpps.educationemployment.api.validator.OffenderIdConstraint
-import java.util.ArrayList
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.NoteDTO
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.NoteRequestDTO
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.ProfileService
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.ReadinessProfileDTO
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.ReadinessProfileRequestDTO
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.StatusChangeUpdateRequestDTO
+import uk.gov.justice.digital.hmpps.educationemployment.api.shared.infrastructure.OffenderIdConstraint
 
 @Validated
 @RestController

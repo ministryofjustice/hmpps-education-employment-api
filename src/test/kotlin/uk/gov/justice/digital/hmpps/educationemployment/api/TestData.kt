@@ -19,7 +19,7 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.data.jsonprofile.Wor
 import uk.gov.justice.digital.hmpps.educationemployment.api.data.jsonprofile.WorkImpacts
 import uk.gov.justice.digital.hmpps.educationemployment.api.data.jsonprofile.WorkInterests
 import uk.gov.justice.digital.hmpps.educationemployment.api.data.jsonprofile.WorkTypesOfInterest
-import uk.gov.justice.digital.hmpps.educationemployment.api.entity.ReadinessProfile
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ReadinessProfile
 import java.io.File
 import java.time.LocalDate
 import java.time.LocalDateTime
