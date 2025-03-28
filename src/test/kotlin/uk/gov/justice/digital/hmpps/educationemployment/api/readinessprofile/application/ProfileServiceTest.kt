@@ -1,6 +1,6 @@
 package uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application
 
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -12,6 +12,18 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.educationemployment.api.TestData
+import uk.gov.justice.digital.hmpps.educationemployment.api.TestData.createdTime
+import uk.gov.justice.digital.hmpps.educationemployment.api.TestData.modifiedAgainTime
+import uk.gov.justice.digital.hmpps.educationemployment.api.TestData.modifiedTime
+import uk.gov.justice.digital.hmpps.educationemployment.api.TestData.newNotes
+import uk.gov.justice.digital.hmpps.educationemployment.api.TestData.profile_accpeted_modified
+import uk.gov.justice.digital.hmpps.educationemployment.api.TestData.profile_declinedModified
+import uk.gov.justice.digital.hmpps.educationemployment.api.TestData.readinessProfileWithSupportDeclinedTwiceAndThenAccepted
+import uk.gov.justice.digital.hmpps.educationemployment.api.TestData.readinessProfile_accepted_1
+import uk.gov.justice.digital.hmpps.educationemployment.api.TestData.readinessProfile_declined_1
+import uk.gov.justice.digital.hmpps.educationemployment.api.TestData.readinessProfile_declined_1_declined_list
+import uk.gov.justice.digital.hmpps.educationemployment.api.TestData.updatedReadinessProfile_accpeted_1
+import uk.gov.justice.digital.hmpps.educationemployment.api.TestData.updatedReadinessProfile_declined_1
 import uk.gov.justice.digital.hmpps.educationemployment.api.deepCopy
 import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.AlreadyExistsException
 import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.InvalidStateException
@@ -54,9 +66,9 @@ class ProfileServiceTest : UnitTestBase() {
 
       verify(readinessProfileRepository).save(any())
       savedProfile.let {
-        Assertions.assertThat(it.createdBy).isEqualTo(userId)
-        Assertions.assertThat(it.offenderId).isEqualTo(prisonNumber)
-        Assertions.assertThat(it.bookingId).isEqualTo(bookingId)
+        assertThat(it.createdBy).isEqualTo(userId)
+        assertThat(it.offenderId).isEqualTo(prisonNumber)
+        assertThat(it.bookingId).isEqualTo(bookingId)
       }
     }
 
@@ -74,7 +86,7 @@ class ProfileServiceTest : UnitTestBase() {
       assertFailsWith<InvalidStateException> {
         profileService.createProfileForOffender(userId, prisonNumber, bookingId, profile)
       }.let {
-        Assertions.assertThat(it.message).contains("Readiness profile is in an invalid state for")
+        assertThat(it.message).contains("Readiness profile is in an invalid state for")
       }
     }
   }
@@ -106,10 +118,10 @@ class ProfileServiceTest : UnitTestBase() {
         val actual = assertProfileIsUpdated(userId, prisonNumber, bookingId, profile)
 
         actual.let {
-          Assertions.assertThat(it.offenderId).isEqualTo(prisonNumber)
-          Assertions.assertThat(it.bookingId).isEqualTo(updatedBookingId)
-          Assertions.assertThat(it.modifiedBy).isEqualTo(userId)
-          Assertions.assertThat(it.createdBy).isEqualTo(userIdCreator)
+          assertThat(it.offenderId).isEqualTo(prisonNumber)
+          assertThat(it.bookingId).isEqualTo(updatedBookingId)
+          assertThat(it.modifiedBy).isEqualTo(userId)
+          assertThat(it.createdBy).isEqualTo(userIdCreator)
         }
       }
 
@@ -120,7 +132,7 @@ class ProfileServiceTest : UnitTestBase() {
         val actual = assertProfileIsUpdated(userId, prisonNumber, bookingId, profile)
 
         profileJsonToValue(actual.profileData).let {
-          Assertions.assertThat(it.prisonName).isEqualTo(profile.prisonName)
+          assertThat(it.prisonName).isEqualTo(profile.prisonName)
         }
       }
     }
@@ -128,7 +140,7 @@ class ProfileServiceTest : UnitTestBase() {
     @Nested
     @DisplayName("And the readiness profile with decline is found")
     inner class AndProfileWithDeclineIsFound {
-      private val profileWithDecline = TestData.readinessProfile_declined_1
+      private val profileWithDecline = readinessProfile_declined_1
 
       @BeforeEach
       internal fun setUp() {
@@ -137,24 +149,24 @@ class ProfileServiceTest : UnitTestBase() {
 
       @Test
       fun `add supportDeclined to empty supportDeclined List, on Update of declined State in readiness profile`() {
-        givenSavedProfile(TestData.updatedReadinessProfile_declined_1)
+        givenSavedProfile(updatedReadinessProfile_declined_1)
 
-        val actual = assertProfileIsUpdated(userId, prisonNumber, bookingId, TestData.profile_declinedModified)
+        val actual = assertProfileIsUpdated(userId, prisonNumber, bookingId, profile_declinedModified)
 
         profileJsonToValue(actual.profileData).let {
-          Assertions.assertThat(it.supportDeclined_history!!.size == 1)
+          assertThat(it.supportDeclined_history!!.size == 1)
         }
       }
 
       @Test
       fun `add supportDeclined to empty supportDeclined List, on Update of acceptedSupport  in readiness profile`() {
-        givenSavedProfile(TestData.updatedReadinessProfile_accpeted_1)
+        givenSavedProfile(updatedReadinessProfile_accpeted_1)
 
-        val actual = assertProfileIsUpdated(userId, prisonNumber, bookingId, TestData.profile_accpeted_modified)
+        val actual = assertProfileIsUpdated(userId, prisonNumber, bookingId, profile_accpeted_modified)
 
         profileJsonToValue(actual.profileData).let {
-          Assertions.assertThat(it.supportDeclined_history!!.size == 1)
-          Assertions.assertThat(it.statusChangeType!!).isEqualTo(StatusChange.DECLINED_TO_ACCEPTED)
+          assertThat(it.supportDeclined_history!!.size == 1)
+          assertThat(it.statusChangeType!!).isEqualTo(StatusChange.DECLINED_TO_ACCEPTED)
         }
       }
 
@@ -162,10 +174,10 @@ class ProfileServiceTest : UnitTestBase() {
       fun `makes a call to the repository to verify support declined is not added to supportDeclineList when declinedsupport has not changed in readiness profile`() {
         givenSavedProfile(profileWithDecline)
 
-        val actual = assertProfileIsUpdated(userId, prisonNumber, bookingId, TestData.profile_declinedModified)
+        val actual = assertProfileIsUpdated(userId, prisonNumber, bookingId, profile_declinedModified)
 
         profileJsonToValue(actual.profileData).let {
-          Assertions.assertThat(it.supportDeclined_history!!.size == 0)
+          assertThat(it.supportDeclined_history!!.size == 0)
         }
       }
     }
@@ -173,7 +185,7 @@ class ProfileServiceTest : UnitTestBase() {
     @Nested
     @DisplayName("And the readiness profile with acceptance is found")
     inner class AndProfileWithAcceptanceIsFound {
-      private val profileWithAcceptance = TestData.readinessProfile_accepted_1
+      private val profileWithAcceptance = readinessProfile_accepted_1
 
       @BeforeEach
       internal fun setUp() {
@@ -182,35 +194,35 @@ class ProfileServiceTest : UnitTestBase() {
 
       @Test
       fun `add supportAccepted to empty supportAccepted List, on Update of declinedSupport in readiness profile`() {
-        givenSavedProfile(TestData.updatedReadinessProfile_declined_1)
+        givenSavedProfile(updatedReadinessProfile_declined_1)
 
-        val actual = assertProfileIsUpdated(userId, prisonNumber, bookingId, TestData.profile_accpeted_modified)
+        val actual = assertProfileIsUpdated(userId, prisonNumber, bookingId, profile_accpeted_modified)
 
         profileJsonToValue(actual.profileData).let {
-          Assertions.assertThat(it.supportAccepted_history!!.size == 1)
-          Assertions.assertThat(it.statusChangeType!!.equals(StatusChange.ACCEPTED_TO_DECLINED))
+          assertThat(it.supportAccepted_history!!.size == 1)
+          assertThat(it.statusChangeType!!.equals(StatusChange.ACCEPTED_TO_DECLINED))
         }
       }
 
       @Test
       fun `add support accepted to empty supportAccpetedList on Update of declined in readiness profile`() {
-        givenSavedProfile(TestData.updatedReadinessProfile_accpeted_1)
+        givenSavedProfile(updatedReadinessProfile_accpeted_1)
 
-        val actual = assertProfileIsUpdated(userId, prisonNumber, bookingId, TestData.profile_accpeted_modified)
+        val actual = assertProfileIsUpdated(userId, prisonNumber, bookingId, profile_accpeted_modified)
 
-        Assertions.assertThat(profileJsonToValue(actual.profileData).supportAccepted_history!!.size == 1)
+        assertThat(profileJsonToValue(actual.profileData).supportAccepted_history!!.size == 1)
       }
     }
 
     @Test
     fun `add supportDeclined to supportDeclineList on Update of declinedSupport in readiness profile`() {
-      val profileDeclinedTwice = TestData.readinessProfile_declined_1_declined_list
+      val profileDeclinedTwice = readinessProfile_declined_1_declined_list
       givenProfileFound(profileDeclinedTwice)
-      givenSavedProfile(TestData.updatedReadinessProfile_declined_1)
+      givenSavedProfile(updatedReadinessProfile_declined_1)
 
-      val actual = assertProfileIsUpdated(userId, prisonNumber, bookingId, TestData.profile_declinedModified)
+      val actual = assertProfileIsUpdated(userId, prisonNumber, bookingId, profile_declinedModified)
 
-      Assertions.assertThat(profileJsonToValue(actual.profileData).supportDeclined_history!!.size == 2)
+      assertThat(profileJsonToValue(actual.profileData).supportDeclined_history!!.size == 2)
     }
 
     @Test
@@ -219,7 +231,7 @@ class ProfileServiceTest : UnitTestBase() {
       assertFailsWith<AlreadyExistsException> {
         profileService.createProfileForOffender(userIdCreator, prisonNumber, bookingId, profile)
       }.let {
-        Assertions.assertThat(it.message).contains("Readiness profile already exists for offender")
+        assertThat(it.message).contains("Readiness profile already exists for offender")
       }
     }
   }
@@ -245,7 +257,7 @@ class ProfileServiceTest : UnitTestBase() {
       val listNote = profileService.addProfileNoteForOffender(userIdCreator, prisonNumber, actionToDoCV, notesText)
 
       verify(readinessProfileRepository).save(any())
-      Assertions.assertThat(listNote[0].text).isEqualTo(notesText)
+      assertThat(listNote[0].text).isEqualTo(notesText)
     }
 
     @Test
@@ -254,7 +266,7 @@ class ProfileServiceTest : UnitTestBase() {
 
       val listNote = profileService.getProfileNotesForOffender(prisonNumber, actionToDoCV)
 
-      Assertions.assertThat(listNote[0].text).isEqualTo(notesText)
+      assertThat(listNote[0].text).isEqualTo(notesText)
     }
 
     @Test
@@ -263,7 +275,7 @@ class ProfileServiceTest : UnitTestBase() {
 
       val profile = profileService.getProfileForOffender(prisonNumber)
 
-      Assertions.assertThat(profile).isEqualTo(updatedProfileWithNotes)
+      assertThat(profile).isEqualTo(updatedProfileWithNotes)
     }
   }
 
@@ -275,7 +287,7 @@ class ProfileServiceTest : UnitTestBase() {
 
     val profileList = profileService.getProfilesForOffenders(prisonNumbers)
 
-    Assertions.assertThat(profileList).containsAll(expectedProfiles)
+    assertThat(profileList).containsAll(expectedProfiles)
   }
 
   @Nested
@@ -296,25 +308,25 @@ class ProfileServiceTest : UnitTestBase() {
       assertFailsWith<NotFoundException> {
         profileService.updateProfileForOffender(userId, prisonNumber, bookingId, profile)
       }.let {
-        Assertions.assertThat(it.message).contains("Readiness profile does not exist for offender")
+        assertThat(it.message).contains("Readiness profile does not exist for offender")
       }
     }
 
     @Test
     fun `throws an exception, when add a note to a non-existing readiness profile`() {
       assertFailsWith<NotFoundException> {
-        profileService.addProfileNoteForOffender(userId, prisonNumber, ActionTodo.BANK_ACCOUNT, TestData.newNotes)
+        profileService.addProfileNoteForOffender(userId, prisonNumber, ActionTodo.BANK_ACCOUNT, newNotes)
       }.let {
-        Assertions.assertThat(it.message).contains("Readiness profile does not exist for offender")
+        assertThat(it.message).contains("Readiness profile does not exist for offender")
       }
     }
 
     @Test
     fun `throws an exception, when retrieve a note from a non-existing readiness profile`() {
       assertFailsWith<NotFoundException> {
-        profileService.getProfileNotesForOffender(TestData.createdBy, ActionTodo.BANK_ACCOUNT)
+        profileService.getProfileNotesForOffender(userId, ActionTodo.BANK_ACCOUNT)
       }.let {
-        Assertions.assertThat(it.message).contains("Readiness profile does not exist for offender")
+        assertThat(it.message).contains("Readiness profile does not exist for offender")
       }
     }
 
@@ -337,21 +349,21 @@ class ProfileServiceTest : UnitTestBase() {
     fun `retrieve readiness profile with full history, when no period is specified`() {
       val profile = profileService.getProfileForOffenderFilterByPeriod(prisonNumber)
 
-      Assertions.assertThat(profile).usingRecursiveComparison().isEqualTo(expectedProfile)
+      assertThat(profile).usingRecursiveComparison().isEqualTo(expectedProfile)
     }
 
     @Test
     fun `retrieve readiness profile with full history, sorted in descending order`() {
       val profile = profileService.getProfileForOffenderFilterByPeriod(prisonNumber)
 
-      Assertions.assertThat(profile)
+      assertThat(profile)
         .usingRecursiveComparison().ignoringFields("profileData")
         .isEqualTo(expectedProfile)
       profileJsonToValue(profile.profileData).let {
-        Assertions.assertThat(it.supportDeclined_history).isNotNull.hasSize(2)
+        assertThat(it.supportDeclined_history).isNotNull.hasSize(2)
         val firstTimestamp = it.supportDeclined_history!![0].modifiedDateTime
         val secondTimestamp = it?.supportDeclined_history!![1].modifiedDateTime
-        Assertions.assertThat(firstTimestamp).isAfterOrEqualTo(secondTimestamp)
+        assertThat(firstTimestamp).isAfterOrEqualTo(secondTimestamp)
       }
     }
 
@@ -362,27 +374,27 @@ class ProfileServiceTest : UnitTestBase() {
 
       val profile = profileService.getProfileForOffenderFilterByPeriod(prisonNumber, fromDate, toDate)
 
-      Assertions.assertThat(profile).usingRecursiveComparison().isEqualTo(expectedProfile)
-      Assertions.assertThat(profile.createdDateTime).isBeforeOrEqualTo(toDate.atStartOfDay())
+      assertThat(profile).usingRecursiveComparison().isEqualTo(expectedProfile)
+      assertThat(profile.createdDateTime).isBeforeOrEqualTo(toDate.atStartOfDay())
       profile.profileData.findPath("supportDeclined_history").let { declinedHistory ->
-        Assertions.assertThat(declinedHistory).isNotNull().hasSize(2)
+        assertThat(declinedHistory).isNotNull().hasSize(2)
       }
     }
 
     @Test
     fun `retrieve readiness profile with partial history and beginning snapshot, when it is created before specific period and last modified during specific period`() {
       val prisonNumber = expectedProfile.offenderId
-      val fromDate = TestData.modifiedAgainTime.toLocalDate().minusDays(1)
+      val fromDate = modifiedAgainTime.toLocalDate().minusDays(1)
       val toDate = null
 
       val profile = profileService.getProfileForOffenderFilterByPeriod(prisonNumber, fromDate, toDate)
 
-      Assertions.assertThat(profile)
+      assertThat(profile)
         .usingRecursiveComparison().ignoringFields("profileData")
         .isEqualTo(expectedProfile)
       profileJsonToValue(profile.profileData).let {
-        Assertions.assertThat(it.supportDeclined_history).isNotNull.hasSize(1)
-        Assertions.assertThat(it.supportDeclined_history!![0].modifiedDateTime).isEqualTo(TestData.modifiedTime)
+        assertThat(it.supportDeclined_history).isNotNull.hasSize(1)
+        assertThat(it.supportDeclined_history!![0].modifiedDateTime).isEqualTo(modifiedTime)
       }
     }
 
@@ -393,20 +405,20 @@ class ProfileServiceTest : UnitTestBase() {
 
       val profile = profileService.getProfileForOffenderFilterByPeriod(prisonNumber, fromDate, toDate)
 
-      Assertions.assertThat(profile.profileData.findPath("supportDeclined_history")).isEmpty()
+      assertThat(profile.profileData.findPath("supportDeclined_history")).isEmpty()
     }
 
     @Test
     fun `retrieve readiness profile with no history, when it is created before specific period and only modified afterward`() {
       val fromDate = expectedProfile.createdDateTime.toLocalDate()
-      val toDate = TestData.modifiedTime.toLocalDate().minusDays(1)
+      val toDate = modifiedTime.toLocalDate().minusDays(1)
 
       val profile = profileService.getProfileForOffenderFilterByPeriod(prisonNumber, fromDate, toDate)
-      Assertions.assertThat(profile.createdDateTime.toLocalDate()).isBeforeOrEqualTo(fromDate)
+      assertThat(profile.createdDateTime.toLocalDate()).isBeforeOrEqualTo(fromDate)
 
       profileJsonToValue(profile.profileData).let {
-        Assertions.assertThat(it.supportDeclined_history).isNotNull.hasSize(1)
-        Assertions.assertThat(it.supportDeclined_history!![0].modifiedDateTime).isEqualTo(TestData.createdTime)
+        assertThat(it.supportDeclined_history).isNotNull.hasSize(1)
+        assertThat(it.supportDeclined_history!![0].modifiedDateTime).isEqualTo(createdTime)
       }
     }
 
@@ -418,7 +430,7 @@ class ProfileServiceTest : UnitTestBase() {
       assertFailsWith<IllegalArgumentException> {
         profileService.getProfileForOffenderFilterByPeriod(prisonNumber, fromDate, toDate)
       }.let {
-        Assertions.assertThat(it.message).isEqualTo("fromDate cannot be after toDate")
+        assertThat(it.message).isEqualTo("fromDate cannot be after toDate")
       }
     }
 
@@ -430,7 +442,7 @@ class ProfileServiceTest : UnitTestBase() {
       assertFailsWith<NotFoundException> {
         profileService.getProfileForOffenderFilterByPeriod(prisonNumber, fromDate, toDate)
       }.let {
-        Assertions.assertThat(it.message).contains(prisonNumber)
+        assertThat(it.message).contains(prisonNumber)
       }
     }
   }
@@ -446,7 +458,7 @@ class ProfileServiceTest : UnitTestBase() {
 
   private fun givenProfileFound(profile: ReadinessProfile) = whenever(readinessProfileRepository.findById(any())).thenReturn(Optional.of(profile))
 
-  private fun givenProfileWithSupportDeclinedTwiceInHistory() = TestData.readinessProfileWithSupportDeclinedTwiceAndThenAccepted.also {
+  private fun givenProfileWithSupportDeclinedTwiceInHistory() = readinessProfileWithSupportDeclinedTwiceAndThenAccepted.also {
     Mockito.lenient().whenever(readinessProfileRepository.findById(any())).thenReturn(Optional.of(it.deepCopy()))
   }
 }
