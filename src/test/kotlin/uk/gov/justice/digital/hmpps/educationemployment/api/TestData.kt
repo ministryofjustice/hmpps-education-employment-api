@@ -285,7 +285,7 @@ object TestData {
   val updatedReadinessProfile = ReadinessProfile(
     newOffenderId,
     updatedBookingId,
-    updatedBy,
+    createdBy,
     modifiedTime,
     updatedBy,
     modifiedTime,
