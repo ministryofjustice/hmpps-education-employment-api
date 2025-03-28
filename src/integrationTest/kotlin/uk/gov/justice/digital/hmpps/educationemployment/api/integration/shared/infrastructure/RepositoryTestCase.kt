@@ -1,8 +1,11 @@
 package uk.gov.justice.digital.hmpps.educationemployment.api.integration.shared.infrastructure
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInstance
-import org.mockito.Mockito
+import org.mockito.Mockito.lenient
 import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
@@ -36,6 +39,8 @@ abstract class RepositoryTestCase {
   @Autowired
   protected lateinit var readinessProfileRepository: ReadinessProfileRepository
 
+  protected val objectMapper: ObjectMapper = jacksonObjectMapper().apply { registerModule(JavaTimeModule()) }
+
   protected final val defaultTimezoneId = AuditObjects.defaultTimezoneId
   protected final val defaultCurrentTime = AuditObjects.defaultAuditTime
   protected final val defaultCurrentTimeLocal: LocalDateTime get() = defaultCurrentTime.atZone(defaultTimezoneId).toLocalDateTime()
@@ -43,7 +48,8 @@ abstract class RepositoryTestCase {
 
   protected val currentTime: Instant get() = defaultCurrentTime
   protected val currentTimeLocal: LocalDateTime get() = defaultCurrentTimeLocal
-  protected val auditor: String get() = defaultAuditor
+
+  protected var auditor = AuditObjects.defaultAuditor
 
   companion object {
     private val postgresContainer = PostgresContainer.repositoryContainer
@@ -60,14 +66,15 @@ abstract class RepositoryTestCase {
   }
 
   @BeforeEach
-  fun setUp() {
+  internal fun setUp() {
     readinessProfileRepository.deleteAll()
 
-    Mockito.lenient().whenever(dateTimeProvider.now).thenAnswer { Optional.of(currentTime) }
+    lenient().whenever(dateTimeProvider.now).thenAnswer { Optional.of(currentTime) }
     setCurrentAuditor()
   }
 
-  protected fun setCurrentAuditor(username: String = auditor) {
-    Mockito.lenient().whenever(auditorProvider.currentAuditor).thenReturn(Optional.of(username))
+  protected fun setCurrentAuditor(username: String = defaultAuditor) {
+    auditor = username
+    lenient().whenever(auditorProvider.currentAuditor).thenAnswer { Optional.of(auditor) }
   }
 }

@@ -22,7 +22,7 @@ class TestJpaConfig {
   @Primary
   @Bean
   fun dateTimeProvider(): DateTimeProvider = mock(DateTimeProvider::class.java).also { dateTimeProvider ->
-    lenient().whenever(dateTimeProvider.now).thenAnswer { Optional.of(defaultAuditTime) }
+    lenient().whenever(dateTimeProvider.now).thenReturn(Optional.of(defaultAuditTime))
   }
 
   @Bean

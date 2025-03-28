@@ -24,6 +24,9 @@ object ProfileObjects {
   val profileOfKnownPrisoner = makeProfile(knownPrisonNumber, 111111, profileJsonSample)
   val profileOfAnotherPrisoner = makeProfile(anotherPrisonNumber, 222222, profileJsonSample2)
 
+  val createdBy = "CCOLUMBUS_GEN"
+  val lastModifiedBy = "JSMITH_GEN"
+
   private fun readJsonProfile(fileName: String) = readTextFromResource("jsonprofile/$fileName")
 
   private fun readTextFromResource(filePath: String) = this.javaClass.classLoader.getResource(filePath)?.readText()
