@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.educationemployment.api.integration.shared.infrastructure
+package uk.gov.justice.digital.hmpps.educationemployment.api.integration.shared.application
 
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
