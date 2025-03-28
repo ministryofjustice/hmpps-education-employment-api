@@ -10,7 +10,6 @@ import org.springframework.test.context.DynamicPropertySource
 import uk.gov.justice.digital.hmpps.educationemployment.api.HmppsEducationEmploymentApi
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.helpers.JwtAuthHelper
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.testcontainers.PostgresContainer
-import uk.gov.justice.digital.hmpps.educationemployment.api.repository.ReadinessProfileRepository
 
 @SpringBootTest(
   webEnvironment = RANDOM_PORT,
@@ -43,9 +42,6 @@ abstract class IntegrationTestBase internal constructor() {
 
   @Autowired
   lateinit var restTemplate: TestRestTemplate
-
-  @Autowired
-  lateinit var readinessProfileRepository: ReadinessProfileRepository
 
   @Autowired
   lateinit var jwtAuthHelper: JwtAuthHelper

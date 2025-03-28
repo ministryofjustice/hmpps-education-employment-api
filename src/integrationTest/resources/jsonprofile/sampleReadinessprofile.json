@@ -1,0 +1,122 @@
+{
+  "status": "SUPPORT_NEEDED",
+  "statusChange": true,
+  "statusChangeDate": [
+    2022,
+    12,
+    18,
+    20,
+    47,
+    48,
+    247677000
+  ],
+  "statusChangeType": "DECLINED_TO_ACCEPTED",
+  "supportDeclined": [
+    {
+      "modifiedBy": "sacintha-raj",
+      "modifiedDateTime": [
+        2022,
+        12,
+        18,
+        20,
+        47,
+        7,
+        894279000
+      ],
+      "supportToWorkDeclinedReason": [
+        "FULL_TIME_CARER"
+      ],
+      "supportToWorkDeclinedReasonOther": "",
+      "circumstanceChangesRequiredToWork": [
+        "DEPENDENCY_SUPPORT"
+      ],
+      "circumstanceChangesRequiredToWorkOther": ""
+    }
+  ],
+  "supportAccepted": null,
+  "currentSupportState": {
+    "supportDeclined": null,
+    "supportAccepted": {
+      "modifiedBy": "sacintha-raj",
+      "modifiedDateTime": [
+        2022,
+        12,
+        18,
+        20,
+        47,
+        48,
+        247651000
+      ],
+      "actionsRequired": {
+        "modifiedBy": "phil-whils",
+        "modifiedDateTime": [
+          2022,
+          12,
+          18,
+          20,
+          47,
+          7,
+          894279000
+        ],
+        "actions": [
+          {
+            "todoItem": "CV_AND_COVERING_LETTER",
+            "status": "IN_PROGRESS"
+          }
+        ]
+      },
+      "workImpacts": {
+        "modifiedBy": "phil-whils",
+        "modifiedDateTime": [
+          2022,
+          12,
+          18,
+          20,
+          47,
+          7,
+          894279000
+        ],
+        "abilityToWorkImpactedBy": [
+          "CARING_RESPONSIBILITIES"
+        ],
+        "caringResponsibilitiesFullTime": true,
+        "ableToManageMentalHealth": true,
+        "ableToManageDependencies": true
+      },
+      "workInterests": {
+        "modifiedBy": "phil-whils",
+        "modifiedDateTime": [
+          2022,
+          12,
+          18,
+          20,
+          47,
+          7,
+          894279000
+        ],
+        "workTypesOfInterest": [
+          "CONSTRUCTION"
+        ],
+        "workTypesOfInterestOther": "freelance",
+        "jobOfParticularInterest": "architect"
+      },
+      "workExperience": {
+        "modifiedBy": "phil-whils",
+        "modifiedDateTime": [
+          2022,
+          12,
+          18,
+          20,
+          47,
+          7,
+          894279000
+        ],
+        "previousWorkOrVolunteering": "NONE",
+        "qualificationsAndTraining": [
+          "ADVANCED_EDUCATION"
+        ],
+        "qualificationsAndTrainingOther": "MBA"
+      }
+    }
+  }
+}

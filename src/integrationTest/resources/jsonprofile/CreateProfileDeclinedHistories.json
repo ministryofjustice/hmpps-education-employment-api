@@ -1,0 +1,98 @@
+{
+  "bookingId": "654321",
+  "profileData": {
+    "status": "SUPPORT_DECLINED",
+    "statusChange": false,
+    "statusChangeDate": null,
+    "prisonName": "prison2",
+    "statusChangeType": "NEW",
+    "supportDeclined_history": [
+      {
+        "modifiedBy": "test-client",
+        "modifiedDateTime": "2024-10-02T10:16:00.90103",
+        "supportToWorkDeclinedReason": [
+          "FULL_TIME_CARER"
+        ],
+        "supportToWorkDeclinedReasonOther": "another reason to decline support",
+        "circumstanceChangesRequiredToWork": [
+          "DEPENDENCY_SUPPORT"
+        ],
+        "circumstanceChangesRequiredToWorkOther": ""
+      },
+      {
+        "modifiedBy": "test-client",
+        "modifiedDateTime": "2024-10-02T10:16:01.90103",
+        "supportToWorkDeclinedReason": [
+          "FULL_TIME_CARER"
+        ],
+        "supportToWorkDeclinedReasonOther": "modified the n-th (1) times",
+        "circumstanceChangesRequiredToWork": [
+          "DEPENDENCY_SUPPORT"
+        ],
+        "circumstanceChangesRequiredToWorkOther": ""
+      },
+      {
+        "modifiedBy": "test-client",
+        "modifiedDateTime": "2024-10-02T10:16:02.90103",
+        "supportToWorkDeclinedReason": [
+          "FULL_TIME_CARER"
+        ],
+        "supportToWorkDeclinedReasonOther": "modified the n-th (2) times",
+        "circumstanceChangesRequiredToWork": [
+          "DEPENDENCY_SUPPORT"
+        ],
+        "circumstanceChangesRequiredToWorkOther": ""
+      },
+      {
+        "modifiedBy": "test-client",
+        "modifiedDateTime": "2024-10-02T10:16:03.90103",
+        "supportToWorkDeclinedReason": [
+          "FULL_TIME_CARER"
+        ],
+        "supportToWorkDeclinedReasonOther": "modified the n-th (3) times",
+        "circumstanceChangesRequiredToWork": [
+          "DEPENDENCY_SUPPORT"
+        ],
+        "circumstanceChangesRequiredToWorkOther": ""
+      },
+      {
+        "modifiedBy": "test-client",
+        "modifiedDateTime": "2024-10-02T10:16:04.90103",
+        "supportToWorkDeclinedReason": [
+          "FULL_TIME_CARER"
+        ],
+        "supportToWorkDeclinedReasonOther": "modified the n-th (4) times",
+        "circumstanceChangesRequiredToWork": [
+          "DEPENDENCY_SUPPORT"
+        ],
+        "circumstanceChangesRequiredToWorkOther": ""
+      },
+      {
+        "modifiedBy": "test-client",
+        "modifiedDateTime": "2024-10-02T10:16:05.90103",
+        "supportToWorkDeclinedReason": [
+          "FULL_TIME_CARER"
+        ],
+        "supportToWorkDeclinedReasonOther": "modified the n-th (5) times",
+        "circumstanceChangesRequiredToWork": [
+          "DEPENDENCY_SUPPORT"
+        ],
+        "circumstanceChangesRequiredToWorkOther": ""
+      }
+    ],
+    "supportAccepted_history": [],
+    "supportDeclined": {
+      "modifiedBy": "test-client",
+      "modifiedDateTime": "2024-10-02T10:16:06.90103",
+      "supportToWorkDeclinedReason": [
+        "FULL_TIME_CARER"
+      ],
+      "supportToWorkDeclinedReasonOther": "modified the n-th (6) times",
+      "circumstanceChangesRequiredToWork": [
+        "DEPENDENCY_SUPPORT"
+      ],
+      "circumstanceChangesRequiredToWorkOther": ""
+    },
+    "supportAccepted": null
+  }
+}
