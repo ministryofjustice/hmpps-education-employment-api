@@ -14,7 +14,7 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.data.NoteRequestDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.data.ReadinessProfileDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.data.ReadinessProfileRequestDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.data.jsonprofile.ActionTodo
-import uk.gov.justice.digital.hmpps.educationemployment.api.integration.shared.infrastructure.ApplicationTestCase
+import uk.gov.justice.digital.hmpps.educationemployment.api.integration.shared.application.ApplicationTestCase
 
 abstract class ReadinessProfileTestCase : ApplicationTestCase() {
   @Autowired

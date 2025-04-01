@@ -15,7 +15,7 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.educationemployment.api.data.NoteRequestDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.data.ReadinessProfileDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.data.ReadinessProfileRequestDTO
-import uk.gov.justice.digital.hmpps.educationemployment.api.integration.shared.infrastructure.ApplicationTestCase
+import uk.gov.justice.digital.hmpps.educationemployment.api.integration.shared.application.ApplicationTestCase
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.util.TestData
 
 class ReadinessProfileIntTest : ApplicationTestCase() {
