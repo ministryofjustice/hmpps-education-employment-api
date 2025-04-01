@@ -1,6 +1,6 @@
 -- initialise revision/audit tables
-DELETE FROM revision_info;
 DELETE FROM work_readiness_audit;
+DELETE FROM revision_info;
 
 SELECT setval('revision_info_rev_number_seq', 1, true);
 

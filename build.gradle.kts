@@ -49,6 +49,7 @@ testing {
         implementation("io.jsonwebtoken:jjwt-jackson:0.12.6")
         implementation("com.microsoft.azure:applicationinsights-logging-logback:2.6.4")
         implementation("com.microsoft.azure:applicationinsights-logging-logback")
+        implementation("org.flywaydb:flyway-core")
         runtimeOnly("org.flywaydb:flyway-database-postgresql")
         implementation("com.zaxxer:HikariCP:5.1.0")
         implementation("org.testcontainers:postgresql") {

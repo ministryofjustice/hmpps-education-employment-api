@@ -10,16 +10,26 @@ parameters:
   releases-slack-channel:
     type: string
     default: education-skills-work-employment-dev
+  java-version:
+    type: string
+    default: "21.0"
+  postgres-version:
+    type: string
+    default: "16"
+  localstack-version:
+    type: string
+    default: "4"
 
 jobs:
   validate:
     executor:
-      name: hmpps/java_localstack_postgres
-      jdk_tag: "21.0"
-      localstack_tag: "0.14.0"
-      postgres_tag: "16.2"
+      name: hmpps/java_localstack_postgres_with_db_name
+      jdk_tag: << pipeline.parameters.java-version >>
+      postgres_tag: << pipeline.parameters.postgres-version >>
+      postgres_db: "education-employment"
       postgres_username: "education-employment"
       postgres_password: "education-employment"
+      localstack_tag: << pipeline.parameters.localstack-version >>
     environment:
       DATABASE_ENDPOINT: localhost:5432
       DATABASE_NAME: education-employment

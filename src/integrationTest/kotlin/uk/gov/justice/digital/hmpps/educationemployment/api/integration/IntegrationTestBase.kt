@@ -1,4 +1,7 @@
 package uk.gov.justice.digital.hmpps.educationemployment.api.integration
+import org.flywaydb.core.Flyway
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.TestInstance
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
@@ -17,8 +20,11 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.integration.testcont
     HmppsEducationEmploymentApi::class,
   ),
 )
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles("integration-test")
 abstract class IntegrationTestBase internal constructor() {
+  @Autowired
+  private lateinit var flyway: Flyway
 
   companion object {
 
@@ -49,4 +55,10 @@ abstract class IntegrationTestBase internal constructor() {
     user: String = "test-client",
     roles: List<String> = listOf(),
   ): (HttpHeaders) = jwtAuthHelper.setAuthorisationForUnitTests(user, roles)
+
+  @BeforeAll
+  internal fun beforeAll() {
+    flyway.clean()
+    flyway.migrate()
+  }
 }

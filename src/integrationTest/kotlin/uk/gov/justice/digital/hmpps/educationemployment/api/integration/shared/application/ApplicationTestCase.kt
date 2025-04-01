@@ -36,7 +36,8 @@ abstract class ApplicationTestCase : IntegrationTestBase() {
   val defaultCurrentTimeLocal: LocalDateTime get() = defaultCurrentTime.atZone(defaultTimezoneId).toLocalDateTime()
 
   @BeforeAll
-  internal fun beforeAll() {
+  override fun beforeAll() {
+    super.beforeAll()
     auditingHandler.setDateTimeProvider(dateTimeProvider)
   }
 
