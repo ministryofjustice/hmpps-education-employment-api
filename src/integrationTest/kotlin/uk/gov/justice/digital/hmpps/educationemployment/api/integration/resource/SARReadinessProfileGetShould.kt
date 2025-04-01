@@ -11,8 +11,6 @@ import org.springframework.http.HttpStatus
 import uk.gov.justice.digital.hmpps.educationemployment.api.data.ReadinessProfileDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.data.jsonprofile.ActionTodo
 import uk.gov.justice.digital.hmpps.educationemployment.api.data.jsonprofile.Profile
-import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.anotherPrisonNumber
-import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.knownPrisonNumber
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.knownnCaseReferenceNumber
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.makeProfileRequestOfAnotherPrisonNumber
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.makeProfileRequestWithSupportAccepted
@@ -21,8 +19,9 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.profileJsonWithSupportAcceptedHistory
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.profileOfAnotherPrisonNumber
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.profileRequestOfKnownPrisonNumber
-import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.unknownPrisonNumber
-import java.time.LocalDate
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.anotherPrisonNumber
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.knownPrisonNumber
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.unknownPrisonNumber
 
 class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
   @AfterEach
@@ -158,7 +157,7 @@ class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
     @Nested
     @DisplayName("And period filter (fromDate, toDate) has been set")
     inner class AndPeriodFilterHasBeenSet {
-      private val today = LocalDate.now()
+      private val today = defaultCurrentTimeLocal.toLocalDate()
       private val tomorrow = today.plusDays(1)
       private val yesterday = today.minusDays(1)
 

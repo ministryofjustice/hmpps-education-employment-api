@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpEntity
@@ -14,11 +15,10 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.educationemployment.api.data.NoteRequestDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.data.ReadinessProfileDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.data.ReadinessProfileRequestDTO
-import uk.gov.justice.digital.hmpps.educationemployment.api.integration.IntegrationTestBase
+import uk.gov.justice.digital.hmpps.educationemployment.api.integration.shared.infrastructure.ApplicationTestCase
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.util.TestData
 
-@Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
-class ReadinessProfileIntTest : IntegrationTestBase() {
+class ReadinessProfileIntTest : ApplicationTestCase() {
 
   @Autowired
   lateinit var objectMapper: ObjectMapper
@@ -32,9 +32,9 @@ class ReadinessProfileIntTest : IntegrationTestBase() {
   fun `Get the exception for profile for a unknown offender`() {
     val result = restTemplate.exchange("/readiness-profiles/A1234AB", HttpMethod.GET, HttpEntity<HttpHeaders>(setAuthorisation(roles = listOf("ROLE_WORK_READINESS_EDIT", "ROLE_WORK_READINESS_VIEW"))), ErrorResponse::class.java)
     assertThat(result).isNotNull
-    val erroResponse = result.body
-    assert(erroResponse.status.equals(HttpStatus.BAD_REQUEST.value()))
-    assert(erroResponse.userMessage.equals("Readiness profile does not exist for offender A1234AB"))
+    val errorResponse = result.body.also { assertNotNull(it) }!!
+    assert(errorResponse.status.equals(HttpStatus.BAD_REQUEST.value()))
+    assert(errorResponse.userMessage.equals("Readiness profile does not exist for offender A1234AB"))
   }
 
   @Test
@@ -82,9 +82,9 @@ class ReadinessProfileIntTest : IntegrationTestBase() {
     restTemplate.exchange("/readiness-profiles/A1234AE", HttpMethod.POST, HttpEntity<ReadinessProfileRequestDTO>(actualReadinessProfileRequestDTO, setAuthorisation(roles = listOf("ROLE_WORK_READINESS_EDIT", "ROLE_WORK_READINESS_VIEW"))), ReadinessProfileDTO::class.java)
 
     val result = restTemplate.exchange("/readiness-profiles/A1234AE/notes/DISCLOSURE_LETTER", HttpMethod.GET, HttpEntity<HttpHeaders>(setAuthorisation("lest", roles = listOf("ROLE_WORK_READINESS_VIEW"))), List::class.java)
-    assert(result != null)
+      .also { assertNotNull(it) }!!
     assert(result.statusCode.is2xxSuccessful)
-    assert(result.body.isEmpty())
+    assert(result.body.isNullOrEmpty())
   }
 
   @Test
@@ -101,7 +101,7 @@ class ReadinessProfileIntTest : IntegrationTestBase() {
     val result = restTemplate.exchange("/readiness-profiles/A1234AT/notes/DISCLOSURE_LETTER", HttpMethod.POST, HttpEntity<NoteRequestDTO>(noteRequestDTO, setAuthorisation("lest", roles = listOf("ROLE_WORK_READINESS_EDIT"))), List::class.java)
     assertThat(result).isNotNull
     assert(result.statusCode.is2xxSuccessful)
-    assert(result.body.size > 0)
+    assertThat(result.body).isNotEmpty
   }
 
   @Test
@@ -118,11 +118,11 @@ class ReadinessProfileIntTest : IntegrationTestBase() {
     val result = restTemplate.exchange("/readiness-profiles/A1234AZ/notes/DISCLOSURE_LETTER", HttpMethod.POST, HttpEntity<NoteRequestDTO>(noteRequestDTO, setAuthorisation("lest", roles = listOf("ROLE_WORK_READINESS_EDIT"))), List::class.java)
     assertThat(result).isNotNull
     assert(result.statusCode.is2xxSuccessful)
-    assert(result.body.size > 0)
+    assertThat(result.body).isNotEmpty
 
     val noteList = restTemplate.exchange("/readiness-profiles/A1234AZ/notes/DISCLOSURE_LETTER", HttpMethod.GET, HttpEntity<HttpHeaders>(setAuthorisation("lest", roles = listOf("ROLE_WORK_READINESS_EDIT"))), List::class.java)
     assertThat(result).isNotNull
     assert(result.statusCode.is2xxSuccessful)
-    assert(result.body.size > 0)
+    assertThat(result.body).isNotEmpty
   }
 }

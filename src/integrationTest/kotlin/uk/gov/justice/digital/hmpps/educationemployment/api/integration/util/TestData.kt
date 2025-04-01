@@ -20,15 +20,15 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.data.jsonprofile.Wor
 import uk.gov.justice.digital.hmpps.educationemployment.api.data.jsonprofile.WorkInterests
 import uk.gov.justice.digital.hmpps.educationemployment.api.data.jsonprofile.WorkTypesOfInterest
 import uk.gov.justice.digital.hmpps.educationemployment.api.entity.ReadinessProfile
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects
 import uk.gov.justice.digital.hmpps.educationemployment.api.service.ProfileService
-import java.io.File
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
 class TestData {
   companion object {
-    val createProfileJsonRequest = File("src/test/resources/CreateProfile_correct.json").inputStream().readBytes().toString(Charsets.UTF_8)
+    val createProfileJsonRequest = ProfileObjects.createProfileJsonRequest
     val noteString: String = "Mary had another little lamb"
     private lateinit var profileService: ProfileService
 

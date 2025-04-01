@@ -20,6 +20,11 @@ jobs:
       postgres_tag: "16.2"
       postgres_username: "education-employment"
       postgres_password: "education-employment"
+    environment:
+      DATABASE_ENDPOINT: localhost:5432
+      DATABASE_NAME: education-employment
+      DATABASE_USERNAME: education-employment
+      DATABASE_PASSWORD: education-employment
     steps:
       - checkout
       - restore_cache:
