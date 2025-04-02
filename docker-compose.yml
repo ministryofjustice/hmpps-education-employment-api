@@ -29,7 +29,7 @@ services:
 #      - SPRING_PROFILES_ACTIVE=dev
 
   education-employment-db:
-    image: postgres
+    image: postgres:16
     networks:
       - hmpps
     # network_mode: "host"
@@ -43,7 +43,7 @@ services:
       - POSTGRES_DB=education-employment
 
   localstack:
-    image: localstack/localstack:0.14.0
+    image: localstack/localstack:4
     networks:
       - hmpps
     container_name: localstack-education-employment-api

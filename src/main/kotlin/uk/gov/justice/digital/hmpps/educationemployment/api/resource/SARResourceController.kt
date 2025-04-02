@@ -19,9 +19,9 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.educationemployment.api.config.CapturedSpringConfigValues
 import uk.gov.justice.digital.hmpps.educationemployment.api.config.ErrorResponse
-import uk.gov.justice.digital.hmpps.educationemployment.api.data.SARReadinessProfileDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.NotFoundException
-import uk.gov.justice.digital.hmpps.educationemployment.api.service.ProfileService
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.ProfileService
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.SARReadinessProfileDTO
 import java.time.LocalDate
 
 @Validated

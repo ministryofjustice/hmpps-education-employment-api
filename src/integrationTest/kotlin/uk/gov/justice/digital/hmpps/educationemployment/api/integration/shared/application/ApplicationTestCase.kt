@@ -11,7 +11,8 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean
 import uk.gov.justice.digital.hmpps.educationemployment.api.audit.domain.AuditObjects
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.IntegrationTestBase
-import uk.gov.justice.digital.hmpps.educationemployment.api.repository.ReadinessProfileRepository
+import uk.gov.justice.digital.hmpps.educationemployment.api.integration.shared.infrastructure.AuditCleaner
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ReadinessProfileRepository
 import uk.gov.justice.digital.hmpps.educationemployment.api.shared.application.DefaultTimeProvider
 import java.time.Instant
 import java.time.LocalDateTime
@@ -31,13 +32,23 @@ abstract class ApplicationTestCase : IntegrationTestBase() {
   @Autowired
   lateinit var readinessProfileRepository: ReadinessProfileRepository
 
+  @Autowired
+  protected lateinit var auditCleaner: AuditCleaner
+
   val defaultTimezoneId = AuditObjects.defaultTimezoneId
   val defaultCurrentTime: Instant = AuditObjects.defaultAuditTime
   val defaultCurrentTimeLocal: LocalDateTime get() = defaultCurrentTime.atZone(defaultTimezoneId).toLocalDateTime()
 
   @BeforeAll
-  internal fun beforeAll() {
+  override fun beforeAll() {
+    super.beforeAll()
     auditingHandler.setDateTimeProvider(dateTimeProvider)
+  }
+
+  @BeforeEach
+  internal fun setUp() {
+    readinessProfileRepository.deleteAll()
+    auditCleaner.deleteAllRevisions()
   }
 
   @BeforeEach

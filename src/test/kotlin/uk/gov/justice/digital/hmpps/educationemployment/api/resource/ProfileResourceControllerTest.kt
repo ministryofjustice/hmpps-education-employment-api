@@ -31,11 +31,11 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import uk.gov.justice.digital.hmpps.educationemployment.api.TestData
 import uk.gov.justice.digital.hmpps.educationemployment.api.config.ControllerAdvice
 import uk.gov.justice.digital.hmpps.educationemployment.api.config.DpsPrincipal
-import uk.gov.justice.digital.hmpps.educationemployment.api.data.ReadinessProfileDTO
-import uk.gov.justice.digital.hmpps.educationemployment.api.data.jsonprofile.ActionTodo
-import uk.gov.justice.digital.hmpps.educationemployment.api.data.jsonprofile.Note
 import uk.gov.justice.digital.hmpps.educationemployment.api.helpers.JwtAuthHelper
-import uk.gov.justice.digital.hmpps.educationemployment.api.service.ProfileService
+import uk.gov.justice.digital.hmpps.educationemployment.api.notesdata.domain.Note
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ActionTodo
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.ProfileService
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.ReadinessProfileDTO
 
 @ExtendWith(SpringExtension::class)
 @ActiveProfiles("test")

@@ -3,7 +3,6 @@ package uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.do
 import uk.gov.justice.digital.hmpps.educationemployment.api.audit.domain.AuditObjects.defaultAuditLocalTime
 import uk.gov.justice.digital.hmpps.educationemployment.api.audit.domain.AuditObjects.defaultAuditor
 import uk.gov.justice.digital.hmpps.educationemployment.api.config.CapturedSpringConfigValues
-import uk.gov.justice.digital.hmpps.educationemployment.api.entity.ReadinessProfile
 import java.io.FileNotFoundException
 
 object ProfileObjects {
@@ -26,6 +25,12 @@ object ProfileObjects {
 
   val createdBy = "CCOLUMBUS_GEN"
   val lastModifiedBy = "JSMITH_GEN"
+
+  var noteFreeTextJson = """
+    {
+    "text": "Mary had another little lamb"
+    }
+  """.trimIndent()
 
   private fun readJsonProfile(fileName: String) = readTextFromResource("jsonprofile/$fileName")
 

@@ -18,7 +18,7 @@ object PostgresContainer {
 
     log.info("Creating a TestContainers PostgreSQL database")
 
-    return PostgreSQLContainer<Nothing>("postgres:16.2").apply {
+    return PostgreSQLContainer<Nothing>("postgres:16").apply {
       withEnv("HOSTNAME_EXTERNAL", "localhost")
       withDatabaseName("education-employment")
       withUsername("education-employment")

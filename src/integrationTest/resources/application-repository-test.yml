@@ -1,6 +1,8 @@
 spring:
   datasource:
-    url: 'jdbc:postgresql://${DATABASE_ENDPOINT}/${DATABASE_NAME}?sslmode=disable&autosave=conservative'
+    url: 'jdbc:postgresql://${DATABASE_ENDPOINT:localhost:5432}/${DATABASE_NAME:education-employment}?sslmode=disable&autosave=conservative'
+    username: '${DATABASE_USERNAME:education-employment}'
+    password: '${DATABASE_PASSWORD:education-employment}'
 
   jpa:
     hibernate:
@@ -12,6 +14,8 @@ spring:
 
   flyway:
     enabled: false
+    user: '${DATABASE_USERNAME:education-employment}'
+    password: '${DATABASE_PASSWORD:education-employment}'
 
 logging:
   level:

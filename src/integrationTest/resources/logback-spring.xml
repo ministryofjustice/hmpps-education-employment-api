@@ -35,7 +35,7 @@
         <appender-ref ref="logAppender"/>
     </logger>
 
-    <logger name="org.springframework" additivity="false" level="TRACE">
+    <logger name="org.springframework" additivity="false" level="DEBUG">
         <appender-ref ref="logAppender"/>
     </logger>
 

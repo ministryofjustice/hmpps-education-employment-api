@@ -2,15 +2,11 @@ package uk.gov.justice.digital.hmpps.educationemployment.api.integration.resourc
 
 import com.fasterxml.jackson.databind.JsonNode
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
-import uk.gov.justice.digital.hmpps.educationemployment.api.data.ReadinessProfileDTO
-import uk.gov.justice.digital.hmpps.educationemployment.api.data.jsonprofile.ActionTodo
-import uk.gov.justice.digital.hmpps.educationemployment.api.data.jsonprofile.Profile
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.knownnCaseReferenceNumber
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.makeProfileRequestOfAnotherPrisonNumber
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.makeProfileRequestWithSupportAccepted
@@ -19,16 +15,14 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.profileJsonWithSupportAcceptedHistory
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.profileOfAnotherPrisonNumber
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.profileRequestOfKnownPrisonNumber
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ActionTodo
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.Profile
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.ReadinessProfileDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.anotherPrisonNumber
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.knownPrisonNumber
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.unknownPrisonNumber
 
 class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
-  @AfterEach
-  fun afterEach() {
-    readinessProfileRepository.deleteAll()
-  }
-
   @Nested
   @DisplayName("Given an unknown prisoner without readiness profile")
   inner class GivenAnUnknownPrisoner {
@@ -84,11 +78,6 @@ class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
     @Nested
     @DisplayName("And some notes have been created")
     inner class AndSomeNotesHaveBeenCreated {
-      @AfterEach
-      fun afterEach() {
-        readinessProfileRepository.deleteAll()
-      }
-
       @Test
       fun `reply 200 (Ok) and data is put inside content, when requesting SAR with known prisoner's PRN`() {
         val prisonNumber = givenTheKnownProfile(withNotes = true).offenderId

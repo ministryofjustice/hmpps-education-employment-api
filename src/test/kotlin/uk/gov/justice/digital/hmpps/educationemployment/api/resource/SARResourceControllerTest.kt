@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice
 import uk.gov.justice.digital.hmpps.educationemployment.api.TestData
 import uk.gov.justice.digital.hmpps.educationemployment.api.config.CapturedSpringConfigValues
 import uk.gov.justice.digital.hmpps.educationemployment.api.helpers.JwtAuthHelper
-import uk.gov.justice.digital.hmpps.educationemployment.api.service.ProfileService
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.ProfileService
 
 @ExtendWith(SpringExtension::class)
 @ActiveProfiles("test")
