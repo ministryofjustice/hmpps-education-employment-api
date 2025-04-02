@@ -1,4 +1,4 @@
-create table work_readiness
+CREATE TABLE IF NOT EXISTS work_readiness
 (
     offender_id  varchar(7) PRIMARY KEY   not null,
     booking_id   bigint                   not null,
