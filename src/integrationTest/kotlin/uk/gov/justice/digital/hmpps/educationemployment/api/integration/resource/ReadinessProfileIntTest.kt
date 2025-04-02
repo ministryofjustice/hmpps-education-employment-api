@@ -3,7 +3,6 @@ package uk.gov.justice.digital.hmpps.educationemployment.api.integration.resourc
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -23,11 +22,6 @@ class ReadinessProfileIntTest : ApplicationTestCase() {
 
   @Autowired
   lateinit var objectMapper: ObjectMapper
-
-  @AfterEach
-  fun tearDown() {
-    readinessProfileRepository.deleteAll()
-  }
 
   @Test
   fun `Get the exception for profile for a unknown offender`() {

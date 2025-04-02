@@ -39,6 +39,9 @@ abstract class RepositoryTestCase {
   @Autowired
   protected lateinit var readinessProfileRepository: ReadinessProfileRepository
 
+  @Autowired
+  protected lateinit var auditCleaner: AuditCleaner
+
   protected val objectMapper: ObjectMapper = jacksonObjectMapper().apply { registerModule(JavaTimeModule()) }
 
   protected final val defaultTimezoneId = AuditObjects.defaultTimezoneId
@@ -68,6 +71,7 @@ abstract class RepositoryTestCase {
   @BeforeEach
   internal fun setUp() {
     readinessProfileRepository.deleteAll()
+    auditCleaner.deleteAllRevisions()
 
     lenient().whenever(dateTimeProvider.now).thenAnswer { Optional.of(currentTime) }
     setCurrentAuditor()

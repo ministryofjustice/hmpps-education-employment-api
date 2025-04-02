@@ -5,6 +5,7 @@ import org.mockito.Mockito.mock
 import org.mockito.kotlin.whenever
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Primary
 import org.springframework.context.annotation.Profile
 import org.springframework.data.auditing.DateTimeProvider
@@ -17,6 +18,7 @@ import java.util.*
 
 @TestConfiguration
 @EnableJpaAuditing(dateTimeProviderRef = "dateTimeProvider", auditorAwareRef = "auditorProvider")
+@ComponentScan("uk.gov.justice.digital.hmpps.educationemployment.api.integration.shared.infrastructure")
 @Profile("repository-test")
 class TestJpaConfig {
   @Primary
