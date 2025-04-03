@@ -60,7 +60,7 @@ class SARResourceControllerTest : ControllerTestBase() {
   @Test
   fun `Get No Content of unknown offender for SAR`() {
     val prn = ProfileObjects.unknownPrisonNumber
-    whenever(profileService.getProfileForOffenderFilterByPeriod(eq(prn), isNull(), isNull())).thenThrow(NotFoundException(prn) as RuntimeException)
+    whenever(profileService.getProfileForOffenderFilterByPeriod(eq(prn), isNull(), isNull())).thenThrow(NotFoundException(prn))
 
     assertRetrieveSARProfileIsNoContent(prn)
   }

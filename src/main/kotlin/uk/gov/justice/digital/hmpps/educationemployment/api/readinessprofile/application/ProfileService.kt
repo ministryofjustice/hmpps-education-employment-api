@@ -17,6 +17,7 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.dom
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ReadinessProfileRepository
 import uk.gov.justice.digital.hmpps.educationemployment.api.shared.domain.TimeProvider
 import java.time.LocalDate
+import kotlin.jvm.Throws
 
 @Service
 class ProfileService(
@@ -108,6 +109,7 @@ class ProfileService(
     return profile
   }
 
+  @Throws(NotFoundException::class, IllegalArgumentException::class)
   fun getProfileForOffenderFilterByPeriod(
     prisonNumber: String,
     fromDate: LocalDate? = null,

@@ -13,7 +13,7 @@ class ExceptionHandler {
 class AlreadyExistsException(offenderId: String) : Exception("Readiness profile already exists for offender $offenderId")
 
 class NotFoundException(var offenderId: String) :
-  RuntimeException("Readiness profile does not exist for offender $offenderId"),
+  Exception("Readiness profile does not exist for offender $offenderId"),
   Supplier<Throwable> {
   override fun get(): Throwable = throw NotFoundException(offenderId)
 }
