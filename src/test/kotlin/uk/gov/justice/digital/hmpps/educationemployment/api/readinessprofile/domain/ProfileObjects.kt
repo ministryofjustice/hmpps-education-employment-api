@@ -1,5 +1,6 @@
-package uk.gov.justice.digital.hmpps.educationemployment.api
+package uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain
 
+import com.fasterxml.jackson.databind.JsonNode
 import uk.gov.justice.digital.hmpps.educationemployment.api.config.CapturedSpringConfigValues
 import uk.gov.justice.digital.hmpps.educationemployment.api.notesdata.domain.Note
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.AbilityToWorkImpactedBy
@@ -19,46 +20,45 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.W
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.WorkImpacts
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.WorkInterests
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.WorkTypesOfInterest
-import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ReadinessProfile
-import java.io.File
+import java.io.FileNotFoundException
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-object TestData {
+object ProfileObjects {
   private val objectMapper = CapturedSpringConfigValues.objectMapper
-  val createProfileJsonRequest =
-    File("src/test/resources/CreateProfile_correct.json").inputStream().readBytes().toString(Charsets.UTF_8)
-  val noteString: String = "Mary had another little lamb"
+
+  private val emptyJsonArray: JsonNode get() = objectMapper.readTree("[]")
+
+  val knownPrisonNumber = "A1234BB"
+  val anotherPrisonNumber = "K9876BC"
+  val unknownPrisonNumber = "A1234BD"
+
+  val newOffenderId = "A1245BC"
+  val updatedOffenderId = "A1245BD"
+
+  val newBookingId = 123456L
+  val updatedBookingId = 123457L
+  var actionToDoCV = ActionTodo.CV_AND_COVERING_LETTER
+
+  val noteString = "Mary had another little lamb"
+
+  val createProfileJsonRequest = readJsonProfile("CreateProfile_correct.json")
+
+  val createdBy = "sacintha-raj"
+  val updatedBy = "phil-whils"
 
   val createdTime = LocalDateTime.of(2024, 1, 1, 12, 10, 20)
   val modifiedTime = createdTime.plusDays(10)
   val modifiedAgainTime = modifiedTime.plusMonths(1)
 
-  val booleanTrue = true
-  val booleanFalse = false
-
-  val createdBy = "sacintha-raj"
-  val updatedBy = "phil-whils"
   val workTypesOfInterestOther = "freelance"
   val jobOfParticularInterests = "architect"
   val previousWorkOrVolunteering_NONE = "NONE"
   val qualificationAndTrainingOther = "MBA"
-  val newOffenderId = "A1245BC"
-  val updatedOffenderId = "A1245BD"
-  val offenderIdList = listOf<String>(newOffenderId, updatedOffenderId)
-  val offenderIdListjson = "[\"".plus(newOffenderId).plus("\",\"").plus(updatedOffenderId).plus("\"]")
-  val emptyString = ""
-  val createdByString = "createdBy"
-  val offenderIdString = "offenderId"
-  val bookingIdString = "bookingId"
-  val noteDataString = "noteData"
-  val prisonNameString = "prisonName"
-  val newNotes = "new notes"
 
-  val newBookingId = 123456L
-  val updatedBookingId = 123457L
-  var actionToDoCV = ActionTodo.CV_AND_COVERING_LETTER
+  val offenderIdList = listOf(newOffenderId, updatedOffenderId)
+  val newNotes = "new notes"
 
   val action = Action(ActionTodo.BANK_ACCOUNT, ActionStatus.COMPLETED, null, null)
   val actionModified = Action(ActionTodo.CV_AND_COVERING_LETTER, ActionStatus.IN_PROGRESS, null, null)
@@ -75,6 +75,23 @@ object TestData {
   val workTypesOfInterestList = listOf(WorkTypesOfInterest.CONSTRUCTION)
   val qualificationsAndTrainingList = listOf(QualificationsAndTraining.ADVANCED_EDUCATION)
 
+  var noteFreeTextJson = """
+    {
+    "text": "$noteString"
+    }
+  """.trimIndent()
+
+  val noteListJson = listOf("2022-09-19T15:39:17.114676", "2022-09-19T15:39:20.873604").map { createdDateTimeText ->
+    """
+    {
+      "createdBy": "$createdBy",
+      "createdDateTime": "$createdDateTimeText",
+      "attribute": "${ActionTodo.DISCLOSURE_LETTER}",
+      "text": "$noteString"
+    }
+    """.trimIndent()
+  }.joinToString(separator = ",\n", prefix = "[", postfix = "]")
+
   val actionsRequired = ActionsRequired(
     updatedBy,
     modifiedTime,
@@ -90,9 +107,9 @@ object TestData {
     updatedBy,
     modifiedTime,
     abilityToWorkImpactedByList,
-    booleanTrue,
-    booleanTrue,
-    booleanTrue,
+    true,
+    true,
+    true,
   )
   val workInterests = WorkInterests(
     updatedBy,
@@ -113,18 +130,18 @@ object TestData {
     createdBy,
     createdTime,
     supportDeclinedReasonList,
-    emptyString,
+    "",
     circumstanceChangesRequiredToWorkList,
-    emptyString,
+    "",
   )
 
   val supportDeclinedModified: SupportDeclined = SupportDeclined(
     updatedBy,
     modifiedTime,
     supportDeclinedReasonModifiedList,
-    emptyString,
+    "",
     circumstanceChangesRequiredToWorkList,
-    emptyString,
+    "",
   )
   val supportDeclinedModifiedOther: SupportDeclined = SupportDeclined(
     createdBy,
@@ -132,7 +149,7 @@ object TestData {
     supportDeclinedReasonModifiedList,
     "ModifiedString",
     circumstanceChangesRequiredToWorkList,
-    emptyString,
+    "",
   )
   val supportAccepted: SupportAccepted = SupportAccepted(
     null,
@@ -150,16 +167,22 @@ object TestData {
     workInterests,
     workExperience,
   )
+
+  val note: Note = Note(
+    createdBy,
+    LocalDateTime.of(LocalDate.of(2024, 1, 1), LocalTime.of(0, 0)),
+    ActionTodo.DISCLOSURE_LETTER,
+    "test comment",
+  )
+
   val profile: Profile = Profile(
     profileStatus_NO_RIGHT_TO_WORK, false, null, "prison2", StatusChange.NEW,
-    mutableListOf(
-      supportDeclined,
-    ),
+    mutableListOf(supportDeclined),
     mutableListOf(supportAccepted), supportDeclined, null,
   )
-  val note: Note = Note("sacintha", LocalDateTime.of(LocalDate.of(2024, 1, 1), LocalTime.of(0, 0)), ActionTodo.DISCLOSURE_LETTER, "test comment")
 
-  val profile_declined: Profile = Profile(profileStatus_NO_RIGHT_TO_WORK, false, null, "prison2", StatusChange.NEW, null, null, supportDeclined, null)
+  val profile_declined: Profile =
+    Profile(profileStatus_NO_RIGHT_TO_WORK, false, null, "prison2", StatusChange.NEW, null, null, supportDeclined, null)
   val profile_declined_declined_list: Profile = Profile(
     profileStatus_NO_RIGHT_TO_WORK, false, null, "prison2", StatusChange.NEW,
     mutableListOf(
@@ -174,7 +197,17 @@ object TestData {
 
   val profile_accpeted: Profile =
     Profile(profileStatus_SUPPORT_NEEDED, false, null, "prison2", StatusChange.NEW, null, null, null, supportAccepted)
-  val profile_accpeted_modified: Profile = Profile(profileStatus_SUPPORT_NEEDED, false, null, "prison2", StatusChange.NEW, null, null, null, supportAcceptedModified)
+  val profile_accpeted_modified: Profile = Profile(
+    profileStatus_SUPPORT_NEEDED,
+    false,
+    null,
+    "prison2",
+    StatusChange.NEW,
+    null,
+    null,
+    null,
+    supportAcceptedModified,
+  )
 
   val profileThatWasDeclinedTwiceAndAccepted = Profile(
     status = ProfileStatus.SUPPORT_NEEDED,
@@ -188,19 +221,78 @@ object TestData {
     supportAccepted_history = mutableListOf(),
   )
 
-  val readinessProfile_accepted_1 =
-    ReadinessProfile(
-      newOffenderId,
-      newBookingId,
-      createdBy,
-      createdTime,
-      createdBy,
-      modifiedTime,
-      "1.0",
-      CapturedSpringConfigValues.objectMapper.readTree(CapturedSpringConfigValues.objectMapper.writeValueAsString(profile_accpeted)),
-      CapturedSpringConfigValues.objectMapper.readTree("{}"),
-      booleanTrue,
-    )
+  val profile_NEW_BOTHSTATE_INCOORECT: Profile = Profile(
+    profileStatus_NO_RIGHT_TO_WORK, false, null, "prison2", StatusChange.NEW,
+    mutableListOf(supportDeclined),
+    mutableListOf(supportAccepted), supportDeclined, supportAccepted,
+  )
+
+  val readinessProfile = ReadinessProfile(
+    offenderId = newOffenderId,
+    bookingId = newBookingId,
+    createdBy = createdBy,
+    createdDateTime = createdTime,
+    modifiedBy = createdBy,
+    modifiedDateTime = modifiedTime,
+    schemaVersion = "1.0",
+    profileData = objectMapper.valueToTree(profile),
+    notesData = emptyJsonArray,
+    new = true,
+  )
+
+  val profileIncorrectStatus: Profile = Profile(
+    profileStatus_SUPPORT_NEEDED, false, null, "prison1", StatusChange.NEW, mutableListOf(supportDeclined),
+    mutableListOf(supportAccepted),
+    supportDeclined, null,
+  )
+
+  val updatedReadinessProfile = ReadinessProfile(
+    offenderId = newOffenderId,
+    bookingId = updatedBookingId,
+    createdBy = createdBy,
+    createdDateTime = modifiedTime,
+    modifiedBy = updatedBy,
+    modifiedDateTime = modifiedTime,
+    schemaVersion = "1.0",
+    profileData = objectMapper.valueToTree(profile),
+    notesData = emptyJsonArray,
+    new = true,
+  )
+
+  val updatedReadinessProfileNotes = ReadinessProfile(
+    offenderId = newOffenderId,
+    bookingId = updatedBookingId,
+    createdBy = createdBy,
+    createdDateTime = createdTime,
+    modifiedBy = updatedBy,
+    modifiedDateTime = modifiedTime,
+    schemaVersion = "1.0",
+    profileData = objectMapper.valueToTree(profile),
+    notesData = objectMapper.readTree(
+      """
+      [{
+        "createdBy": "$createdBy",
+        "createdDateTime": "2022-09-22T09:52:53.422898",
+        "attribute": "$actionToDoCV",
+        "text": "$noteString"
+       }],
+      """.trimIndent(),
+    ),
+    new = true,
+  )
+
+  val readinessProfile_accepted_1 = ReadinessProfile(
+    newOffenderId,
+    newBookingId,
+    createdBy,
+    createdTime,
+    createdBy,
+    modifiedTime,
+    "1.0",
+    objectMapper.valueToTree(profile_accpeted),
+    emptyJsonArray,
+    true,
+  )
 
   val updatedReadinessProfile_accpeted_1 = ReadinessProfile(
     newOffenderId,
@@ -210,9 +302,9 @@ object TestData {
     updatedBy,
     modifiedTime,
     "1.0",
-    CapturedSpringConfigValues.objectMapper.readTree(CapturedSpringConfigValues.objectMapper.writeValueAsString(profile_accpeted_modified)),
-    CapturedSpringConfigValues.objectMapper.readTree("[]"),
-    booleanTrue,
+    objectMapper.valueToTree(profile_accpeted_modified),
+    emptyJsonArray,
+    true,
   )
 
   val readinessProfile_declined_1 = ReadinessProfile(
@@ -223,9 +315,9 @@ object TestData {
     createdBy,
     modifiedTime,
     "1.0",
-    CapturedSpringConfigValues.objectMapper.readTree(CapturedSpringConfigValues.objectMapper.writeValueAsString(profile_declined)),
-    CapturedSpringConfigValues.objectMapper.readTree("{}"),
-    booleanTrue,
+    objectMapper.valueToTree(profile_declined),
+    emptyJsonArray,
+    true,
   )
 
   val readinessProfile_declined_1_declined_list = ReadinessProfile(
@@ -236,9 +328,9 @@ object TestData {
     createdBy,
     modifiedTime,
     "1.0",
-    CapturedSpringConfigValues.objectMapper.readTree(CapturedSpringConfigValues.objectMapper.writeValueAsString(profile_declined_declined_list)),
-    CapturedSpringConfigValues.objectMapper.readTree("{}"),
-    booleanTrue,
+    objectMapper.valueToTree(profile_declined_declined_list),
+    emptyJsonArray,
+    true,
   )
 
   val updatedReadinessProfile_declined_1 = ReadinessProfile(
@@ -249,73 +341,10 @@ object TestData {
     updatedBy,
     modifiedTime,
     "1.0",
-    CapturedSpringConfigValues.objectMapper.readTree(CapturedSpringConfigValues.objectMapper.writeValueAsString(profile_declinedModified)),
-    CapturedSpringConfigValues.objectMapper.readTree("[]"),
-    booleanTrue,
+    objectMapper.valueToTree(profile_declinedModified),
+    emptyJsonArray,
+    true,
   )
-
-  val profile_IncorrectStatus: Profile = Profile(
-    profileStatus_SUPPORT_NEEDED, false, null, "prison1", StatusChange.NEW, mutableListOf(supportDeclined),
-    mutableListOf(
-      supportAccepted,
-    ),
-    supportDeclined, null,
-  )
-  val profile_NEW_BOTHSTATE_INCOORECT: Profile = Profile(
-    profileStatus_NO_RIGHT_TO_WORK, false, null, "prison2", StatusChange.NEW,
-    mutableListOf(
-      supportDeclined,
-    ),
-    mutableListOf(supportAccepted), supportDeclined, supportAccepted,
-  )
-
-  val readinessProfile = ReadinessProfile(
-    newOffenderId,
-    newBookingId,
-    createdBy,
-    createdTime,
-    createdBy,
-    modifiedTime,
-    "1.0",
-    CapturedSpringConfigValues.objectMapper.readTree(CapturedSpringConfigValues.objectMapper.writeValueAsString(profile)),
-    CapturedSpringConfigValues.objectMapper.readTree("{}"),
-    booleanTrue,
-  )
-
-  val updatedReadinessProfile = ReadinessProfile(
-    newOffenderId,
-    updatedBookingId,
-    createdBy,
-    modifiedTime,
-    updatedBy,
-    modifiedTime,
-    "1.0",
-    CapturedSpringConfigValues.objectMapper.readTree(CapturedSpringConfigValues.objectMapper.writeValueAsString(profile)),
-    CapturedSpringConfigValues.objectMapper.readTree("[]"),
-    booleanTrue,
-  )
-
-  val updatedReadinessProfileNotes =
-    ReadinessProfile(
-      newOffenderId,
-      updatedBookingId,
-      createdBy,
-      createdTime,
-      updatedBy,
-      modifiedTime,
-      "1.0",
-      CapturedSpringConfigValues.objectMapper.readTree(CapturedSpringConfigValues.objectMapper.writeValueAsString(profile)),
-      CapturedSpringConfigValues.objectMapper.readTree(
-        "[{\n" +
-          "        \"createdBy\": \"sacintha-raj\",\n" +
-          "        \"createdDateTime\": \"2022-09-22T09:52:53.422898\",\n" +
-          "        \"attribute\": \"CV_AND_COVERING_LETTER\",\n" +
-          "        \"text\": \"Mary had another little lamb\"\n" +
-          "    }]",
-      ),
-      booleanTrue,
-
-    )
 
   val readinessProfileWithSupportDeclinedTwiceAndThenAccepted = ReadinessProfile(
     newOffenderId,
@@ -331,35 +360,16 @@ object TestData {
       [{
         "createdBy": "$createdBy",
         "createdDateTime": "$createdTime",
-        "attribute": "CV_AND_COVERING_LETTER",
-        "text": "Mary had another little lamb"
+        "attribute": "$actionToDoCV",
+        "text": "$noteString"
       }]
       """.trimIndent(),
     ),
-    booleanTrue,
+    true,
   )
 
-  var profileList = listOf<ReadinessProfile>(readinessProfile, updatedReadinessProfileNotes)
-  var noteFreeTextJson = "{\n" +
-    "    \"text\": \"Mary had another little lamb\"\n" +
-    "}"
-  val noteListJson = "[\n" +
-    "    {\n" +
-    "        \"createdBy\": \"sacintha-raj\",\n" +
-    "        \"createdDateTime\": \"2022-09-19T15:39:17.114676\",\n" +
-    "        \"attribute\": \"DISCLOSURE_LETTER\",\n" +
-    "        \"text\": \"Mary had another little lamb\"\n" +
-    "    },\n" +
-    "    {\n" +
-    "        \"createdBy\": \"sacintha-raj\",\n" +
-    "        \"createdDateTime\": \"2022-09-19T15:39:20.873604\",\n" +
-    "        \"attribute\": \"DISCLOSURE_LETTER\",\n" +
-    "        \"text\": \"Mary had another little lamb\"\n" +
-    "    }\n" +
-    "]"
-
   val readinessProfileForSAR = ReadinessProfile(
-    newOffenderId,
+    anotherPrisonNumber,
     newBookingId,
     createdBy,
     createdTime,
@@ -368,11 +378,22 @@ object TestData {
     schemaVersion = "1.0",
     profileData = objectMapper.valueToTree(profile),
     notesData = objectMapper.valueToTree(listOf(note)),
-    new = booleanTrue,
+    new = true,
   )
-}
 
-fun ReadinessProfile.deepCopy() = this.copy(
-  profileData = this.profileData.deepCopy(),
-  notesData = this.notesData.deepCopy(),
-)
+  val readinessProfileOfKnownPrisoner = readinessProfile.copy(offenderId = knownPrisonNumber, bookingId = newBookingId, createdBy = createdBy)
+
+  var profileList = listOf(readinessProfile, updatedReadinessProfileNotes)
+
+  private fun readJsonProfile(fileName: String) = readTextFromResource("jsonprofile/$fileName")
+
+  private fun readTextFromResource(filePath: String) = this.javaClass.classLoader.getResource(filePath)?.readText()
+    ?: run { throw FileNotFoundException("$filePath not found") }
+
+  internal fun ReadinessProfile.deepCopy() = this.copy(
+    profileData = this.profileData.deepCopy(),
+    notesData = this.notesData.deepCopy(),
+  )
+
+  internal fun List<String>.joinToJsonString() = joinToString(prefix = "[", postfix = "]") { "\"$it\"" }
+}

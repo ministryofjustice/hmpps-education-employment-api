@@ -9,7 +9,9 @@ import org.mockito.Mockito.lenient
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.educationemployment.api.config.CapturedSpringConfigValues
+import uk.gov.justice.digital.hmpps.educationemployment.api.notesdata.domain.Note
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.Profile
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.ReadinessProfileDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.shared.domain.TimeProvider
 import java.time.Instant
 import java.time.LocalDateTime
@@ -34,7 +36,21 @@ abstract class UnitTestBase {
     lenient().whenever(timeProvider.now()).thenReturn(defaultCurrentLocalTime)
   }
 
-  protected fun profileJsonToValue(json: JsonNode) = jsonToValue(json, object : TypeReference<Profile>() {})
+  companion object {
+    internal val typeReferenceOfProfile by lazy { object : TypeReference<Profile>() {} }
+    internal val typeReferenceOfNoteList by lazy { object : TypeReference<MutableList<Note>>() {} }
+    internal val typeReferenceOfReadinessProfile by lazy { object : TypeReference<ReadinessProfileDTO>() {} }
+    internal val typeReferenceOfReadinessProfileList by lazy { object : TypeReference<List<ReadinessProfileDTO>>() {} }
+  }
+
+  protected fun readinessProfileToValue(jsonText: String) = jsonTextToValue(jsonText, typeReferenceOfReadinessProfile)
+  protected fun readinessProfileToList(jsonText: String) = jsonTextToValue(jsonText, typeReferenceOfReadinessProfileList)
+
+  protected fun profileJsonToValue(json: JsonNode) = jsonToValue(json, typeReferenceOfProfile)
+
+  protected fun notesToList(jsonText: String) = jsonTextToValue(jsonText, typeReferenceOfNoteList)
+  protected fun notesJsonToList(json: JsonNode) = jsonToValue(json, typeReferenceOfNoteList)
 
   protected fun <T> jsonToValue(json: JsonNode, typeReference: TypeReference<T>) = objectMapper.treeToValue(json, typeReference)
+  protected fun <T> jsonTextToValue(json: String, typeReference: TypeReference<T>) = objectMapper.readValue(json, typeReference)
 }
