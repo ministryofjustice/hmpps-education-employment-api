@@ -26,7 +26,7 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.dom
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.offenderIdList
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.profileIncorrectStatus
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.profileList
-import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.profile_NEW_BOTHSTATE_INCOORECT
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.profileStatusNewAndBothStateIncorrect
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ReadinessProfile
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ReadinessProfileRepository
 import uk.gov.justice.digital.hmpps.educationemployment.api.shared.application.UnitTestBase
@@ -72,7 +72,7 @@ class ProfileServiceTest : UnitTestBase() {
 
     @Test
     fun `throws an exception, when create the readiness profile with both support states`() {
-      assertFailsWithInvalidState(profile_NEW_BOTHSTATE_INCOORECT)
+      assertFailsWithInvalidState(profileStatusNewAndBothStateIncorrect)
     }
 
     private fun assertFailsWithInvalidState(profile: Profile) {
@@ -96,8 +96,8 @@ class ProfileServiceTest : UnitTestBase() {
     private val updatedProfile = ProfileObjects.updatedReadinessProfile
     private val userId = ProfileObjects.updatedBy
 
-    private val profileDataWithDecline = ProfileObjects.profile_declinedModified
-    private val updatedProfileWithDecline = ProfileObjects.updatedReadinessProfile_declined_1
+    private val profileDataWithDecline = ProfileObjects.profileDeclinedModified
+    private val updatedProfileWithDecline = ProfileObjects.updatedReadinessProfileAndDeclined1
 
     @Nested
     @DisplayName("And the readiness profile is found")
@@ -136,11 +136,11 @@ class ProfileServiceTest : UnitTestBase() {
     @Nested
     @DisplayName("And the readiness profile with decline is found")
     inner class AndProfileWithDeclineIsFound {
-      private val profileWithDecline = ProfileObjects.readinessProfile_declined_1
-      private val updatedProfileWithDecline = ProfileObjects.updatedReadinessProfile_declined_1
+      private val profileWithDecline = ProfileObjects.readinessProfileAndDeclined1
+      private val updatedProfileWithDecline = ProfileObjects.updatedReadinessProfileAndDeclined1
 
-      private val profileDataWithAcceptance = ProfileObjects.profile_accpeted_modified
-      private val profileWithAcceptance = ProfileObjects.updatedReadinessProfile_accpeted_1
+      private val profileDataWithAcceptance = ProfileObjects.profileAccpetedAndModified
+      private val profileWithAcceptance = ProfileObjects.updatedReadinessProfileAndAccepted1
 
       @BeforeEach
       internal fun setUp() {
@@ -185,9 +185,9 @@ class ProfileServiceTest : UnitTestBase() {
     @Nested
     @DisplayName("And the readiness profile with acceptance is found")
     inner class AndProfileWithAcceptanceIsFound {
-      private val profileWithAcceptance = ProfileObjects.readinessProfile_accepted_1
-      private val profileDataWithAcceptance = ProfileObjects.profile_accpeted_modified
-      private val updatedProfileWithAcceptance = ProfileObjects.updatedReadinessProfile_accpeted_1
+      private val profileWithAcceptance = ProfileObjects.readinessProfileAndAccepted1
+      private val profileDataWithAcceptance = ProfileObjects.profileAccpetedAndModified
+      private val updatedProfileWithAcceptance = ProfileObjects.updatedReadinessProfileAndAccepted1
 
       @BeforeEach
       internal fun setUp() {
@@ -218,7 +218,7 @@ class ProfileServiceTest : UnitTestBase() {
 
     @Test
     fun `add supportDeclined to supportDeclineList on Update of declinedSupport in readiness profile`() {
-      val profileDeclinedTwice = ProfileObjects.readinessProfile_declined_1_declined_list
+      val profileDeclinedTwice = ProfileObjects.readinessProfileAndDeclined1AndDeclinedList
       givenProfileFound(profileDeclinedTwice)
       givenSavedProfile(updatedProfileWithDecline)
 

@@ -54,7 +54,7 @@ object ProfileObjects {
 
   val workTypesOfInterestOther = "freelance"
   val jobOfParticularInterests = "architect"
-  val previousWorkOrVolunteering_NONE = "NONE"
+  val previousWorkOrVolunteeringNone = "NONE"
   val qualificationAndTrainingOther = "MBA"
 
   val offenderIdList = listOf(newOffenderId, updatedOffenderId)
@@ -63,8 +63,8 @@ object ProfileObjects {
   val action = Action(ActionTodo.BANK_ACCOUNT, ActionStatus.COMPLETED, null, null)
   val actionModified = Action(ActionTodo.CV_AND_COVERING_LETTER, ActionStatus.IN_PROGRESS, null, null)
 
-  val profileStatus_NO_RIGHT_TO_WORK = ProfileStatus.NO_RIGHT_TO_WORK
-  val profileStatus_SUPPORT_NEEDED = ProfileStatus.SUPPORT_NEEDED
+  val profileWithStatusNoRightToWork = ProfileStatus.NO_RIGHT_TO_WORK
+  val profileWithStatusSupportNeeded = ProfileStatus.SUPPORT_NEEDED
 
   val supportDeclinedReasonList = listOf(SupportToWorkDeclinedReason.FULL_TIME_CARER)
   val supportDeclinedReasonModifiedList = listOf(SupportToWorkDeclinedReason.HEALTH)
@@ -121,7 +121,7 @@ object ProfileObjects {
   val workExperience = WorkExperience(
     updatedBy,
     modifiedTime,
-    previousWorkOrVolunteering_NONE,
+    previousWorkOrVolunteeringNone,
     qualificationsAndTrainingList,
     qualificationAndTrainingOther,
   )
@@ -176,29 +176,29 @@ object ProfileObjects {
   )
 
   val profile: Profile = Profile(
-    profileStatus_NO_RIGHT_TO_WORK, false, null, "prison2", StatusChange.NEW,
+    profileWithStatusNoRightToWork, false, null, "prison2", StatusChange.NEW,
     mutableListOf(supportDeclined),
     mutableListOf(supportAccepted), supportDeclined, null,
   )
 
-  val profile_declined: Profile =
-    Profile(profileStatus_NO_RIGHT_TO_WORK, false, null, "prison2", StatusChange.NEW, null, null, supportDeclined, null)
-  val profile_declined_declined_list: Profile = Profile(
-    profileStatus_NO_RIGHT_TO_WORK, false, null, "prison2", StatusChange.NEW,
+  val profileDeclined: Profile =
+    Profile(profileWithStatusNoRightToWork, false, null, "prison2", StatusChange.NEW, null, null, supportDeclined, null)
+  val profileDeclinedAndDeclinedList: Profile = Profile(
+    profileWithStatusNoRightToWork, false, null, "prison2", StatusChange.NEW,
     mutableListOf(
       supportDeclinedModifiedOther,
     ),
     null, supportDeclined, null,
   )
-  val profile_declinedModified: Profile = Profile(
-    profileStatus_NO_RIGHT_TO_WORK, false, null, "prison2", StatusChange.NEW, mutableListOf(supportDeclined), null,
+  val profileDeclinedModified: Profile = Profile(
+    profileWithStatusNoRightToWork, false, null, "prison2", StatusChange.NEW, mutableListOf(supportDeclined), null,
     supportDeclinedModified, null,
   )
 
-  val profile_accpeted: Profile =
-    Profile(profileStatus_SUPPORT_NEEDED, false, null, "prison2", StatusChange.NEW, null, null, null, supportAccepted)
-  val profile_accpeted_modified: Profile = Profile(
-    profileStatus_SUPPORT_NEEDED,
+  val profileAccpeted: Profile =
+    Profile(profileWithStatusSupportNeeded, false, null, "prison2", StatusChange.NEW, null, null, null, supportAccepted)
+  val profileAccpetedAndModified: Profile = Profile(
+    profileWithStatusSupportNeeded,
     false,
     null,
     "prison2",
@@ -221,8 +221,8 @@ object ProfileObjects {
     supportAccepted_history = mutableListOf(),
   )
 
-  val profile_NEW_BOTHSTATE_INCOORECT: Profile = Profile(
-    profileStatus_NO_RIGHT_TO_WORK, false, null, "prison2", StatusChange.NEW,
+  val profileStatusNewAndBothStateIncorrect: Profile = Profile(
+    profileWithStatusNoRightToWork, false, null, "prison2", StatusChange.NEW,
     mutableListOf(supportDeclined),
     mutableListOf(supportAccepted), supportDeclined, supportAccepted,
   )
@@ -241,7 +241,7 @@ object ProfileObjects {
   )
 
   val profileIncorrectStatus: Profile = Profile(
-    profileStatus_SUPPORT_NEEDED, false, null, "prison1", StatusChange.NEW, mutableListOf(supportDeclined),
+    profileWithStatusSupportNeeded, false, null, "prison1", StatusChange.NEW, mutableListOf(supportDeclined),
     mutableListOf(supportAccepted),
     supportDeclined, null,
   )
@@ -281,7 +281,7 @@ object ProfileObjects {
     new = true,
   )
 
-  val readinessProfile_accepted_1 = ReadinessProfile(
+  val readinessProfileAndAccepted1 = ReadinessProfile(
     newOffenderId,
     newBookingId,
     createdBy,
@@ -289,12 +289,12 @@ object ProfileObjects {
     createdBy,
     modifiedTime,
     "1.0",
-    objectMapper.valueToTree(profile_accpeted),
+    objectMapper.valueToTree(profileAccpeted),
     emptyJsonArray,
     true,
   )
 
-  val updatedReadinessProfile_accpeted_1 = ReadinessProfile(
+  val updatedReadinessProfileAndAccepted1 = ReadinessProfile(
     newOffenderId,
     updatedBookingId,
     updatedBy,
@@ -302,12 +302,12 @@ object ProfileObjects {
     updatedBy,
     modifiedTime,
     "1.0",
-    objectMapper.valueToTree(profile_accpeted_modified),
+    objectMapper.valueToTree(profileAccpetedAndModified),
     emptyJsonArray,
     true,
   )
 
-  val readinessProfile_declined_1 = ReadinessProfile(
+  val readinessProfileAndDeclined1 = ReadinessProfile(
     newOffenderId,
     newBookingId,
     createdBy,
@@ -315,12 +315,12 @@ object ProfileObjects {
     createdBy,
     modifiedTime,
     "1.0",
-    objectMapper.valueToTree(profile_declined),
+    objectMapper.valueToTree(profileDeclined),
     emptyJsonArray,
     true,
   )
 
-  val readinessProfile_declined_1_declined_list = ReadinessProfile(
+  val readinessProfileAndDeclined1AndDeclinedList = ReadinessProfile(
     newOffenderId,
     newBookingId,
     createdBy,
@@ -328,12 +328,12 @@ object ProfileObjects {
     createdBy,
     modifiedTime,
     "1.0",
-    objectMapper.valueToTree(profile_declined_declined_list),
+    objectMapper.valueToTree(profileDeclinedAndDeclinedList),
     emptyJsonArray,
     true,
   )
 
-  val updatedReadinessProfile_declined_1 = ReadinessProfile(
+  val updatedReadinessProfileAndDeclined1 = ReadinessProfile(
     newOffenderId,
     updatedBookingId,
     updatedBy,
@@ -341,7 +341,7 @@ object ProfileObjects {
     updatedBy,
     modifiedTime,
     "1.0",
-    objectMapper.valueToTree(profile_declinedModified),
+    objectMapper.valueToTree(profileDeclinedModified),
     emptyJsonArray,
     true,
   )
