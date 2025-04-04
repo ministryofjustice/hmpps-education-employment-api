@@ -8,6 +8,9 @@ object AuditObjects {
   val displayName = "John Doe"
   val system = "system"
 
+  val testClient = "test-client"
+  val testPrincipal = "test"
+
   val defaultAuditor = username
 
   val defaultAuditTime = Instant.parse("2025-01-01T00:00:00.00Z")

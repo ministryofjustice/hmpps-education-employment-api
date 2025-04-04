@@ -5,38 +5,35 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.kotlin.any
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import uk.gov.justice.digital.hmpps.educationemployment.api.TestData
-import uk.gov.justice.digital.hmpps.educationemployment.api.TestData.createdTime
-import uk.gov.justice.digital.hmpps.educationemployment.api.TestData.modifiedAgainTime
-import uk.gov.justice.digital.hmpps.educationemployment.api.TestData.modifiedTime
-import uk.gov.justice.digital.hmpps.educationemployment.api.TestData.newNotes
-import uk.gov.justice.digital.hmpps.educationemployment.api.TestData.profile_accpeted_modified
-import uk.gov.justice.digital.hmpps.educationemployment.api.TestData.profile_declinedModified
-import uk.gov.justice.digital.hmpps.educationemployment.api.TestData.readinessProfileWithSupportDeclinedTwiceAndThenAccepted
-import uk.gov.justice.digital.hmpps.educationemployment.api.TestData.readinessProfile_accepted_1
-import uk.gov.justice.digital.hmpps.educationemployment.api.TestData.readinessProfile_declined_1
-import uk.gov.justice.digital.hmpps.educationemployment.api.TestData.readinessProfile_declined_1_declined_list
-import uk.gov.justice.digital.hmpps.educationemployment.api.TestData.updatedReadinessProfile_accpeted_1
-import uk.gov.justice.digital.hmpps.educationemployment.api.TestData.updatedReadinessProfile_declined_1
-import uk.gov.justice.digital.hmpps.educationemployment.api.deepCopy
 import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.AlreadyExistsException
 import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.InvalidStateException
 import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.NotFoundException
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ActionTodo
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.Profile
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.StatusChange
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.createdTime
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.deepCopy
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.modifiedAgainTime
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.newNotes
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.offenderIdList
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.profileIncorrectStatus
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.profileList
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.profileStatusNewAndBothStateIncorrect
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ReadinessProfile
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ReadinessProfileRepository
 import uk.gov.justice.digital.hmpps.educationemployment.api.shared.application.UnitTestBase
 import java.util.*
 import kotlin.test.assertFailsWith
 
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
 class ProfileServiceTest : UnitTestBase() {
   @Mock
   private lateinit var readinessProfileRepository: ReadinessProfileRepository
@@ -47,19 +44,15 @@ class ProfileServiceTest : UnitTestBase() {
   @Nested
   @DisplayName("Given a new readiness profile")
   inner class GivenNewProfile {
-    private val prisonNumber = TestData.newOffenderId
-    private val bookingId = TestData.newBookingId
-    private val userId = TestData.createdBy
-    private val profile = TestData.profile
-    private val readinessProfile = TestData.readinessProfile
-
-    @BeforeEach
-    internal fun setUp() {
-      givenProfileNotExist(prisonNumber)
-    }
+    private val prisonNumber = ProfileObjects.newOffenderId
+    private val bookingId = ProfileObjects.newBookingId
+    private val userId = ProfileObjects.createdBy
+    private val profile = ProfileObjects.profile
+    private val readinessProfile = ProfileObjects.readinessProfile
 
     @Test
     fun `save the readiness profile`() {
+      givenProfileNotExist(prisonNumber)
       givenSavedProfile(readinessProfile)
 
       val savedProfile = profileService.createProfileForOffender(userId, prisonNumber, bookingId, profile)
@@ -74,12 +67,12 @@ class ProfileServiceTest : UnitTestBase() {
 
     @Test
     fun `throws an exception, when create a readiness profile with incorrect status`() {
-      assertFailsWithInvalidState(TestData.profile_IncorrectStatus)
+      assertFailsWithInvalidState(profileIncorrectStatus)
     }
 
     @Test
     fun `throws an exception, when create the readiness profile with both support states`() {
-      assertFailsWithInvalidState(TestData.profile_NEW_BOTHSTATE_INCOORECT)
+      assertFailsWithInvalidState(profileStatusNewAndBothStateIncorrect)
     }
 
     private fun assertFailsWithInvalidState(profile: Profile) {
@@ -94,14 +87,17 @@ class ProfileServiceTest : UnitTestBase() {
   @Nested
   @DisplayName("Given an existing readiness profile")
   inner class GivenExistingProfile {
-    private val prisonNumber = TestData.newOffenderId
-    private val bookingId = TestData.newBookingId
-    private val profile = TestData.profile
-    private val userIdCreator = TestData.createdBy
+    private val prisonNumber = ProfileObjects.newOffenderId
+    private val bookingId = ProfileObjects.newBookingId
+    private val profile = ProfileObjects.profile
+    private val userIdCreator = ProfileObjects.createdBy
 
-    private val updatedBookingId = TestData.updatedBookingId
-    private val updatedProfile = TestData.updatedReadinessProfile
-    private val userId = TestData.updatedBy
+    private val updatedBookingId = ProfileObjects.updatedBookingId
+    private val updatedProfile = ProfileObjects.updatedReadinessProfile
+    private val userId = ProfileObjects.updatedBy
+
+    private val profileDataWithDecline = ProfileObjects.profileDeclinedModified
+    private val updatedProfileWithDecline = ProfileObjects.updatedReadinessProfileAndDeclined1
 
     @Nested
     @DisplayName("And the readiness profile is found")
@@ -140,7 +136,11 @@ class ProfileServiceTest : UnitTestBase() {
     @Nested
     @DisplayName("And the readiness profile with decline is found")
     inner class AndProfileWithDeclineIsFound {
-      private val profileWithDecline = readinessProfile_declined_1
+      private val profileWithDecline = ProfileObjects.readinessProfileAndDeclined1
+      private val updatedProfileWithDecline = ProfileObjects.updatedReadinessProfileAndDeclined1
+
+      private val profileDataWithAcceptance = ProfileObjects.profileAccpetedAndModified
+      private val profileWithAcceptance = ProfileObjects.updatedReadinessProfileAndAccepted1
 
       @BeforeEach
       internal fun setUp() {
@@ -149,9 +149,9 @@ class ProfileServiceTest : UnitTestBase() {
 
       @Test
       fun `add supportDeclined to empty supportDeclined List, on Update of declined State in readiness profile`() {
-        givenSavedProfile(updatedReadinessProfile_declined_1)
+        givenSavedProfile(updatedProfileWithDecline)
 
-        val actual = assertProfileIsUpdated(userId, prisonNumber, bookingId, profile_declinedModified)
+        val actual = assertProfileIsUpdated(userId, prisonNumber, bookingId, profileDataWithDecline)
 
         profileJsonToValue(actual.profileData).let {
           assertThat(it.supportDeclined_history!!.size == 1)
@@ -160,9 +160,9 @@ class ProfileServiceTest : UnitTestBase() {
 
       @Test
       fun `add supportDeclined to empty supportDeclined List, on Update of acceptedSupport  in readiness profile`() {
-        givenSavedProfile(updatedReadinessProfile_accpeted_1)
+        givenSavedProfile(profileWithAcceptance)
 
-        val actual = assertProfileIsUpdated(userId, prisonNumber, bookingId, profile_accpeted_modified)
+        val actual = assertProfileIsUpdated(userId, prisonNumber, bookingId, profileDataWithAcceptance)
 
         profileJsonToValue(actual.profileData).let {
           assertThat(it.supportDeclined_history!!.size == 1)
@@ -174,7 +174,7 @@ class ProfileServiceTest : UnitTestBase() {
       fun `makes a call to the repository to verify support declined is not added to supportDeclineList when declinedsupport has not changed in readiness profile`() {
         givenSavedProfile(profileWithDecline)
 
-        val actual = assertProfileIsUpdated(userId, prisonNumber, bookingId, profile_declinedModified)
+        val actual = assertProfileIsUpdated(userId, prisonNumber, bookingId, profileDataWithDecline)
 
         profileJsonToValue(actual.profileData).let {
           assertThat(it.supportDeclined_history!!.size == 0)
@@ -185,7 +185,9 @@ class ProfileServiceTest : UnitTestBase() {
     @Nested
     @DisplayName("And the readiness profile with acceptance is found")
     inner class AndProfileWithAcceptanceIsFound {
-      private val profileWithAcceptance = readinessProfile_accepted_1
+      private val profileWithAcceptance = ProfileObjects.readinessProfileAndAccepted1
+      private val profileDataWithAcceptance = ProfileObjects.profileAccpetedAndModified
+      private val updatedProfileWithAcceptance = ProfileObjects.updatedReadinessProfileAndAccepted1
 
       @BeforeEach
       internal fun setUp() {
@@ -194,9 +196,9 @@ class ProfileServiceTest : UnitTestBase() {
 
       @Test
       fun `add supportAccepted to empty supportAccepted List, on Update of declinedSupport in readiness profile`() {
-        givenSavedProfile(updatedReadinessProfile_declined_1)
+        givenSavedProfile(updatedProfileWithDecline)
 
-        val actual = assertProfileIsUpdated(userId, prisonNumber, bookingId, profile_accpeted_modified)
+        val actual = assertProfileIsUpdated(userId, prisonNumber, bookingId, profileDataWithAcceptance)
 
         profileJsonToValue(actual.profileData).let {
           assertThat(it.supportAccepted_history!!.size == 1)
@@ -206,9 +208,9 @@ class ProfileServiceTest : UnitTestBase() {
 
       @Test
       fun `add support accepted to empty supportAccpetedList on Update of declined in readiness profile`() {
-        givenSavedProfile(updatedReadinessProfile_accpeted_1)
+        givenSavedProfile(updatedProfileWithAcceptance)
 
-        val actual = assertProfileIsUpdated(userId, prisonNumber, bookingId, profile_accpeted_modified)
+        val actual = assertProfileIsUpdated(userId, prisonNumber, bookingId, profileDataWithAcceptance)
 
         assertThat(profileJsonToValue(actual.profileData).supportAccepted_history!!.size == 1)
       }
@@ -216,11 +218,11 @@ class ProfileServiceTest : UnitTestBase() {
 
     @Test
     fun `add supportDeclined to supportDeclineList on Update of declinedSupport in readiness profile`() {
-      val profileDeclinedTwice = readinessProfile_declined_1_declined_list
+      val profileDeclinedTwice = ProfileObjects.readinessProfileAndDeclined1AndDeclinedList
       givenProfileFound(profileDeclinedTwice)
-      givenSavedProfile(updatedReadinessProfile_declined_1)
+      givenSavedProfile(updatedProfileWithDecline)
 
-      val actual = assertProfileIsUpdated(userId, prisonNumber, bookingId, profile_declinedModified)
+      val actual = assertProfileIsUpdated(userId, prisonNumber, bookingId, profileDataWithDecline)
 
       assertThat(profileJsonToValue(actual.profileData).supportDeclined_history!!.size == 2)
     }
@@ -239,15 +241,15 @@ class ProfileServiceTest : UnitTestBase() {
   @Nested
   @DisplayName("Given an existing readiness profile, and some notes")
   inner class GivenExistingProfileAndNotes {
-    private val prisonNumber = TestData.newOffenderId
-    private val userIdCreator = TestData.createdBy
+    private val prisonNumber = ProfileObjects.newOffenderId
+    private val userIdCreator = ProfileObjects.createdBy
 
-    private val updatedProfile = TestData.updatedReadinessProfile
+    private val updatedProfile = ProfileObjects.updatedReadinessProfile
 
-    private val updatedProfileWithNotes = TestData.updatedReadinessProfileNotes
+    private val updatedProfileWithNotes = ProfileObjects.updatedReadinessProfileNotes
 
-    private val actionToDoCV = TestData.actionToDoCV
-    private val notesText = TestData.noteString
+    private val actionToDoCV = ProfileObjects.actionToDoCV
+    private val notesText = ProfileObjects.noteString
 
     @Test
     fun `save a readiness profile note`() {
@@ -281,8 +283,8 @@ class ProfileServiceTest : UnitTestBase() {
 
   @Test
   fun `retrieve a list of readiness profiles for list offender ids`() {
-    val expectedProfiles = TestData.profileList
-    val prisonNumbers = TestData.offenderIdList
+    val expectedProfiles = profileList
+    val prisonNumbers = offenderIdList
     whenever(readinessProfileRepository.findAllById(any())).thenReturn(expectedProfiles)
 
     val profileList = profileService.getProfilesForOffenders(prisonNumbers)
@@ -293,10 +295,10 @@ class ProfileServiceTest : UnitTestBase() {
   @Nested
   @DisplayName("Given a non-existing readiness profile")
   inner class GivenNonExistingProfile {
-    private val prisonNumber = TestData.newOffenderId
-    private val bookingId = TestData.newBookingId
-    private val userId = TestData.createdBy
-    private val profile = TestData.profile
+    private val prisonNumber = ProfileObjects.newOffenderId
+    private val bookingId = ProfileObjects.newBookingId
+    private val userId = ProfileObjects.createdBy
+    private val profile = ProfileObjects.profile
 
     @BeforeEach
     internal fun setUp() {
@@ -338,6 +340,7 @@ class ProfileServiceTest : UnitTestBase() {
   inner class GivenProfileWithHistory {
     private lateinit var expectedProfile: ReadinessProfile
     private lateinit var prisonNumber: String
+    private val modifiedTime = ProfileObjects.modifiedTime
 
     @BeforeEach
     internal fun setUp() {
@@ -458,7 +461,7 @@ class ProfileServiceTest : UnitTestBase() {
 
   private fun givenProfileFound(profile: ReadinessProfile) = whenever(readinessProfileRepository.findById(any())).thenReturn(Optional.of(profile))
 
-  private fun givenProfileWithSupportDeclinedTwiceInHistory() = readinessProfileWithSupportDeclinedTwiceAndThenAccepted.also {
+  private fun givenProfileWithSupportDeclinedTwiceInHistory() = ProfileObjects.readinessProfileWithSupportDeclinedTwiceAndThenAccepted.also {
     Mockito.lenient().whenever(readinessProfileRepository.findById(any())).thenReturn(Optional.of(it.deepCopy()))
   }
 }

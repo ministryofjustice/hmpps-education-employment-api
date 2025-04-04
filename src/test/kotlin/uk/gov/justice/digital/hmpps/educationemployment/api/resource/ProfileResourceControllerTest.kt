@@ -1,170 +1,166 @@
 package uk.gov.justice.digital.hmpps.educationemployment.api.resource
 
-import com.fasterxml.jackson.core.type.TypeReference
-import com.fasterxml.jackson.databind.ObjectMapper
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mockito.reset
 import org.mockito.kotlin.any
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.http.HttpHeaders
-import org.springframework.http.MediaType.APPLICATION_JSON
-import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers
-import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.bean.override.mockito.MockitoBean
-import org.springframework.test.context.junit.jupiter.SpringExtension
-import org.springframework.test.context.web.WebAppConfiguration
-import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import org.springframework.test.web.servlet.setup.MockMvcBuilders
-import uk.gov.justice.digital.hmpps.educationemployment.api.TestData
-import uk.gov.justice.digital.hmpps.educationemployment.api.config.ControllerAdvice
-import uk.gov.justice.digital.hmpps.educationemployment.api.config.DpsPrincipal
-import uk.gov.justice.digital.hmpps.educationemployment.api.helpers.JwtAuthHelper
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import uk.gov.justice.digital.hmpps.educationemployment.api.notesdata.domain.Note
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ActionTodo
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.ProfileService
-import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.ReadinessProfileDTO
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.joinToJsonString
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ReadinessProfile
+import kotlin.test.assertEquals
 
-@ExtendWith(SpringExtension::class)
-@ActiveProfiles("test")
+private const val READINESS_PROFILES_PATH = "/readiness-profiles"
+const val SEARCH_ENDPOINT = "$READINESS_PROFILES_PATH/search"
+const val PROFILE_ENDPOINT = "$READINESS_PROFILES_PATH/{id}"
+const val NOTES_ENDPOINT = "$READINESS_PROFILES_PATH/{id}/notes/{attribute}"
+
 @WebMvcTest(controllers = [ProfileResourceController::class])
-@AutoConfigureMockMvc(addFilters = false)
 @ContextConfiguration(classes = [ProfileResourceController::class])
-@WebAppConfiguration
-class ProfileResourceControllerTest {
-
+class ProfileResourceControllerTest : ControllerTestBase() {
   @MockitoBean
   private lateinit var profileService: ProfileService
 
-  @Autowired
-  private lateinit var mvc: MockMvc
-
-  @Autowired
-  private lateinit var mapper: ObjectMapper
-
-  var jwtAuthHelper: JwtAuthHelper = JwtAuthHelper()
-
   @BeforeEach
-  fun reset() {
+  internal fun reset() {
     reset(profileService)
-    SecurityMockMvcConfigurers.springSecurity()
-
-    mvc = MockMvcBuilders
-      .standaloneSetup(ProfileResourceController(profileService))
-      .setControllerAdvice(ControllerAdvice())
-      .build()
+    initMvcMock(ProfileResourceController(profileService))
   }
 
-  @Test
-  fun `Test GET of a PRELIMINARY retreive profile notes`() {
-    val prisonerId = "A1234AB"
-    val disclosureLetter = ActionTodo.DISCLOSURE_LETTER.toString()
-    var notesList: MutableList<Note> = mapper.readValue(TestData.noteListJson, object : TypeReference<MutableList<Note>>() {})
-    whenever(profileService.getProfileNotesForOffender(prisonerId, ActionTodo.DISCLOSURE_LETTER)).thenReturn(notesList)
+  @Nested
+  @DisplayName("Given a profile with notes")
+  inner class GivenProfileWithNotes {
+    private val prisonNumber = "A1234AB"
+    private val disclosureLetter = ActionTodo.DISCLOSURE_LETTER.toString()
+    private lateinit var notesList: MutableList<Note>
 
-    val result = mvc.perform(get("/readiness-profiles/A1234AB/notes/$disclosureLetter").accept(APPLICATION_JSON))
-      .andExpect(status().isOk)
-      .andExpect(content().contentType(APPLICATION_JSON))
-      .andReturn()
-    var retreivedNotesList: MutableList<Note> = mapper.readValue(result.response.contentAsString, object : TypeReference<MutableList<Note>>() {})
-    assert(retreivedNotesList.size == 2)
-    verify(profileService, times(1)).getProfileNotesForOffender(prisonerId, ActionTodo.DISCLOSURE_LETTER)
+    @BeforeEach
+    internal fun setUp() {
+      notesList = notesToList(ProfileObjects.noteListJson)
+    }
+
+    @Test
+    fun `Test GET of a PRELIMINARY retrieve profile notes`() {
+      whenever(profileService.getProfileNotesForOffender(prisonNumber, ActionTodo.DISCLOSURE_LETTER)).thenReturn(notesList)
+
+      val result = assertReadOnlyApiReplyJson(get(NOTES_ENDPOINT, prisonNumber, disclosureLetter))
+
+      val retrievedNotesList = notesToList(result.response.contentAsString)
+      assertThat(retrievedNotesList).hasSize(2)
+      verify(profileService, times(1)).getProfileNotesForOffender(prisonNumber, ActionTodo.DISCLOSURE_LETTER)
+    }
+
+    @Test
+    fun `Test Post of a add profile notes`() {
+      whenever(profileService.addProfileNoteForOffender(any(), any(), any(), any())).thenReturn(notesList)
+      val notes = ProfileObjects.noteFreeTextJson
+
+      val result = assertReadWriteApiReplyJson(post(NOTES_ENDPOINT, prisonNumber, disclosureLetter), notes)
+
+      val retrievedNotesList = notesToList(result.response.contentAsString)
+      assert(retrievedNotesList.size == 2)
+      verify(profileService, times(1)).addProfileNoteForOffender(any(), any(), any(), any())
+    }
   }
 
-  @Test
-  fun `Test Post  of a add profile notes`() {
-    val disclosureLetter = ActionTodo.DISCLOSURE_LETTER.toString()
-    var notesList: MutableList<Note> = mapper.readValue(TestData.noteListJson, object : TypeReference<MutableList<Note>>() {})
-    whenever(profileService.addProfileNoteForOffender(any(), any(), any(), any())).thenReturn(notesList)
+  @Nested
+  @DisplayName("Given a profile")
+  inner class GivenAProfile {
+    private val profile = ProfileObjects.readinessProfileOfKnownPrisoner
+    private val prisonNumber = profile.offenderId
+    private val bookingId = profile.bookingId
+    private val createdBy = profile.createdBy
 
-    val result = mvc.perform(post("/readiness-profiles/A1234AB/notes/$disclosureLetter").accept(APPLICATION_JSON).content(TestData.noteFreeTextJson).contentType(APPLICATION_JSON).principal(DpsPrincipal("test", "test")).headers((setAuthorisation(roles = listOf("WORK_READINESS_EDIT")))))
-      .andExpect(status().isOk)
-      .andExpect(content().contentType(APPLICATION_JSON))
-      .andReturn()
-    var retreivedNotesList: MutableList<Note> = mapper.readValue(result.response.contentAsString, object : TypeReference<MutableList<Note>>() {})
-    assert(retreivedNotesList.size == 2)
-    verify(profileService, times(1)).addProfileNoteForOffender(any(), any(), any(), any())
+    @Test
+    fun `Test Post of a new profile `() {
+      whenever(profileService.createProfileForOffender(any(), any(), any(), any())).thenReturn(profile)
+      val createRequest = ProfileObjects.createProfileJsonRequest
+
+      assertCreateProfileIsExpected(prisonNumber, createRequest)
+    }
+
+    @Test
+    fun `Test Put of an update profile `() {
+      whenever(profileService.updateProfileForOffender(any(), any(), any(), any())).thenReturn(profile)
+      val updateRequest = ProfileObjects.createProfileJsonRequest
+
+      assertUpdateProfileIsExpected(prisonNumber, updateRequest)
+    }
+
+    @Test
+    fun `Test Get profile of an Offender `() {
+      whenever(profileService.getProfileForOffender(any())).thenReturn(profile)
+
+      assertRetrieveProfileIsExpected(prisonNumber)
+    }
+
+    private fun assertCreateProfileIsExpected(prisonNumber: String, requestJson: String) = assertCreateOrUpdateProfileIsExpected(post(PROFILE_ENDPOINT, prisonNumber), requestJson)
+      .also { verify(profileService, times(1)).createProfileForOffender(any(), any(), any(), any()) }
+
+    private fun assertUpdateProfileIsExpected(prisonNumber: String, requestJson: String) = assertCreateOrUpdateProfileIsExpected(put(PROFILE_ENDPOINT, prisonNumber), requestJson)
+      .also { verify(profileService, times(1)).updateProfileForOffender(any(), any(), any(), any()) }
+
+    private fun assertCreateOrUpdateProfileIsExpected(requestBuilder: MockHttpServletRequestBuilder, requestJson: String) = assertReadWriteApiReplyJson(requestBuilder, requestJson)
+      .also { result ->
+        readinessProfileToValue(result.response.contentAsString).let {
+          assertEquals(createdBy, it.createdBy)
+          assertEquals(prisonNumber, it.offenderId)
+          assertEquals(bookingId, it.bookingId)
+        }
+      }
+
+    private fun assertRetrieveProfileIsExpected(prisonNumber: String) = assertReadOnlyApiReplyJson(get(PROFILE_ENDPOINT, prisonNumber))
+      .also { result ->
+        readinessProfileToValue(result.response.contentAsString).let {
+          assertEquals(createdBy, it.createdBy)
+          assertEquals(prisonNumber, it.offenderId)
+          assertEquals(bookingId, it.bookingId)
+        }
+
+        verify(profileService, times(1)).getProfileForOffender(any())
+      }
   }
 
-  @Test
-  fun `Test Post  of a add profile `() {
-    whenever(profileService.createProfileForOffender(any(), any(), any(), any())).thenReturn(TestData.readinessProfile)
-    var dpsPrincipal = DpsPrincipal("username", "displayName")
-    val result = mvc.perform(post("/readiness-profiles/A1234AB").accept(APPLICATION_JSON).content(TestData.createProfileJsonRequest).contentType(APPLICATION_JSON).principal(DpsPrincipal("test", "test")).headers((setAuthorisation(roles = listOf("WORK_READINESS_EDIT")))))
-      .andExpect(status().isOk)
-      .andExpect(content().contentType(APPLICATION_JSON))
-      .andReturn()
-    val actualReadinessProfileDTO = mapper.readValue(
-      result.response.contentAsString,
-      object : TypeReference<ReadinessProfileDTO>() {},
-    )
-    Assertions.assertThat(actualReadinessProfileDTO).extracting(TestData.createdByString, TestData.offenderIdString, TestData.bookingIdString)
-      .contains(TestData.createdBy, TestData.newOffenderId, TestData.newBookingId)
-    verify(profileService, times(1)).createProfileForOffender(any(), any(), any(), any())
-  }
+  @Nested
+  @DisplayName("Given some profiles")
+  inner class GivenSomeProfiles {
+    private val prisonNumbers = ProfileObjects.offenderIdList
+    private val profileList = ProfileObjects.profileList
 
-  @Test
-  fun `Test Post  of an update profile `() {
-    whenever(profileService.createProfileForOffender(any(), any(), any(), any())).thenReturn(TestData.readinessProfile)
-    val result = mvc.perform(post("/readiness-profiles/A1234AB").accept(APPLICATION_JSON).content(TestData.createProfileJsonRequest).contentType(APPLICATION_JSON).principal(DpsPrincipal("test", "test")).headers((setAuthorisation(roles = listOf("WORK_READINESS_EDIT")))))
-      .andExpect(status().isOk)
-      .andExpect(content().contentType(APPLICATION_JSON))
-      .andReturn()
-    val actualReadinessProfileDTO = mapper.readValue(
-      result.response.contentAsString,
-      object : TypeReference<ReadinessProfileDTO>() {},
-    )
-    Assertions.assertThat(actualReadinessProfileDTO).extracting(TestData.createdByString, TestData.offenderIdString, TestData.bookingIdString)
-      .contains(TestData.createdBy, TestData.newOffenderId, TestData.newBookingId)
-    verify(profileService, times(1)).createProfileForOffender(any(), any(), any(), any())
-  }
+    @Test
+    fun `Test Get of profile list for offenders `() {
+      whenever(profileService.getProfilesForOffenders(any())).thenReturn(profileList)
 
-  @Test
-  fun `Test Get  profile of an  Offender `() {
-    whenever(profileService.getProfileForOffender(any())).thenReturn(TestData.readinessProfile)
-    val result = mvc.perform(get("/readiness-profiles/A1234AB").accept(APPLICATION_JSON).content(TestData.createProfileJsonRequest).contentType(APPLICATION_JSON).param("oauth2User", "ssss").headers((setAuthorisation(roles = listOf("WORK_READINESS_EDIT")))))
-      .andExpect(status().isOk)
-      .andExpect(content().contentType(APPLICATION_JSON))
-      .andReturn()
-    val actualReadinessProfileDTO = mapper.readValue(
-      result.response.contentAsString,
-      object : TypeReference<ReadinessProfileDTO>() {},
-    )
-    Assertions.assertThat(actualReadinessProfileDTO).extracting(TestData.createdByString, TestData.offenderIdString, TestData.bookingIdString)
-      .contains(TestData.createdBy, TestData.newOffenderId, TestData.newBookingId)
-    verify(profileService, times(1)).getProfileForOffender(any())
-  }
+      assertSearchProfileIsExpected(prisonNumbers, profileList)
+      verify(profileService, times(1)).getProfilesForOffenders(any())
+    }
 
-  @Test
-  fun `Test Get  of an  profile list for offenders `() {
-    whenever(profileService.getProfilesForOffenders(any())).thenReturn(TestData.profileList)
-    val result = mvc.perform(post("/readiness-profiles/search").accept(APPLICATION_JSON).content(TestData.offenderIdListjson).contentType(APPLICATION_JSON).headers((setAuthorisation(roles = listOf("WORK_READINESS_EDIT")))))
-      .andExpect(status().isOk)
-      .andExpect(content().contentType(APPLICATION_JSON))
-      .andReturn()
-    val readinessProfileDTOList = mapper.readValue(
-      result.response.contentAsString,
-      object : TypeReference<List<ReadinessProfileDTO>>() {},
-    )
-    Assertions.assertThat(readinessProfileDTOList[0]).extracting(TestData.createdByString, TestData.offenderIdString, TestData.bookingIdString)
-      .contains(TestData.createdBy, TestData.newOffenderId, TestData.newBookingId)
-    verify(profileService, times(1)).getProfilesForOffenders(any())
+    private fun assertSearchProfileIsExpected(
+      prisonNumbers: List<String>,
+      expectedProfiles: List<ReadinessProfile>,
+    ) = assertReadOnlyApiReplyJson(post(SEARCH_ENDPOINT), prisonNumbers.joinToJsonString()).also { result ->
+      readinessProfileToList(result.response.contentAsString).forEachIndexed { i, it ->
+        with(expectedProfiles[i]) {
+          assertEquals(createdBy, it.createdBy)
+          assertEquals(offenderId, it.offenderId)
+          assertEquals(bookingId, it.bookingId)
+        }
+      }
+    }
   }
-
-  internal fun setAuthorisation(
-    user: String = "test-client",
-    roles: List<String> = listOf(),
-  ): (HttpHeaders) = jwtAuthHelper.setAuthorisationForUnitTests(user, roles)
 }
