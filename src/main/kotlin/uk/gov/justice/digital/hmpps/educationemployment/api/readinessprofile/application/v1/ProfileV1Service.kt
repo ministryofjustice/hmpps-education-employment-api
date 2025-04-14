@@ -1,30 +1,40 @@
-package uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application
+@file:Suppress("DEPRECATION")
+
+package uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v1
 
 import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.stereotype.Service
-import uk.gov.justice.digital.hmpps.educationemployment.api.config.CapturedSpringConfigValues
 import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.AlreadyExistsException
 import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.InvalidStateException
 import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.NotFoundException
-import uk.gov.justice.digital.hmpps.educationemployment.api.notesdata.domain.Note
-import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ActionTodo
-import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.Profile
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ProfileStatus
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.StatusChange
-import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.SupportAccepted
-import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.SupportDeclined
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.v1.Profile
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.ProfileService
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.StatusChangeUpdateRequestDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ReadinessProfile
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ReadinessProfileRepository
 import uk.gov.justice.digital.hmpps.educationemployment.api.shared.domain.TimeProvider
 import java.time.LocalDate
-import kotlin.jvm.Throws
 
+const val PROFILE_SCHEMA_VERSION = "1.0"
+
+@Deprecated(
+  message = "Use v2 instead",
+  replaceWith = ReplaceWith("ProfileV2Service", "uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v2"),
+)
 @Service
-class ProfileService(
+class ProfileV1Service(
   private val readinessProfileRepository: ReadinessProfileRepository,
   private val timeProvider: TimeProvider,
-) {
-  fun createProfileForOffender(
+  private val objectMapper: ObjectMapper,
+) : ProfileService<Profile> {
+  private val typeRefProfile by lazy { object : TypeReference<Profile>() {} }
+  private val emptyJsonArray: JsonNode get() = objectMapper.readTree("[]")
+
+  override fun createProfileForOffender(
     userId: String,
     offenderId: String,
     bookingId: Long,
@@ -39,36 +49,33 @@ class ProfileService(
     setMiscellaneousAttributesOnSupportState(profile, userId, offenderId)
     profile.statusChange = false
     profile.statusChangeType = StatusChange.NEW
-    profile.supportAccepted_history = mutableListOf<SupportAccepted>()
-    profile.supportDeclined_history = mutableListOf<SupportDeclined>()
+    profile.supportAccepted_history = mutableListOf()
+    profile.supportDeclined_history = mutableListOf()
     return readinessProfileRepository.save(
       ReadinessProfile(
-        offenderId,
-        bookingId,
-        userId,
-        timeProvider.now(),
-        userId,
-        timeProvider.now(),
-        "1.0",
-        CapturedSpringConfigValues.objectMapper.readTree(CapturedSpringConfigValues.objectMapper.writeValueAsString(profile)),
-        CapturedSpringConfigValues.objectMapper.readTree("[]"),
-        true,
+        offenderId = offenderId,
+        bookingId = bookingId,
+        createdBy = userId,
+        createdDateTime = timeProvider.now(),
+        modifiedBy = userId,
+        modifiedDateTime = timeProvider.now(),
+        schemaVersion = PROFILE_SCHEMA_VERSION,
+        profileData = profile.json(),
+        notesData = emptyJsonArray,
+        new = true,
       ),
     )
   }
 
-  fun updateProfileForOffender(
+  override fun updateProfileForOffender(
     userId: String,
     offenderId: String,
     bookingId: Long,
     profile: Profile,
   ): ReadinessProfile {
-    var storedProfile: ReadinessProfile =
+    val storedProfile: ReadinessProfile =
       readinessProfileRepository.findById(offenderId).orElseThrow(NotFoundException(offenderId))
-    var storedCoreProfile: Profile = CapturedSpringConfigValues.objectMapper.readValue(
-      CapturedSpringConfigValues.objectMapper.writeValueAsString(storedProfile.profileData),
-      object : TypeReference<Profile>() {},
-    )
+    val storedCoreProfile: Profile = parseProfile(storedProfile.profileData)
     profile.supportAccepted_history = storedCoreProfile.supportAccepted_history
     profile.supportDeclined_history = storedCoreProfile.supportDeclined_history
     if (storedCoreProfile.supportAccepted == null && storedCoreProfile.supportDeclined == null && profile.supportAccepted != null && profile.supportDeclined != null) {
@@ -79,7 +86,7 @@ class ProfileService(
         storedCoreProfile.supportAccepted,
       )
     ) {
-      updateAcceptedStatusList(profile, storedCoreProfile, userId, offenderId)
+      updateAcceptedStatusList(profile, storedCoreProfile, userId)
     } else if (storedCoreProfile.supportDeclined != null &&
       profile.supportDeclined != null &&
       !profile.supportDeclined?.equals(
@@ -93,38 +100,62 @@ class ProfileService(
       updateProfileAcceptStatusChange(profile, userId, offenderId, storedProfile)
     }
 
-    storedProfile.profileData =
-      CapturedSpringConfigValues.objectMapper.readTree(CapturedSpringConfigValues.objectMapper.writeValueAsString(profile))
+    storedProfile.profileData = profile.json()
     storedProfile.modifiedBy = userId
     storedProfile.modifiedDateTime = timeProvider.now()
     readinessProfileRepository.save(storedProfile)
     return storedProfile
   }
 
-  fun getProfilesForOffenders(offenders: List<String>) = readinessProfileRepository.findAllById(offenders)
-
-  fun getProfileForOffender(offenderId: String): ReadinessProfile {
-    var profile: ReadinessProfile =
+  override fun changeStatusForOffender(
+    userId: String,
+    offenderId: String,
+    statusChangeUpdateRequestDTO: StatusChangeUpdateRequestDTO?,
+  ): ReadinessProfile {
+    val storedProfile: ReadinessProfile =
       readinessProfileRepository.findById(offenderId).orElseThrow(NotFoundException(offenderId))
-    return profile
+    val storedCoreProfile: Profile?
+    if (statusChangeUpdateRequestDTO != null && statusChangeUpdateRequestDTO.supportDeclined != null) {
+      storedCoreProfile =
+        changeStatusToDeclinedForOffender(userId, offenderId, statusChangeUpdateRequestDTO, storedProfile)
+      storedCoreProfile.status = statusChangeUpdateRequestDTO.status
+      checkDeclinedProfileStatus(storedCoreProfile, offenderId)
+    } else if (statusChangeUpdateRequestDTO != null && statusChangeUpdateRequestDTO.supportAccepted != null) {
+      storedCoreProfile =
+        changeStatusToAcceptedForOffender(userId, offenderId, statusChangeUpdateRequestDTO, storedProfile)
+      storedCoreProfile.status = statusChangeUpdateRequestDTO.status
+    } else if (statusChangeUpdateRequestDTO!!.status.equals(ProfileStatus.READY_TO_WORK) || statusChangeUpdateRequestDTO.status.equals(ProfileStatus.NO_RIGHT_TO_WORK)) {
+      storedCoreProfile = parseProfile(storedProfile.profileData)
+      storedCoreProfile.status = statusChangeUpdateRequestDTO.status
+    } else {
+      throw InvalidStateException(offenderId)
+    }
+
+    storedCoreProfile.statusChangeDate = timeProvider.now()
+    storedCoreProfile.statusChange = true
+    storedProfile.profileData = storedCoreProfile.json()
+    storedProfile.modifiedBy = userId
+    storedProfile.modifiedDateTime = timeProvider.now()
+    readinessProfileRepository.save(storedProfile)
+    return storedProfile
   }
 
+  override fun getProfilesForOffenders(offenders: List<String>) = readinessProfileRepository.findAllById(offenders)
+
+  override fun getProfileForOffender(offenderId: String): ReadinessProfile = readinessProfileRepository.findById(offenderId).orElseThrow(NotFoundException(offenderId))
+
   @Throws(NotFoundException::class, IllegalArgumentException::class)
-  fun getProfileForOffenderFilterByPeriod(
+  override fun getProfileForOffenderFilterByPeriod(
     prisonNumber: String,
-    fromDate: LocalDate? = null,
-    toDate: LocalDate? = null,
+    fromDate: LocalDate?,
+    toDate: LocalDate?,
   ): ReadinessProfile {
     if (fromDate != null && toDate != null && fromDate.isAfter(toDate)) {
       throw IllegalArgumentException("fromDate cannot be after toDate")
     }
 
     val readinessProfile = getProfileForOffender(prisonNumber)
-    val profile =
-      CapturedSpringConfigValues.objectMapper.treeToValue(
-        readinessProfile.profileData,
-        object : TypeReference<Profile>() {},
-      )
+    val profile = parseProfile(readinessProfile.profileData)
     if (fromDate != null || toDate != null) {
       toDate?.let {
         if (readinessProfile.createdDateTime.toLocalDate().isAfter(it)) {
@@ -166,43 +197,20 @@ class ProfileService(
     profile.supportAccepted_history?.sortByDescending { it.modifiedDateTime }
     profile.supportDeclined_history?.sortByDescending { it.modifiedDateTime }
 
-    readinessProfile.profileData = CapturedSpringConfigValues.objectMapper.valueToTree(profile)
+    readinessProfile.profileData = profile.json()
     return readinessProfile
   }
 
-  fun addProfileNoteForOffender(userId: String, offenderId: String, attribute: ActionTodo, text: String): List<Note> {
-    var storedProfile: ReadinessProfile =
-      readinessProfileRepository.findById(offenderId).orElseThrow(NotFoundException(offenderId))
-    var notesList: MutableList<Note> = CapturedSpringConfigValues.objectMapper.readValue(
-      CapturedSpringConfigValues.objectMapper.writeValueAsString(storedProfile.notesData),
-      object : TypeReference<MutableList<Note>>() {},
-    )
-    notesList.add(Note(userId, timeProvider.now(), attribute, text))
-    storedProfile.notesData =
-      CapturedSpringConfigValues.objectMapper.readTree(CapturedSpringConfigValues.objectMapper.writeValueAsString(notesList))
-    storedProfile.modifiedBy = userId
-    readinessProfileRepository.save(storedProfile)
-    return notesList.filter { n -> n.attribute == attribute }
-  }
+  fun parseProfile(profileData: JsonNode): Profile = objectMapper.treeToValue(profileData, typeRefProfile)
 
-  fun getProfileNotesForOffender(offenderId: String, attribute: ActionTodo): List<Note> {
-    var storedProfile: ReadinessProfile =
-      readinessProfileRepository.findById(offenderId).orElseThrow(NotFoundException(offenderId))
-    var notesList: List<Note> = CapturedSpringConfigValues.objectMapper.readValue(
-      CapturedSpringConfigValues.objectMapper.writeValueAsString(storedProfile.notesData),
-      object : TypeReference<List<Note>>() {},
-    )
-    return notesList.filter { n -> n.attribute == attribute }
-  }
-
-  fun checkDeclinedProfileStatus(profile: Profile, offenderId: String): Boolean {
+  private fun checkDeclinedProfileStatus(profile: Profile, offenderId: String): Boolean {
     if (profile.status.equals(ProfileStatus.SUPPORT_NEEDED)) {
       throw InvalidStateException(offenderId)
     }
     return true
   }
 
-  fun setMiscellaneousAttributesOnSupportState(profile: Profile, userId: String, offenderId: String) {
+  private fun setMiscellaneousAttributesOnSupportState(profile: Profile, userId: String, offenderId: String) {
     if (profile.supportAccepted != null) {
       profile.supportAccepted?.modifiedBy = userId
       profile.supportAccepted?.modifiedDateTime = timeProvider.now()
@@ -215,22 +223,19 @@ class ProfileService(
     }
   }
 
-  fun changeStatusToAcceptedForOffender(
+  private fun changeStatusToAcceptedForOffender(
     userId: String,
     offenderId: String,
     statusChangeUpdateRequestDTO: StatusChangeUpdateRequestDTO,
     storedProfile: ReadinessProfile,
   ): Profile {
-    var profile: Profile = CapturedSpringConfigValues.objectMapper.readValue(
-      CapturedSpringConfigValues.objectMapper.writeValueAsString(storedProfile.profileData),
-      object : TypeReference<Profile>() {},
-    )
+    val profile: Profile = parseProfile(storedProfile.profileData)
     checkDeclinedProfileStatus(profile, offenderId)
     profile.statusChangeDate = timeProvider.now()
     profile.statusChangeType = StatusChange.DECLINED_TO_ACCEPTED
 
-    profile.supportDeclined_history?.let { it.add(profile.supportDeclined!!) } ?: run {
-      profile.supportDeclined_history = mutableListOf<SupportDeclined>()
+    profile.supportDeclined_history?.add(profile.supportDeclined!!) ?: run {
+      profile.supportDeclined_history = mutableListOf()
       profile.supportDeclined_history!!.add(profile.supportDeclined!!)
     }
     profile.supportDeclined = null
@@ -242,7 +247,7 @@ class ProfileService(
     return profile
   }
 
-  fun setProfileValues(profileToBeModified: Profile, profileReference: Profile) {
+  private fun setProfileValues(profileToBeModified: Profile, profileReference: Profile) {
     profileToBeModified.supportDeclined = profileReference.supportDeclined
     profileToBeModified.supportAccepted = profileReference.supportAccepted
     profileToBeModified.supportAccepted_history = profileReference.supportAccepted_history
@@ -251,57 +256,21 @@ class ProfileService(
     profileToBeModified.statusChange = true
     profileToBeModified.statusChangeType = profileReference.statusChangeType
   }
-  fun changeStatusForOffender(
-    userId: String,
-    offenderId: String,
-    statusChangeUpdateRequestDTO: StatusChangeUpdateRequestDTO?,
-  ): ReadinessProfile {
-    var storedProfile: ReadinessProfile =
-      readinessProfileRepository.findById(offenderId).orElseThrow(NotFoundException(offenderId))
-    var storedCoreProfile: Profile? = null
-    if (statusChangeUpdateRequestDTO != null && statusChangeUpdateRequestDTO.supportDeclined != null) {
-      storedCoreProfile =
-        changeStatusToDeclinedForOffender(userId, offenderId, statusChangeUpdateRequestDTO, storedProfile)
-      storedCoreProfile.status = statusChangeUpdateRequestDTO.status
-      checkDeclinedProfileStatus(storedCoreProfile, offenderId)
-    } else if (statusChangeUpdateRequestDTO != null && statusChangeUpdateRequestDTO.supportAccepted != null) {
-      storedCoreProfile =
-        changeStatusToAcceptedForOffender(userId, offenderId, statusChangeUpdateRequestDTO, storedProfile)
-      storedCoreProfile.status = statusChangeUpdateRequestDTO.status
-    } else if (statusChangeUpdateRequestDTO!!.status.equals(ProfileStatus.READY_TO_WORK) || statusChangeUpdateRequestDTO.status.equals(ProfileStatus.NO_RIGHT_TO_WORK)) {
-      storedCoreProfile = CapturedSpringConfigValues.objectMapper.readValue(CapturedSpringConfigValues.objectMapper.writeValueAsString(storedProfile.profileData), object : TypeReference<Profile>() {})
-      storedCoreProfile!!.status = statusChangeUpdateRequestDTO.status
-    } else {
-      throw InvalidStateException(offenderId)
-    }
 
-    storedCoreProfile.statusChangeDate = timeProvider.now()
-    storedCoreProfile.statusChange = true
-    storedProfile.profileData =
-      CapturedSpringConfigValues.objectMapper.readTree(CapturedSpringConfigValues.objectMapper.writeValueAsString(storedCoreProfile))
-    storedProfile.modifiedBy = userId
-    storedProfile.modifiedDateTime = timeProvider.now()
-    readinessProfileRepository.save(storedProfile)
-    return storedProfile
-  }
-  fun changeStatusToDeclinedForOffender(
+  private fun changeStatusToDeclinedForOffender(
     userId: String,
     offenderId: String,
     statusChangeUpdateRequestDTO: StatusChangeUpdateRequestDTO,
     storedProfile: ReadinessProfile,
   ): Profile {
-    var profile: Profile = CapturedSpringConfigValues.objectMapper.readValue(
-      CapturedSpringConfigValues.objectMapper.writeValueAsString(storedProfile.profileData),
-      object : TypeReference<Profile>() {},
-    )
+    val profile: Profile = parseProfile(storedProfile.profileData)
     profile.statusChangeDate = timeProvider.now()
     profile.statusChangeType = StatusChange.ACCEPTED_TO_DECLINED
 
-    profile.supportAccepted_history?.let { it.add(profile.supportAccepted!!) } ?: run {
-      profile.supportAccepted_history = mutableListOf<SupportAccepted>()
+    profile.supportAccepted_history?.add(profile.supportAccepted!!) ?: run {
+      profile.supportAccepted_history = mutableListOf()
       profile.supportAccepted_history!!.add(profile.supportAccepted!!)
     }
-    // profile.supportAccepted = null
     statusChangeUpdateRequestDTO.supportDeclined!!.modifiedBy = userId
     statusChangeUpdateRequestDTO.supportDeclined.modifiedDateTime = timeProvider.now()
     profile.supportDeclined = statusChangeUpdateRequestDTO.supportDeclined
@@ -311,52 +280,52 @@ class ProfileService(
     return profile
   }
 
-  fun updateProfileAcceptStatusChange(
+  private fun updateProfileAcceptStatusChange(
     profile: Profile,
     userId: String,
     offenderId: String,
     storedProfile: ReadinessProfile,
   ) {
-    val statusChangeUpdateRequestDTO: StatusChangeUpdateRequestDTO =
-      StatusChangeUpdateRequestDTO(profile.supportAccepted!!, null, profile.status)
+    val statusChangeUpdateRequestDTO = StatusChangeUpdateRequestDTO(profile.supportAccepted!!, null, profile.status)
     val storedCoreProfile: Profile =
       changeStatusToAcceptedForOffender(userId, offenderId, statusChangeUpdateRequestDTO, storedProfile)
     setProfileValues(profile, storedCoreProfile)
   }
 
-  fun updateProfileDeclinedStatusChange(
+  private fun updateProfileDeclinedStatusChange(
     profile: Profile,
     userId: String,
     offenderId: String,
     storedProfile: ReadinessProfile,
   ) {
-    val statusChangeUpdateRequestDTO: StatusChangeUpdateRequestDTO =
-      StatusChangeUpdateRequestDTO(null, profile.supportDeclined!!, profile.status)
+    val statusChangeUpdateRequestDTO = StatusChangeUpdateRequestDTO(null, profile.supportDeclined!!, profile.status)
     val storedCoreProfile: Profile =
       changeStatusToDeclinedForOffender(userId, offenderId, statusChangeUpdateRequestDTO, storedProfile)
     setProfileValues(profile, storedCoreProfile)
     checkDeclinedProfileStatus(profile, offenderId)
   }
 
-  fun updateAcceptedStatusList(profile: Profile, storedCoreProfile: Profile, userId: String, offenderId: String) {
+  private fun updateAcceptedStatusList(profile: Profile, storedCoreProfile: Profile, userId: String) {
     profile.supportAccepted?.modifiedBy = userId
     profile.supportAccepted?.modifiedBy = userId
     profile.supportAccepted?.modifiedDateTime = timeProvider.now()
-    profile.supportAccepted_history?.let { it.add(storedCoreProfile.supportAccepted!!) } ?: run {
-      profile.supportAccepted_history = mutableListOf<SupportAccepted>()
+    profile.supportAccepted_history?.add(storedCoreProfile.supportAccepted!!) ?: run {
+      profile.supportAccepted_history = mutableListOf()
       profile.supportAccepted_history!!.add(storedCoreProfile.supportAccepted!!)
     }
   }
 
-  fun updateDeclinedStatusList(profile: Profile, storedCoreProfile: Profile, userId: String, offenderId: String) {
+  private fun updateDeclinedStatusList(profile: Profile, storedCoreProfile: Profile, userId: String, offenderId: String) {
     profile.supportAccepted?.modifiedBy = userId
     profile.supportDeclined?.modifiedBy = userId
     profile.supportDeclined?.modifiedDateTime = timeProvider.now()
-    profile.supportDeclined_history?.let { it.add(storedCoreProfile.supportDeclined!!) } ?: run {
-      profile.supportDeclined_history = mutableListOf<SupportDeclined>()
+    profile.supportDeclined_history?.add(storedCoreProfile.supportDeclined!!) ?: run {
+      profile.supportDeclined_history = mutableListOf()
       profile.supportDeclined_history!!.add(storedCoreProfile.supportDeclined!!)
     }
 
     checkDeclinedProfileStatus(profile, offenderId)
   }
+
+  private fun Profile.json(): JsonNode = objectMapper.valueToTree(this)
 }

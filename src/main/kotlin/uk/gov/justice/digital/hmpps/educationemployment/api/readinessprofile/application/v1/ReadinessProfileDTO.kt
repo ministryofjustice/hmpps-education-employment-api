@@ -1,11 +1,17 @@
-package uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application
+@file:Suppress("DEPRECATION")
+
+package uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v1
 
 import io.swagger.v3.oas.annotations.media.Schema
 import uk.gov.justice.digital.hmpps.educationemployment.api.config.CapturedSpringConfigValues
-import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.Profile
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.v1.Profile
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ReadinessProfile
 import java.time.LocalDateTime
 
+@Deprecated(
+  message = "Use v2 instead",
+  replaceWith = ReplaceWith("ReadinessProfileDTO", "uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v2"),
+)
 data class ReadinessProfileDTO(
   @Schema(description = "Offender Id", example = "ABC12345")
   val offenderId: String,

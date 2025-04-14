@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/ministryofjustice/hmpps-education-employment-api/schemas/work-readiness-schema-v1.json",
+  "$id": "https://github.com/ministryofjustice/hmpps-education-employment-api/schemas/work-readiness-schema-v2.json",
   "title": "WorkReadiness",
   "description": "Data representing an offenders readiness to re-enter the workplace",
   "definitions": {
@@ -364,7 +364,7 @@
       "$ref": "#/definitions/statusEnumType"
     },
     "statusChange": {
-      "description": "has there been a status chnage?",
+      "description": "has there been a status change?",
       "type": "boolean"
     },
     "statusChangeDate": {
@@ -373,38 +373,24 @@
     "statusChangeType": {
       "$ref": "#/definitions/statusChangeEnumType"
     },
-    "supportDeclined_history": {
-      "description": "History of declined status",
+    "supportDeclined": {
+      "type": "object",
+      "$ref": "#/definitions/supportDeclinedType"
+    },
+    "supportAccepted": {
+      "type": "object",
+      "$ref": "#/definitions/supportAcceptedType"
+    },
+    "notes": {
       "type": "array",
       "items": {
-        "$ref": "#/definitions/supportDeclinedType"
+        "$ref": "#/definitions/note"
       }
-    },
-    "supportAccepted_history": {
-      "description": "History of declined status",
-      "type": "array",
-      "items": {
-        "$ref": "#/definitions/supportAcceptedType"
-      },
-      "supportDeclined": {
-        "type": "object",
-        "$ref": "#/definitions/supportDeclinedType"
-      },
-      "supportAccepted": {
-        "type": "object",
-        "$ref": "#/definitions/supportAcceptedType"
-      },
-      "notes": {
-        "type": "array",
-        "items": {
-          "$ref": "#/definitions/note"
-        }
-      }
-    },
-    "required": [
-      "status",
-      "modifiedBy",
-      "modifiedDateTime"
-    ]
-  }
+    }
+  },
+  "required": [
+    "status",
+    "modifiedBy",
+    "modifiedDateTime"
+  ]
 }

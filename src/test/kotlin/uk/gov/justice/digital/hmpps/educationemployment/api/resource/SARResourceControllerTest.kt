@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package uk.gov.justice.digital.hmpps.educationemployment.api.resource
 
 import org.assertj.core.api.Assertions.assertThat
@@ -16,9 +18,9 @@ import org.springframework.test.web.servlet.ResultMatcher
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.NotFoundException
-import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.ProfileService
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v1.ProfileV1Service
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects
-import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.readinessProfileForSAR
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.V1Profiles.readinessProfileForSAR
 
 const val SAR_ENDPOINT = "/subject-access-request"
 
@@ -26,7 +28,7 @@ const val SAR_ENDPOINT = "/subject-access-request"
 @ContextConfiguration(classes = [SARResourceController::class])
 class SARResourceControllerTest : ControllerTestBase() {
   @MockitoBean
-  private lateinit var profileService: ProfileService
+  private lateinit var profileService: ProfileV1Service
 
   companion object {
     private const val ROLE_SAR = "ROLE_SAR_DATA_ACCESS"

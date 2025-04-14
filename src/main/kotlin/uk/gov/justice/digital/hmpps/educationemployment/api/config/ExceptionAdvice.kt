@@ -15,8 +15,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.client.RestClientException
 import org.springframework.web.client.RestClientResponseException
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
+import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.DeprecatedApiException
 import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.NotFoundException
-import java.util.Arrays
+import java.util.*
 
 @RestControllerAdvice
 class ControllerAdvice {
@@ -166,6 +167,20 @@ class ControllerAdvice {
           developerMessage = e.message,
         ),
       )
+  }
+
+  @ExceptionHandler(DeprecatedApiException::class)
+  fun handleDeprecatedApiException(e: DeprecatedApiException): ResponseEntity<ErrorResponse> {
+    log.warn("DeprecatedApiException: ${e.message}", e)
+    return HttpStatus.GONE.let {
+      ResponseEntity.status(it).body(
+        ErrorResponse(
+          status = it.value(),
+          userMessage = "${it.reasonPhrase}: This API is no longer supported",
+          developerMessage = e.message,
+        ),
+      )
+    }
   }
 
   @ExceptionHandler(java.lang.Exception::class)

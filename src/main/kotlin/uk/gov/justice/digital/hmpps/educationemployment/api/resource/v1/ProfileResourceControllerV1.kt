@@ -1,4 +1,6 @@
-package uk.gov.justice.digital.hmpps.educationemployment.api.resource
+@file:Suppress("DEPRECATION")
+
+package uk.gov.justice.digital.hmpps.educationemployment.api.resource.v1
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
@@ -9,6 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import jakarta.validation.Valid
 import jakarta.validation.constraints.Pattern
 import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.validation.annotation.Validated
@@ -21,20 +24,26 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.educationemployment.api.config.DpsPrincipal
 import uk.gov.justice.digital.hmpps.educationemployment.api.config.ErrorResponse
+import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.DeprecatedApiException
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ActionTodo
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.NoteDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.NoteRequestDTO
-import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.ProfileService
-import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.ReadinessProfileDTO
-import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.ReadinessProfileRequestDTO
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.ProfileNoteService
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.StatusChangeUpdateRequestDTO
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v1.ProfileV1Service
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v1.ReadinessProfileDTO
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v1.ReadinessProfileRequestDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.shared.infrastructure.OffenderIdConstraint
+
+private const val DEPRECATED_MESSAGE = "This v1 API has been deprecated. Use v2 or newer API"
+private const val API_V2_PATH = "/v2/readiness-profiles/{offenderId}"
 
 @Validated
 @RestController
-@RequestMapping("/readiness-profiles", produces = [MediaType.APPLICATION_JSON_VALUE])
-class ProfileResourceController(
-  private val profileService: ProfileService,
+@RequestMapping("/readiness-profiles", "/v1/readiness-profiles", produces = [MediaType.APPLICATION_JSON_VALUE])
+class ProfileResourceControllerV1(
+  private val profileService: ProfileV1Service,
+  private val profileNoteService: ProfileNoteService,
 ) {
   @PreAuthorize("hasAnyRole('WORK_READINESS_VIEW','WORK_READINESS_EDIT')")
   @PostMapping("/search")
@@ -77,6 +86,7 @@ class ProfileResourceController(
     return profiles
   }
 
+  @Deprecated(level = DeprecationLevel.ERROR, message = DEPRECATED_MESSAGE, replaceWith = ReplaceWith(API_V2_PATH))
   @PreAuthorize("hasRole('WORK_READINESS_EDIT')")
   @PostMapping("/{offenderId}")
   @Operation(
@@ -103,6 +113,11 @@ class ProfileResourceController(
         description = "Incorrect permissions to access this endpoint",
         content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
       ),
+      ApiResponse(
+        responseCode = "410",
+        description = "Gone - The API has been deprecated.",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
     ],
   )
   fun createOffenderProfile(
@@ -114,15 +129,9 @@ class ProfileResourceController(
     @RequestBody
     requestDTO: ReadinessProfileRequestDTO,
     @AuthenticationPrincipal oauth2User: DpsPrincipal,
-  ): ReadinessProfileDTO = ReadinessProfileDTO(
-    profileService.createProfileForOffender(
-      oauth2User.name,
-      offenderId,
-      requestDTO.bookingId,
-      requestDTO.profileData,
-    ),
-  )
+  ): ResponseEntity<ReadinessProfileDTO> = throw DeprecatedApiException()
 
+  @Deprecated(level = DeprecationLevel.ERROR, message = DEPRECATED_MESSAGE, replaceWith = ReplaceWith(API_V2_PATH))
   @PreAuthorize("hasRole('WORK_READINESS_EDIT')")
   @PutMapping("/{offenderId}")
   @Operation(
@@ -149,6 +158,11 @@ class ProfileResourceController(
         description = "Incorrect permissions to access this endpoint",
         content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
       ),
+      ApiResponse(
+        responseCode = "410",
+        description = "Gone - The API has been deprecated.",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
     ],
   )
   fun updateOffenderProfile(
@@ -161,20 +175,13 @@ class ProfileResourceController(
     @Parameter
     requestDTO: ReadinessProfileRequestDTO,
     @AuthenticationPrincipal oauth2User: DpsPrincipal,
-  ): ReadinessProfileDTO = ReadinessProfileDTO(
-    profileService.updateProfileForOffender(
-      oauth2User.name,
-      offenderId,
-      requestDTO.bookingId,
-      requestDTO.profileData,
-    ),
-  )
+  ): ResponseEntity<ReadinessProfileDTO> = throw DeprecatedApiException()
 
   @PreAuthorize("hasRole('WORK_READINESS_EDIT')")
   @PutMapping("/status-change/{offenderId}")
   @Operation(
-    summary = "Update the work readiness profile for an offender",
-    description = "Called to modify an offenders work readiness profile. Currently requires role <b>ROLE_VIEW_PRISONER_DATA</b>",
+    summary = "Update the status of work readiness profile for an offender",
+    description = "Called to modify status of an offenders work readiness profile. Currently requires role <b>ROLE_VIEW_PRISONER_DATA</b>",
     responses = [
       ApiResponse(
         responseCode = "200",
@@ -295,7 +302,7 @@ class ProfileResourceController(
   ): List<NoteDTO> {
     // TODO: validate the NoteRequestDTO - field length
 
-    return profileService.addProfileNoteForOffender(oauth2User.name, offenderId, attribute, requestDTO.text)
+    return profileNoteService.addProfileNoteForOffender(oauth2User.name, offenderId, attribute, requestDTO.text)
       .map { note -> NoteDTO(note) }
   }
 
@@ -337,5 +344,5 @@ class ProfileResourceController(
     @Schema(description = "attribute", example = "DISCLOSURE_LETTER", required = true)
     @PathVariable
     attribute: ActionTodo,
-  ): List<NoteDTO> = profileService.getProfileNotesForOffender(offenderId, attribute).map { note -> NoteDTO(note) }
+  ): List<NoteDTO> = profileNoteService.getProfileNotesForOffender(offenderId, attribute).map { note -> NoteDTO(note) }
 }
