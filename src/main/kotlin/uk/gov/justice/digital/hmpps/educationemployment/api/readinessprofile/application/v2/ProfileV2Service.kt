@@ -91,6 +91,7 @@ class ProfileV2Service(
       updateProfileAcceptStatusChange(profile, userId, offenderId, storedProfile)
     }
 
+    storedProfile.schemaVersion = PROFILE_SCHEMA_VERSION
     storedProfile.profileData = profile.json()
     storedProfile.modifiedBy = userId
     storedProfile.modifiedDateTime = timeProvider.now()
