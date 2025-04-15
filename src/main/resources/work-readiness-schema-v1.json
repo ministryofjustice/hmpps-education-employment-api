@@ -349,6 +349,10 @@
       "type": "string",
       "maxLength": 32
     },
+    "string64": {
+      "type": "string",
+      "maxLength": 64
+    },
     "string200": {
       "type": "string",
       "maxLength": 200
@@ -389,6 +393,9 @@
     "statusChange": {
       "description": "has there been a status change?",
       "type": "boolean"
+    },
+    "prisonName": {
+      "$ref": "#/definitions/string64"
     },
     "statusChangeDate": {
       "$ref": "#/definitions/dateTime"
