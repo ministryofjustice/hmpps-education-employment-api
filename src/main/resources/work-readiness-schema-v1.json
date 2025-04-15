@@ -45,7 +45,9 @@
         "modifiedBy",
         "modifiedDateTime",
         "supportToWorkDeclinedReason",
-        "circumstanceChangesRequiredToWork"
+        "supportToWorkDeclinedReasonOther",
+        "circumstanceChangesRequiredToWork",
+        "circumstanceChangesRequiredToWorkOther"
       ]
     },
     "supportAcceptedType": {
@@ -74,10 +76,26 @@
                   },
                   "status": {
                     "$ref": "#/definitions/taskStatusEnum"
+                  },
+                  "other": {
+                    "$ref": "#/definitions/string200"
+                  },
+                  "id": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "BIRTH_CERTIFICATE",
+                        "DRIVING_LICENCE",
+                        "PASSPORT",
+                        "OTHER"
+                      ]
+                    }
                   }
                 },
                 "minItems": 1,
-                "uniqueItems": true
+                "uniqueItems": true,
+                "required": ["status", "todoItem"]
               }
             }
           },
@@ -159,7 +177,9 @@
           "required": [
             "modifiedBy",
             "modifiedDateTime",
-            "workTypesOfInterest"
+            "workTypesOfInterest",
+            "workTypesOfInterestOther",
+            "jobOfParticularInterest"
           ]
         },
         "workExperience": {
@@ -194,7 +214,8 @@
             "modifiedBy",
             "modifiedDateTime",
             "previousWorkOrVolunteering",
-            "qualificationsAndTraining"
+            "qualificationsAndTraining",
+            "qualificationsAndTrainingOther"
           ]
         }
       },
@@ -225,14 +246,16 @@
     "supportToWorkDeclinedReasonEnumType": {
       "type": "string",
       "enum": [
+        "ALREADY_HAS_WORK",
+        "LIMIT_THEIR_ABILITY",
         "FULL_TIME_CARER",
-        "LACKS_CONFIDENCE",
-        "LACKS_MOTIVATION",
+        "HOUSING_NOT_IN_PLACE",
+        "LACKS_CONFIDENCE_OR_MOTIVATION",
         "HEALTH",
+        "NO_REASON",
         "RETIRED",
         "RETURNING_TO_JOB",
         "SELF_EMPLOYED",
-        "LIMIT_THEIR_ABILITY",
         "OTHER"
       ]
     },
@@ -252,12 +275,11 @@
         "BANK_ACCOUNT",
         "CV_AND_COVERING_LETTER",
         "DISCLOSURE_LETTER",
-        "EMAIL_OR_PHONE",
+        "EMAIL",
+        "PHONE",
         "HOUSING",
         "INTERVIEW_CLOTHING",
-        "BIRTH_CERTIFICATE",
-        "DRIVING_LICENCE",
-        "PASSPORT"
+        "ID"
       ]
     },
     "taskStatusEnum": {
@@ -296,6 +318,7 @@
         "WAREHOUSING",
         "WASTE_MANAGEMENT",
         "EDUCATION_TRAINING",
+        "CLEANING_AND_MAINTENANCE",
         "OTHER"
       ]
     },
