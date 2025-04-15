@@ -51,10 +51,15 @@ abstract class IntegrationTestBase internal constructor() {
 
   @Autowired
   lateinit var jwtAuthHelper: JwtAuthHelper
+
+  internal fun setAuthorisationOfRoles(vararg roles: String, user: String = authUser): HttpHeaders = setAuthorisation(user, listOf(*roles))
+
   internal fun setAuthorisation(
-    user: String = "test-client",
+    user: String = authUser,
     roles: List<String> = listOf(),
   ): (HttpHeaders) = jwtAuthHelper.setAuthorisationForUnitTests(user, roles)
+
+  protected val authUser = "test-client"
 
   @BeforeAll
   internal fun beforeAll() {

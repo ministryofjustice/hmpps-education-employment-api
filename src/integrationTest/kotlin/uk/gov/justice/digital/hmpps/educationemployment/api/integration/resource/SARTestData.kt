@@ -6,9 +6,9 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import uk.gov.justice.digital.hmpps.educationemployment.api.config.CapturedSpringConfigValues
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v1.ReadinessProfileRequestDTO
-import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.createProfileJsonRequest
-import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.createProfileJsonRequestWithSupportAccepted
-import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.createProfileJsonRequestWithSupportDeclined
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.createProfileV1JsonRequest
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.createProfileV1JsonRequestWithSupportAccepted
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.createProfileV1JsonRequestWithSupportDeclined
 
 object SARTestData {
   private val objectMapperSAR = CapturedSpringConfigValues.objectMapperSAR
@@ -16,24 +16,24 @@ object SARTestData {
 
   val knownnCaseReferenceNumber = "X08769"
 
-  val profileRequestOfKnownPrisonNumber = makeProfileRequestDTO(createProfileJsonRequest)
+  val profileRequestOfKnownPrisonNumber = makeProfileRequestDTO(createProfileV1JsonRequest)
   val profileJsonOfKnownPrisonNumber = objectMapperSAR.valueToTree<JsonNode>(profileRequestOfKnownPrisonNumber).get("profileData")
 
   val profileOfAnotherPrisonNumber =
-    makeProfileRequestDTO(createProfileJsonRequestWithSupportDeclined, cleanHistory = false).profileData
+    makeProfileRequestDTO(createProfileV1JsonRequestWithSupportDeclined, cleanHistory = false).profileData
   val profileJsonOfAnotherPrisonNumber = objectMapperSAR.valueToTree<JsonNode>(profileOfAnotherPrisonNumber)
 
   val profileWithSupportAcceptedHistory =
-    makeProfileRequestDTO(createProfileJsonRequestWithSupportAccepted, cleanHistory = false).profileData
+    makeProfileRequestDTO(createProfileV1JsonRequestWithSupportAccepted, cleanHistory = false).profileData
   val profileJsonWithSupportAcceptedHistory = objectMapperSAR.valueToTree<JsonNode>(profileWithSupportAcceptedHistory)
 
-  fun makeProfileRequestOfAnotherPrisonNumber() = makeProfileRequestDTO(createProfileJsonRequestWithSupportDeclined).apply {
+  fun makeProfileRequestOfAnotherPrisonNumber() = makeProfileRequestDTO(createProfileV1JsonRequestWithSupportDeclined).apply {
     profileData.supportDeclined!!.let {
       profileData.supportDeclined = it.copy(supportToWorkDeclinedReasonOther = "another reason to decline support")
     }
   }
 
-  fun makeProfileRequestWithSupportAccepted() = makeProfileRequestDTO(createProfileJsonRequestWithSupportAccepted).apply {
+  fun makeProfileRequestWithSupportAccepted() = makeProfileRequestDTO(createProfileV1JsonRequestWithSupportAccepted).apply {
     profileData.supportAccepted!!.let {
       profileData.supportAccepted = it.copy(workExperience = it.workExperience.copy(previousWorkOrVolunteering = ""))
     }

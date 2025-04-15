@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.client.RestClientException
 import org.springframework.web.client.RestClientResponseException
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
+import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.AlreadyExistsException
 import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.DeprecatedApiException
 import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.NotFoundException
 import java.util.*
@@ -158,28 +159,20 @@ class ControllerAdvice {
   @ExceptionHandler(NotFoundException::class)
   fun handleNotFoundException(e: NotFoundException): ResponseEntity<ErrorResponse> {
     log.info("NotFoundException: ${e.message}", e)
-    return ResponseEntity
-      .status(HttpStatus.BAD_REQUEST)
-      .body(
-        ErrorResponse(
-          status = HttpStatus.BAD_REQUEST.value(),
-          userMessage = "${e.message}",
-          developerMessage = e.message,
-        ),
-      )
+    return makeErrorResponse(e)
+  }
+
+  @ExceptionHandler(AlreadyExistsException::class)
+  fun handleAlreadyExistsException(e: AlreadyExistsException): ResponseEntity<ErrorResponse> {
+    log.info("AlreadyExistsException: ${e.message}", e)
+    return makeErrorResponse(e)
   }
 
   @ExceptionHandler(DeprecatedApiException::class)
   fun handleDeprecatedApiException(e: DeprecatedApiException): ResponseEntity<ErrorResponse> {
     log.warn("DeprecatedApiException: ${e.message}", e)
     return HttpStatus.GONE.let {
-      ResponseEntity.status(it).body(
-        ErrorResponse(
-          status = it.value(),
-          userMessage = "${it.reasonPhrase}: This API is no longer supported",
-          developerMessage = e.message,
-        ),
-      )
+      makeErrorResponse(e, it, userMessage = "${it.reasonPhrase}: This API is no longer supported")
     }
   }
 
@@ -196,6 +189,19 @@ class ControllerAdvice {
         ),
       )
   }
+
+  private fun makeErrorResponse(
+    e: Exception,
+    httpStatus: HttpStatus = HttpStatus.BAD_REQUEST,
+    userMessage: String? = null,
+    developerMessage: String? = null,
+  ) = ResponseEntity.status(httpStatus).body(
+    ErrorResponse(
+      status = httpStatus.value(),
+      userMessage = "${userMessage ?: e.message}",
+      developerMessage = "${developerMessage ?: e.message}",
+    ),
+  )
 }
 
 data class ErrorResponse(

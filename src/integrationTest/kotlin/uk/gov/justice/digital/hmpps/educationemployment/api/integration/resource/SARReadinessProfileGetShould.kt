@@ -229,40 +229,40 @@ class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
 
   private fun givenTheKnownProfile(withNotes: Boolean = false): ReadinessProfileDTO {
     val prisonNumber = knownPrisonNumber
-    val addProfileResult = assertAddReadinessProfileIsOk(prisonNumber, profileRequestOfKnownPrisonNumber)
-    if (withNotes) {
-      assertAddNoteIsOk(prisonNumber, ActionTodo.DISCLOSURE_LETTER, "disclosure letter is missing")
-      assertAddNoteIsOk(prisonNumber, ActionTodo.ID, "ID document is not yet ready")
-      assertAddNoteIsOk(prisonNumber, ActionTodo.INTERVIEW_CLOTHING, "Need to buy some clothes for interview")
-    }
-    return addProfileResult.body!!
+    return addProfile(prisonNumber, profileRequestOfKnownPrisonNumber).also {
+      if (withNotes) {
+        assertAddNoteIsOk(prisonNumber, ActionTodo.DISCLOSURE_LETTER, "disclosure letter is missing")
+        assertAddNoteIsOk(prisonNumber, ActionTodo.ID, "ID document is not yet ready")
+        assertAddNoteIsOk(prisonNumber, ActionTodo.INTERVIEW_CLOTHING, "Need to buy some clothes for interview")
+      }
+    }.let { ReadinessProfileDTO(it) }
   }
 
   private fun givenAnotherProfileWithDeclinedHistory(): ReadinessProfileDTO {
     val prisonNumber = anotherPrisonNumber
     val request = makeProfileRequestOfAnotherPrisonNumber()
-    var result = assertAddReadinessProfileIsOk(prisonNumber, request)
+    var result = addProfile(prisonNumber, request)
     repeat(6) { times ->
       request.profileData.supportDeclined!!.let {
         request.profileData.supportDeclined =
           it.copy(supportToWorkDeclinedReasonOther = "modified the n-th (${times + 1}) times")
       }
-      result = assertUpdateReadinessProfileIsOk(prisonNumber, request)
+      result = updateProfile(prisonNumber, request)
     }
-    return result.body!!
+    return ReadinessProfileDTO(result)
   }
 
   private fun givenAProfileWithAcceptedHistory(): ReadinessProfileDTO {
     val prisonNumber = "X1357YZ"
     val request = makeProfileRequestWithSupportAccepted()
-    var result = assertAddReadinessProfileIsOk(prisonNumber, request)
+    var result = addProfile(prisonNumber, request)
     repeat(6) { times ->
       request.profileData.supportAccepted!!.let {
         request.profileData.supportAccepted =
           it.copy(workExperience = it.workExperience.copy(previousWorkOrVolunteering = "modified the n-th (${times + 1}) times"))
       }
-      result = assertUpdateReadinessProfileIsOk(prisonNumber, request)
+      result = updateProfile(prisonNumber, request)
     }
-    return result.body!!
+    return ReadinessProfileDTO(result)
   }
 }

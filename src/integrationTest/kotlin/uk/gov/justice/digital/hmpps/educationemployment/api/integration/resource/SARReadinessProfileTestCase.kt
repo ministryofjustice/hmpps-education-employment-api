@@ -9,10 +9,11 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatusCode
 import org.springframework.http.ResponseEntity
 import uk.gov.justice.digital.hmpps.educationemployment.api.config.CapturedSpringConfigValues
+import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.v1.ReadinessProfileV1TestCase
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.SARReadinessProfileDTO
 import java.time.LocalDate
 
-class SARReadinessProfileTestCase : ReadinessProfileTestCase() {
+class SARReadinessProfileTestCase : ReadinessProfileV1TestCase() {
   protected val objectMapperSAR = CapturedSpringConfigValues.objectMapperSAR
 
   protected fun assertGetSARResponseIsOk(
@@ -22,10 +23,7 @@ class SARReadinessProfileTestCase : ReadinessProfileTestCase() {
     expectedProfileAsJson: JsonNode? = null,
     roles: List<String> = listOf(SAR_ROLE),
   ): ResponseEntity<SARReadinessProfileDTO> {
-    val url = makeUrl(
-      "/subject-access-request",
-      makeRequestParamsOfSAR(prn = prn, fromDate = fromDate, toDate = toDate),
-    )
+    val url = makeUrl(SAR_ENDPOINT, makeRequestParamsOfSAR(prn = prn, fromDate = fromDate, toDate = toDate))
     val request = HttpEntity<HttpHeaders>(setAuthorisation(roles = roles))
     val result = restTemplate.exchange(url, HttpMethod.GET, request, SARReadinessProfileDTO::class.java)
 
@@ -56,10 +54,7 @@ class SARReadinessProfileTestCase : ReadinessProfileTestCase() {
     roles: List<String> = listOf(SAR_ROLE),
   ): ResponseEntity<Any> {
     val request = (if (authorised) setAuthorisation(roles = roles) else null)?.let { HttpEntity<HttpHeaders>(it) }
-    val url = makeUrl(
-      "/subject-access-request",
-      makeRequestParamsOfSAR(prn = prn, crn = crn, fromDate = fromDate, toDate = toDate),
-    )
+    val url = makeUrl(SAR_ENDPOINT, makeRequestParamsOfSAR(prn = prn, crn = crn, fromDate = fromDate, toDate = toDate))
     val result = restTemplate.exchange(url, HttpMethod.GET, request, Any::class.java)
 
     assertThat(result).isNotNull
@@ -87,3 +82,5 @@ class SARReadinessProfileTestCase : ReadinessProfileTestCase() {
 
   protected fun SARReadinessProfileDTO.asJson(): String = objectMapper.writeValueAsString(this)
 }
+
+private const val SAR_ENDPOINT = "/subject-access-request"

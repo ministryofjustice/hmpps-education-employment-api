@@ -6,15 +6,19 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.config.CapturedSprin
 import java.io.FileNotFoundException
 
 object ProfileObjects {
+  const val KNOWN_PRISON_NUMBER = "A1234BB"
+  const val ANOTHER_PRISON_NUMBER = "K9876BC"
+
   private val objectMapper = CapturedSpringConfigValues.objectMapper
 
-  val knownPrisonNumber = "A1234BB"
-  val anotherPrisonNumber = "K9876BC"
+  val knownPrisonNumber = KNOWN_PRISON_NUMBER
+  val anotherPrisonNumber = ANOTHER_PRISON_NUMBER
   val unknownPrisonNumber = "A1234BD"
 
   val createProfileJsonRequest = readJsonProfile("CreateProfile_correct.json")
-  val createProfileJsonRequestWithSupportDeclined = readJsonProfile("CreateProfileDeclinedHistories.json")
-  val createProfileJsonRequestWithSupportAccepted = readJsonProfile("CreateProfileAcceptedHistories.json")
+  val createProfileV1JsonRequest = readJsonProfile("CreateProfile_correct_v1.json")
+  val createProfileV1JsonRequestWithSupportDeclined = readJsonProfile("CreateProfileDeclinedHistories.json")
+  val createProfileV1JsonRequestWithSupportAccepted = readJsonProfile("CreateProfileAcceptedHistories.json")
 
   val profileJsonSample = readJsonProfile("sampleprofile.json")
   val profileJsonSample2 = readJsonProfile("sample2.json")
@@ -23,12 +27,14 @@ object ProfileObjects {
   val profileOfKnownPrisoner = makeProfile(knownPrisonNumber, 111111, profileJsonSample)
   val profileOfAnotherPrisoner = makeProfile(anotherPrisonNumber, 222222, profileJsonSample2)
 
+  val noteString = "Mary had another little lamb"
+
   val createdBy = "CCOLUMBUS_GEN"
   val lastModifiedBy = "JSMITH_GEN"
 
   var noteFreeTextJson = """
     {
-    "text": "Mary had another little lamb"
+    "text": "$noteString"
     }
   """.trimIndent()
 
