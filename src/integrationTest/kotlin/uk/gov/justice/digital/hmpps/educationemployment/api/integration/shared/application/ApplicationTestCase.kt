@@ -1,12 +1,18 @@
 package uk.gov.justice.digital.hmpps.educationemployment.api.integration.shared.application
 
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInstance
+import org.mockito.Mockito.lenient
 import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.core.ParameterizedTypeReference
 import org.springframework.data.auditing.AuditingHandler
 import org.springframework.data.auditing.DateTimeProvider
+import org.springframework.http.HttpEntity
+import org.springframework.http.HttpMethod
+import org.springframework.http.HttpStatus
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean
 import uk.gov.justice.digital.hmpps.educationemployment.api.audit.domain.AuditObjects
@@ -30,7 +36,7 @@ abstract class ApplicationTestCase : IntegrationTestBase() {
   protected lateinit var auditingHandler: AuditingHandler
 
   @Autowired
-  lateinit var readinessProfileRepository: ReadinessProfileRepository
+  protected lateinit var readinessProfileRepository: ReadinessProfileRepository
 
   @Autowired
   protected lateinit var auditCleaner: AuditCleaner
@@ -49,12 +55,31 @@ abstract class ApplicationTestCase : IntegrationTestBase() {
   internal fun setUp() {
     readinessProfileRepository.deleteAll()
     auditCleaner.deleteAllRevisions()
+
+    lenient().whenever(dateTimeProvider.now).thenReturn(Optional.of(defaultCurrentTime))
+    lenient().whenever(timeProvider.timezoneId).thenReturn(defaultTimezoneId)
+    lenient().whenever(timeProvider.now()).thenReturn(defaultCurrentTimeLocal)
   }
 
-  @BeforeEach
-  internal fun setup() {
-    whenever(dateTimeProvider.now).thenReturn(Optional.of(defaultCurrentTime))
-    whenever(timeProvider.timezoneId).thenReturn(defaultTimezoneId)
-    whenever(timeProvider.now()).thenReturn(defaultCurrentTimeLocal)
+  protected fun <RESP, REQ> assertRequest(
+    url: String,
+    method: HttpMethod,
+    requestEntity: HttpEntity<REQ>,
+    responseType: Class<RESP>,
+    expectedStatus: HttpStatus,
+  ) = restTemplate.exchange(url, method, requestEntity, responseType).also { result ->
+    assertThat(result).isNotNull
+    assertThat(result.statusCode).isEqualTo(expectedStatus)
+  }
+
+  protected fun <RESP, REQ> assertRequest(
+    url: String,
+    method: HttpMethod,
+    requestEntity: HttpEntity<REQ>,
+    responseType: ParameterizedTypeReference<RESP>,
+    expectedStatus: HttpStatus,
+  ) = restTemplate.exchange(url, method, requestEntity, responseType).also { result ->
+    assertThat(result).isNotNull
+    assertThat(result.statusCode).isEqualTo(expectedStatus)
   }
 }

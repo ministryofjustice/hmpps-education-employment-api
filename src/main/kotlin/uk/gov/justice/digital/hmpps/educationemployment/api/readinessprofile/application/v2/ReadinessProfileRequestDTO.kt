@@ -1,8 +1,8 @@
-package uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application
+package uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v2
 
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.Valid
-import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.Profile
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.v2.Profile
 
 data class ReadinessProfileRequestDTO(
 

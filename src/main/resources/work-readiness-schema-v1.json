@@ -1,0 +1,440 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/ministryofjustice/hmpps-education-employment-api/schemas/work-readiness-schema-v1.json",
+  "title": "WorkReadiness",
+  "description": "Data representing an offenders readiness to re-enter the workplace",
+  "definitions": {
+    "supportDeclinedType": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "modifiedBy": {
+          "$ref": "#/definitions/string32"
+        },
+        "modifiedDateTime": {
+          "$ref": "#/definitions/dateTime"
+        },
+        "supportToWorkDeclinedReason": {
+          "description": "Why does the offender not want support?",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/supportToWorkDeclinedReasonEnumType"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "supportToWorkDeclinedReasonOther": {
+          "description": "When supportToWorkDeclinedReason includes OTHER",
+          "$ref": "#/definitions/string200"
+        },
+        "circumstanceChangesRequiredToWork": {
+          "description": "What change in circumstances would make the offender want to get work on release?",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/circumstanceChangesRequiredToWorkEnumType"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "circumstanceChangesRequiredToWorkOther": {
+          "description": "When circumstanceChangesRequiredToWork includes OTHER",
+          "$ref": "#/definitions/string200"
+        }
+      },
+      "required": [
+        "modifiedBy",
+        "modifiedDateTime",
+        "supportToWorkDeclinedReason",
+        "supportToWorkDeclinedReasonOther",
+        "circumstanceChangesRequiredToWork",
+        "circumstanceChangesRequiredToWorkOther"
+      ]
+    },
+    "supportAcceptedType": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "actionsRequired": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "modifiedBy": {
+              "$ref": "#/definitions/string32"
+            },
+            "modifiedDateTime": {
+              "$ref": "#/definitions/dateTime"
+            },
+            "actions": {
+              "description": "What does the offender have in place already",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "todoItem": {
+                    "$ref": "#/definitions/todoItemEnumType"
+                  },
+                  "status": {
+                    "$ref": "#/definitions/taskStatusEnum"
+                  },
+                  "other": {
+                    "$ref": "#/definitions/string200"
+                  },
+                  "id": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "BIRTH_CERTIFICATE",
+                        "DRIVING_LICENCE",
+                        "PASSPORT",
+                        "OTHER"
+                      ]
+                    }
+                  }
+                },
+                "minItems": 1,
+                "uniqueItems": true,
+                "required": ["status", "todoItem"]
+              }
+            }
+          },
+          "required": [
+            "modifiedBy",
+            "modifiedDateTime",
+            "actions"
+          ]
+        },
+        "workImpacts": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "modifiedBy": {
+              "$ref": "#/definitions/string32"
+            },
+            "modifiedDateTime": {
+              "$ref": "#/definitions/dateTime"
+            },
+            "abilityToWorkImpactedBy": {
+              "description": "What might impact the offender's ability to work?",
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/abilityToWorkImpactedByEnum"
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            },
+            "caringResponsibilitiesFullTime": {
+              "description": "Are the offender's caring responsibilities full-time?",
+              "type": "boolean"
+            },
+            "ableToManageMentalHealth": {
+              "description": "Is the offender currently able to manage their mental health?",
+              "type": "boolean"
+            },
+            "ableToManageDependencies": {
+              "description": "Is the offender currently able to manage their drug or alcohol dependency?",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "modifiedBy",
+            "modifiedDateTime",
+            "abilityToWorkImpactedBy",
+            "caringResponsibilitiesFullTime",
+            "ableToManageMentalHealth",
+            "ableToManageDependencies"
+          ]
+        },
+        "workInterests": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "modifiedBy": {
+              "$ref": "#/definitions/string32"
+            },
+            "modifiedDateTime": {
+              "$ref": "#/definitions/dateTime"
+            },
+            "workTypesOfInterest": {
+              "description": "What type of work is the offender interested in?",
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/workTypesOfInterestEnum"
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            },
+            "workTypesOfInterestOther": {
+              "description": "When workTypesOfInterest includes OTHER",
+              "$ref": "#/definitions/string200"
+            },
+            "jobOfParticularInterest": {
+              "description": "Is the offender interested in a particular job?",
+              "$ref": "#/definitions/string200"
+            }
+          },
+          "required": [
+            "modifiedBy",
+            "modifiedDateTime",
+            "workTypesOfInterest",
+            "workTypesOfInterestOther",
+            "jobOfParticularInterest"
+          ]
+        },
+        "workExperience": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "modifiedBy": {
+              "$ref": "#/definitions/string32"
+            },
+            "modifiedDateTime": {
+              "$ref": "#/definitions/dateTime"
+            },
+            "previousWorkOrVolunteering": {
+              "description": "Does the offender have any previous work or volunteering experience?",
+              "$ref": "#/definitions/string200"
+            },
+            "qualificationsAndTraining": {
+              "description": "Does the offender have any qualifications or training?",
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/qualificationsAndTrainingEnum"
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            },
+            "qualificationsAndTrainingOther": {
+              "description": "If qualificationsAndTraining includes OTHER",
+              "$ref": "#/definitions/string200"
+            }
+          },
+          "required": [
+            "modifiedBy",
+            "modifiedDateTime",
+            "previousWorkOrVolunteering",
+            "qualificationsAndTraining",
+            "qualificationsAndTrainingOther"
+          ]
+        }
+      },
+      "required": [
+        "actionsRequired",
+        "workImpacts",
+        "workInterests",
+        "workExperience"
+      ]
+    },
+    "statusChangeEnumType": {
+      "type": "string",
+      "enum": [
+        "NEW",
+        "ACCEPTED_TO_DECLINED",
+        "DECLINED_TO_ACCEPTED"
+      ]
+    },
+    "statusEnumType": {
+      "type": "string",
+      "enum": [
+        "SUPPORT_NEEDED",
+        "READY_TO_WORK",
+        "SUPPORT_DECLINED",
+        "NO_RIGHT_TO_WORK"
+      ]
+    },
+    "supportToWorkDeclinedReasonEnumType": {
+      "type": "string",
+      "enum": [
+        "ALREADY_HAS_WORK",
+        "LIMIT_THEIR_ABILITY",
+        "FULL_TIME_CARER",
+        "HOUSING_NOT_IN_PLACE",
+        "LACKS_CONFIDENCE_OR_MOTIVATION",
+        "HEALTH",
+        "NO_REASON",
+        "RETIRED",
+        "RETURNING_TO_JOB",
+        "SELF_EMPLOYED",
+        "OTHER"
+      ]
+    },
+    "circumstanceChangesRequiredToWorkEnumType": {
+      "type": "string",
+      "enum": [
+        "HOUSING_ON_RELEASE",
+        "ID_ON_RELEASE",
+        "DEPENDENCY_SUPPORT",
+        "MENTAL_HEALTH_SUPPORT",
+        "OTHER"
+      ]
+    },
+    "todoItemEnumType": {
+      "type": "string",
+      "enum": [
+        "BANK_ACCOUNT",
+        "CV_AND_COVERING_LETTER",
+        "DISCLOSURE_LETTER",
+        "EMAIL",
+        "PHONE",
+        "HOUSING",
+        "INTERVIEW_CLOTHING",
+        "ID"
+      ]
+    },
+    "taskStatusEnum": {
+      "type": "string",
+      "enum": [
+        "NOT_STARTED",
+        "IN_PROGRESS",
+        "COMPLETED"
+      ]
+    },
+    "abilityToWorkImpactedByEnum": {
+      "type": "string",
+      "enum": [
+        "CARING_RESPONSIBILITIES",
+        "EDUCATION_ENROLLMENT",
+        "FAMILY_ISSUES",
+        "MENTAL_HEALTH_ISSUES",
+        "PHYSICAL_HEALTH_ISSUES",
+        "DEPENDENCY_ISSUES",
+        "NONE"
+      ]
+    },
+    "workTypesOfInterestEnum": {
+      "type": "string",
+      "enum": [
+        "CONSTRUCTION",
+        "DRIVING",
+        "BEAUTY",
+        "HOSPITALITY",
+        "MANUFACTURING",
+        "OFFICE",
+        "OUTDOOR",
+        "RETAIL",
+        "TECHNICAL",
+        "SPORTS",
+        "WAREHOUSING",
+        "WASTE_MANAGEMENT",
+        "EDUCATION_TRAINING",
+        "CLEANING_AND_MAINTENANCE",
+        "OTHER"
+      ]
+    },
+    "qualificationsAndTrainingEnum": {
+      "type": "string",
+      "enum": [
+        "ADVANCED_EDUCATION",
+        "CSCS",
+        "DRIVING_LICENSE",
+        "FIRST_AID",
+        "FOOD_HYGIENE",
+        "HEALTH_AND_SAFETY",
+        "HGV_LICENSE",
+        "HIGHER_EDUCATION",
+        "MACHINERY",
+        "MANUAL",
+        "TRADE",
+        "SCHOOL_EDUCATION",
+        "NONE",
+        "OTHER"
+      ]
+    },
+    "dateTime": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "string32": {
+      "type": "string",
+      "maxLength": 32
+    },
+    "string64": {
+      "type": "string",
+      "maxLength": 64
+    },
+    "string200": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "note": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "$ref": "#/definitions/string200"
+        },
+        "createdBy": {
+          "$ref": "#/definitions/string32"
+        },
+        "createdDateTime": {
+          "$ref": "#/definitions/dateTime"
+        },
+        "attribute": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "text"
+      ]
+    }
+  },
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "modifiedBy": {
+      "$ref": "#/definitions/string32"
+    },
+    "modifiedDateTime": {
+      "$ref": "#/definitions/dateTime"
+    },
+    "status": {
+      "$ref": "#/definitions/statusEnumType"
+    },
+    "statusChange": {
+      "description": "has there been a status change?",
+      "type": "boolean"
+    },
+    "prisonName": {
+      "$ref": "#/definitions/string64"
+    },
+    "statusChangeDate": {
+      "$ref": "#/definitions/dateTime"
+    },
+    "statusChangeType": {
+      "$ref": "#/definitions/statusChangeEnumType"
+    },
+    "supportDeclined_history": {
+      "description": "History of declined status",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/supportDeclinedType"
+      }
+    },
+    "supportAccepted_history": {
+      "description": "History of declined status",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/supportAcceptedType"
+      },
+      "supportDeclined": {
+        "type": "object",
+        "$ref": "#/definitions/supportDeclinedType"
+      },
+      "supportAccepted": {
+        "type": "object",
+        "$ref": "#/definitions/supportAcceptedType"
+      },
+      "notes": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/note"
+        }
+      }
+    },
+    "required": [
+      "status",
+      "modifiedBy",
+      "modifiedDateTime"
+    ]
+  }
+}

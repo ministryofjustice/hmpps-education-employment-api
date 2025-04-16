@@ -1,14 +1,6 @@
 package uk.gov.justice.digital.hmpps.educationemployment.api.exceptions
 
-import org.slf4j.LoggerFactory
 import java.util.function.Supplier
-
-class ExceptionHandler {
-
-  companion object {
-    private val log = LoggerFactory.getLogger(this::class.java)
-  }
-}
 
 class AlreadyExistsException(offenderId: String) : Exception("Readiness profile already exists for offender $offenderId")
 
@@ -23,3 +15,5 @@ class InvalidStateException(var offenderId: String) :
   Supplier<Throwable> {
   override fun get(): Throwable = throw InvalidStateException(offenderId)
 }
+
+class DeprecatedApiException : Exception("The API has been deprecated and is no longer supported.")
