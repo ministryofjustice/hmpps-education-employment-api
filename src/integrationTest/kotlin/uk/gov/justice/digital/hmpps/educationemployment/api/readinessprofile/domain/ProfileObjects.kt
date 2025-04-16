@@ -26,6 +26,7 @@ object ProfileObjects {
 
   val profileOfKnownPrisoner = makeProfile(knownPrisonNumber, 111111, profileJsonSample)
   val profileOfAnotherPrisoner = makeProfile(anotherPrisonNumber, 222222, profileJsonSample2)
+  val profileOfUnknownPrisoner = makeProfile(unknownPrisonNumber, 333333, profileJsonSampleReadinessProfile)
 
   val noteString = "Mary had another little lamb"
 

@@ -8,7 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.ParameterizedTypeReference
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.helpers.ProfileV1Helper
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.ReadinessProfileTestCase
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ProfileStatus
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.v1.Profile
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.StatusChangeUpdateRequestDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v2.ReadinessProfileDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v2.ReadinessProfileRequestDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.v1.Profile as ProfileV1
@@ -44,6 +46,9 @@ class ReadinessProfileV2TestCase :
   )
 
   protected fun parseProfileV1(profileData: JsonNode): ProfileV1 = objectMapper.treeToValue(profileData, typeRefProfileV1)
+
+  protected fun Profile.statusChangeRequestToAccepted(newStatus: ProfileStatus = ProfileStatus.SUPPORT_NEEDED) = StatusChangeUpdateRequestDTO(supportAccepted, supportDeclined, newStatus)
+  protected fun Profile.statusChangeRequestToDeclined() = StatusChangeUpdateRequestDTO(supportAccepted, supportDeclined, ProfileStatus.SUPPORT_DECLINED)
 }
 
 private const val READINESS_PROFILE_V2_ENDPOINT = "/v2/readiness-profiles"

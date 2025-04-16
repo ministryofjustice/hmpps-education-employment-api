@@ -1,5 +1,3 @@
-@file:Suppress("DEPRECATION")
-
 package uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource
 
 import com.fasterxml.jackson.core.type.TypeReference
@@ -18,6 +16,7 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.integration.shared.a
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ActionTodo
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.NoteDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.NoteRequestDTO
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.StatusChangeUpdateRequestDTO
 
 abstract class ReadinessProfileTestCase<RP, REQ>(
   protected val endpoint: String = READINESS_PROFILE_ENDPOINT,
@@ -76,6 +75,15 @@ abstract class ReadinessProfileTestCase<RP, REQ>(
     HttpStatus.OK,
   )
 
+  protected fun assertChangeStatusIsOk(prisonNumber: String, request: StatusChangeUpdateRequestDTO) = assertChangeStatusIsExpected(prisonNumber, request, responseType, HttpStatus.OK)
+  protected fun assertChangeStatusFailed(prisonNumber: String, request: StatusChangeUpdateRequestDTO) = assertChangeStatusIsExpected(prisonNumber, request, errorResponseType, HttpStatus.BAD_REQUEST)
+  private fun <R> assertChangeStatusIsExpected(
+    prisonNumber: String,
+    request: StatusChangeUpdateRequestDTO,
+    responseClass: Class<R>,
+    expectedStatus: HttpStatus,
+  ): ResponseEntity<R> = assertRequest(profileStatusUrl(prisonNumber), HttpMethod.PUT, HttpEntity(request, readWriteHeaders), responseClass, expectedStatus)
+
   protected fun assertAddNoteIsOk(prisonNumber: String, attribute: ActionTodo, noteText: String) = assertAddNoteIsOk(prisonNumber, attribute.name, noteText)
   protected fun assertAddNoteIsOk(prisonNumber: String, attribute: String, noteText: String) = assertRequest(
     notesUrl(prisonNumber, attribute),
@@ -132,7 +140,8 @@ abstract class ReadinessProfileTestCase<RP, REQ>(
     .let { noteTextJson -> parseProfileNoteDTO(noteTextJson) }
 
   private fun profileUrl(prisonNumber: String) = "/$endpoint/$prisonNumber"
-  private fun notesUrl(prisonNumber: String, attribute: String) = "/$endpoint/$prisonNumber/notes/$attribute"
+  private fun profileStatusUrl(prisonNumber: String) = "/$endpoint/status-change/$prisonNumber"
+  private fun notesUrl(prisonNumber: String, attribute: String) = "/$READINESS_PROFILE_ENDPOINT/$prisonNumber/notes/$attribute"
 
   protected fun Any.asJson(): String = objectMapper.writeValueAsString(this)
 }
