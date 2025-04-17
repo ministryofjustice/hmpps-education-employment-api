@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import jakarta.validation.constraints.Pattern
 import org.springframework.http.MediaType
@@ -31,12 +32,15 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.app
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v1.ReadinessProfileRequestDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.shared.infrastructure.OffenderIdConstraint
 
+const val API_VERSION = "v1"
+
 private const val DEPRECATED_MESSAGE = "This v1 API has been deprecated. Use v2 or newer API"
 private const val API_V2_PATH = "/v2/readiness-profiles/{offenderId}"
 
 @Validated
 @RestController
 @RequestMapping("/readiness-profiles", "/v1/readiness-profiles", produces = [MediaType.APPLICATION_JSON_VALUE])
+@Tag(name = API_VERSION)
 class ProfileResourceControllerV1(
   private val profileService: ProfileV1Service,
 ) {
@@ -44,7 +48,7 @@ class ProfileResourceControllerV1(
   @PostMapping("/search")
   @Operation(
     summary = "Fetch work readiness profile summaries for a set of offenders",
-    description = "The records are un-paged and requires role <b>ROLE_VIEW_PRISONER_DATA</b> currently",
+    description = "The records are un-paged and requires role $DESC_READ_ONLY_ROLES currently",
     responses = [
       ApiResponse(
         responseCode = "200",
@@ -86,7 +90,7 @@ class ProfileResourceControllerV1(
   @PostMapping("/{offenderId}")
   @Operation(
     summary = "Create the work readiness profile for an offender",
-    description = "Called once to initially create the profile. Currently requires role <b>ROLE_VIEW_PRISONER_DATA</b>",
+    description = "Called once to initially create the profile. Currently requires role $DESC_READ_WRITE_ROLE",
     responses = [
       ApiResponse(
         responseCode = "200",
@@ -131,7 +135,7 @@ class ProfileResourceControllerV1(
   @PutMapping("/{offenderId}")
   @Operation(
     summary = "Update the work readiness profile for an offender",
-    description = "Called to modify an offenders work readiness profile. Currently requires role <b>ROLE_VIEW_PRISONER_DATA</b>",
+    description = "Called to modify an offenders work readiness profile. Currently requires role $",
     responses = [
       ApiResponse(
         responseCode = "200",
@@ -177,7 +181,7 @@ class ProfileResourceControllerV1(
   @PutMapping("/status-change/{offenderId}")
   @Operation(
     summary = "Update the status of work readiness profile for an offender",
-    description = "Called to modify status of an offenders work readiness profile. Currently requires role <b>ROLE_VIEW_PRISONER_DATA</b>",
+    description = "Called to modify status of an offenders work readiness profile. Currently requires role $DESC_READ_WRITE_ROLE",
     responses = [
       ApiResponse(
         responseCode = "200",
@@ -220,9 +224,10 @@ class ProfileResourceControllerV1(
 
   @PreAuthorize("hasAnyRole('WORK_READINESS_VIEW','WORK_READINESS_EDIT')")
   @GetMapping("/{offenderId}")
+  @Tag(name = "Popular")
   @Operation(
     summary = "Fetch the work readiness profile for a given offender",
-    description = "Currently requires role <b>ROLE_VIEW_PRISONER_DATA</b>",
+    description = "Currently requires role $DESC_READ_ONLY_ROLES",
     responses = [
       ApiResponse(
         responseCode = "200",
@@ -254,3 +259,6 @@ class ProfileResourceControllerV1(
     offenderId: String,
   ): ReadinessProfileDTO = ReadinessProfileDTO(profileService.getProfileForOffender(offenderId))
 }
+
+private const val DESC_READ_WRITE_ROLE = "<b>WORK_READINESS_EDIT</b>"
+private const val DESC_READ_ONLY_ROLES = "<b>WORK_READINESS_VIEW</b> or <b>WORK_READINESS_EDIT</b>"

@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import jakarta.validation.constraints.Pattern
 import org.springframework.http.MediaType
@@ -26,7 +27,8 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.app
 
 @Validated
 @RestController
-@RequestMapping("/readiness-profiles", produces = [MediaType.APPLICATION_JSON_VALUE])
+@RequestMapping("/readiness-profiles", "/v1/readiness-profiles", "/v2/readiness-profiles", produces = [MediaType.APPLICATION_JSON_VALUE])
+@Tag(name = "Notes")
 class ProfileNotesResourceController(
   private val profileNoteService: ProfileNoteService,
 ) {
@@ -34,7 +36,7 @@ class ProfileNotesResourceController(
   @PostMapping("/{offenderId}/notes/{attribute}")
   @Operation(
     summary = "Create a note against the offenders profile for the given attribute",
-    description = "Currently requires role <b>ROLE_VIEW_PRISONER_DATA</b>. Attribute must be one of the enums values of SupportAccepted.ActionsRequired.Action.todoItem",
+    description = "Currently requires role $DESC_READ_WRITE_ROLE. Attribute must be one of the enums values of SupportAccepted.ActionsRequired.Action.todoItem",
     responses = [
       ApiResponse(
         responseCode = "200",
@@ -81,7 +83,7 @@ class ProfileNotesResourceController(
   @GetMapping("/{offenderId}/notes/{attribute}")
   @Operation(
     summary = "Get all notes against the offenders profile for the given attribute",
-    description = "Gets all notes against the given attribute for the offender. Currently requires role <b>ROLE_VIEW_PRISONER_DATA</b>",
+    description = "Gets all notes against the given attribute for the offender. Currently requires role $DESC_READ_ONLY_ROLES",
     responses = [
       ApiResponse(
         responseCode = "200",
@@ -116,3 +118,6 @@ class ProfileNotesResourceController(
     attribute: ActionTodo,
   ): List<NoteDTO> = profileNoteService.getProfileNotesForOffender(offenderId, attribute).map { note -> NoteDTO(note) }
 }
+
+private const val DESC_READ_WRITE_ROLE = "<b>WORK_READINESS_EDIT</b>"
+private const val DESC_READ_ONLY_ROLES = "<b>WORK_READINESS_VIEW</b> or <b>WORK_READINESS_EDIT</b>"
