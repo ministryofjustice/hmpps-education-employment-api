@@ -18,6 +18,7 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.shared.domain.TimePr
 import java.time.LocalDate
 
 const val PROFILE_SCHEMA_VERSION = "2.0"
+private const val PROFILE_SCHEMA_PREVIOUS_VERSION = "1.0"
 
 @Service
 class ProfileV2Service(
@@ -132,9 +133,9 @@ class ProfileV2Service(
     return storedProfile
   }
 
-  override fun getProfilesForOffenders(offenders: List<String>) = readinessProfileRepository.findAllById(offenders)
+  override fun getProfilesForOffenders(offenders: List<String>) = readinessProfileRepository.findAllById(offenders).migrateSchema()
 
-  override fun getProfileForOffender(offenderId: String): ReadinessProfile = readinessProfileRepository.findById(offenderId).orElseThrow(NotFoundException(offenderId))
+  override fun getProfileForOffender(offenderId: String): ReadinessProfile = readinessProfileRepository.findById(offenderId).orElseThrow(NotFoundException(offenderId)).migrateSchema()
 
   override fun getProfileForOffenderFilterByPeriod(
     prisonNumber: String,
@@ -251,6 +252,17 @@ class ProfileV2Service(
   }
 
   private fun parseProfile(profileData: JsonNode): Profile = objectMapper.treeToValue(profileData, typeRefProfile)
+
+  private fun List<ReadinessProfile>.migrateSchema() = map { it.migrateSchema() }.toList()
+
+  private fun ReadinessProfile.migrateSchema() = when (schemaVersion) {
+    PROFILE_SCHEMA_PREVIOUS_VERSION -> parseProfile(profileData).apply {
+      within12Weeks = within12Weeks ?: true
+      prisonId = prisonId ?: ""
+    }.let { this.copy(profileData = it.json(), schemaVersion = PROFILE_SCHEMA_VERSION) }
+
+    else -> this
+  }
 
   private fun Profile.json(): JsonNode = objectMapper.valueToTree(this)
 }

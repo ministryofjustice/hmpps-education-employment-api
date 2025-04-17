@@ -314,6 +314,9 @@ object ProfileObjects {
     val readinessProfileOfKnownPrisoner =
       readinessProfile.copy(offenderId = knownPrisonNumber, bookingId = newBookingId, createdBy = createdBy)
 
+    val readinessProfileOfAnotherPrisoner =
+      readinessProfileAndAccepted1.copy(offenderId = anotherPrisonNumber, bookingId = newBookingId, createdBy = createdBy)
+
     var profileList = listOf(readinessProfile, updatedReadinessProfileNotes)
   }
 
