@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import jakarta.validation.constraints.Pattern
 import org.springframework.http.MediaType
@@ -21,28 +22,26 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.educationemployment.api.config.DpsPrincipal
 import uk.gov.justice.digital.hmpps.educationemployment.api.config.ErrorResponse
-import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ActionTodo
-import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.NoteDTO
-import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.NoteRequestDTO
-import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.ProfileNoteService
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.StatusChangeUpdateRequestDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v2.ProfileV2Service
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v2.ReadinessProfileDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v2.ReadinessProfileRequestDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.shared.infrastructure.OffenderIdConstraint
 
+const val API_VERSION = "v2"
+
 @Validated
 @RestController
 @RequestMapping("/v2/readiness-profiles", produces = [MediaType.APPLICATION_JSON_VALUE])
+@Tag(name = API_VERSION)
 class ProfileResourceController(
   private val profileService: ProfileV2Service,
-  private val profileNoteService: ProfileNoteService,
 ) {
   @PreAuthorize("hasAnyRole('WORK_READINESS_VIEW','WORK_READINESS_EDIT')")
   @PostMapping("/search")
   @Operation(
     summary = "Fetch work readiness profile summaries for a set of offenders",
-    description = "The records are un-paged and requires role <b>ROLE_VIEW_PRISONER_DATA</b> currently",
+    description = "The records are un-paged and requires role $DESC_READ_ONLY_ROLES currently",
     responses = [
       ApiResponse(
         responseCode = "200",
@@ -83,7 +82,7 @@ class ProfileResourceController(
   @PostMapping("/{offenderId}")
   @Operation(
     summary = "Create the work readiness profile for an offender",
-    description = "Called once to initially create the profile. Currently requires role <b>ROLE_VIEW_PRISONER_DATA</b>",
+    description = "Called once to initially create the profile. Currently requires role $DESC_READ_WRITE_ROLE",
     responses = [
       ApiResponse(
         responseCode = "200",
@@ -127,9 +126,10 @@ class ProfileResourceController(
 
   @PreAuthorize("hasRole('WORK_READINESS_EDIT')")
   @PutMapping("/{offenderId}")
+  @Tag(name = API_VERSION)
   @Operation(
     summary = "Update the work readiness profile for an offender",
-    description = "Called to modify an offenders work readiness profile. Currently requires role <b>ROLE_VIEW_PRISONER_DATA</b>",
+    description = "Called to modify an offenders work readiness profile. Currently requires role $DESC_READ_WRITE_ROLE",
     responses = [
       ApiResponse(
         responseCode = "200",
@@ -174,9 +174,10 @@ class ProfileResourceController(
 
   @PreAuthorize("hasRole('WORK_READINESS_EDIT')")
   @PutMapping("/status-change/{offenderId}")
+  @Tag(name = API_VERSION)
   @Operation(
     summary = "Update the work readiness profile for an offender",
-    description = "Called to modify an offenders work readiness profile. Currently requires role <b>ROLE_VIEW_PRISONER_DATA</b>",
+    description = "Called to modify an offenders work readiness profile. Currently requires role $DESC_READ_WRITE_ROLE",
     responses = [
       ApiResponse(
         responseCode = "200",
@@ -220,9 +221,10 @@ class ProfileResourceController(
 
   @PreAuthorize("hasAnyRole('WORK_READINESS_VIEW','WORK_READINESS_EDIT')")
   @GetMapping("/{offenderId}")
+  @Tag(name = "Popular")
   @Operation(
     summary = "Fetch the work readiness profile for a given offender",
-    description = "Currently requires role <b>ROLE_VIEW_PRISONER_DATA</b>",
+    description = "Currently requires role $DESC_READ_ONLY_ROLES",
     responses = [
       ApiResponse(
         responseCode = "200",
@@ -253,91 +255,7 @@ class ProfileResourceController(
     @PathVariable
     offenderId: String,
   ): ReadinessProfileDTO = ReadinessProfileDTO(profileService.getProfileForOffender(offenderId))
-
-  @PreAuthorize("hasRole('WORK_READINESS_EDIT')")
-  @PostMapping("/{offenderId}/notes/{attribute}")
-  @Operation(
-    summary = "Create a note against the offenders profile for the given attribute",
-    description = "Currently requires role <b>ROLE_VIEW_PRISONER_DATA</b>. Attribute must be one of the enums values of SupportAccepted.ActionsRequired.Action.todoItem",
-    responses = [
-      ApiResponse(
-        responseCode = "200",
-        description = "Work readiness profile attribute note created - the notes for that attribute after the addition are returned",
-        content = [
-          Content(
-            mediaType = "application/json",
-            array = ArraySchema(schema = Schema(implementation = NoteDTO::class)),
-          ),
-        ],
-      ),
-      ApiResponse(
-        responseCode = "401",
-        description = "Unauthorized to access this endpoint",
-        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
-      ),
-      ApiResponse(
-        responseCode = "403",
-        description = "Incorrect permissions to access this endpoint",
-        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
-      ),
-    ],
-  )
-  fun createOffenderProfileNote(
-    @Schema(description = "offenderId", example = "A1234BC", required = true)
-    @Valid
-    @Pattern(regexp = "^[A-Z]\\d{4}[A-Z]{2}\$")
-    @PathVariable
-    offenderId: String,
-    @Schema(description = "attribute", example = "DISCLOSURE_LETTER", required = true)
-    @Valid
-    @PathVariable
-    attribute: ActionTodo,
-    @RequestBody requestDTO: NoteRequestDTO,
-    @AuthenticationPrincipal oauth2User: DpsPrincipal,
-  ): List<NoteDTO> {
-    // TODO: validate the NoteRequestDTO - field length
-
-    return profileNoteService.addProfileNoteForOffender(oauth2User.name, offenderId, attribute, requestDTO.text)
-      .map { note -> NoteDTO(note) }
-  }
-
-  @PreAuthorize("hasAnyRole('WORK_READINESS_VIEW','WORK_READINESS_EDIT')")
-  @GetMapping("/{offenderId}/notes/{attribute}")
-  @Operation(
-    summary = "Get all notes against the offenders profile for the given attribute",
-    description = "Gets all notes against the given attribute for the offender. Currently requires role <b>ROLE_VIEW_PRISONER_DATA</b>",
-    responses = [
-      ApiResponse(
-        responseCode = "200",
-        description = "Work readiness profile notes for the given attribute are returned:w" +
-          "",
-        content = [
-          Content(
-            mediaType = "application/json",
-            array = ArraySchema(schema = Schema(implementation = NoteDTO::class)),
-          ),
-        ],
-      ),
-      ApiResponse(
-        responseCode = "401",
-        description = "Unauthorized to access this endpoint",
-        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
-      ),
-      ApiResponse(
-        responseCode = "403",
-        description = "Incorrect permissions to access this endpoint",
-        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
-      ),
-    ],
-  )
-  fun getOffenderProfileNotes(
-    @Schema(description = "offenderId", example = "A1234BC", required = true)
-    @Valid
-    @Pattern(regexp = "^[A-Z]\\d{4}[A-Z]{2}\$", message = "Invalid Offender Id")
-    @PathVariable
-    offenderId: String,
-    @Schema(description = "attribute", example = "DISCLOSURE_LETTER", required = true)
-    @PathVariable
-    attribute: ActionTodo,
-  ): List<NoteDTO> = profileNoteService.getProfileNotesForOffender(offenderId, attribute).map { note -> NoteDTO(note) }
 }
+
+private const val DESC_READ_WRITE_ROLE = "<b>WORK_READINESS_EDIT</b>"
+private const val DESC_READ_ONLY_ROLES = "<b>WORK_READINESS_VIEW</b> or <b>WORK_READINESS_EDIT</b>"

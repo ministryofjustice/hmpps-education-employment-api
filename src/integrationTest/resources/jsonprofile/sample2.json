@@ -10,106 +10,83 @@
     17,
     738068000
   ],
-  "prisonName":"prison2",
   "statusChangeType": "ACCEPTED_TO_DECLINED",
+  "prisonId": "prison2",
+  "prisonName":"Prison 2",
+  "within12weeks": true,
   "supportDeclined": null,
-  "supportAccepted": [
-    {
-      "modifiedBy": null,
-      "modifiedDateTime": null,
-      "actionsRequired": {
-        "modifiedBy": "phil-whils",
-        "modifiedDateTime": [
-          2022,
-          12,
-          18,
-          14,
-          7,
-          8,
-          5657000
-        ],
-        "actions": [
-          {
-            "todoItem": "BANK_ACCOUNT",
-            "status": "COMPLETED"
-          }
-        ]
-      },
-      "workImpacts": {
-        "modifiedBy": "phil-whils",
-        "modifiedDateTime": [
-          2022,
-          12,
-          18,
-          14,
-          7,
-          8,
-          5657000
-        ],
-        "abilityToWorkImpactedBy": [
-          "CARING_RESPONSIBILITIES"
-        ],
-        "caringResponsibilitiesFullTime": true,
-        "ableToManageMentalHealth": true,
-        "ableToManageDependencies": true
-      },
-      "workInterests": {
-        "modifiedBy": "phil-whils",
-        "modifiedDateTime": [
-          2022,
-          12,
-          18,
-          14,
-          7,
-          8,
-          5657000
-        ],
-        "workTypesOfInterest": [
-          "CONSTRUCTION"
-        ],
-        "workTypesOfInterestOther": "freelance",
-        "jobOfParticularInterest": "architect"
-      },
-      "workExperience": {
-        "modifiedBy": "phil-whils",
-        "modifiedDateTime": [
-          2022,
-          12,
-          18,
-          14,
-          7,
-          8,
-          5657000
-        ],
-        "previousWorkOrVolunteering": "NONE",
-        "qualificationsAndTraining": [
-          "ADVANCED_EDUCATION"
-        ],
-        "qualificationsAndTrainingOther": "MBA"
-      }
-    }
-  ],
-  "currentSupportState": {
-    "supportDeclined": {
-      "modifiedBy": "sacintha-raj",
+  "supportAccepted": {
+    "modifiedBy": null,
+    "modifiedDateTime": null,
+    "actionsRequired": {
+      "modifiedBy": "phil-whils",
       "modifiedDateTime": [
         2022,
         12,
         18,
         14,
         7,
-        47,
-        967213000
+        8,
+        5657000
       ],
-      "supportToWorkDeclinedReason": [
-        "FULL_TIME_CARER"
-      ],
-      "supportToWorkDeclinedReasonOther": "",
-      "circumstanceChangesRequiredToWork": [
-        "DEPENDENCY_SUPPORT"
-      ],
-      "circumstanceChangesRequiredToWorkOther": ""
+      "actions": [
+        {
+          "todoItem": "BANK_ACCOUNT",
+          "status": "COMPLETED"
+        }
+      ]
     },
-    "supportAccepted": null
+    "workImpacts": {
+      "modifiedBy": "phil-whils",
+      "modifiedDateTime": [
+        2022,
+        12,
+        18,
+        14,
+        7,
+        8,
+        5657000
+      ],
+      "abilityToWorkImpactedBy": [
+        "CARING_RESPONSIBILITIES"
+      ],
+      "caringResponsibilitiesFullTime": true,
+      "ableToManageMentalHealth": true,
+      "ableToManageDependencies": true
+    },
+    "workInterests": {
+      "modifiedBy": "phil-whils",
+      "modifiedDateTime": [
+        2022,
+        12,
+        18,
+        14,
+        7,
+        8,
+        5657000
+      ],
+      "workTypesOfInterest": [
+        "CONSTRUCTION"
+      ],
+      "workTypesOfInterestOther": "freelance",
+      "jobOfParticularInterest": "architect"
+    },
+    "workExperience": {
+      "modifiedBy": "phil-whils",
+      "modifiedDateTime": [
+        2022,
+        12,
+        18,
+        14,
+        7,
+        8,
+        5657000
+      ],
+      "previousWorkOrVolunteering": "NONE",
+      "qualificationsAndTraining": [
+        "ADVANCED_EDUCATION"
+      ],
+      "qualificationsAndTrainingOther": "MBA"
+    }
   }
 }

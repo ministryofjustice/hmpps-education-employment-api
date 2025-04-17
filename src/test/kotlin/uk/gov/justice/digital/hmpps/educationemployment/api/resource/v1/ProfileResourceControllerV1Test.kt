@@ -2,7 +2,6 @@
 
 package uk.gov.justice.digital.hmpps.educationemployment.api.resource.v1
 
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -22,8 +21,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import uk.gov.justice.digital.hmpps.educationemployment.api.notesdata.domain.Note
-import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ActionTodo
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.v1.Profile
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.ProfileNoteService
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v1.ProfileV1Service
@@ -37,7 +34,6 @@ import kotlin.test.assertEquals
 private const val READINESS_PROFILES_PATH = "/readiness-profiles"
 const val SEARCH_ENDPOINT = "$READINESS_PROFILES_PATH/search"
 const val PROFILE_ENDPOINT = "$READINESS_PROFILES_PATH/{id}"
-const val NOTES_ENDPOINT = "$READINESS_PROFILES_PATH/{id}/notes/{attribute}"
 
 @WebMvcTest(controllers = [ProfileResourceControllerV1::class])
 @ContextConfiguration(classes = [ProfileResourceControllerV1::class])
@@ -51,43 +47,7 @@ class ProfileResourceControllerV1Test : ControllerTestBase() {
   @BeforeEach
   internal fun reset() {
     reset(profileService)
-    initMvcMock(ProfileResourceControllerV1(profileService, noteService))
-  }
-
-  @Nested
-  @DisplayName("Given a profile with notes")
-  inner class GivenProfileWithNotes {
-    private val prisonNumber = "A1234AB"
-    private val disclosureLetter = ActionTodo.DISCLOSURE_LETTER.toString()
-    private lateinit var notesList: MutableList<Note>
-
-    @BeforeEach
-    internal fun setUp() {
-      notesList = notesToList(ProfileObjects.noteListJson)
-    }
-
-    @Test
-    fun `Test GET of a PRELIMINARY retrieve profile notes`() {
-      whenever(noteService.getProfileNotesForOffender(prisonNumber, ActionTodo.DISCLOSURE_LETTER)).thenReturn(notesList)
-
-      val result = assertReadOnlyApiReplyJson(get(NOTES_ENDPOINT, prisonNumber, disclosureLetter))
-
-      val retrievedNotesList = notesToList(result.response.contentAsString)
-      assertThat(retrievedNotesList).hasSize(2)
-      verify(noteService, times(1)).getProfileNotesForOffender(prisonNumber, ActionTodo.DISCLOSURE_LETTER)
-    }
-
-    @Test
-    fun `Test Post of a add profile notes`() {
-      whenever(noteService.addProfileNoteForOffender(any(), any(), any(), any())).thenReturn(notesList)
-      val notes = ProfileObjects.noteFreeTextJson
-
-      val result = assertReadWriteApiReplyJson(post(NOTES_ENDPOINT, prisonNumber, disclosureLetter), notes)
-
-      val retrievedNotesList = notesToList(result.response.contentAsString)
-      assert(retrievedNotesList.size == 2)
-      verify(noteService, times(1)).addProfileNoteForOffender(any(), any(), any(), any())
-    }
+    initMvcMock(ProfileResourceControllerV1(profileService))
   }
 
   @Nested

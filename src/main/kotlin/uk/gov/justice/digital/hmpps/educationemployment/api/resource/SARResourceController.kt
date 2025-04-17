@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import jakarta.validation.constraints.Pattern
 import org.springframework.format.annotation.DateTimeFormat
@@ -29,6 +30,7 @@ import java.time.LocalDate
 @Validated
 @RestController
 @RequestMapping("/subject-access-request", produces = [MediaType.APPLICATION_JSON_VALUE])
+@Tag(name = "SAR")
 class SARResourceController(
   private val profileService: ProfileV1Service,
 ) {
