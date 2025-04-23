@@ -197,6 +197,8 @@ object ProfileObjects {
     val profileAcceptedAndModified = makeProfile(
       status = profileStatusSupportNeeded,
       supportAccepted = supportAcceptedModified,
+      supportDeclined = supportDeclined,
+      statusChangeType = StatusChange.DECLINED_TO_ACCEPTED,
     )
 
     val profileStatusNewAndBothStateIncorrect = makeProfile(
@@ -314,6 +316,9 @@ object ProfileObjects {
     val readinessProfileOfKnownPrisoner =
       readinessProfile.copy(offenderId = knownPrisonNumber, bookingId = newBookingId, createdBy = createdBy)
 
+    val readinessProfileOfAnotherPrisoner =
+      readinessProfileAndAccepted1.copy(offenderId = anotherPrisonNumber, bookingId = newBookingId, createdBy = createdBy)
+
     var profileList = listOf(readinessProfile, updatedReadinessProfileNotes)
   }
 
@@ -337,6 +342,8 @@ object ProfileObjects {
     val profileAcceptedAndModified = makeProfileV1(
       status = profileStatusSupportNeeded,
       supportAccepted = supportAcceptedModified,
+      supportDeclined = supportDeclined,
+      statusChangeType = StatusChange.DECLINED_TO_ACCEPTED,
     )
 
     val profileDeclinedModified = makeProfileV1(

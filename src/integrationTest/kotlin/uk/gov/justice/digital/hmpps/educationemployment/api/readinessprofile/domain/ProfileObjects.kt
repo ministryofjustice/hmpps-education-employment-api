@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.do
 import uk.gov.justice.digital.hmpps.educationemployment.api.audit.domain.AuditObjects.defaultAuditLocalTime
 import uk.gov.justice.digital.hmpps.educationemployment.api.audit.domain.AuditObjects.defaultAuditor
 import uk.gov.justice.digital.hmpps.educationemployment.api.config.CapturedSpringConfigValues
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v2.ReadinessProfileDTO
 import java.io.FileNotFoundException
 
 object ProfileObjects {
@@ -27,6 +28,17 @@ object ProfileObjects {
   val profileOfKnownPrisoner = makeProfile(knownPrisonNumber, 111111, profileJsonSample)
   val profileOfAnotherPrisoner = makeProfile(anotherPrisonNumber, 222222, profileJsonSample2)
   val profileOfUnknownPrisoner = makeProfile(unknownPrisonNumber, 333333, profileJsonSampleReadinessProfile)
+
+  val migratedProfile = profileOfKnownPrisoner.copy(
+    createdBy = "system",
+    modifiedBy = "system",
+    schemaVersion = "2.0",
+  ).let { ReadinessProfileDTO(it) }.apply {
+    with(profileData) {
+      prisonId = ""
+      within12Weeks = true
+    }
+  }
 
   val noteString = "Mary had another little lamb"
 

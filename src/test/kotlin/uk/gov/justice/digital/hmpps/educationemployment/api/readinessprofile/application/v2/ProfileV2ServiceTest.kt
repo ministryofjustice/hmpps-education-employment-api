@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v2
 
+import com.fasterxml.jackson.databind.node.BooleanNode
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -8,7 +9,9 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.mockito.InjectMocks
 import org.mockito.Mock
+import org.mockito.Mockito.lenient
 import org.mockito.kotlin.any
+import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.AlreadyExistsException
@@ -17,6 +20,7 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.NotFoundE
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.StatusChange
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.v2.Profile
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.V1Profiles
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.V2Profiles
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.V2Profiles.profileIncorrectStatus
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.V2Profiles.profileStatusNewAndBothStateIncorrect
@@ -34,6 +38,8 @@ class ProfileV2ServiceTest : UnitTestBase() {
 
   @InjectMocks
   private lateinit var profileService: ProfileV2Service
+
+  private val expectedVersion = PROFILE_SCHEMA_VERSION
 
   @Nested
   @DisplayName("Given a new readiness profile")
@@ -56,6 +62,21 @@ class ProfileV2ServiceTest : UnitTestBase() {
         assertThat(it.createdBy).isEqualTo(userId)
         assertThat(it.offenderId).isEqualTo(prisonNumber)
         assertThat(it.bookingId).isEqualTo(bookingId)
+        assertThat(it.schemaVersion).isEqualTo(expectedVersion)
+      }
+    }
+
+    @Test
+    fun `save the readiness profile, and set within-12-weeks to true by default, when value is missing`() {
+      givenProfileNotExist(prisonNumber)
+      givenSavedProfile(readinessProfile)
+      val newProfile = profile.copy(within12Weeks = null)
+
+      profileService.createProfileForOffender(userId, prisonNumber, bookingId, newProfile)
+
+      val actualCaptor = argumentCaptor<ReadinessProfile>().also { verify(readinessProfileRepository).save(it.capture()) }
+      with(actualCaptor.firstValue.profileData) {
+        assertThat(get("within12Weeks").booleanValue()).isEqualTo(true)
       }
     }
 
@@ -67,6 +88,17 @@ class ProfileV2ServiceTest : UnitTestBase() {
     @Test
     fun `throws an exception, when create the readiness profile with both support states`() {
       assertFailsWithInvalidState(profileStatusNewAndBothStateIncorrect)
+    }
+
+    @Test
+    fun `throws an exception, when create the readiness profile without prisonId`() {
+      val newProfile = profile.copy(prisonId = null)
+
+      assertFailsWith<IllegalArgumentException> {
+        profileService.createProfileForOffender(userId, prisonNumber, bookingId, newProfile)
+      }.let {
+        assertThat(it.message).isEqualTo("prisonId is missing")
+      }
     }
 
     private fun assertFailsWithInvalidState(profile: Profile) {
@@ -104,13 +136,14 @@ class ProfileV2ServiceTest : UnitTestBase() {
       fun `update the readiness profile`() {
         givenSavedProfile(updatedProfile)
 
-        val actual = assertProfileIsUpdated(userId, prisonNumber, bookingId, profile)
+        val actual = assertProfileIsUpdated(userId, prisonNumber, bookingId, profile.copy())
 
         actual.let {
           assertThat(it.offenderId).isEqualTo(prisonNumber)
           assertThat(it.bookingId).isEqualTo(updatedBookingId)
           assertThat(it.modifiedBy).isEqualTo(userId)
           assertThat(it.createdBy).isEqualTo(userIdCreator)
+          assertThat(it.schemaVersion).isEqualTo(expectedVersion)
         }
       }
 
@@ -122,6 +155,30 @@ class ProfileV2ServiceTest : UnitTestBase() {
 
         profileJsonToValue(actual.profileData).let {
           assertThat(it.prisonName).isEqualTo(profile.prisonName)
+        }
+      }
+
+      @Test
+      fun `throws an exception, when update the readiness profile without prisonId`() {
+        val revisedProfile = profile.copy(prisonId = null)
+
+        assertFailsWith<IllegalArgumentException> {
+          profileService.createProfileForOffender(userId, prisonNumber, bookingId, revisedProfile)
+        }.let {
+          assertThat(it.message).isEqualTo("prisonId is missing")
+        }
+      }
+
+      @Test
+      fun `update the readiness profile, and set within-12-weeks to true by default, when value is missing`() {
+        val revisedProfile = profile.copy(within12Weeks = null)
+        givenSavedProfile(updatedProfile.copy())
+
+        assertProfileIsUpdated(userId, prisonNumber, bookingId, revisedProfile)
+
+        val actualCaptor = argumentCaptor<ReadinessProfile>().also { verify(readinessProfileRepository).save(it.capture()) }
+        with(actualCaptor.firstValue.profileData) {
+          assertThat(get("within12Weeks").booleanValue()).isEqualTo(true)
         }
       }
     }
@@ -145,7 +202,7 @@ class ProfileV2ServiceTest : UnitTestBase() {
 
         val actual = assertProfileIsUpdated(userId, prisonNumber, bookingId, profileDataWithAcceptance)
 
-        profileV1JsonToValue(actual.profileData).let {
+        profileJsonToValue(actual.profileData).let {
           assertThat(it.statusChangeType!!).isEqualTo(StatusChange.DECLINED_TO_ACCEPTED)
         }
       }
@@ -221,6 +278,54 @@ class ProfileV2ServiceTest : UnitTestBase() {
     assertThat(profileList).containsAll(expectedProfiles)
   }
 
+  @Nested
+  inner class GivenProfilesWithPreviousVersion {
+    private val readinessProfile1 = V2Profiles.readinessProfileOfAnotherPrisoner
+    private val readinessProfile2PreviousVersion = V1Profiles.readinessProfileOfKnownPrisoner
+    private val readinessProfiles = listOf(readinessProfile1, readinessProfile2PreviousVersion)
+    private val readinessProfile2CurrentVersion = V2Profiles.readinessProfileOfKnownPrisoner
+    private val expectedReadinessProfiles = listOf(readinessProfile1, readinessProfile2CurrentVersion)
+    private val prisonNumbers = readinessProfiles.map { it.offenderId }.toList()
+    private val excludedFields = listOf("supportDeclined_history", "supportAccepted_history", "prisonId", "within12Weeks")
+    private val excludedMetaData = listOf(".*createdBy", ".*createdDateTime", ".*modifiedBy", ".*modifiedDateTime")
+    private val excludedFieldPatterns = (excludedFields + excludedMetaData).map { ".*$it.*" }.toTypedArray()
+
+    @Test
+    fun `retrieve a list of readiness profiles for list offender ids, and migrate profiles of previous version on the fly`() {
+      whenever(readinessProfileRepository.findAllById(any())).thenReturn(readinessProfiles)
+      val expectedProfilesData = expectedReadinessProfiles.map { it.profileData }
+
+      val profileList = profileService.getProfilesForOffenders(prisonNumbers)
+
+      assertThat(profileList).extracting("schemaVersion").containsOnly(expectedVersion)
+
+      assertThat(profileList).extracting("profileData")
+        .usingRecursiveComparison().ignoringFieldsMatchingRegexes(*excludedFieldPatterns)
+        .isEqualTo(expectedProfilesData)
+
+      profileList.map { it.profileData.get("prisonId") }.forEach { assertThat(it).isNotNull() }
+      profileList.map { it.profileData.get("within12Weeks") }.forEach { assertThat(it).isEqualTo(BooleanNode.TRUE) }
+    }
+
+    @Test
+    fun `retrieve and migrate a readiness profile of previous version`() {
+      val prisonNumber = readinessProfile1.offenderId
+      val expected = readinessProfile1.profileData
+      whenever(readinessProfileRepository.findById(prisonNumber)).thenReturn(Optional.of(readinessProfile1))
+
+      val profile = profileService.getProfileForOffender(prisonNumber)
+
+      assertThat(profile.schemaVersion).isEqualTo(expectedVersion)
+
+      val actual = profile.profileData
+      assertThat(actual)
+        .usingRecursiveComparison().ignoringFieldsMatchingRegexes(*excludedFieldPatterns)
+        .isEqualTo(expected)
+      assertThat(actual.get("prisonId")).isNotNull
+      assertThat(actual.get("within12Weeks")).isEqualTo(BooleanNode.TRUE)
+    }
+  }
+
   private fun assertProfileIsUpdated(userId: String, prisonNumber: String, bookingId: Long, profile: Profile) = profileService.updateProfileForOffender(userId, prisonNumber, bookingId, profile)
     .also { verify(readinessProfileRepository).save(any()) }
 
@@ -230,5 +335,5 @@ class ProfileV2ServiceTest : UnitTestBase() {
 
   private fun givenSavedProfile(profile: ReadinessProfile) = whenever(readinessProfileRepository.save(any())).thenReturn(profile)
 
-  private fun givenProfileFound(profile: ReadinessProfile) = whenever(readinessProfileRepository.findById(any())).thenReturn(Optional.of(profile))
+  private fun givenProfileFound(profile: ReadinessProfile) = lenient().whenever(readinessProfileRepository.findById(any())).thenReturn(Optional.of(profile))
 }

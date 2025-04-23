@@ -156,6 +156,12 @@ class ControllerAdvice {
       )
   }
 
+  @ExceptionHandler(IllegalArgumentException::class)
+  fun handleIllegalArgumentException(e: IllegalArgumentException): ResponseEntity<ErrorResponse> {
+    log.info("IllegalArgumentException: ${e.message}", e)
+    return makeErrorResponse(e)
+  }
+
   @ExceptionHandler(NotFoundException::class)
   fun handleNotFoundException(e: NotFoundException): ResponseEntity<ErrorResponse> {
     log.info("NotFoundException: ${e.message}", e)

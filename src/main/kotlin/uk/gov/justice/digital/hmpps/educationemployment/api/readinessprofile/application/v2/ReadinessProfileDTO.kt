@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v2
 
+import com.fasterxml.jackson.module.kotlin.treeToValue
 import io.swagger.v3.oas.annotations.media.Schema
 import uk.gov.justice.digital.hmpps.educationemployment.api.config.CapturedSpringConfigValues
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.v2.Profile
@@ -39,6 +40,6 @@ data class ReadinessProfileDTO(
     modifiedBy = profileEntity.modifiedBy,
     modifiedDateTime = profileEntity.modifiedDateTime,
     schemaVersion = profileEntity.schemaVersion,
-    profileData = CapturedSpringConfigValues.objectMapper.readValue(profileEntity.profileData.toString(), Profile::class.java),
+    profileData = CapturedSpringConfigValues.objectMapper.treeToValue(profileEntity.profileData),
   )
 }

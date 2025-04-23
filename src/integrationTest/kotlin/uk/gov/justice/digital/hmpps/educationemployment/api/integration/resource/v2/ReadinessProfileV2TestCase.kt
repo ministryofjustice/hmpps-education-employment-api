@@ -28,6 +28,9 @@ class ReadinessProfileV2TestCase :
 
   private val typeRefProfile by lazy { object : TypeReference<Profile>() {} }
   private val typeRefProfileV1 by lazy { object : TypeReference<ProfileV1>() {} }
+  private val typeRefRequestV1 by lazy { object : TypeReference<ReadinessProfileV1RequestDTO>() {} }
+
+  protected val expectedVersion = "2.0"
 
   protected fun parseProfile(profileData: JsonNode): Profile = objectMapper.treeToValue(profileData, typeRefProfile)
 
@@ -46,6 +49,7 @@ class ReadinessProfileV2TestCase :
   )
 
   protected fun parseProfileV1(profileData: JsonNode): ProfileV1 = objectMapper.treeToValue(profileData, typeRefProfileV1)
+  protected fun parseProfileV1RequestDTO(profileJson: String) = objectMapper.readValue(profileJson, typeRefRequestV1)
 
   protected fun Profile.statusChangeRequestToAccepted(newStatus: ProfileStatus = ProfileStatus.SUPPORT_NEEDED) = StatusChangeUpdateRequestDTO(supportAccepted, supportDeclined, newStatus)
   protected fun Profile.statusChangeRequestToDeclined() = StatusChangeUpdateRequestDTO(supportAccepted, supportDeclined, ProfileStatus.SUPPORT_DECLINED)
