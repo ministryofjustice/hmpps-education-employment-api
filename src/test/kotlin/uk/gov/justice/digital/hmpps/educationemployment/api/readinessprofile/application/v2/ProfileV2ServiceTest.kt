@@ -9,7 +9,9 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.mockito.InjectMocks
 import org.mockito.Mock
+import org.mockito.Mockito.lenient
 import org.mockito.kotlin.any
+import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.AlreadyExistsException
@@ -65,6 +67,20 @@ class ProfileV2ServiceTest : UnitTestBase() {
     }
 
     @Test
+    fun `save the readiness profile, and set within-12-weeks to true by default, when value is missing`() {
+      givenProfileNotExist(prisonNumber)
+      givenSavedProfile(readinessProfile)
+      val newProfile = profile.copy(within12Weeks = null)
+
+      profileService.createProfileForOffender(userId, prisonNumber, bookingId, newProfile)
+
+      val actualCaptor = argumentCaptor<ReadinessProfile>().also { verify(readinessProfileRepository).save(it.capture()) }
+      with(actualCaptor.firstValue.profileData) {
+        assertThat(get("within12Weeks").booleanValue()).isEqualTo(true)
+      }
+    }
+
+    @Test
     fun `throws an exception, when create a readiness profile with incorrect status`() {
       assertFailsWithInvalidState(profileIncorrectStatus)
     }
@@ -72,6 +88,17 @@ class ProfileV2ServiceTest : UnitTestBase() {
     @Test
     fun `throws an exception, when create the readiness profile with both support states`() {
       assertFailsWithInvalidState(profileStatusNewAndBothStateIncorrect)
+    }
+
+    @Test
+    fun `throws an exception, when create the readiness profile without prisonId`() {
+      val newProfile = profile.copy(prisonId = null)
+
+      assertFailsWith<IllegalArgumentException> {
+        profileService.createProfileForOffender(userId, prisonNumber, bookingId, newProfile)
+      }.let {
+        assertThat(it.message).isEqualTo("prisonId is missing")
+      }
     }
 
     private fun assertFailsWithInvalidState(profile: Profile) {
@@ -109,7 +136,7 @@ class ProfileV2ServiceTest : UnitTestBase() {
       fun `update the readiness profile`() {
         givenSavedProfile(updatedProfile)
 
-        val actual = assertProfileIsUpdated(userId, prisonNumber, bookingId, profile)
+        val actual = assertProfileIsUpdated(userId, prisonNumber, bookingId, profile.copy())
 
         actual.let {
           assertThat(it.offenderId).isEqualTo(prisonNumber)
@@ -128,6 +155,30 @@ class ProfileV2ServiceTest : UnitTestBase() {
 
         profileJsonToValue(actual.profileData).let {
           assertThat(it.prisonName).isEqualTo(profile.prisonName)
+        }
+      }
+
+      @Test
+      fun `throws an exception, when update the readiness profile without prisonId`() {
+        val revisedProfile = profile.copy(prisonId = null)
+
+        assertFailsWith<IllegalArgumentException> {
+          profileService.createProfileForOffender(userId, prisonNumber, bookingId, revisedProfile)
+        }.let {
+          assertThat(it.message).isEqualTo("prisonId is missing")
+        }
+      }
+
+      @Test
+      fun `update the readiness profile, and set within-12-weeks to true by default, when value is missing`() {
+        val revisedProfile = profile.copy(within12Weeks = null)
+        givenSavedProfile(updatedProfile.copy())
+
+        assertProfileIsUpdated(userId, prisonNumber, bookingId, revisedProfile)
+
+        val actualCaptor = argumentCaptor<ReadinessProfile>().also { verify(readinessProfileRepository).save(it.capture()) }
+        with(actualCaptor.firstValue.profileData) {
+          assertThat(get("within12Weeks").booleanValue()).isEqualTo(true)
         }
       }
     }
@@ -151,7 +202,7 @@ class ProfileV2ServiceTest : UnitTestBase() {
 
         val actual = assertProfileIsUpdated(userId, prisonNumber, bookingId, profileDataWithAcceptance)
 
-        profileV1JsonToValue(actual.profileData).let {
+        profileJsonToValue(actual.profileData).let {
           assertThat(it.statusChangeType!!).isEqualTo(StatusChange.DECLINED_TO_ACCEPTED)
         }
       }
@@ -284,5 +335,5 @@ class ProfileV2ServiceTest : UnitTestBase() {
 
   private fun givenSavedProfile(profile: ReadinessProfile) = whenever(readinessProfileRepository.save(any())).thenReturn(profile)
 
-  private fun givenProfileFound(profile: ReadinessProfile) = whenever(readinessProfileRepository.findById(any())).thenReturn(Optional.of(profile))
+  private fun givenProfileFound(profile: ReadinessProfile) = lenient().whenever(readinessProfileRepository.findById(any())).thenReturn(Optional.of(profile))
 }

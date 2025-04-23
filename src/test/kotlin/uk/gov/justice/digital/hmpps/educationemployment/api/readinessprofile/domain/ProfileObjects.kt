@@ -197,6 +197,8 @@ object ProfileObjects {
     val profileAcceptedAndModified = makeProfile(
       status = profileStatusSupportNeeded,
       supportAccepted = supportAcceptedModified,
+      supportDeclined = supportDeclined,
+      statusChangeType = StatusChange.DECLINED_TO_ACCEPTED,
     )
 
     val profileStatusNewAndBothStateIncorrect = makeProfile(
@@ -340,6 +342,8 @@ object ProfileObjects {
     val profileAcceptedAndModified = makeProfileV1(
       status = profileStatusSupportNeeded,
       supportAccepted = supportAcceptedModified,
+      supportDeclined = supportDeclined,
+      statusChangeType = StatusChange.DECLINED_TO_ACCEPTED,
     )
 
     val profileDeclinedModified = makeProfileV1(
