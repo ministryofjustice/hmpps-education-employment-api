@@ -91,6 +91,7 @@ class ProfileV2Service(
         if (profile.supportAccepted != storedCoreProfile.supportAccepted) {
           updateAcceptedStatusList(profile, userId, currentTime)
         }
+
       storedCoreProfile.supportDeclined != null && profile.supportDeclined != null ->
         if (profile.supportDeclined != storedCoreProfile.supportDeclined) {
           updateDeclinedStatusList(profile, userId, offenderId, currentTime)
