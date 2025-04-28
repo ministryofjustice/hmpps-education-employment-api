@@ -6,7 +6,7 @@ plugins {
 }
 
 dependencies {
-  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:5.4.2") {
+  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:5.4.4") {
     implementation("org.apache.commons:commons-compress:1.27.1")
   }
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
