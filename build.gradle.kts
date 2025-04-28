@@ -41,7 +41,6 @@ testing {
     @Suppress("UnstableApiUsage")
     val integrationTest by registering(JvmTestSuite::class) {
       dependencies {
-        testType.set(TestSuiteType.INTEGRATION_TEST)
         kotlin.target.compilations { named("integrationTest") { associateWith(getByName("main")) } }
         implementation("org.springframework.boot:spring-boot-starter-test")
         implementation("org.springframework.security:spring-security-test")
