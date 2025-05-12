@@ -16,6 +16,7 @@ import org.springframework.web.client.RestClientException
 import org.springframework.web.client.RestClientResponseException
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
 import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.AlreadyExistsException
+import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.CustomValidationException
 import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.DeprecatedApiException
 import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.NotFoundException
 import java.util.*
@@ -180,6 +181,12 @@ class ControllerAdvice {
     return HttpStatus.GONE.let {
       makeErrorResponse(e, it, userMessage = "${it.reasonPhrase}: This API is no longer supported")
     }
+  }
+
+  @ExceptionHandler(CustomValidationException::class)
+  fun handleCustomValidationException(e: CustomValidationException): ResponseEntity<ErrorResponse> {
+    log.info("CustomValidationException: ${e.message}", e)
+    return makeErrorResponse(e, userMessage = "Validation failure: ${e.message}")
   }
 
   @ExceptionHandler(java.lang.Exception::class)
