@@ -35,7 +35,7 @@ class ProfileMetricsService(
 }
 
 data class GetMetricsReasonsSupportDeclinedResponse(
-  val supportToWorkDeclinedReason: String?,
+  val supportToWorkDeclinedReason: String,
   val numberOfPrisonersWithin12Weeks: Long,
   val numberOfPrisonersOver12Weeks: Long,
 )

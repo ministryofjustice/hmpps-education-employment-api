@@ -47,7 +47,9 @@ interface ReadinessProfileRepository :
     SELECT declined_reason as field,
       COUNT(CASE within_12_weeks WHEN TRUE THEN 1 ELSE 0 END) AS countWithin12Weeks,
       COUNT(CASE within_12_weeks WHEN FALSE THEN 1 ELSE 0 END) AS countOver12Weeks
-    FROM declined_reasons GROUP BY 1 ORDER BY 1;
+    FROM declined_reasons 
+    WHERE declined_reason IS NOT NULL 
+    GROUP BY 1 ORDER BY 1;
     """,
     nativeQuery = true,
   )
