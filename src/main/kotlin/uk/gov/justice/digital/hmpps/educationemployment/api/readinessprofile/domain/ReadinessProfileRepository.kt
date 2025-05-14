@@ -25,7 +25,7 @@ interface ReadinessProfileRepository :
         WHERE wra2.offender_id IN (SELECT DISTINCT offender_id from recent_updates) AND wra2.modified_date_time <= :startTime AND wra2.rev_type IN (0,1)
         GROUP BY 1
       ) at_start 
-      ON wra1.offender_id = at_start.offender_id AND at_start.rev_number = at_start.rev_number
+      ON wra1.offender_id = at_start.offender_id AND wra1.rev_number = at_start.rev_number
       AND at_start.rev_number NOT IN (SELECT rev_number from recent_updates)
     ), profile_snapshots AS (
       SELECT * FROM recent_updates UNION ALL SELECT * FROM profile_at_start
@@ -45,8 +45,8 @@ interface ReadinessProfileRepository :
       SELECT p.offender_id, p.within_12_weeks, dr.value AS declined_reason FROM latest_profiles p, jsonb_array_elements_text(declined_reasons) AS dr
     )
     SELECT declined_reason as field,
-      COUNT(CASE within_12_weeks WHEN TRUE THEN 1 ELSE 0 END) AS countWithin12Weeks,
-      COUNT(CASE within_12_weeks WHEN FALSE THEN 1 ELSE 0 END) AS countOver12Weeks
+      COUNT(CASE within_12_weeks WHEN TRUE THEN 1 ELSE NULL END) AS countWithin12Weeks,
+      COUNT(CASE within_12_weeks WHEN FALSE THEN 1 ELSE NULL END) AS countOver12Weeks
     FROM declined_reasons 
     WHERE declined_reason IS NOT NULL 
     GROUP BY 1 ORDER BY 1;
