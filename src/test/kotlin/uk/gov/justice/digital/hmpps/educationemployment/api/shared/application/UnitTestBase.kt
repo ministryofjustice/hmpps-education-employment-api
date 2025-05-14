@@ -39,6 +39,7 @@ abstract class UnitTestBase {
   internal open fun setUpBase() {
     lenient().whenever(timeProvider.nowAsInstant()).thenReturn(defaultCurrentTime)
     lenient().whenever(timeProvider.now()).thenReturn(defaultCurrentLocalTime)
+    lenient().whenever(timeProvider.timezoneId).thenReturn(defaultTimeZoneOffset)
   }
 
   companion object {

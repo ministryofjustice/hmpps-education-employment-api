@@ -17,3 +17,5 @@ class InvalidStateException(var offenderId: String) :
 }
 
 class DeprecatedApiException : Exception("The API has been deprecated and is no longer supported.")
+
+class CustomValidationException(message: String) : Exception(message)
