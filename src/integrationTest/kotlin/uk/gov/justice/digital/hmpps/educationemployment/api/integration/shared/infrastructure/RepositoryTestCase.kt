@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.educationemployment.api.integration.shared.infrastructure
 
+import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -53,6 +54,8 @@ abstract class RepositoryTestCase {
   protected val currentTimeLocal: LocalDateTime get() = defaultCurrentTimeLocal
 
   protected var auditor = AuditObjects.defaultAuditor
+
+  protected val emptyJsonArray: JsonNode get() = objectMapper.readTree("[]")
 
   companion object {
     private val postgresContainer = PostgresContainer.repositoryContainer

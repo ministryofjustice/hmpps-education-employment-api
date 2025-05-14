@@ -5,7 +5,7 @@
   "statusChangeType": "NEW",
   "prisonId": "prison2",
   "prisonName":"Prison 2",
-  "within12weeks": true,
+  "within12Weeks": true,
   "supportDeclined": {
     "modifiedBy": "sacintha-raj",
     "modifiedDateTime": [

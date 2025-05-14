@@ -2,32 +2,61 @@ package uk.gov.justice.digital.hmpps.educationemployment.api.integration.readine
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.ArrayNode
+import com.fasterxml.jackson.databind.node.ObjectNode
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.springframework.data.history.Revision
 import org.springframework.data.history.RevisionMetadata.RevisionType
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
 import uk.gov.justice.digital.hmpps.educationemployment.api.audit.domain.RevisionInfo
-import uk.gov.justice.digital.hmpps.educationemployment.api.integration.shared.infrastructure.RepositoryTestCase
+import uk.gov.justice.digital.hmpps.educationemployment.api.integration.shared.infrastructure.MetricsCountForTest
+import uk.gov.justice.digital.hmpps.educationemployment.api.integration.shared.infrastructure.TestClock
 import uk.gov.justice.digital.hmpps.educationemployment.api.notesdata.domain.Note
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ActionTodo
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.SupportToWorkDeclinedReason
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.SupportToWorkDeclinedReason.ALREADY_HAS_WORK
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.SupportToWorkDeclinedReason.FULL_TIME_CARER
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.SupportToWorkDeclinedReason.HEALTH
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.SupportToWorkDeclinedReason.HOUSING_NOT_IN_PLACE
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.SupportToWorkDeclinedReason.LACKS_CONFIDENCE_OR_MOTIVATION
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.SupportToWorkDeclinedReason.LIMIT_THEIR_ABILITY
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.SupportToWorkDeclinedReason.NO_REASON
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.SupportToWorkDeclinedReason.OTHER
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.SupportToWorkDeclinedReason.RETIRED
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.SupportToWorkDeclinedReason.RETURNING_TO_JOB
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.SupportToWorkDeclinedReason.SELF_EMPLOYED
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.profileOfAnotherPrisoner
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.profileOfDeclinedSupportPrisoner
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.profileOfKnownPrisoner
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.unknownPrisonNumber
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ReadinessProfile
+import uk.gov.justice.digital.hmpps.educationemployment.api.shared.infrastructure.MetricsCountByStringField
+import java.time.Instant
 
-class ReadinessProfileRepositoryShould : RepositoryTestCase() {
+class ReadinessProfileRepositoryShould : ReadinessProfileRepositoryTestCase() {
+  private val startOfTime = Instant.parse("2025-01-01T00:00:00Z")
+  private val timeslotClock = TestClock.timeslotClock(startOfTime)
+  private val timeslotDuration = TestClock.TimeslotClock.defaultDuration
+  override val testClock = timeslotClock
+
   private val firstAuditor = ProfileObjects.createdBy
   private val subsequentAuditor = ProfileObjects.lastModifiedBy
+
+  private val prisonId = "prison2"
+  private val prisonName = "Prison 2"
+  private val startTime = startOfTime
+  private val endTime = startOfTime
 
   @BeforeEach
   override fun setUp() {
     super.setUp()
     setCurrentAuditor(firstAuditor)
+    timeslotClock.timeslot.set(0)
   }
 
   @Test
@@ -39,9 +68,15 @@ class ReadinessProfileRepositoryShould : RepositoryTestCase() {
 
   @Test
   fun `return nothing, for any prison number (offender ID)`() {
-    val prisonNumber = ProfileObjects.unknownPrisonNumber
+    val prisonNumber = unknownPrisonNumber
     val actual = readinessProfileRepository.findById(prisonNumber)
     assertThat(actual).isEmpty
+  }
+
+  @Test
+  fun `return empty list, for metric of reasons for support declined`() {
+    val counts = readinessProfileRepository.countReasonsForSupportDeclinedByPrisonIdAndDateTimeBetween(prisonId, startTime, endTime)
+    assertThat(counts).isEmpty()
   }
 
   @Nested
@@ -142,25 +177,260 @@ class ReadinessProfileRepositoryShould : RepositoryTestCase() {
     }
   }
 
-  private val ReadinessProfile.asExpected
-    get() = this.copy(
-      new = false,
-      createdDateTime = currentTimeLocal,
-      createdBy = auditor,
-      modifiedDateTime = currentTimeLocal,
-      modifiedBy = auditor,
+  @Nested
+  @Transactional(propagation = Propagation.NOT_SUPPORTED)
+  @DisplayName("Given some readiness profile with revision(s)")
+  inner class GivenExistingReadinessProfilesWithRevisions {
+    private lateinit var profiles: List<ReadinessProfile>
+
+    @BeforeEach
+    internal fun setUp() {
+      profiles = listOf(
+        profileOfKnownPrisoner,
+        profileOfAnotherPrisoner,
+        profileOfDeclinedSupportPrisoner,
+      ).map { readinessProfileRepository.save(it) }.toList()
+    }
+
+    @Test
+    fun `return metric of reasons for support declined`() {
+      val expectedReasons = listOf(FULL_TIME_CARER, SELF_EMPLOYED, RETURNING_TO_JOB, ALREADY_HAS_WORK).map { it.name }.toSet()
+
+      val counts = readinessProfileRepository.countReasonsForSupportDeclinedByPrisonIdAndDateTimeBetween(prisonId, startTime, endTime)
+
+      // There is only one profile with support declined
+      assertThat(counts).isNotEmpty.hasSize(expectedReasons.size)
+      val actualReasons = counts.map { it.field }.toSet()
+      assertThat(actualReasons).isEqualTo(expectedReasons)
+      // All reasons were from the single profile over 12 weeks from release
+      counts.map { it.countWithin12Weeks }.toSet().let { assertThat(it).containsOnly(0L) }
+      counts.map { it.countOver12Weeks }.toSet().let { assertThat(it).containsOnly(1L) }
+    }
+  }
+
+  @Nested
+  @Transactional(propagation = Propagation.NOT_SUPPORTED)
+  @DisplayName("Given many profiles with support declined ")
+  inner class GIvenManyProfilesWithSupportDeclined {
+    private lateinit var profiles: MutableList<ReadinessProfile>
+    private lateinit var profileMap: MutableMap<String, ReadinessProfile>
+
+    @BeforeEach
+    internal fun setUp() {
+      auditCleaner.deleteAllRevisions()
+      givenProfilesInFourTimeslots()
+    }
+
+    @Test
+    fun `return metric of reasons for support declined`() {
+      // time t = [1,4]
+      val startTime = startOfTime + timeslotDuration
+      val endTime = currentTime
+
+      val expectedMetrics = listOf(
+        makeMetricCount(ALREADY_HAS_WORK, 4, 1),
+        makeMetricCount(LIMIT_THEIR_ABILITY, 12, 0),
+        makeMetricCount(FULL_TIME_CARER, 1, 0),
+        makeMetricCount(HOUSING_NOT_IN_PLACE, 11, 1),
+        makeMetricCount(LACKS_CONFIDENCE_OR_MOTIVATION, 3, 0),
+        makeMetricCount(HEALTH, 6, 4),
+        makeMetricCount(NO_REASON, 2, 0),
+        makeMetricCount(RETIRED, 7, 0),
+        makeMetricCount(RETURNING_TO_JOB, 2, 0),
+        makeMetricCount(SELF_EMPLOYED, 13, 1),
+        makeMetricCount(OTHER, 8, 3),
+      )
+
+      val actualMetrics = readinessProfileRepository.countReasonsForSupportDeclinedByPrisonIdAndDateTimeBetween(prisonId, startTime, endTime)
+
+      assertThat(actualMetrics).isNotEmpty.hasSize(SupportToWorkDeclinedReason.entries.size)
+      assertEquals(expectedMetrics, actualMetrics)
+    }
+
+    @Test
+    fun `return metrics with profile, that was over 12 weeks before the period, and within 12 weeks during the period`() {
+      // time t = [2,2]
+      val startTime = startOfTime + timeslotDuration.multipliedBy(2)
+      val endTime = startTime
+      // expected counts from profiles:   within={2} ; over={5, 9, 15},
+      // and then resolved to these reasons: (two with zero counts: FULL_TIME_CARER, NO_REASON)
+      val expectedMetrics = listOf(
+        makeMetricCount(ALREADY_HAS_WORK, 1, 0),
+        makeMetricCount(LIMIT_THEIR_ABILITY, 1, 2),
+        makeMetricCount(FULL_TIME_CARER, 0, 0),
+        makeMetricCount(HOUSING_NOT_IN_PLACE, 1, 3),
+        makeMetricCount(LACKS_CONFIDENCE_OR_MOTIVATION, 1, 0),
+        makeMetricCount(HEALTH, 1, 2),
+        makeMetricCount(NO_REASON, 0, 0),
+        makeMetricCount(RETIRED, 1, 1),
+        makeMetricCount(RETURNING_TO_JOB, 1, 0),
+        makeMetricCount(SELF_EMPLOYED, 1, 2),
+        makeMetricCount(OTHER, 1, 2),
+      ).filter { it.countWithin12Weeks > 0 || it.countOver12Weeks > 0 }
+
+      val counts = readinessProfileRepository.countReasonsForSupportDeclinedByPrisonIdAndDateTimeBetween(prisonId, startTime, endTime)
+
+      assertEquals(expectedMetrics, counts)
+    }
+
+    @Test
+    fun `return metrics with profile, that was within 12 weeks and becoming over during the period (check beginning snapshot)`() {
+      // time t = [2,3]
+      val startTime = startOfTime + timeslotDuration.multipliedBy(2)
+      val endTime = startOfTime + timeslotDuration.multipliedBy(3)
+      // expected counts from profiles:   within={2, 3, 6, 7, 9} ; over={5, 10, 15, 16},
+      // and then resolved to these reasons: (two with zero counts: FULL_TIME_CARER, NO_REASON)
+      val expectedMetrics = listOf(
+        makeMetricCount(ALREADY_HAS_WORK, 2, 0),
+        makeMetricCount(LIMIT_THEIR_ABILITY, 5, 2),
+        makeMetricCount(FULL_TIME_CARER, 0, 0),
+        makeMetricCount(HOUSING_NOT_IN_PLACE, 5, 3),
+        makeMetricCount(LACKS_CONFIDENCE_OR_MOTIVATION, 2, 0),
+        makeMetricCount(HEALTH, 3, 3),
+        makeMetricCount(NO_REASON, 0, 0),
+        makeMetricCount(RETIRED, 4, 1),
+        makeMetricCount(RETURNING_TO_JOB, 1, 0),
+        makeMetricCount(SELF_EMPLOYED, 5, 2),
+        makeMetricCount(OTHER, 4, 3),
+      ).filter { it.countWithin12Weeks > 0 || it.countOver12Weeks > 0 }
+
+      val counts = readinessProfileRepository.countReasonsForSupportDeclinedByPrisonIdAndDateTimeBetween(prisonId, startTime, endTime)
+
+      assertEquals(expectedMetrics, counts)
+    }
+
+    private fun assertEquals(expected: List<MetricsCountByStringField>, actual: List<MetricsCountByStringField>) {
+      assertThat(actual).isNotEmpty.hasSize(expected.size)
+
+      val expectedMetrics = expected.map { it.field to it }.toMap()
+      val actualMetrics = actual.map { it.field to it }.toMap()
+
+      expectedMetrics.forEach {
+        val reason = it.key
+        assertThat(actualMetrics).containsKeys(reason)
+        val actualMetric = actualMetrics[reason]!!
+        val expectedMetric = expectedMetrics[reason]!!
+        assertThat(actualMetric.field).isEqualTo(expectedMetric.field)
+        assertThat(actualMetric.countWithin12Weeks)
+          .`as`("checking count of reason=$reason, if within 12 weeks")
+          .isEqualTo(expectedMetric.countWithin12Weeks)
+        assertThat(actualMetric.countOver12Weeks)
+          .`as`("checking count of reason=$reason, if over 12 weeks")
+          .isEqualTo(expectedMetric.countOver12Weeks)
+      }
+    }
+
+    private fun givenProfilesInFourTimeslots() {
+      givenSomeProfiles()
+      profileMap = mutableMapOf()
+
+      // offender ID mapping to index (1-based)
+      val offenderIdToIdxMap = profiles.mapIndexed { i, it -> it.offenderId to i + 1 }.toMap()
+      val updatesWithin12WeeksAtTimeT = sortedMapOf(
+        0 to arrayOf(),
+        1 to arrayOf(1, 5, 6, 11, 12, 13),
+        2 to arrayOf(2),
+        3 to arrayOf(3, 7, 9),
+        4 to arrayOf(4, 8, 10),
+      )
+      val updatesOver12WeeksAtTimeT = sortedMapOf(
+        0 to arrayOf(),
+        1 to arrayOf(9, 10, 14),
+        2 to arrayOf(5, 9, 15),
+        3 to arrayOf(6, 10, 15, 16),
+        4 to arrayOf(7, 17),
+      )
+
+      updatesWithin12WeeksAtTimeT.keys.forEach { t ->
+        val updatedProfiles = mutableListOf<ReadinessProfile>()
+        updatesWithin12WeeksAtTimeT[t]?.map { idx -> profileAt(idx).within12Weeks() }?.let { updatedProfiles += it }
+        updatesOver12WeeksAtTimeT[t]?.map { idx -> profileAt(idx).over12Weeks() }?.let { updatedProfiles += it }
+        if (updatedProfiles.isNotEmpty()) {
+          timeslotClock.timeslot.set(t.toLong())
+          updatedProfiles.forEach { it.addNote(ActionTodo.ID, "making changes") }
+          readinessProfileRepository.saveAllAndFlush(updatedProfiles).onEach {
+            profileMap[it.offenderId] = it
+            offenderIdToIdxMap[it.offenderId]?.let { idx -> updateProfileAt(idx, it) }
+          }
+        }
+      }
+    }
+
+    private fun givenSomeProfiles() {
+      // LIMIT_THEIR_ABILITY on screen:  "Feels type of offence will limit their ability to find work", and on dashboard "Type of offence"
+      val reasons = listOf(
+        arrayOf(ALREADY_HAS_WORK, LIMIT_THEIR_ABILITY, FULL_TIME_CARER, HOUSING_NOT_IN_PLACE, LACKS_CONFIDENCE_OR_MOTIVATION, HEALTH, RETIRED, RETURNING_TO_JOB, SELF_EMPLOYED, OTHER),
+        arrayOf(ALREADY_HAS_WORK, LIMIT_THEIR_ABILITY, HOUSING_NOT_IN_PLACE, LACKS_CONFIDENCE_OR_MOTIVATION, HEALTH, RETIRED, RETURNING_TO_JOB, SELF_EMPLOYED, OTHER),
+        arrayOf(ALREADY_HAS_WORK, LIMIT_THEIR_ABILITY, HOUSING_NOT_IN_PLACE, LACKS_CONFIDENCE_OR_MOTIVATION, HEALTH, RETIRED, SELF_EMPLOYED, OTHER),
+        arrayOf(ALREADY_HAS_WORK, LIMIT_THEIR_ABILITY, HOUSING_NOT_IN_PLACE, HEALTH, RETIRED, SELF_EMPLOYED, OTHER),
+        arrayOf(LIMIT_THEIR_ABILITY, HOUSING_NOT_IN_PLACE, HEALTH, RETIRED, SELF_EMPLOYED, OTHER),
+        arrayOf(LIMIT_THEIR_ABILITY, HOUSING_NOT_IN_PLACE, HEALTH, RETIRED, SELF_EMPLOYED, OTHER),
+        arrayOf(LIMIT_THEIR_ABILITY, HOUSING_NOT_IN_PLACE, RETIRED, SELF_EMPLOYED, OTHER),
+        arrayOf(LIMIT_THEIR_ABILITY, HOUSING_NOT_IN_PLACE, SELF_EMPLOYED, OTHER),
+        arrayOf(LIMIT_THEIR_ABILITY, HOUSING_NOT_IN_PLACE, SELF_EMPLOYED),
+        arrayOf(LIMIT_THEIR_ABILITY, HOUSING_NOT_IN_PLACE, SELF_EMPLOYED),
+        arrayOf(LIMIT_THEIR_ABILITY, HOUSING_NOT_IN_PLACE, SELF_EMPLOYED),
+        arrayOf(LIMIT_THEIR_ABILITY, NO_REASON, SELF_EMPLOYED),
+        arrayOf(NO_REASON, SELF_EMPLOYED),
+        arrayOf(ALREADY_HAS_WORK, HEALTH, SELF_EMPLOYED, OTHER),
+        arrayOf(HOUSING_NOT_IN_PLACE, HEALTH, OTHER),
+        arrayOf(HEALTH, OTHER),
+        arrayOf(HEALTH),
+      )
+      // At last/final time t:  Profiles #1 to #13 are within 12 weeks; profiles #14 to #17 are over 12 weeks
+      profiles = (1..17).map { i ->
+        makeProfileDeclined(
+          prisonNumber = "D%04dDD".format(i),
+          bookingId = i.toLong(),
+          within12Weeks = (i <= 13),
+          *reasons[i - 1],
+        )
+      }.toMutableList()
+    }
+
+    private fun makeProfileDeclined(
+      prisonNumber: String,
+      bookingId: Long,
+      within12Weeks: Boolean,
+      vararg reasons: SupportToWorkDeclinedReason,
+    ) = makeProfileWithSupportDeclined(
+      prisonNumber = prisonNumber,
+      bookingId = bookingId,
+      prisonId = prisonId,
+      prisonName = prisonName,
+      within12Weeks = within12Weeks,
+      *reasons,
     )
 
-  private fun assertRevisionMetadata(
-    expectedRevisionType: RevisionType,
-    expectedCreator: String?,
-    vararg revisions: Revision<Long, ReadinessProfile>,
-  ) {
-    revisions.forEach { revision ->
-      with(revision.metadata) {
-        assertThat(revisionType).isEqualTo(expectedRevisionType)
-        expectedCreator?.let { assertThat(getDelegate<RevisionInfo>().createdBy).isEqualTo(expectedCreator) }
+    private fun makeMetricCount(
+      reason: SupportToWorkDeclinedReason,
+      countWithin12Weeks: Long,
+      countOver12Weeks: Long,
+    ): MetricsCountByStringField = MetricsCountForTest(reason.name, countWithin12Weeks, countOver12Weeks)
+
+    private fun profileAt(idx: Int) = profiles[idx - 1]
+    private fun updateProfileAt(idx: Int, updatedProfile: ReadinessProfile) {
+      profiles[idx - 1] = updatedProfile
+    }
+    private fun ReadinessProfile.within12Weeks() = copyAs(true)
+    private fun ReadinessProfile.over12Weeks() = copyAs(false)
+    private fun ReadinessProfile.copyAs(within12Weeks: Boolean) = (profileData.deepCopy() as ObjectNode)
+      .put("within12Weeks", within12Weeks).let {
+        copy(
+          profileData = it,
+          modifiedDateTime = currentLocalDateTime,
+          createdDateTime = createdDateTime,
+        )
       }
+    private fun ReadinessProfile.addNote(attribute: ActionTodo, noteText: String) = this.apply {
+      (notesData as ArrayNode).add(
+        Note(
+          attribute = attribute,
+          text = noteText,
+          createdBy = auditor,
+          createdDateTime = currentLocalDateTime,
+        ).let { objectMapper.valueToTree(it) as JsonNode },
+      )
     }
   }
 }

@@ -1,38 +1,32 @@
 {
-  "status": "SUPPORT_NEEDED",
-  "statusChange": true,
-  "statusChangeDate": [
-    2022,
-    12,
-    18,
-    20,
-    47,
-    48,
-    247677000
-  ],
-  "statusChangeType": "DECLINED_TO_ACCEPTED",
+  "status": "SUPPORT_DECLINED",
+  "statusChange": false,
+  "statusChangeDate": null,
+  "statusChangeType": "NEW",
   "prisonId": "prison2",
   "prisonName":"Prison 2",
-  "within12Weeks": true,
+  "within12Weeks": false,
   "supportDeclined": {
     "modifiedBy": "sacintha-raj",
     "modifiedDateTime": [
       2022,
       12,
       18,
-      20,
-      47,
-      7,
-      894279000
+      9,
+      15,
+      56,
+      460988000
     ],
     "supportToWorkDeclinedReason": [
-      "FULL_TIME_CARER"
+      "FULL_TIME_CARER",
+      "SELF_EMPLOYED",
+      "RETURNING_TO_JOB",
+      "ALREADY_HAS_WORK"
     ],
     "supportToWorkDeclinedReasonOther": "",
     "circumstanceChangesRequiredToWork": [
       "DEPENDENCY_SUPPORT"
     ],
     "circumstanceChangesRequiredToWorkOther": ""
-  },
-  "supportAccepted": null
+  }
 }
