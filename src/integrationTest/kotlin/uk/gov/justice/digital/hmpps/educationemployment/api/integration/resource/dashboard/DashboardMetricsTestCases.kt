@@ -83,5 +83,5 @@ abstract class MetricsReasonsSupportDeclinedTestCase : DashboardMetricsTestCase(
         "numberOfPrisonersOver12Weeks":${it.numberOfPrisonersOver12Weeks}
       }
     """.trimJsonResponse()
-  }.joinToJsonString().also { println(it) }
+  }.joinToJsonString()
 }
