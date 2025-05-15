@@ -47,8 +47,8 @@ class ReadinessProfileRepositoryShould : ReadinessProfileRepositoryTestCase() {
   private val firstAuditor = ProfileObjects.createdBy
   private val subsequentAuditor = ProfileObjects.lastModifiedBy
 
-  private val prisonId = "prison2"
-  private val prisonName = "Prison 2"
+  private val prisonId = ProfileObjects.prison1
+  private val prisonName = ProfileObjects.prison1Name
   private val startTime = startOfTime
   private val endTime = startOfTime
 

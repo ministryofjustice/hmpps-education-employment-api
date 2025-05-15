@@ -3,8 +3,8 @@
   "statusChange": false,
   "statusChangeDate": null,
   "statusChangeType": "NEW",
-  "prisonId": "prison2",
-  "prisonName":"Prison 2",
+  "prisonId": "prison1",
+  "prisonName":"Prison 1",
   "within12Weeks": false,
   "supportDeclined": {
     "modifiedBy": "sacintha-raj",

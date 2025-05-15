@@ -4,7 +4,9 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.audit.domain.AuditOb
 import uk.gov.justice.digital.hmpps.educationemployment.api.audit.domain.AuditObjects.defaultAuditor
 import uk.gov.justice.digital.hmpps.educationemployment.api.config.CapturedSpringConfigValues
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.CircumstanceChangesRequiredToWork
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.v2.Profile
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v2.ReadinessProfileDTO
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v2.ReadinessProfileRequestDTO
 import java.io.FileNotFoundException
 
 object ProfileObjects {
@@ -18,6 +20,12 @@ object ProfileObjects {
   val anotherPrisonNumber = ANOTHER_PRISON_NUMBER
   val declinedPrisonNumber = SUPPORT_DECLINED_PRISON_NUMBER
   val unknownPrisonNumber = "A1234BD"
+
+  val prisonId = "prison2"
+  val prisonName = "Prison 2"
+
+  val prison1 = "prison1"
+  val prison1Name = "Prison 1"
 
   val createProfileJsonRequest = readJsonProfile("CreateProfile_correct.json")
   val createProfileV1JsonRequest = readJsonProfile("CreateProfile_correct_v1.json")
@@ -33,6 +41,9 @@ object ProfileObjects {
   val profileOfAnotherPrisoner = makeProfile(anotherPrisonNumber, 222222, profileJsonSample2)
   val profileOfUnknownPrisoner = makeProfile(unknownPrisonNumber, 333333, profileJsonSampleReadinessProfile)
   val profileOfDeclinedSupportPrisoner = makeProfile(unknownPrisonNumber, 444444, profileJsonSupportDeclined)
+
+  val profilesFromPrison2 = listOf(profileOfKnownPrisoner, profileOfAnotherPrisoner)
+  val profilesFromPrison1 = listOf(profileOfDeclinedSupportPrisoner)
 
   val migratedProfile = profileOfKnownPrisoner.copy(
     createdBy = "system",
@@ -57,6 +68,11 @@ object ProfileObjects {
   """.trimIndent()
 
   val circumstanceChangesRequiredToWorkList = listOf(CircumstanceChangesRequiredToWork.DEPENDENCY_SUPPORT)
+
+  val ReadinessProfile.requestDto: ReadinessProfileRequestDTO get() = ReadinessProfileRequestDTO(
+    bookingId,
+    objectMapper.treeToValue(profileData, Profile::class.java),
+  )
 
   private fun readJsonProfile(fileName: String) = readTextFromResource("jsonprofile/$fileName")
 

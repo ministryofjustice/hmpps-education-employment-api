@@ -13,10 +13,14 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.v
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.StatusChangeUpdateRequestDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v2.ReadinessProfileDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v2.ReadinessProfileRequestDTO
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.profilesFromPrison1
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.profilesFromPrison2
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.requestDto
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ReadinessProfile
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.v1.Profile as ProfileV1
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v1.ReadinessProfileRequestDTO as ReadinessProfileV1RequestDTO
 
-class ReadinessProfileV2TestCase :
+abstract class ReadinessProfileV2TestCase :
   ReadinessProfileTestCase<ReadinessProfileDTO, ReadinessProfileRequestDTO>(
     READINESS_PROFILE_V2_ENDPOINT,
     ReadinessProfileDTO::class.java,
@@ -53,6 +57,12 @@ class ReadinessProfileV2TestCase :
 
   protected fun Profile.statusChangeRequestToAccepted(newStatus: ProfileStatus = ProfileStatus.SUPPORT_NEEDED) = StatusChangeUpdateRequestDTO(supportAccepted, supportDeclined, newStatus)
   protected fun Profile.statusChangeRequestToDeclined() = StatusChangeUpdateRequestDTO(supportAccepted, supportDeclined, ProfileStatus.SUPPORT_DECLINED)
+
+  protected fun givenMoreProfilesFromMultiplePrisons() = (profilesFromPrison2 + profilesFromPrison1).toTypedArray().let { givenProfilesAreCreated(*it) }
+
+  protected fun givenProfilesAreCreated(vararg profiles: ReadinessProfile) = profiles.map {
+    assertAddReadinessProfileIsOk(it.offenderId, it.requestDto).body
+  }.filterNotNull()
 }
 
 private const val READINESS_PROFILE_V2_ENDPOINT = "/v2/readiness-profiles"
