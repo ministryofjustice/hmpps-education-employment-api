@@ -4,10 +4,12 @@ import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.GetMetricsDocumentSupportResponse
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.GetMetricsReasonsSupportDeclinedResponse
 import java.time.LocalDate
 
 const val METRICS_REASONS_ENDPOINT = "$DASHBOARD_ENDPOINT/reasons-support-declined"
+const val METRICS_DOCUMENTS_ENDPOINT = "$DASHBOARD_ENDPOINT/documents-support-needed"
 
 @Transactional(propagation = Propagation.NOT_SUPPORTED)
 abstract class DashboardMetricsTestCase(
@@ -79,6 +81,20 @@ abstract class MetricsReasonsSupportDeclinedTestCase : DashboardMetricsTestCase(
     """
       {
         "supportToWorkDeclinedReason":"${it.supportToWorkDeclinedReason}",
+        "numberOfPrisonersWithin12Weeks":${it.numberOfPrisonersWithin12Weeks},
+        "numberOfPrisonersOver12Weeks":${it.numberOfPrisonersOver12Weeks}
+      }
+    """.trimJsonResponse()
+  }.joinToJsonString()
+}
+
+abstract class MetricsDocumentsSupportNeededTestCase : DashboardMetricsTestCase(METRICS_DOCUMENTS_ENDPOINT) {
+  protected final val List<GetMetricsDocumentSupportResponse>.metricsResponses: String get() = toMetricsResponses(this)
+
+  private fun toMetricsResponses(expectedMetrics: List<GetMetricsDocumentSupportResponse>) = expectedMetrics.map {
+    """
+      {
+        "actionTodo":"${it.actionTodo}",
         "numberOfPrisonersWithin12Weeks":${it.numberOfPrisonersWithin12Weeks},
         "numberOfPrisonersOver12Weeks":${it.numberOfPrisonersOver12Weeks}
       }
