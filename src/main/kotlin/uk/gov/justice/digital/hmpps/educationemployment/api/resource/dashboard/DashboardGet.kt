@@ -60,7 +60,7 @@ class DashboardGet(
       ),
     ],
   )
-  fun retrieveMetricsLatestApplications(
+  fun retrieveMetricsReasonsSupportDeclined(
     @RequestParam(required = true)
     @Parameter(description = "The identifier of the given prison.", example = "MDI")
     prisonId: String,
@@ -72,7 +72,7 @@ class DashboardGet(
     @Parameter(description = "The end date of reporting period (in ISO-8601 date format)", example = "2024-01-31")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     dateTo: LocalDate,
-  ): ResponseEntity<Any> {
+  ): ResponseEntity<List<GetMetricsReasonsSupportDeclinedResponse>> {
     validateDatePeriod(dateFrom, dateTo)?.let { errorMessage -> throw CustomValidationException(errorMessage) }
 
     val response = profileMetricsService.retrieveMetricsReasonsSupportDeclinedByPrisonIdAndDates(prisonId, dateFrom, dateTo)
