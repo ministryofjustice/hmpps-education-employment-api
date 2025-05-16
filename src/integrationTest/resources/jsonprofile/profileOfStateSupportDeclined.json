@@ -1,11 +1,11 @@
 {
-  "status": "NO_RIGHT_TO_WORK",
+  "status": "SUPPORT_DECLINED",
   "statusChange": false,
   "statusChangeDate": null,
   "statusChangeType": "NEW",
-  "prisonId": "prison2",
-  "prisonName":"Prison 2",
-  "within12Weeks": true,
+  "prisonId": "prison1",
+  "prisonName":"Prison 1",
+  "within12Weeks": false,
   "supportDeclined": {
     "modifiedBy": "sacintha-raj",
     "modifiedDateTime": [
@@ -18,7 +18,10 @@
       460988000
     ],
     "supportToWorkDeclinedReason": [
-      "FULL_TIME_CARER"
+      "FULL_TIME_CARER",
+      "SELF_EMPLOYED",
+      "RETURNING_TO_JOB",
+      "ALREADY_HAS_WORK"
     ],
     "supportToWorkDeclinedReasonOther": "",
     "circumstanceChangesRequiredToWork": [

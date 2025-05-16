@@ -13,7 +13,7 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.SARReadinessProfileDTO
 import java.time.LocalDate
 
-class SARReadinessProfileTestCase : ReadinessProfileV1TestCase() {
+abstract class SARReadinessProfileTestCase : ReadinessProfileV1TestCase() {
   protected val objectMapperSAR = CapturedSpringConfigValues.objectMapperSAR
 
   protected fun assertGetSARResponseIsOk(

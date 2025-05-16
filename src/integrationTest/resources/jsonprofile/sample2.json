@@ -1,5 +1,5 @@
 {
-  "status": "NO_RIGHT_TO_WORK",
+  "status": "SUPPORT_NEEDED",
   "statusChange": false,
   "statusChangeDate": [
     2022,
@@ -13,7 +13,7 @@
   "statusChangeType": "ACCEPTED_TO_DECLINED",
   "prisonId": "prison2",
   "prisonName":"Prison 2",
-  "within12weeks": true,
+  "within12Weeks": true,
   "supportDeclined": null,
   "supportAccepted": {
     "modifiedBy": null,

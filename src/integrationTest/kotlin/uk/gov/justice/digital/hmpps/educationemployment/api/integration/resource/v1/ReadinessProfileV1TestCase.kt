@@ -13,7 +13,7 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.v
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v1.ReadinessProfileDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v1.ReadinessProfileRequestDTO
 
-class ReadinessProfileV1TestCase :
+abstract class ReadinessProfileV1TestCase :
   ReadinessProfileTestCase<ReadinessProfileDTO, ReadinessProfileRequestDTO>(
     READINESS_PROFILE_ENDPOINT,
     ReadinessProfileDTO::class.java,

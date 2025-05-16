@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.access.AuthorizationServiceException
+import org.springframework.web.bind.MissingServletRequestParameterException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.client.RestClientException
@@ -143,18 +144,16 @@ class ControllerAdvice {
       )
   }
 
+  @ExceptionHandler(MissingServletRequestParameterException::class)
+  fun handleMissingParams(e: MissingServletRequestParameterException) = "Missing required parameter: ${e.message}"
+    .also { log.info(it) }
+    .let { makeErrorResponse(e, userMessage = it) }
+
   @ExceptionHandler(MethodArgumentTypeMismatchException::class)
   fun handleMethodArgumentTypeMismatchException(e: MethodArgumentTypeMismatchException): ResponseEntity<ErrorResponse> {
-    log.info("Validation exception: ${e.message}", e)
-    return ResponseEntity
-      .status(HttpStatus.BAD_REQUEST)
-      .body(
-        ErrorResponse(
-          status = HttpStatus.BAD_REQUEST.value(),
-          userMessage = "Validation failure: ${e.message}",
-          developerMessage = e.message,
-        ),
-      )
+    log.info("Method argument type mismatch exception: ${e.message}", e)
+    val errorMessage = "Type mismatch: parameter '${e.name}' with value '${e.value}'"
+    return makeErrorResponse(e, userMessage = "Validation failure: $errorMessage", developerMessage = errorMessage)
   }
 
   @ExceptionHandler(IllegalArgumentException::class)

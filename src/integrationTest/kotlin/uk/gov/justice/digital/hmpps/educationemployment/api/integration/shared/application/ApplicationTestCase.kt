@@ -82,4 +82,16 @@ abstract class ApplicationTestCase : IntegrationTestBase() {
     assertThat(result).isNotNull
     assertThat(result.statusCode).isEqualTo(expectedStatus)
   }
+
+  protected fun assertRequest(
+    url: String,
+    method: HttpMethod,
+    requestEntity: HttpEntity<*>,
+    expectedStatus: HttpStatus,
+    expectedResponse: String? = null,
+  ) = restTemplate.exchange(url, method, requestEntity, String::class.java).also { result ->
+    assertThat(result).isNotNull
+    assertThat(result.statusCode).isEqualTo(expectedStatus)
+    expectedResponse?.let { assertThat(result.body).isEqualTo(expectedResponse) }
+  }
 }
