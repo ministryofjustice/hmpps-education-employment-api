@@ -6,10 +6,12 @@ import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.GetMetricsDocumentSupportResponse
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.GetMetricsReasonsSupportDeclinedResponse
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.GetMetricsWorkStatusResponse
 import java.time.LocalDate
 
 const val METRICS_REASONS_ENDPOINT = "$DASHBOARD_ENDPOINT/reasons-support-declined"
 const val METRICS_DOCUMENTS_ENDPOINT = "$DASHBOARD_ENDPOINT/documents-support-needed"
+const val METRICS_STATUS_ENDPOINT = "$DASHBOARD_ENDPOINT/work-status"
 
 @Transactional(propagation = Propagation.NOT_SUPPORTED)
 abstract class DashboardMetricsTestCase(
@@ -100,4 +102,25 @@ abstract class MetricsDocumentsSupportNeededTestCase : DashboardMetricsTestCase(
       }
     """.trimJsonResponse()
   }.joinToJsonString()
+}
+
+abstract class MetricsWorkStatusTestCase : DashboardMetricsTestCase(METRICS_STATUS_ENDPOINT) {
+  protected final val GetMetricsWorkStatusResponse.metricsResponse: String get() = toMetricsResponses(this)
+
+  private fun toMetricsResponses(expectedMetrics: GetMetricsWorkStatusResponse) = expectedMetrics.statusCounts.map {
+    """
+      {
+        "profileStatus":"${it.profileStatus}",
+        "numberOfPrisonersWithin12Weeks":${it.numberOfPrisonersWithin12Weeks},
+        "numberOfPrisonersOver12Weeks":${it.numberOfPrisonersOver12Weeks}
+      }
+    """.trimJsonResponse()
+  }.joinToJsonString().let { statusCounts ->
+    """
+      {
+        "numberOfPrisonersStatusChange": ${expectedMetrics.numberOfPrisonersStatusChange},
+        "statusCounts": $statusCounts
+      }
+    """.trimIndent().trimJsonResponse()
+  }
 }

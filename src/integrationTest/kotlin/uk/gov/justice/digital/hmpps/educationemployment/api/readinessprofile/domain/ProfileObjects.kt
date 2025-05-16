@@ -27,6 +27,8 @@ object ProfileObjects {
   val prison1 = "prison1"
   val prison1Name = "Prison 1"
 
+  val prison3 = "prison3"
+
   val createProfileJsonRequest = readJsonProfile("CreateProfile_correct.json")
   val createProfileV1JsonRequest = readJsonProfile("CreateProfile_correct_v1.json")
   val createProfileV1JsonRequestWithSupportDeclined = readJsonProfile("CreateProfileDeclinedHistories.json")

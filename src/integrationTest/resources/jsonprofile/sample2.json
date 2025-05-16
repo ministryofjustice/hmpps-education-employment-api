@@ -1,6 +1,6 @@
 {
   "status": "SUPPORT_NEEDED",
-  "statusChange": false,
+  "statusChange": true,
   "statusChangeDate": [
     2022,
     12,
@@ -10,7 +10,7 @@
     17,
     738068000
   ],
-  "statusChangeType": "ACCEPTED_TO_DECLINED",
+  "statusChangeType": "DECLINED_TO_ACCEPTED",
   "prisonId": "prison2",
   "prisonName":"Prison 2",
   "within12Weeks": true,

@@ -12,12 +12,14 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ActionTodo
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ProfileStatus
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.SupportToWorkDeclinedReason
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ReadinessProfileRepository
 import uk.gov.justice.digital.hmpps.educationemployment.api.shared.application.UnitTestBase
 import uk.gov.justice.digital.hmpps.educationemployment.api.shared.infrastructure.MetricsCountForTest
 import java.time.LocalDate
 import kotlin.test.assertContentEquals
+import kotlin.test.assertEquals
 
 class ProfileMetricsServiceTest : UnitTestBase() {
   @Mock
@@ -91,12 +93,33 @@ class ProfileMetricsServiceTest : UnitTestBase() {
 
       assertContentEquals(expected, actual)
     }
+
+    @Test
+    fun `return counts for metric - Work status progress`() {
+      val metricCounts = listOf(
+        makeMetricsCount(ProfileStatus.NO_RIGHT_TO_WORK, 21, 0),
+        makeMetricsCount(ProfileStatus.SUPPORT_DECLINED, 16, 2),
+        makeMetricsCount(ProfileStatus.SUPPORT_NEEDED, 22, 6),
+        makeMetricsCount(ProfileStatus.READY_TO_WORK, 12, 0),
+      )
+      whenever(readinessProfileRepository.countWorkStatusByPrisonIdAndDateTimeBetween(eq(prisonId), any(), any())).thenReturn(metricCounts)
+      whenever(readinessProfileRepository.countWorkStatusChangeByPrisonIdAndDateTimeBetween(eq(prisonId), any(), any())).thenReturn(28L)
+      val expectedStatusCounts = metricCounts.map { it.profileStatus() }.toList()
+      val expectedStatusChangeCount = 28L
+
+      val actual = profileMetricsService.retrieveMetricsWorkStatusProgressByPrisonIdAndDates(prisonId, dateFrom, dateTo)
+
+      assertEquals(expectedStatusChangeCount, actual.numberOfPrisonersStatusChange)
+      assertContentEquals(expectedStatusCounts, actual.statusCounts)
+    }
   }
 
   private fun makeMetricsCount(reasonForSupportDeclined: SupportToWorkDeclinedReason, countWithin12Weeks: Long, countOver12Weeks: Long) = makeMetricsCount(reasonForSupportDeclined.name, countWithin12Weeks, countOver12Weeks)
   private fun makeMetricsCount(documentSupport: ActionTodo, countWithin12Weeks: Long, countOver12Weeks: Long) = makeMetricsCount(documentSupport.name, countWithin12Weeks, countOver12Weeks)
+  private fun makeMetricsCount(profileStatus: ProfileStatus, countWithin12Weeks: Long, countOver12Weeks: Long) = makeMetricsCount(profileStatus.name, countWithin12Weeks, countOver12Weeks)
   private fun makeMetricsCount(field: String, countWithin12Weeks: Long = 0, countOver12Weeks: Long = 0) = MetricsCountForTest(field, countWithin12Weeks, countOver12Weeks)
 
   private fun MetricsCountForTest.reasonsDeclinedResponse() = GetMetricsReasonsSupportDeclinedResponse(field, countWithin12Weeks, countOver12Weeks)
   private fun MetricsCountForTest.documentsSupportResponse() = GetMetricsDocumentSupportResponse(field, countWithin12Weeks, countOver12Weeks)
+  private fun MetricsCountForTest.profileStatus() = MetricsProfileStatusCount(field, countWithin12Weeks, countOver12Weeks)
 }

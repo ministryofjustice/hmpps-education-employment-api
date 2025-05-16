@@ -24,6 +24,12 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.A
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ActionTodo.HOUSING
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ActionTodo.ID
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ActionTodo.PHONE
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ProfileStatus
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ProfileStatus.NO_RIGHT_TO_WORK
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ProfileStatus.READY_TO_WORK
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ProfileStatus.SUPPORT_DECLINED
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ProfileStatus.SUPPORT_NEEDED
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.StatusChange
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.SupportToWorkDeclinedReason
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.SupportToWorkDeclinedReason.ALREADY_HAS_WORK
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.SupportToWorkDeclinedReason.FULL_TIME_CARER
@@ -36,6 +42,7 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.S
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.SupportToWorkDeclinedReason.RETIRED
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.SupportToWorkDeclinedReason.RETURNING_TO_JOB
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.SupportToWorkDeclinedReason.SELF_EMPLOYED
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.v2.Profile
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.profileOfAnotherPrisoner
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.profileOfDeclinedSupportPrisoner
@@ -163,7 +170,7 @@ class ReadinessProfileRepositoryShould : ReadinessProfileRepositoryTestCase() {
 
           val updateCount = 3
           repeat(updateCount) { index ->
-            profile = Note(auditor, currentTimeLocal, ActionTodo.ID, "updating info: ${index + 1}")
+            profile = Note(auditor, currentTimeLocal, ID, "updating info: ${index + 1}")
               .let { (profile.notesData as ArrayNode).deepCopy().add(objectMapper.valueToTree(it) as JsonNode) }
               .let { readinessProfileRepository.saveAndFlush(profile.copy(notesData = it)) }
           }
@@ -217,7 +224,7 @@ class ReadinessProfileRepositoryShould : ReadinessProfileRepositoryTestCase() {
 
   @Nested
   @Transactional(propagation = Propagation.NOT_SUPPORTED)
-  @DisplayName("Given many profiles with support declined ")
+  @DisplayName("Given many profiles with support declined")
   inner class GIvenManyProfilesWithSupportDeclined {
     private lateinit var profiles: MutableList<ReadinessProfile>
     private lateinit var profileMap: MutableMap<String, ReadinessProfile>
@@ -333,10 +340,10 @@ class ReadinessProfileRepositoryShould : ReadinessProfileRepositoryTestCase() {
         updatesOver12WeeksAtTimeT[t]?.map { idx -> profileAt(idx).over12Weeks() }?.let { updatedProfiles += it }
         if (updatedProfiles.isNotEmpty()) {
           timeslotClock.timeslot.set(t.toLong())
-          updatedProfiles.forEach { it.addNote(ActionTodo.ID, "making changes") }
+          updatedProfiles.forEach { it.addNote(ID, "making changes") }
           readinessProfileRepository.saveAllAndFlush(updatedProfiles).onEach {
             profileMap[it.offenderId] = it
-            offenderIdToIdxMap[it.offenderId]?.let { idx -> updateProfileAt(idx, it) }
+            offenderIdToIdxMap[it.offenderId]?.let { idx -> refreshProfileAt(idx, it) }
           }
         }
       }
@@ -395,7 +402,7 @@ class ReadinessProfileRepositoryShould : ReadinessProfileRepositoryTestCase() {
     ): MetricsCountByStringField = MetricsCountForTest(reason.name, countWithin12Weeks, countOver12Weeks)
 
     private fun profileAt(idx: Int) = profiles[idx - 1]
-    private fun updateProfileAt(idx: Int, updatedProfile: ReadinessProfile) {
+    private fun refreshProfileAt(idx: Int, updatedProfile: ReadinessProfile) {
       profiles[idx - 1] = updatedProfile
     }
     private fun ReadinessProfile.within12Weeks() = copyAs(true)
@@ -422,7 +429,7 @@ class ReadinessProfileRepositoryShould : ReadinessProfileRepositoryTestCase() {
 
   @Nested
   @Transactional(propagation = Propagation.NOT_SUPPORTED)
-  @DisplayName("Given many profiles with support accepted ")
+  @DisplayName("Given many profiles with support accepted")
   inner class GIvenManyProfilesWithSupportAccepted {
     private lateinit var profiles: MutableList<ReadinessProfile>
 
@@ -508,5 +515,108 @@ class ReadinessProfileRepositoryShould : ReadinessProfileRepositoryTestCase() {
       countWithin12Weeks: Long,
       countOver12Weeks: Long,
     ): MetricsCountByStringField = MetricsCountForTest(actionTodo.name, countWithin12Weeks, countOver12Weeks)
+  }
+
+  @Nested
+  @Transactional(propagation = Propagation.NOT_SUPPORTED)
+  @DisplayName("Given many profiles with status changes")
+  inner class GIvenManyProfilesWithStatusChanges {
+    private lateinit var profiles: MutableList<ReadinessProfile>
+    private lateinit var profileMap: MutableMap<String, ReadinessProfile>
+    private lateinit var offenderIdToIdxMap: Map<String, Int>
+
+    @BeforeEach
+    internal fun setUp() {
+      auditCleaner.deleteAllRevisions()
+      profiles = mutableListOf()
+      profileMap = mutableMapOf()
+      givenProfilesInTwoTimeslots()
+    }
+
+    @Test
+    fun `return metric of work status counts`() {
+      // time t = [1,2]
+      val startTime = startOfTime + timeslotDuration
+      val endTime = startOfTime + timeslotDuration.multipliedBy(2)
+
+      val expectedMetrics = listOf(
+        makeMetricCount(SUPPORT_NEEDED, 22, 6),
+        makeMetricCount(READY_TO_WORK, 12, 0),
+        makeMetricCount(SUPPORT_DECLINED, 16, 2),
+        makeMetricCount(NO_RIGHT_TO_WORK, 21, 0),
+      )
+
+      val actualMetrics = readinessProfileRepository.countWorkStatusByPrisonIdAndDateTimeBetween(prisonId, startTime, endTime)
+
+      assertThat(actualMetrics).isNotEmpty.hasSize(ProfileStatus.entries.size)
+      assertEquals(expectedMetrics, actualMetrics)
+    }
+
+    @Test
+    fun `return metric of work status change count`() {
+      // time t = [1,2]
+      val startTime = startOfTime + timeslotDuration
+      val endTime = startOfTime + timeslotDuration.multipliedBy(2)
+      val expectedMetric = 28L
+
+      val actualMetric = readinessProfileRepository.countWorkStatusChangeByPrisonIdAndDateTimeBetween(prisonId, startTime, endTime)
+
+      assertEquals(expectedMetric, actualMetric)
+    }
+
+    private fun givenProfilesInTwoTimeslots() {
+      // 1. save all testing profiles
+      givenSomeProfiles()
+      timeslotClock.timeslot.set(1L)
+      readinessProfileRepository.saveAllAndFlush(profiles).onEach { refreshProfile(it) }
+
+      // 2. change status of profiles #1 to #28, from support declined to accepted
+      timeslotClock.timeslot.set(2L)
+      (1..28).map { idx ->
+        profileAt(idx).apply {
+          profileData = parseProfile(profileData).transitSupportDeclinedToAccepted().json
+          modifiedDateTime = currentLocalDateTime
+        }
+      }.let { readinessProfileRepository.saveAllAndFlush(it).onEach { refreshProfile(it) } }
+    }
+
+    private fun givenSomeProfiles() {
+      profiles += (1L..28).map { i ->
+        makeProfileWithSupportDeclined("S%04dSS".format(i), i, prisonId, prisonName, (i <= 22), NO_REASON)
+      } + (29L..40).map { i ->
+        makeProfileWithReadyToWork("R%04dRR".format(i), i, prisonId, prisonName, true)
+      } + (41L..58).map { i ->
+        makeProfileWithSupportDeclined("D%04dDD".format(i), i, prisonId, prisonName, (i <= 56), NO_REASON)
+      } + (59L..79).map { i ->
+        makeProfileWithNoRightToWork("N%04dNN".format(i), i, prisonId, prisonName, true)
+      }
+      // offender ID mapping to index (1-based)
+      offenderIdToIdxMap = profiles.mapIndexed { i, it -> it.offenderId to i + 1 }.toMap()
+    }
+
+    private fun profileAt(idx: Int) = profiles[idx - 1]
+    private fun refreshProfileAt(idx: Int, updatedProfile: ReadinessProfile) {
+      profiles[idx - 1] = updatedProfile
+    }
+
+    private fun refreshProfile(updatedProfile: ReadinessProfile): Unit = updatedProfile.let {
+      profileMap[it.offenderId] = it
+      offenderIdToIdxMap[it.offenderId]?.let { idx -> refreshProfileAt(idx, it) }
+    }
+
+    private fun makeMetricCount(
+      status: ProfileStatus,
+      countWithin12Weeks: Long,
+      countOver12Weeks: Long,
+    ): MetricsCountByStringField = MetricsCountForTest(status.name, countWithin12Weeks, countOver12Weeks)
+
+    private fun Profile.transitSupportDeclinedToAccepted() = this.apply {
+      status = SUPPORT_NEEDED
+      statusChange = true
+      statusChangeType = StatusChange.DECLINED_TO_ACCEPTED
+      statusChangeDate = currentLocalDateTime
+      supportAccepted = makeSupportAccepted(*ActionTodo.entries.toTypedArray())
+      supportDeclined = null
+    }
   }
 }
