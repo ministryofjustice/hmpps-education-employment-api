@@ -19,6 +19,7 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.CustomValidationException
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.GetMetricsDocumentSupportResponse
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.GetMetricsReasonsSupportDeclinedResponse
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.GetMetricsWorkStatusResponse
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.ProfileMetricsService
 import java.time.LocalDate
 
@@ -125,6 +126,55 @@ class DashboardGet(
   ): ResponseEntity<List<GetMetricsDocumentSupportResponse>> {
     validateDatePeriodAndThrowError(dateFrom, dateTo)
     return ResponseEntity.ok(profileMetricsService.retrieveMetricsDocumentsSupportNeededByPrisonIdAndDates(prisonId, dateFrom, dateTo))
+  }
+
+  @GetMapping("/work-status")
+  @Operation(
+    summary = "Retrieve metrics Work status progress, of given prison",
+    description = "requires role ${DESC_READ_ONLY_ROLES}",
+    responses = [
+      ApiResponse(
+        responseCode = "200",
+        description = "The success status is set as the request has been processed correctly.",
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = GetMetricsWorkStatusResponse::class),
+          ),
+        ],
+      ),
+      ApiResponse(
+        responseCode = "400",
+        description = "The failure status is set when the request is invalid. An error response will be provided.",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+      ApiResponse(
+        responseCode = "401",
+        description = "Error: Unauthorised. The error status is set as the required authorisation was not provided.",
+        content = [Content()],
+      ),
+      ApiResponse(
+        responseCode = "403",
+        description = "Error: Access Denied. The error status is set as the required system role(s) was/were not found.",
+        content = [Content()],
+      ),
+    ],
+  )
+  fun retrieveMetricsWorkStatusProgress(
+    @RequestParam(required = true)
+    @Parameter(description = "The identifier of the given prison.", example = "MDI")
+    prisonId: String,
+    @RequestParam(required = true)
+    @Parameter(description = "The start date of reporting period (in ISO-8601 date format)", example = "2024-01-01")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    dateFrom: LocalDate,
+    @RequestParam(required = true)
+    @Parameter(description = "The end date of reporting period (in ISO-8601 date format)", example = "2024-01-31")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    dateTo: LocalDate,
+  ): ResponseEntity<GetMetricsWorkStatusResponse> {
+    validateDatePeriodAndThrowError(dateFrom, dateTo)
+    return ResponseEntity.ok(profileMetricsService.retrieveMetricsWorkStatusProgressByPrisonIdAndDates(prisonId, dateFrom, dateTo))
   }
 
   private fun validateDatePeriodAndThrowError(dateFrom: LocalDate, dateTo: LocalDate) {
