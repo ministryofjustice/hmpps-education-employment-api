@@ -17,6 +17,13 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.integration.shared.i
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.shared.infrastructure.TestClock
 import uk.gov.justice.digital.hmpps.educationemployment.api.notesdata.domain.Note
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ActionTodo
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ActionTodo.BANK_ACCOUNT
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ActionTodo.CV_AND_COVERING_LETTER
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ActionTodo.DISCLOSURE_LETTER
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ActionTodo.EMAIL
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ActionTodo.HOUSING
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ActionTodo.ID
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ActionTodo.PHONE
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.SupportToWorkDeclinedReason
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.SupportToWorkDeclinedReason.ALREADY_HAS_WORK
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.SupportToWorkDeclinedReason.FULL_TIME_CARER
@@ -299,27 +306,6 @@ class ReadinessProfileRepositoryShould : ReadinessProfileRepositoryTestCase() {
       assertEquals(expectedMetrics, counts)
     }
 
-    private fun assertEquals(expected: List<MetricsCountByStringField>, actual: List<MetricsCountByStringField>) {
-      assertThat(actual).isNotEmpty.hasSize(expected.size)
-
-      val expectedMetrics = expected.map { it.field to it }.toMap()
-      val actualMetrics = actual.map { it.field to it }.toMap()
-
-      expectedMetrics.forEach {
-        val reason = it.key
-        assertThat(actualMetrics).containsKeys(reason)
-        val actualMetric = actualMetrics[reason]!!
-        val expectedMetric = expectedMetrics[reason]!!
-        assertThat(actualMetric.field).isEqualTo(expectedMetric.field)
-        assertThat(actualMetric.countWithin12Weeks)
-          .`as`("checking count of reason=$reason, if within 12 weeks")
-          .isEqualTo(expectedMetric.countWithin12Weeks)
-        assertThat(actualMetric.countOver12Weeks)
-          .`as`("checking count of reason=$reason, if over 12 weeks")
-          .isEqualTo(expectedMetric.countOver12Weeks)
-      }
-    }
-
     private fun givenProfilesInFourTimeslots() {
       givenSomeProfiles()
       profileMap = mutableMapOf()
@@ -432,5 +418,95 @@ class ReadinessProfileRepositoryShould : ReadinessProfileRepositoryTestCase() {
         ).let { objectMapper.valueToTree(it) as JsonNode },
       )
     }
+  }
+
+  @Nested
+  @Transactional(propagation = Propagation.NOT_SUPPORTED)
+  @DisplayName("Given many profiles with support accepted ")
+  inner class GIvenManyProfilesWithSupportAccepted {
+    private lateinit var profiles: MutableList<ReadinessProfile>
+
+    @BeforeEach
+    internal fun setUp() {
+      auditCleaner.deleteAllRevisions()
+      givenProfilesInOneTimeslot()
+    }
+
+    @Test
+    fun `return metric of documentation and support needed`() {
+      // time t = [0,0]
+      val startTime = startOfTime
+      val endTime = currentTime
+
+      val expectedMetrics = listOf(
+        makeMetricCount(BANK_ACCOUNT, 2, 1),
+        makeMetricCount(CV_AND_COVERING_LETTER, 22, 6),
+        makeMetricCount(DISCLOSURE_LETTER, 12, 6),
+        makeMetricCount(EMAIL, 16, 6),
+        makeMetricCount(HOUSING, 21, 6),
+        makeMetricCount(ID, 18, 4),
+        makeMetricCount(PHONE, 4, 5),
+      )
+
+      val actualMetrics = readinessProfileRepository.countDocumentsSupportNeededByPrisonIdAndDateTimeBetween(prisonId, startTime, endTime)
+
+      // cannot verify with enum size as INTERVIEW_CLOTHING is not included
+      assertThat(actualMetrics).isNotEmpty.hasSize(expectedMetrics.size)
+      assertEquals(expectedMetrics, actualMetrics)
+    }
+
+    private fun givenProfilesInOneTimeslot() {
+      givenProfilesWithSupportAccepted()
+      // save all profiles at time t=0
+      readinessProfileRepository.saveAllAndFlush(profiles)
+    }
+
+    private fun givenProfilesWithSupportAccepted() {
+      val documentsSupport = mutableListOf<Array<ActionTodo>>()
+      // profiles within12w
+      documentsSupport +=
+        (1..2).map { arrayOf(BANK_ACCOUNT, CV_AND_COVERING_LETTER, DISCLOSURE_LETTER, EMAIL, HOUSING, ID, PHONE) } +
+        (3..4).map { arrayOf(CV_AND_COVERING_LETTER, DISCLOSURE_LETTER, EMAIL, HOUSING, ID, PHONE) } +
+        (5..12).map { arrayOf(CV_AND_COVERING_LETTER, DISCLOSURE_LETTER, EMAIL, HOUSING, ID) } +
+        (13..16).map { arrayOf(CV_AND_COVERING_LETTER, EMAIL, HOUSING, ID) } +
+        (17..18).map { arrayOf(CV_AND_COVERING_LETTER, HOUSING, ID) } +
+        (19..21).map { arrayOf(CV_AND_COVERING_LETTER, HOUSING) }
+      documentsSupport.add(arrayOf(CV_AND_COVERING_LETTER))
+      // profiles over12w
+      documentsSupport.add(arrayOf(BANK_ACCOUNT, CV_AND_COVERING_LETTER, DISCLOSURE_LETTER, EMAIL, HOUSING, ID, PHONE))
+      documentsSupport += (24..26).map { arrayOf(CV_AND_COVERING_LETTER, DISCLOSURE_LETTER, EMAIL, HOUSING, ID, PHONE) }
+      documentsSupport.add(arrayOf(CV_AND_COVERING_LETTER, DISCLOSURE_LETTER, EMAIL, HOUSING, PHONE))
+      documentsSupport.add(arrayOf(CV_AND_COVERING_LETTER, DISCLOSURE_LETTER, EMAIL, HOUSING))
+
+      // Profiles #1 to #22 are within 12 weeks; profiles #23 to #28 are over 12 weeks
+      profiles = (1..28).map { i ->
+        makeProfileAccepted(
+          prisonNumber = "S%04dAA".format(i),
+          bookingId = i.toLong(),
+          within12Weeks = (i <= 22),
+          *documentsSupport[i - 1],
+        )
+      }.toMutableList()
+    }
+
+    private fun makeProfileAccepted(
+      prisonNumber: String,
+      bookingId: Long,
+      within12Weeks: Boolean,
+      vararg documentsSupport: ActionTodo,
+    ) = makeProfileWithSupportAccepted(
+      prisonNumber = prisonNumber,
+      bookingId = bookingId,
+      prisonId = prisonId,
+      prisonName = prisonName,
+      within12Weeks = within12Weeks,
+      *documentsSupport,
+    )
+
+    private fun makeMetricCount(
+      actionTodo: ActionTodo,
+      countWithin12Weeks: Long,
+      countOver12Weeks: Long,
+    ): MetricsCountByStringField = MetricsCountForTest(actionTodo.name, countWithin12Weeks, countOver12Weeks)
   }
 }

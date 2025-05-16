@@ -11,6 +11,7 @@ import org.mockito.Mockito.lenient
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.whenever
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ActionTodo
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.SupportToWorkDeclinedReason
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ReadinessProfileRepository
 import uk.gov.justice.digital.hmpps.educationemployment.api.shared.application.UnitTestBase
@@ -36,11 +37,19 @@ class ProfileMetricsServiceTest : UnitTestBase() {
     internal fun setUp() {
       lenient().whenever(readinessProfileRepository.countReasonsForSupportDeclinedByPrisonIdAndDateTimeBetween(eq(prisonId), any(), any()))
         .thenReturn(emptyList())
+      lenient().whenever(readinessProfileRepository.countDocumentsSupportNeededByPrisonIdAndDateTimeBetween(eq(prisonId), any(), any()))
+        .thenReturn(emptyList())
     }
 
     @Test
     fun `return nothing for metric - Reasons for not wanting support`() {
       val actual = profileMetricsService.retrieveMetricsReasonsSupportDeclinedByPrisonIdAndDates(prisonId, dateFrom, dateTo)
+      assertThat(actual).isEmpty()
+    }
+
+    @Test
+    fun `return nothing for metric - Documentation and support needed`() {
+      val actual = profileMetricsService.retrieveMetricsDocumentsSupportNeededByPrisonIdAndDates(prisonId, dateFrom, dateTo)
       assertThat(actual).isEmpty()
     }
   }
@@ -62,11 +71,32 @@ class ProfileMetricsServiceTest : UnitTestBase() {
 
       assertContentEquals(expected, actual)
     }
+
+    @Test
+    fun `return counts for metric - Documentation and support needed`() {
+      val metricCounts = listOf(
+        makeMetricsCount(ActionTodo.BANK_ACCOUNT, 2, 1),
+        makeMetricsCount(ActionTodo.CV_AND_COVERING_LETTER, 22, 6),
+        makeMetricsCount(ActionTodo.DISCLOSURE_LETTER, 12, 6),
+        makeMetricsCount(ActionTodo.EMAIL, 16, 6),
+        makeMetricsCount(ActionTodo.HOUSING, 21, 6),
+        makeMetricsCount(ActionTodo.ID, 18, 4),
+        makeMetricsCount(ActionTodo.PHONE, 4, 5),
+
+      )
+      whenever(readinessProfileRepository.countDocumentsSupportNeededByPrisonIdAndDateTimeBetween(eq(prisonId), any(), any())).thenReturn(metricCounts)
+      val expected = metricCounts.map { it.documentsSupportResponse() }.toList()
+
+      val actual = profileMetricsService.retrieveMetricsDocumentsSupportNeededByPrisonIdAndDates(prisonId, dateFrom, dateTo)
+
+      assertContentEquals(expected, actual)
+    }
   }
 
   private fun makeMetricsCount(reasonForSupportDeclined: SupportToWorkDeclinedReason, countWithin12Weeks: Long, countOver12Weeks: Long) = makeMetricsCount(reasonForSupportDeclined.name, countWithin12Weeks, countOver12Weeks)
-
+  private fun makeMetricsCount(documentSupport: ActionTodo, countWithin12Weeks: Long, countOver12Weeks: Long) = makeMetricsCount(documentSupport.name, countWithin12Weeks, countOver12Weeks)
   private fun makeMetricsCount(field: String, countWithin12Weeks: Long = 0, countOver12Weeks: Long = 0) = MetricsCountForTest(field, countWithin12Weeks, countOver12Weeks)
 
   private fun MetricsCountForTest.reasonsDeclinedResponse() = GetMetricsReasonsSupportDeclinedResponse(field, countWithin12Weeks, countOver12Weeks)
+  private fun MetricsCountForTest.documentsSupportResponse() = GetMetricsDocumentSupportResponse(field, countWithin12Weeks, countOver12Weeks)
 }

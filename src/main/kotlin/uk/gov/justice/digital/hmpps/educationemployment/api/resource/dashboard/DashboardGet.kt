@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.educationemployment.api.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.CustomValidationException
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.GetMetricsDocumentSupportResponse
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.GetMetricsReasonsSupportDeclinedResponse
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.ProfileMetricsService
 import java.time.LocalDate
@@ -73,12 +74,62 @@ class DashboardGet(
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     dateTo: LocalDate,
   ): ResponseEntity<List<GetMetricsReasonsSupportDeclinedResponse>> {
-    validateDatePeriod(dateFrom, dateTo)?.let { errorMessage -> throw CustomValidationException(errorMessage) }
-
-    val response = profileMetricsService.retrieveMetricsReasonsSupportDeclinedByPrisonIdAndDates(prisonId, dateFrom, dateTo)
-    return ResponseEntity.ok(response)
+    validateDatePeriodAndThrowError(dateFrom, dateTo)
+    return ResponseEntity.ok(profileMetricsService.retrieveMetricsReasonsSupportDeclinedByPrisonIdAndDates(prisonId, dateFrom, dateTo))
   }
 
+  @GetMapping("/documents-support-needed")
+  @Operation(
+    summary = "Retrieve metrics Documentation and support needed, of given prison",
+    description = "requires role ${DESC_READ_ONLY_ROLES}",
+    responses = [
+      ApiResponse(
+        responseCode = "200",
+        description = "The success status is set as the request has been processed correctly.",
+        content = [
+          Content(
+            mediaType = "application/json",
+            array = ArraySchema(schema = Schema(implementation = GetMetricsReasonsSupportDeclinedResponse::class)),
+          ),
+        ],
+      ),
+      ApiResponse(
+        responseCode = "400",
+        description = "The failure status is set when the request is invalid. An error response will be provided.",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+      ApiResponse(
+        responseCode = "401",
+        description = "Error: Unauthorised. The error status is set as the required authorisation was not provided.",
+        content = [Content()],
+      ),
+      ApiResponse(
+        responseCode = "403",
+        description = "Error: Access Denied. The error status is set as the required system role(s) was/were not found.",
+        content = [Content()],
+      ),
+    ],
+  )
+  fun retrieveMetricsDocumentsSupportNeeded(
+    @RequestParam(required = true)
+    @Parameter(description = "The identifier of the given prison.", example = "MDI")
+    prisonId: String,
+    @RequestParam(required = true)
+    @Parameter(description = "The start date of reporting period (in ISO-8601 date format)", example = "2024-01-01")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    dateFrom: LocalDate,
+    @RequestParam(required = true)
+    @Parameter(description = "The end date of reporting period (in ISO-8601 date format)", example = "2024-01-31")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    dateTo: LocalDate,
+  ): ResponseEntity<List<GetMetricsDocumentSupportResponse>> {
+    validateDatePeriodAndThrowError(dateFrom, dateTo)
+    return ResponseEntity.ok(profileMetricsService.retrieveMetricsDocumentsSupportNeededByPrisonIdAndDates(prisonId, dateFrom, dateTo))
+  }
+
+  private fun validateDatePeriodAndThrowError(dateFrom: LocalDate, dateTo: LocalDate) {
+    validateDatePeriod(dateFrom, dateTo)?.let { errorMessage -> throw CustomValidationException(errorMessage) }
+  }
   private fun validateDatePeriod(dateFrom: LocalDate, dateTo: LocalDate): String? = when {
     dateFrom.isAfter(dateTo) -> "dateFrom ($dateFrom) cannot be after dateTo ($dateTo)"
     else -> null

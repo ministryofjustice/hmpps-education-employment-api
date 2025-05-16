@@ -27,15 +27,32 @@ class ProfileMetricsService(
     endTime = dateTo.endAt,
   ).reasonsSupportDeclinedResponses()
 
+  fun retrieveMetricsDocumentsSupportNeededByPrisonIdAndDates(
+    prisonId: String,
+    dateFrom: LocalDate,
+    dateTo: LocalDate,
+  ): List<GetMetricsDocumentSupportResponse> = readinessProfileRepository.countDocumentsSupportNeededByPrisonIdAndDateTimeBetween(
+    prisonId,
+    startTime = dateFrom.startAt,
+    endTime = dateTo.endAt,
+  ).documentsSupportResponses()
+
   private val LocalDate.startAt: Instant get() = this.atStartOfDay().instant
   private val LocalDate.endAt: Instant get() = this.atTime(atEndOfDay).instant
   private val LocalDateTime.instant: Instant get() = this.atZone(timeProvider.timezoneId).toInstant()
 
   private fun List<MetricsCountByStringField>.reasonsSupportDeclinedResponses() = this.map { GetMetricsReasonsSupportDeclinedResponse(it.field, it.countWithin12Weeks, it.countOver12Weeks) }
+  private fun List<MetricsCountByStringField>.documentsSupportResponses() = this.map { GetMetricsDocumentSupportResponse(it.field, it.countWithin12Weeks, it.countOver12Weeks) }
 }
 
 data class GetMetricsReasonsSupportDeclinedResponse(
   val supportToWorkDeclinedReason: String,
+  val numberOfPrisonersWithin12Weeks: Long,
+  val numberOfPrisonersOver12Weeks: Long,
+)
+
+data class GetMetricsDocumentSupportResponse(
+  val actionTodo: String,
   val numberOfPrisonersWithin12Weeks: Long,
   val numberOfPrisonersOver12Weeks: Long,
 )

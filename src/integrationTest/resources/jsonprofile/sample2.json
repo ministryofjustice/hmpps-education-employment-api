@@ -31,8 +31,32 @@
       ],
       "actions": [
         {
-          "todoItem": "BANK_ACCOUNT",
-          "status": "COMPLETED"
+          "status": "COMPLETED",
+          "todoItem": "CV_AND_COVERING_LETTER"
+        },
+        {
+          "status": "IN_PROGRESS",
+          "todoItem": "ID"
+        },
+        {
+          "status": "NOT_STARTED",
+          "todoItem": "EMAIL"
+        },
+        {
+          "status": "NOT_STARTED",
+          "todoItem": "PHONE"
+        },
+        {
+          "status": "NOT_STARTED",
+          "todoItem": "HOUSING"
+        },
+        {
+          "status": "COMPLETED",
+          "todoItem": "BANK_ACCOUNT"
+        },
+        {
+          "status": "IN_PROGRESS",
+          "todoItem": "DISCLOSURE_LETTER"
         }
       ]
     },
