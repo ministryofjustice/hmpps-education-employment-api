@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.http.ResponseEntity
@@ -26,6 +27,7 @@ import java.time.LocalDate
 @Validated
 @RestController
 @RequestMapping("/dashboard", produces = [APPLICATION_JSON_VALUE])
+@Tag(name = "Dashboard")
 @PreAuthorize("hasAnyRole('WORK_READINESS_EDIT','WORK_READINESS_VIEW')")
 class DashboardGet(
   private val profileMetricsService: ProfileMetricsService,
@@ -90,7 +92,7 @@ class DashboardGet(
         content = [
           Content(
             mediaType = "application/json",
-            array = ArraySchema(schema = Schema(implementation = GetMetricsReasonsSupportDeclinedResponse::class)),
+            array = ArraySchema(schema = Schema(implementation = GetMetricsDocumentSupportResponse::class)),
           ),
         ],
       ),

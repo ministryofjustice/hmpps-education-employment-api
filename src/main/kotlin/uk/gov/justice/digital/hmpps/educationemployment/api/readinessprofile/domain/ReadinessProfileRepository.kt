@@ -61,7 +61,7 @@ interface ReadinessProfileRepository :
 
   @Query(
     """
-   WITH recent_updates AS (
+    WITH recent_updates AS (
       SELECT rev_number, offender_id, profile_data FROM work_readiness_audit wra
       WHERE wra.modified_date_time BETWEEN :startTime AND :endTime AND wra.rev_type IN (0,1)
     ), profile_at_start AS (
