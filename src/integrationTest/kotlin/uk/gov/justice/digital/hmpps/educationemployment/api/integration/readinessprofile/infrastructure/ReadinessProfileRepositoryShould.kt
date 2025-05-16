@@ -217,7 +217,7 @@ class ReadinessProfileRepositoryShould : ReadinessProfileRepositoryTestCase() {
 
   @Nested
   @Transactional(propagation = Propagation.NOT_SUPPORTED)
-  @DisplayName("Given many profiles with support declined ")
+  @DisplayName("Given many profiles with support declined")
   inner class GIvenManyProfilesWithSupportDeclined {
     private lateinit var profiles: MutableList<ReadinessProfile>
     private lateinit var profileMap: MutableMap<String, ReadinessProfile>
@@ -422,7 +422,7 @@ class ReadinessProfileRepositoryShould : ReadinessProfileRepositoryTestCase() {
 
   @Nested
   @Transactional(propagation = Propagation.NOT_SUPPORTED)
-  @DisplayName("Given many profiles with support accepted ")
+  @DisplayName("Given many profiles with support accepted")
   inner class GIvenManyProfilesWithSupportAccepted {
     private lateinit var profiles: MutableList<ReadinessProfile>
 
