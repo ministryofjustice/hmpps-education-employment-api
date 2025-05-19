@@ -1,5 +1,7 @@
 package uk.gov.justice.digital.hmpps.educationemployment.api.integration.readinessprofile.infrastructure
 
+import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.JsonNode
 import org.assertj.core.api.Assertions.assertThat
 import org.springframework.data.history.Revision
 import org.springframework.data.history.RevisionMetadata.RevisionType
@@ -26,6 +28,8 @@ import java.time.Instant
 import java.time.LocalDateTime
 
 abstract class ReadinessProfileRepositoryTestCase : RepositoryTestCase() {
+  private val typeRefProfile by lazy { object : TypeReference<Profile>() {} }
+
   protected val testClock: TestClock = TestClock.defaultClock()
   override val currentTime: Instant get() = testClock.instant
   protected val currentLocalDateTime: LocalDateTime get() = testClock.localDateTime
@@ -38,6 +42,8 @@ abstract class ReadinessProfileRepositoryTestCase : RepositoryTestCase() {
       modifiedDateTime = currentTimeLocal,
       modifiedBy = auditor,
     )
+
+  protected val Profile.json: JsonNode get() = objectMapper.valueToTree(this)
 
   protected fun assertRevisionMetadata(
     expectedRevisionType: RevisionType,
@@ -89,13 +95,15 @@ abstract class ReadinessProfileRepositoryTestCase : RepositoryTestCase() {
     prisonName: String? = null,
     within12Weeks: Boolean = true,
     vararg actionTodo: ActionTodo,
-  ): ReadinessProfile {
+  ) = makeProfile(prisonNumber, bookingId, ProfileStatus.SUPPORT_NEEDED, prisonId, prisonName, within12Weeks, supportAccepted = makeSupportAccepted(*actionTodo))
+
+  protected fun makeSupportAccepted(vararg actionTodo: ActionTodo): SupportAccepted {
     val actionsRequired = actionTodo.map { Action(it, ActionStatus.NOT_STARTED, null, null) }
       .let { ActionsRequired(auditor, currentLocalDateTime, it) }
     val workImpacts = WorkImpacts(auditor, currentLocalDateTime, emptyList(), false, false, false)
     val workInterests = WorkInterests(auditor, currentLocalDateTime, emptyList(), "", "")
     val workExperience = WorkExperience(auditor, currentLocalDateTime, "", emptyList(), "")
-    val supportAccepted = SupportAccepted(
+    return SupportAccepted(
       modifiedBy = auditor,
       modifiedDateTime = currentLocalDateTime,
       actionsRequired = actionsRequired,
@@ -103,19 +111,44 @@ abstract class ReadinessProfileRepositoryTestCase : RepositoryTestCase() {
       workInterests = workInterests,
       workExperience = workExperience,
     )
-    val profile = Profile(
-      status = ProfileStatus.SUPPORT_NEEDED,
-      prisonId = prisonId,
-      prisonName = prisonName,
-      within12Weeks = within12Weeks,
-      statusChange = false,
-      statusChangeDate = null,
-      statusChangeType = StatusChange.NEW,
-      supportDeclined = null,
-      supportAccepted = supportAccepted,
-    )
-    return makeReadinessProfile(prisonNumber, bookingId, profile)
   }
+
+  protected fun makeProfileWithNoRightToWork(
+    prisonNumber: String,
+    bookingId: Long,
+    prisonId: String,
+    prisonName: String? = null,
+    within12Weeks: Boolean = true,
+  ) = makeProfile(prisonNumber, bookingId, ProfileStatus.NO_RIGHT_TO_WORK, prisonId, prisonName, within12Weeks)
+
+  protected fun makeProfileWithReadyToWork(
+    prisonNumber: String,
+    bookingId: Long,
+    prisonId: String,
+    prisonName: String? = null,
+    within12Weeks: Boolean = true,
+  ) = makeProfile(prisonNumber, bookingId, ProfileStatus.READY_TO_WORK, prisonId, prisonName, within12Weeks, supportAccepted = makeSupportAccepted())
+
+  protected fun makeProfile(
+    prisonNumber: String,
+    bookingId: Long,
+    status: ProfileStatus,
+    prisonId: String,
+    prisonName: String? = null,
+    within12Weeks: Boolean = true,
+    supportDeclined: SupportDeclined? = null,
+    supportAccepted: SupportAccepted? = null,
+  ) = Profile(
+    status = status,
+    prisonId = prisonId,
+    prisonName = prisonName,
+    within12Weeks = within12Weeks,
+    statusChange = false,
+    statusChangeDate = null,
+    statusChangeType = StatusChange.NEW,
+    supportDeclined = supportDeclined,
+    supportAccepted = supportAccepted,
+  ).let { profile -> makeReadinessProfile(prisonNumber, bookingId, profile) }
 
   protected fun assertEquals(expected: List<MetricsCountByStringField>, actual: List<MetricsCountByStringField>) {
     assertThat(actual).isNotEmpty.hasSize(expected.size)
@@ -137,6 +170,8 @@ abstract class ReadinessProfileRepositoryTestCase : RepositoryTestCase() {
         .isEqualTo(expectedMetric.countOver12Weeks)
     }
   }
+
+  protected fun parseProfile(profileData: JsonNode): Profile = objectMapper.treeToValue(profileData, typeRefProfile)
 
   private fun makeReadinessProfile(prisonNumber: String, bookingId: Long, profile: Profile) = ReadinessProfile(
     offenderId = prisonNumber,
