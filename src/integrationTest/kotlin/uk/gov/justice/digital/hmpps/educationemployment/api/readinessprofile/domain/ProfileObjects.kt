@@ -58,10 +58,10 @@ object ProfileObjects {
     }
   }
 
-  val noteString = "Mary had another little lamb"
+  val noteString = "M*** had another little lamb"
 
-  val createdBy = "CCOLUMBUS_GEN"
-  val lastModifiedBy = "JSMITH_GEN"
+  val createdBy = "USER1_GEN"
+  val lastModifiedBy = "USER2_GEN"
 
   var noteFreeTextJson = """
     {

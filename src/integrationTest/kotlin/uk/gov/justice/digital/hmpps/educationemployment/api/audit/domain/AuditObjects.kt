@@ -5,7 +5,7 @@ import java.time.ZoneId
 
 object AuditObjects {
   val username = "auser_gen"
-  val displayName = "John Doe"
+  val displayName = "Some One"
   val system = "system"
 
   val defaultAuditor = username

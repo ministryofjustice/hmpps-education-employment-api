@@ -47,13 +47,13 @@ object ProfileObjects {
   val updatedBookingId = 123457L
   var actionToDoCV = ActionTodo.CV_AND_COVERING_LETTER
 
-  val noteString = "Mary had another little lamb"
+  val noteString = "M*** had another little lamb"
 
   val createProfileJsonRequest = readJsonProfile("CreateProfile_correct.json")
   val createProfileV1JsonRequest = readJsonProfile("CreateProfile_correct_v1.json")
 
-  val createdBy = "sacintha-raj"
-  val updatedBy = "phil-whils"
+  val createdBy = "user-one"
+  val updatedBy = "user-two"
 
   val createdTime = LocalDateTime.of(2024, 1, 1, 12, 10, 20)
   val modifiedTime = createdTime.plusDays(10)
