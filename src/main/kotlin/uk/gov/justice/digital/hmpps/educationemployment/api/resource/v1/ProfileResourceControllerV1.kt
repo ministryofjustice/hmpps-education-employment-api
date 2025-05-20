@@ -39,7 +39,7 @@ private const val API_V2_PATH = "/v2/readiness-profiles/{offenderId}"
 
 @Validated
 @RestController
-@RequestMapping("/readiness-profiles", "/v1/readiness-profiles", produces = [MediaType.APPLICATION_JSON_VALUE])
+@RequestMapping("/v1/readiness-profiles", produces = [MediaType.APPLICATION_JSON_VALUE])
 @Tag(name = API_VERSION)
 class ProfileResourceControllerV1(
   private val profileService: ProfileV1Service,
@@ -224,7 +224,6 @@ class ProfileResourceControllerV1(
 
   @PreAuthorize("hasAnyRole('WORK_READINESS_VIEW','WORK_READINESS_EDIT')")
   @GetMapping("/{offenderId}")
-  @Tag(name = "Popular")
   @Operation(
     summary = "Fetch the work readiness profile for a given offender",
     description = "Currently requires role $DESC_READ_ONLY_ROLES",

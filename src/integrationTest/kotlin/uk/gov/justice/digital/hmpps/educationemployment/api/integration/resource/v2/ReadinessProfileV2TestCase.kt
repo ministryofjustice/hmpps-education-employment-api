@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.ParameterizedTypeReference
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.helpers.ProfileV1Helper
+import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.READINESS_PROFILE_ENDPOINT
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.ReadinessProfileTestCase
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ProfileStatus
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.v2.Profile
@@ -22,7 +23,7 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.app
 
 abstract class ReadinessProfileV2TestCase :
   ReadinessProfileTestCase<ReadinessProfileDTO, ReadinessProfileRequestDTO>(
-    READINESS_PROFILE_V2_ENDPOINT,
+    READINESS_PROFILE_ENDPOINT,
     ReadinessProfileDTO::class.java,
     object : TypeReference<ReadinessProfileRequestDTO>() {},
     object : ParameterizedTypeReference<List<ReadinessProfileDTO>>() {},
@@ -64,5 +65,3 @@ abstract class ReadinessProfileV2TestCase :
     assertAddReadinessProfileIsOk(it.offenderId, it.requestDto).body
   }.filterNotNull()
 }
-
-private const val READINESS_PROFILE_V2_ENDPOINT = "/v2/readiness-profiles"

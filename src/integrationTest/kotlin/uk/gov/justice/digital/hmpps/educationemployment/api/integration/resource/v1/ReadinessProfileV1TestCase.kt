@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.JsonNode
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.ParameterizedTypeReference
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.helpers.ProfileV1Helper
-import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.READINESS_PROFILE_ENDPOINT
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.ReadinessProfileTestCase
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.v1.Profile
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v1.ReadinessProfileDTO
@@ -15,7 +14,7 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.app
 
 abstract class ReadinessProfileV1TestCase :
   ReadinessProfileTestCase<ReadinessProfileDTO, ReadinessProfileRequestDTO>(
-    READINESS_PROFILE_ENDPOINT,
+    READINESS_PROFILE_V1_ENDPOINT,
     ReadinessProfileDTO::class.java,
     object : TypeReference<ReadinessProfileRequestDTO>() {},
     object : ParameterizedTypeReference<List<ReadinessProfileDTO>>() {},
@@ -41,3 +40,5 @@ abstract class ReadinessProfileV1TestCase :
 
   protected fun parseProfile(profileData: JsonNode): Profile = objectMapper.treeToValue(profileData, typeRefProfile)
 }
+
+private const val READINESS_PROFILE_V1_ENDPOINT = "/v1/readiness-profiles"

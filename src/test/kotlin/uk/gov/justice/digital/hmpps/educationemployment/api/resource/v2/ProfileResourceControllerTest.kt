@@ -26,7 +26,7 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.dom
 import uk.gov.justice.digital.hmpps.educationemployment.api.resource.ControllerTestBase
 import kotlin.test.assertEquals
 
-private const val READINESS_PROFILES_PATH = "/v2/readiness-profiles"
+private const val READINESS_PROFILES_PATH = "/readiness-profiles"
 const val SEARCH_ENDPOINT = "$READINESS_PROFILES_PATH/search"
 const val PROFILE_ENDPOINT = "$READINESS_PROFILES_PATH/{id}"
 
