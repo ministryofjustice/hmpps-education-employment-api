@@ -23,6 +23,7 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.A
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ActionTodo.EMAIL
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ActionTodo.HOUSING
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ActionTodo.ID
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ActionTodo.INTERVIEW_CLOTHING
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ActionTodo.PHONE
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ProfileStatus
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ProfileStatus.NO_RIGHT_TO_WORK
@@ -43,6 +44,7 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.S
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.SupportToWorkDeclinedReason.RETURNING_TO_JOB
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.SupportToWorkDeclinedReason.SELF_EMPLOYED
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.v2.Profile
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.MetricsSummaryCount
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.profileOfAnotherPrisoner
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.profileOfDeclinedSupportPrisoner
@@ -225,7 +227,7 @@ class ReadinessProfileRepositoryShould : ReadinessProfileRepositoryTestCase() {
   @Nested
   @Transactional(propagation = Propagation.NOT_SUPPORTED)
   @DisplayName("Given many profiles with support declined")
-  inner class GIvenManyProfilesWithSupportDeclined {
+  inner class GivenManyProfilesWithSupportDeclined {
     private lateinit var profiles: MutableList<ReadinessProfile>
     private lateinit var profileMap: MutableMap<String, ReadinessProfile>
 
@@ -381,20 +383,6 @@ class ReadinessProfileRepositoryShould : ReadinessProfileRepositoryTestCase() {
       }.toMutableList()
     }
 
-    private fun makeProfileDeclined(
-      prisonNumber: String,
-      bookingId: Long,
-      within12Weeks: Boolean,
-      vararg reasons: SupportToWorkDeclinedReason,
-    ) = makeProfileWithSupportDeclined(
-      prisonNumber = prisonNumber,
-      bookingId = bookingId,
-      prisonId = prisonId,
-      prisonName = prisonName,
-      within12Weeks = within12Weeks,
-      *reasons,
-    )
-
     private fun makeMetricCount(
       reason: SupportToWorkDeclinedReason,
       countWithin12Weeks: Long,
@@ -430,7 +418,7 @@ class ReadinessProfileRepositoryShould : ReadinessProfileRepositoryTestCase() {
   @Nested
   @Transactional(propagation = Propagation.NOT_SUPPORTED)
   @DisplayName("Given many profiles with support accepted")
-  inner class GIvenManyProfilesWithSupportAccepted {
+  inner class GivenManyProfilesWithSupportAccepted {
     private lateinit var profiles: MutableList<ReadinessProfile>
 
     @BeforeEach
@@ -496,20 +484,6 @@ class ReadinessProfileRepositoryShould : ReadinessProfileRepositoryTestCase() {
       }.toMutableList()
     }
 
-    private fun makeProfileAccepted(
-      prisonNumber: String,
-      bookingId: Long,
-      within12Weeks: Boolean,
-      vararg documentsSupport: ActionTodo,
-    ) = makeProfileWithSupportAccepted(
-      prisonNumber = prisonNumber,
-      bookingId = bookingId,
-      prisonId = prisonId,
-      prisonName = prisonName,
-      within12Weeks = within12Weeks,
-      *documentsSupport,
-    )
-
     private fun makeMetricCount(
       actionTodo: ActionTodo,
       countWithin12Weeks: Long,
@@ -520,7 +494,7 @@ class ReadinessProfileRepositoryShould : ReadinessProfileRepositoryTestCase() {
   @Nested
   @Transactional(propagation = Propagation.NOT_SUPPORTED)
   @DisplayName("Given many profiles with status changes")
-  inner class GIvenManyProfilesWithStatusChanges {
+  inner class GivenManyProfilesWithStatusChanges {
     private lateinit var profiles: MutableList<ReadinessProfile>
     private lateinit var profileMap: MutableMap<String, ReadinessProfile>
     private lateinit var offenderIdToIdxMap: Map<String, Int>
@@ -615,8 +589,100 @@ class ReadinessProfileRepositoryShould : ReadinessProfileRepositoryTestCase() {
       statusChange = true
       statusChangeType = StatusChange.DECLINED_TO_ACCEPTED
       statusChangeDate = currentLocalDateTime
-      supportAccepted = makeSupportAccepted(*ActionTodo.entries.toTypedArray())
+      supportAccepted = makeSupportAccepted(*ActionTodo.entries.filterNot { it == INTERVIEW_CLOTHING }.toTypedArray())
       supportDeclined = null
     }
   }
+
+  @Nested
+  @Transactional(propagation = Propagation.NOT_SUPPORTED)
+  @DisplayName("Given many profiles with various status")
+  inner class GivenManyProfilesWithVariousStatus {
+    private lateinit var profiles: MutableList<ReadinessProfile>
+
+    @BeforeEach
+    internal fun setUp() {
+      auditCleaner.deleteAllRevisions()
+      givenProfilesInOneTimeslot()
+    }
+
+    @Test
+    fun `return metric of summary`() {
+      // time t = [0,0]
+      val startTime = startOfTime
+      val endTime = currentTime
+      val expectedMetrics = MetricsSummaryCount(34, 6, 16, 21)
+
+      val actualMetrics = readinessProfileRepository.countSummaryByPrisonIdAndDateTimeBetween(prisonId, startTime, endTime)
+
+      assertEquals(expectedMetrics, actualMetrics)
+    }
+
+    private fun givenProfilesInOneTimeslot() {
+      givenProfilesWithVariousStatus()
+      // save all profiles at time t=0
+      readinessProfileRepository.saveAllAndFlush(profiles)
+    }
+
+    private fun givenProfilesWithVariousStatus() {
+      // total 40 profiles
+      //    34 within 12 weeks ; 6 over 12 weeks
+      //    16 declined support
+      //    21 no right to work
+      profiles = mutableListOf()
+
+      // Profiles #1 to #34 are within 12 weeks; profiles #35 to #40 are over 12 weeks
+      // Profiles #1 to #16 have declined support
+      profiles += (1..16).map { i ->
+        makeProfileDeclined(
+          prisonNumber = "D%04dDD".format(i),
+          bookingId = i.toLong(),
+          within12Weeks = true,
+          NO_REASON,
+        )
+      }
+      // Profiles #17 to #37 have no right to work
+      profiles += (17..37).map { i ->
+        makeProfileWithNoRightToWork("N%04dNN".format(i), i.toLong(), prisonId, prisonName, i <= 34)
+      }
+      // Profiles #38 to #40 have accepted support
+      val allActions = ActionTodo.entries.filterNot { it == INTERVIEW_CLOTHING }.toTypedArray()
+      profiles += (38..40).map { i ->
+        makeProfileAccepted(
+          prisonNumber = "S%04dAA".format(i),
+          bookingId = i.toLong(),
+          within12Weeks = false,
+          *allActions,
+        )
+      }.toMutableList()
+    }
+  }
+
+  private fun makeProfileDeclined(
+    prisonNumber: String,
+    bookingId: Long,
+    within12Weeks: Boolean,
+    vararg reasons: SupportToWorkDeclinedReason,
+  ) = makeProfileWithSupportDeclined(
+    prisonNumber = prisonNumber,
+    bookingId = bookingId,
+    prisonId = prisonId,
+    prisonName = prisonName,
+    within12Weeks = within12Weeks,
+    *reasons,
+  )
+
+  private fun makeProfileAccepted(
+    prisonNumber: String,
+    bookingId: Long,
+    within12Weeks: Boolean,
+    vararg documentsSupport: ActionTodo,
+  ) = makeProfileWithSupportAccepted(
+    prisonNumber = prisonNumber,
+    bookingId = bookingId,
+    prisonId = prisonId,
+    prisonName = prisonName,
+    within12Weeks = within12Weeks,
+    *documentsSupport,
+  )
 }

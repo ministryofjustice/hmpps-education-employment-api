@@ -99,7 +99,13 @@ abstract class ReadinessProfileRepositoryTestCase : RepositoryTestCase() {
 
   protected fun makeSupportAccepted(vararg actionTodo: ActionTodo): SupportAccepted {
     val actionsRequired = actionTodo.map { Action(it, ActionStatus.NOT_STARTED, null, null) }
-      .let { ActionsRequired(auditor, currentLocalDateTime, it) }
+      .let { actionNotStarted ->
+        val actionsCompleted = actionTodo.toSet().let { actions ->
+          ActionTodo.entries.filter { it != ActionTodo.INTERVIEW_CLOTHING && !actions.contains(it) }
+            .map { Action(it, ActionStatus.COMPLETED, null, null) }
+        }
+        ActionsRequired(auditor, currentLocalDateTime, actionNotStarted + actionsCompleted)
+      }
     val workImpacts = WorkImpacts(auditor, currentLocalDateTime, emptyList(), false, false, false)
     val workInterests = WorkInterests(auditor, currentLocalDateTime, emptyList(), "", "")
     val workExperience = WorkExperience(auditor, currentLocalDateTime, "", emptyList(), "")
