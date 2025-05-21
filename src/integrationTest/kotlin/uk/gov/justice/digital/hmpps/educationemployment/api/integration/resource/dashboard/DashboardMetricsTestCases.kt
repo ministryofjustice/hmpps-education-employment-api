@@ -6,12 +6,14 @@ import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.GetMetricsDocumentSupportResponse
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.GetMetricsReasonsSupportDeclinedResponse
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.GetMetricsSummaryResponse
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.GetMetricsWorkStatusResponse
 import java.time.LocalDate
 
 const val METRICS_REASONS_ENDPOINT = "$DASHBOARD_ENDPOINT/reasons-support-declined"
 const val METRICS_DOCUMENTS_ENDPOINT = "$DASHBOARD_ENDPOINT/documents-support-needed"
 const val METRICS_STATUS_ENDPOINT = "$DASHBOARD_ENDPOINT/work-status"
+const val METRICS_SUMMARY_ENDPOINT = "$DASHBOARD_ENDPOINT/summary"
 
 @Transactional(propagation = Propagation.NOT_SUPPORTED)
 abstract class DashboardMetricsTestCase(
@@ -122,5 +124,20 @@ abstract class MetricsWorkStatusTestCase : DashboardMetricsTestCase(METRICS_STAT
         "statusCounts": $statusCounts
       }
     """.trimIndent().trimJsonResponse()
+  }
+}
+
+abstract class MetricsSummaryTestCase : DashboardMetricsTestCase(METRICS_SUMMARY_ENDPOINT) {
+  protected final val GetMetricsSummaryResponse.metricsResponse: String get() = toMetricsResponses(this)
+
+  private fun toMetricsResponses(expectedMetrics: GetMetricsSummaryResponse) = expectedMetrics.run {
+    """
+      {
+        "numberOfPrisonersWithin12Weeks":$numberOfPrisonersWithin12Weeks,
+        "numberOfPrisonersOver12Weeks":$numberOfPrisonersOver12Weeks,
+        "numberOfSupportDeclined":$numberOfSupportDeclined,
+        "numberOfNoRightToWork":$numberOfNoRightToWork
+      }
+    """.trimJsonResponse()
   }
 }
