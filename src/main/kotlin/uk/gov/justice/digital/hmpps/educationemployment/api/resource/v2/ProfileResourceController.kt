@@ -32,7 +32,7 @@ const val API_VERSION = "v2"
 
 @Validated
 @RestController
-@RequestMapping("/v2/readiness-profiles", produces = [MediaType.APPLICATION_JSON_VALUE])
+@RequestMapping("/readiness-profiles", "/v2/readiness-profiles", produces = [MediaType.APPLICATION_JSON_VALUE])
 @Tag(name = API_VERSION)
 class ProfileResourceController(
   private val profileService: ProfileV2Service,
