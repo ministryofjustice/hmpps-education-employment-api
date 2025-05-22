@@ -112,6 +112,17 @@ class ProfileMetricsServiceTest : UnitTestBase() {
       assertEquals(expectedStatusChangeCount, actual.numberOfPrisonersStatusChange)
       assertContentEquals(expectedStatusCounts, actual.statusCounts)
     }
+
+    @Test
+    fun `return counts for metric - Summary`() {
+      val metricCounts = MetricsSummaryCount(34, 6, 16, 21)
+      whenever(readinessProfileRepository.countSummaryByPrisonIdAndDateTimeBetween(eq(prisonId), any(), any())).thenReturn(metricCounts)
+      val expectedCount = GetMetricsSummaryResponse(34, 6, 16, 21)
+
+      val actualCount = profileMetricsService.retrieveMetricsSummaryByPrisonIdAndDates(prisonId, dateFrom, dateTo)
+
+      assertEquals(expectedCount, actualCount)
+    }
   }
 
   private fun makeMetricsCount(reasonForSupportDeclined: SupportToWorkDeclinedReason, countWithin12Weeks: Long, countOver12Weeks: Long) = makeMetricsCount(reasonForSupportDeclined.name, countWithin12Weeks, countOver12Weeks)

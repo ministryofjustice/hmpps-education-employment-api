@@ -49,6 +49,12 @@ class ProfileMetricsService(
     return GetMetricsWorkStatusResponse(statusChangeCount, statusCounts.statusCounts())
   }
 
+  fun retrieveMetricsSummaryByPrisonIdAndDates(
+    prisonId: String,
+    dateFrom: LocalDate,
+    dateTo: LocalDate,
+  ): GetMetricsSummaryResponse = readinessProfileRepository.countSummaryByPrisonIdAndDateTimeBetween(prisonId, dateFrom.startAt, dateTo.endAt).response()
+
   private val LocalDate.startAt: Instant get() = this.atStartOfDay().instant
   private val LocalDate.endAt: Instant get() = this.atTime(atEndOfDay).instant
   private val LocalDateTime.instant: Instant get() = this.atZone(timeProvider.timezoneId).toInstant()
@@ -56,6 +62,7 @@ class ProfileMetricsService(
   private fun List<MetricsCountByStringField>.reasonsSupportDeclinedResponses() = this.map { GetMetricsReasonsSupportDeclinedResponse(it.field, it.countWithin12Weeks, it.countOver12Weeks) }
   private fun List<MetricsCountByStringField>.documentsSupportResponses() = this.map { GetMetricsDocumentSupportResponse(it.field, it.countWithin12Weeks, it.countOver12Weeks) }
   private fun List<MetricsCountByStringField>.statusCounts() = this.map { MetricsProfileStatusCount(it.field, it.countWithin12Weeks, it.countOver12Weeks) }
+  private fun MetricsSummaryCount.response() = GetMetricsSummaryResponse(countWithin12Weeks, countOver12Weeks, countSupportDeclined, countNoRightToWork)
 }
 
 data class GetMetricsReasonsSupportDeclinedResponse(
@@ -79,4 +86,11 @@ data class MetricsProfileStatusCount(
 data class GetMetricsWorkStatusResponse(
   val numberOfPrisonersStatusChange: Long,
   val statusCounts: List<MetricsProfileStatusCount>,
+)
+
+data class GetMetricsSummaryResponse(
+  val numberOfPrisonersWithin12Weeks: Long,
+  val numberOfPrisonersOver12Weeks: Long,
+  val numberOfSupportDeclined: Long,
+  val numberOfNoRightToWork: Long,
 )
