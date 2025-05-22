@@ -29,7 +29,7 @@ import java.time.LocalDate
 @RestController
 @RequestMapping("/dashboard", produces = [APPLICATION_JSON_VALUE])
 @Tag(name = "Dashboard")
-@PreAuthorize("hasAnyRole('WORK_READINESS_EDIT','WORK_READINESS_VIEW')")
+@PreAuthorize("hasAnyRole('WORK_READINESS_EDIT','WORK_READINESS_VIEW', 'ROLE_EDUCATION_WORK_PLAN_EDIT', 'ROLE_EDUCATION_WORK_PLAN_VIEW')")
 class DashboardGet(
   private val profileMetricsService: ProfileMetricsService,
 ) {
