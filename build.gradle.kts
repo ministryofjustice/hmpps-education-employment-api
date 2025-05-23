@@ -1,20 +1,18 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "8.1.0"
-  kotlin("plugin.spring") version "2.1.20"
-  kotlin("plugin.jpa") version "2.1.20"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "8.2.0"
+  kotlin("plugin.spring") version "2.1.21"
+  kotlin("plugin.jpa") version "2.1.21"
   id("jacoco")
 }
 
 dependencies {
-  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:5.4.4") {
+  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:5.4.5") {
     implementation("org.apache.commons:commons-compress:1.27.1")
   }
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
   implementation("org.springframework.data:spring-data-envers")
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.5") {
-    implementation("org.webjars:swagger-ui:5.20.0")
-  }
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.8")
   implementation("com.fasterxml.jackson.core:jackson-databind")
   implementation("io.jsonwebtoken:jjwt-impl:0.12.6")
   implementation("io.jsonwebtoken:jjwt-jackson:0.12.6")
@@ -44,13 +42,9 @@ testing {
         kotlin.target.compilations { named("integrationTest") { associateWith(getByName("main")) } }
         implementation("org.springframework.boot:spring-boot-starter-test")
         implementation("org.springframework.security:spring-security-test")
-        implementation("io.jsonwebtoken:jjwt-impl:0.12.6")
-        implementation("io.jsonwebtoken:jjwt-jackson:0.12.6")
         implementation("com.microsoft.azure:applicationinsights-logging-logback:2.6.4")
-        implementation("com.microsoft.azure:applicationinsights-logging-logback")
         implementation("org.flywaydb:flyway-core")
         runtimeOnly("org.flywaydb:flyway-database-postgresql")
-        implementation("com.zaxxer:HikariCP:5.1.0")
         implementation("org.testcontainers:postgresql") {
           implementation("org.apache.commons:commons-compress:1.27.1")
         }
