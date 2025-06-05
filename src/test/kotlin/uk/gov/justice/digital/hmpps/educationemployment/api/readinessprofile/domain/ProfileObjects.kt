@@ -313,6 +313,19 @@ object ProfileObjects {
       true,
     )
 
+    val readinessProfileForSAR = ReadinessProfile(
+      anotherPrisonNumber,
+      newBookingId,
+      createdBy,
+      createdTime,
+      modifiedBy = createdBy,
+      modifiedTime,
+      schemaVersion = "2.0",
+      profileData = objectMapper.valueToTree(profile),
+      notesData = objectMapper.valueToTree(listOf(note)),
+      new = true,
+    )
+
     val readinessProfileOfKnownPrisoner =
       readinessProfile.copy(offenderId = knownPrisonNumber, bookingId = newBookingId, createdBy = createdBy)
 
