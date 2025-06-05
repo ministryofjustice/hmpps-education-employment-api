@@ -31,8 +31,10 @@ object ProfileObjects {
 
   val createProfileJsonRequest = readJsonProfile("CreateProfile_correct.json")
   val createProfileV1JsonRequest = readJsonProfile("CreateProfile_correct_v1.json")
-  val createProfileV1JsonRequestWithSupportDeclined = readJsonProfile("CreateProfileDeclinedHistories.json")
-  val createProfileV1JsonRequestWithSupportAccepted = readJsonProfile("CreateProfileAcceptedHistories.json")
+//  val createProfileV2JsonRequest = readJsonProfile("CreateProfile_correct_v2.json")
+//  val createProfileV1JsonRequestWithSupportDeclined = readJsonProfile("CreateProfileDeclinedHistories.json")
+//  val createProfileV1JsonRequestWithSupportAccepted = readJsonProfile("CreateProfileAcceptedHistories.json")
+//  val createProfileV2JsonRequestWithSupportAccepted = readJsonProfile("CreateProfileAcceptedHistories_v2.json")
 
   val profileJsonSample = readJsonProfile("sampleprofile.json")
   val profileJsonSample2 = readJsonProfile("sample2.json")

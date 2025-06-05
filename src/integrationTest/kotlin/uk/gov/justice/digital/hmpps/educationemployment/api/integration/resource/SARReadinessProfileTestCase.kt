@@ -9,11 +9,11 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatusCode
 import org.springframework.http.ResponseEntity
 import uk.gov.justice.digital.hmpps.educationemployment.api.config.CapturedSpringConfigValues
-import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.v1.ReadinessProfileV1TestCase
+import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.v2.ReadinessProfileV2TestCase
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.SARReadinessProfileDTO
 import java.time.LocalDate
 
-abstract class SARReadinessProfileTestCase : ReadinessProfileV1TestCase() {
+abstract class SARReadinessProfileTestCase : ReadinessProfileV2TestCase() {
   protected val objectMapperSAR = CapturedSpringConfigValues.objectMapperSAR
 
   protected fun assertGetSARResponseIsOk(
