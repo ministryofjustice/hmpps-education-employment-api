@@ -4,7 +4,8 @@ import com.fasterxml.jackson.core.type.TypeReference
 import io.swagger.v3.oas.annotations.media.Schema
 import uk.gov.justice.digital.hmpps.educationemployment.api.config.CapturedSpringConfigValues.Companion.objectMapperSAR
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ReadinessProfile
-import uk.gov.justice.digital.hmpps.educationemployment.api.sardata.domain.Profile
+import uk.gov.justice.digital.hmpps.educationemployment.api.sardata.domain.v2.Profile
+import uk.gov.justice.digital.hmpps.educationemployment.api.sardata.domain.v2.toDto
 import java.time.LocalDateTime
 
 data class SARReadinessProfileDTO(
@@ -26,12 +27,12 @@ data class SARContent(
   val modifiedDateTime: LocalDateTime,
 
   @Schema(description = "Work readiness profile JSON data", example = "{...}")
-  val profileData: Profile,
+  val profileData: uk.gov.justice.digital.hmpps.educationemployment.api.sardata.domain.v2.ProfileDTO,
 ) {
   constructor(profileEntity: ReadinessProfile) : this(
     offenderId = profileEntity.offenderId,
     createdDateTime = profileEntity.createdDateTime,
     modifiedDateTime = profileEntity.modifiedDateTime,
-    profileData = objectMapperSAR.treeToValue(profileEntity.profileData, object : TypeReference<Profile>() {}),
+    profileData = objectMapperSAR.treeToValue(profileEntity.profileData, object : TypeReference<Profile>() {}).toDto(),
   )
 }
