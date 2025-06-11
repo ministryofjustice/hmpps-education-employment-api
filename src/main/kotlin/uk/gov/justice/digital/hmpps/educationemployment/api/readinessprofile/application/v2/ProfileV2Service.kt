@@ -160,7 +160,49 @@ class ProfileV2Service(
     fromDate: LocalDate?,
     toDate: LocalDate?,
   ): ReadinessProfile {
-    TODO("Not yet implemented")
+    if (fromDate != null && toDate != null && fromDate.isAfter(toDate)) {
+      throw IllegalArgumentException("fromDate cannot be after toDate")
+    }
+
+    val readinessProfile = getProfileForOffender(prisonNumber)
+    val profile = parseProfile(readinessProfile.profileData)
+    if (fromDate != null || toDate != null) {
+      toDate?.let {
+        if (readinessProfile.createdDateTime.toLocalDate().isAfter(it)) {
+          throw NotFoundException(prisonNumber)
+        }
+      }
+      fromDate?.let { from ->
+        if (fromDate.isAfter(readinessProfile.modifiedDateTime.toLocalDate())) {
+          profile.supportAccepted = null
+          profile.supportDeclined = null
+        } else {
+          val acceptedDate = profile.supportAccepted?.modifiedDateTime?.toLocalDate()
+          if (acceptedDate != null && acceptedDate.isBefore(from)) {
+            profile.supportAccepted = null
+          }
+
+          val declinedDate = profile.supportDeclined?.modifiedDateTime?.toLocalDate()
+          if (declinedDate != null && declinedDate.isBefore(from)) {
+            profile.supportDeclined = null
+          }
+        }
+      }
+      toDate?.let { to ->
+        val acceptedDate = profile.supportAccepted?.modifiedDateTime?.toLocalDate()
+        if (acceptedDate != null && acceptedDate.isAfter(to)) {
+          profile.supportAccepted = null
+        }
+
+        val declinedDate = profile.supportDeclined?.modifiedDateTime?.toLocalDate()
+        if (declinedDate != null && declinedDate.isAfter(to)) {
+          profile.supportDeclined = null
+        }
+      }
+    }
+
+    readinessProfile.profileData = profile.json()
+    return readinessProfile
   }
 
   private fun checkDeclinedProfileStatus(profile: Profile, offenderId: String) = when {

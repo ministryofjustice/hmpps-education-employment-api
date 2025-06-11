@@ -1,0 +1,111 @@
+{
+  "status": ["SUPPORT_NEEDED"],
+  "statusChange": true,
+  "statusChangeDate": [
+    2022,
+    12,
+    18,
+    14,
+    7,
+    17,
+    738068000
+  ],
+  "statusChangeType": ["DECLINED_TO_ACCEPTED"],
+  "prisonId": "prison2",
+  "prisonName":"Prison 2",
+  "within12Weeks": true,
+  "supportDeclined": null,
+  "supportAccepted": {
+    "modifiedDateTime": null,
+    "actionsRequired": {
+      "modifiedDateTime": [
+        2022,
+        12,
+        18,
+        14,
+        7,
+        8,
+        5657000
+      ],
+      "actions": [
+        {
+          "status": ["COMPLETED"],
+          "todoItem": ["CV_AND_COVERING_LETTER"]
+        },
+        {
+          "status": ["IN_PROGRESS"],
+          "todoItem": ["ID"]
+        },
+        {
+          "status": ["NOT_STARTED"],
+          "todoItem": ["EMAIL"]
+        },
+        {
+          "status": ["NOT_STARTED"],
+          "todoItem": ["PHONE"]
+        },
+        {
+          "status": ["NOT_STARTED"],
+          "todoItem": ["HOUSING"]
+        },
+        {
+          "status": ["COMPLETED"],
+          "todoItem": ["BANK_ACCOUNT"]
+        },
+        {
+          "status": ["IN_PROGRESS"],
+          "todoItem": ["DISCLOSURE_LETTER"]
+        }
+      ]
+    },
+    "workImpacts": {
+      "modifiedDateTime": [
+        2022,
+        12,
+        18,
+        14,
+        7,
+        8,
+        5657000
+      ],
+      "abilityToWorkImpactedBy": [
+        "CARING_RESPONSIBILITIES"
+      ],
+      "caringResponsibilitiesFullTime": true,
+      "ableToManageMentalHealth": true,
+      "ableToManageDependencies": true
+    },
+    "workInterests": {
+      "modifiedDateTime": [
+        2022,
+        12,
+        18,
+        14,
+        7,
+        8,
+        5657000
+      ],
+      "workTypesOfInterest": [
+        "CONSTRUCTION"
+      ],
+      "workTypesOfInterestOther": "freelance",
+      "jobOfParticularInterest": "architect"
+    },
+    "workExperience": {
+      "modifiedDateTime": [
+        2022,
+        12,
+        18,
+        14,
+        7,
+        8,
+        5657000
+      ],
+      "previousWorkOrVolunteering": "NONE",
+      "qualificationsAndTraining": [
+        "ADVANCED_EDUCATION"
+      ],
+      "qualificationsAndTrainingOther": "MBA"
+    }
+  }
+}

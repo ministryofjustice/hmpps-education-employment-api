@@ -13,8 +13,12 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.S
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.WorkExperience
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.WorkImpacts
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.WorkInterests
+import uk.gov.justice.digital.hmpps.educationemployment.api.sardata.domain.Action
+import uk.gov.justice.digital.hmpps.educationemployment.api.sardata.domain.ActionMixin
 import uk.gov.justice.digital.hmpps.educationemployment.api.sardata.domain.ModifiedByExclusionMixIn
 import uk.gov.justice.digital.hmpps.educationemployment.api.sardata.domain.OptionalModifiedByExclusionMixIn
+import uk.gov.justice.digital.hmpps.educationemployment.api.sardata.domain.ProfileMixin
+import uk.gov.justice.digital.hmpps.educationemployment.api.sardata.domain.v2.Profile
 
 /**
  * This class is used as a way to capture the Spring Jackson mapper in a way that
@@ -25,6 +29,9 @@ class CapturedSpringConfigValues {
   companion object {
     var objectMapper: ObjectMapper = configObjectMapper()
     var objectMapperSAR = configObjectMapper().apply {
+
+      addMixIn(Profile::class.java, ProfileMixin::class.java)
+      addMixIn(Action::class.java, ActionMixin::class.java)
       listOf(
         SupportDeclined::class.java,
         SupportAccepted::class.java,
@@ -41,6 +48,7 @@ class CapturedSpringConfigValues {
     fun configObjectMapper() = JsonMapper.builder()
       .addModules(JavaTimeModule())
       .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+      .enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
       .build()
       .registerKotlinModule()
   }

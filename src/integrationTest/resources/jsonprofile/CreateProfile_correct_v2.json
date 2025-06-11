@@ -1,0 +1,32 @@
+{
+  "bookingId": "111111",
+  "profileData": {
+    "status": "NO_RIGHT_TO_WORK",
+    "statusChange": false,
+    "statusChangeDate": null,
+    "prisonName":"Prison 2",
+    "prisonId":"P001",
+    "within12Weeks":false,
+    "statusChangeType": "NEW",
+    "supportDeclined": {
+      "modifiedDateTime": [
+        2022,
+        12,
+        18,
+        9,
+        15,
+        56,
+        460988000
+      ],
+        "supportToWorkDeclinedReason": [
+          "FULL_TIME_CARER"
+        ],
+        "supportToWorkDeclinedReasonOther": "",
+        "circumstanceChangesRequiredToWork": [
+          "DEPENDENCY_SUPPORT"
+        ],
+        "circumstanceChangesRequiredToWorkOther": ""
+      },
+    "supportAccepted": null
+  }
+}
