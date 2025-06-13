@@ -18,9 +18,9 @@ import org.springframework.test.web.servlet.ResultMatcher
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.NotFoundException
-import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v1.ProfileV1Service
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v2.ProfileV2Service
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects
-import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.V1Profiles.readinessProfileForSAR
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.V2Profiles.readinessProfileForSAR
 
 const val SAR_ENDPOINT = "/subject-access-request"
 
@@ -28,7 +28,7 @@ const val SAR_ENDPOINT = "/subject-access-request"
 @ContextConfiguration(classes = [SARResourceController::class])
 class SARResourceControllerTest : ControllerTestBase() {
   @MockitoBean
-  private lateinit var profileService: ProfileV1Service
+  private lateinit var profileService: ProfileV2Service
 
   companion object {
     private const val ROLE_SAR = "ROLE_SAR_DATA_ACCESS"
@@ -54,8 +54,6 @@ class SARResourceControllerTest : ControllerTestBase() {
     jsonContent.findPath("profileData").let { jsonProfile ->
       assertThat(jsonProfile.isMissingNode).isFalse()
       assertThat(jsonProfile.get("supportDeclined")).isNotEmpty
-      assertThat(jsonProfile.get("supportDeclined_history")).isNotEmpty
-      assertThat(jsonProfile.get("supportAccepted_history")).isNotEmpty
     }
   }
 
@@ -63,7 +61,10 @@ class SARResourceControllerTest : ControllerTestBase() {
   fun `Get No Content of unknown offender for SAR`() {
     val prn = ProfileObjects.unknownPrisonNumber
     whenever(profileService.getProfileForOffenderFilterByPeriod(eq(prn), isNull(), isNull())).thenThrow(NotFoundException(prn))
-
+    /*
+    So the NFE is a checked exception but as the Kotlin code does not explicitly declare the throws - Mockito is unable to
+    throw the Exception. So the workaround is to declare it as a Runtime (unchecked exception instead)
+     */
     assertRetrieveSARProfileIsNoContent(prn)
   }
 

@@ -2,9 +2,10 @@ package uk.gov.justice.digital.hmpps.educationemployment.api.config
 
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.core.context.SecurityContextHolder
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ActionsRequired
@@ -39,9 +40,13 @@ class CapturedSpringConfigValues {
 
     fun getDPSPrincipal(): DpsPrincipal = SecurityContextHolder.getContext().authentication.principal as DpsPrincipal
     fun configObjectMapper() = JsonMapper.builder()
-      .addModules(JavaTimeModule())
+      .addModule(JavaTimeModule())
+      .addModule(KotlinModule.Builder().build())
+      .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+      .configure(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, false)
+      .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true)
+      .configure(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT, true)
       .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
       .build()
-      .registerKotlinModule()
   }
 }
