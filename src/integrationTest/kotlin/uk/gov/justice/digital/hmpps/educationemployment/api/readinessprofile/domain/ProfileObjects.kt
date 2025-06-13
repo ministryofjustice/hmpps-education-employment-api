@@ -11,15 +11,15 @@ import java.io.FileNotFoundException
 
 object ProfileObjects {
   const val KNOWN_PRISON_NUMBER = "A1234BB"
-  const val ANOTHER_PRISON_NUMBER = "K9876BC"
-  const val SUPPORT_DECLINED_PRISON_NUMBER = "D1111EF"
+  const val ANOTHER_PRISON_NUMBER = "A1234CC"
+  const val SUPPORT_DECLINED_PRISON_NUMBER = "D1234EE"
 
   private val objectMapper = CapturedSpringConfigValues.objectMapper
 
   val knownPrisonNumber = KNOWN_PRISON_NUMBER
   val anotherPrisonNumber = ANOTHER_PRISON_NUMBER
   val declinedPrisonNumber = SUPPORT_DECLINED_PRISON_NUMBER
-  val unknownPrisonNumber = "A1234BD"
+  val unknownPrisonNumber = "A1234AA"
 
   val prisonId = "prison2"
   val prisonName = "Prison 2"
@@ -31,8 +31,10 @@ object ProfileObjects {
 
   val createProfileJsonRequest = readJsonProfile("CreateProfile_correct.json")
   val createProfileV1JsonRequest = readJsonProfile("CreateProfile_correct_v1.json")
+  val createProfileV2JsonRequest = readJsonProfile("CreateProfile_correct_v2.json")
   val createProfileV1JsonRequestWithSupportDeclined = readJsonProfile("CreateProfileDeclinedHistories.json")
   val createProfileV1JsonRequestWithSupportAccepted = readJsonProfile("CreateProfileAcceptedHistories.json")
+  val createProfileV2JsonRequestWithSupportAccepted = readJsonProfile("CreateProfileAccepted_v2.json")
 
   val profileJsonSample = readJsonProfile("sampleprofile.json")
   val profileJsonSample2 = readJsonProfile("sample2.json")
