@@ -31,10 +31,10 @@ class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
       assertGetSARResponseStatusAndBody(expectedStatusCode = HttpStatus.NO_CONTENT, prn = unknownPrisonNumber)
     }
 
-//    @Test
-//    fun `reply 209 (Subject Identifier is not recognised by this service), when requesting a SAR with CRN only`() {
-//      assertGetSARResponseStatusAndBody(expectedStatusCodeValue = 209, crn = knownnCaseReferenceNumber)
-//    }
+    @Test
+    fun `reply 209 (Subject Identifier is not recognised by this service), when requesting a SAR with CRN only`() {
+      assertGetSARResponseStatusAndBody(expectedStatusCodeValue = 209, crn = knownPrisonNumber)
+    }
   }
 
   @Nested
@@ -57,9 +57,9 @@ class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
     }
   }
 
-//  @Nested
-//  @DisplayName("Given the known readiness profile")
-//  inner class GivenTheKnownProfile {
+  @Nested
+  @DisplayName("Given the known readiness profile")
+  inner class GivenTheKnownProfile {
 //    @Test
 //    fun `reply 200 (Ok), when requesting SAR with a profile of known prisoner, and PRN is provided`() {
 //      val prisonNumber = givenTheKnownProfile().offenderId
@@ -90,7 +90,7 @@ class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
 //      expectedPrisonNumber = expectedProfileDTO.offenderId
 //      expectedProfileJson = profileJsonOfAnotherPrisonNumber
 //      expectedProfileData = profileOfAnotherPrisonNumber
-//    }
+  }
 
     /*
     @Test

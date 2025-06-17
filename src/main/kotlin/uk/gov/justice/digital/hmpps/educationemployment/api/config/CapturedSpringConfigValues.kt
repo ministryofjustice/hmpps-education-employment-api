@@ -7,18 +7,9 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.core.context.SecurityContextHolder
-import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ActionsRequired
-import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.SupportAccepted
-import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.SupportDeclined
-import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.WorkExperience
-import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.WorkImpacts
-import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.WorkInterests
-import uk.gov.justice.digital.hmpps.educationemployment.api.sardata.domain.Action
-import uk.gov.justice.digital.hmpps.educationemployment.api.sardata.domain.ActionMixin
-import uk.gov.justice.digital.hmpps.educationemployment.api.sardata.domain.ModifiedByExclusionMixIn
+import uk.gov.justice.digital.hmpps.educationemployment.api.sardata.domain.ActionsRequired
 import uk.gov.justice.digital.hmpps.educationemployment.api.sardata.domain.OptionalModifiedByExclusionMixIn
-import uk.gov.justice.digital.hmpps.educationemployment.api.sardata.domain.ProfileMixin
-import uk.gov.justice.digital.hmpps.educationemployment.api.sardata.domain.v2.Profile
+import uk.gov.justice.digital.hmpps.educationemployment.api.sardata.domain.SupportAccepted
 
 /**
  * This class is used as a way to capture the Spring Jackson mapper in a way that
@@ -28,20 +19,14 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.sardata.domain.v2.Pr
 class CapturedSpringConfigValues {
   companion object {
     var objectMapper: ObjectMapper = configObjectMapper()
-    var objectMapperSAR = configObjectMapper().apply {
+    var objectMapperSAR: ObjectMapper = configObjectMapper().apply {
 
-      addMixIn(Profile::class.java, ProfileMixin::class.java)
-      addMixIn(Action::class.java, ActionMixin::class.java)
       listOf(
-        SupportDeclined::class.java,
         SupportAccepted::class.java,
-      ).forEach { this.addMixIn(it, OptionalModifiedByExclusionMixIn::class.java) }
-      listOf(
         ActionsRequired::class.java,
-        WorkExperience::class.java,
-        WorkImpacts::class.java,
-        WorkInterests::class.java,
-      ).forEach { this.addMixIn(it, ModifiedByExclusionMixIn::class.java) }
+      ).forEach {
+        this.addMixIn(it, OptionalModifiedByExclusionMixIn::class.java)
+      }
     }
 
     fun getDPSPrincipal(): DpsPrincipal = SecurityContextHolder.getContext().authentication.principal as DpsPrincipal

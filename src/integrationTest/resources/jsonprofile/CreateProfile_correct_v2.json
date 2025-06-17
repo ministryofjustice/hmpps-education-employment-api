@@ -1,6 +1,4 @@
 {
-  "bookingId": "111111",
-  "profileData": {
     "status": "NO_RIGHT_TO_WORK",
     "statusChange": false,
     "statusChangeDate": null,
@@ -9,6 +7,7 @@
     "within12Weeks":false,
     "statusChangeType": "NEW",
     "supportDeclined": {
+      "modifiedBy": "MOD 1",
       "modifiedDateTime": [
         2022,
         12,
@@ -29,4 +28,3 @@
       },
     "supportAccepted": null
   }
-}

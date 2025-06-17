@@ -110,9 +110,9 @@ class SARResourceController(
 
     if (!prn.isNullOrEmpty()) {
       return try {
-        SARReadinessProfileDTO(
-          profileEntity = profileService.getProfileForOffenderFilterByPeriod(prn, fromDate, toDate),
-        ).let { objectMapperSAR.writeValueAsString(it) }.let { ResponseEntity.ok(it) }
+        val sarContentList = profileService.getSARProfileForOffenderFilterByPeriod(prn, fromDate, toDate)
+        val responseDto = SARReadinessProfileDTO(sarContentList)
+        ResponseEntity.ok(responseDto)
       } catch (ex: NotFoundException) {
         return ResponseEntity.noContent().build()
       }
