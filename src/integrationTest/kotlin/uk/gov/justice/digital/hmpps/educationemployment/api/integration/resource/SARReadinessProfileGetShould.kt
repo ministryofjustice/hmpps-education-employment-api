@@ -116,6 +116,7 @@ class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
 
   @Nested
   @DisplayName("Given another readiness profile with support declined history")
+  @Transactional(propagation = Propagation.NOT_SUPPORTED)
   inner class GivenAnotherProfileWithSupportDeclinedHistory {
     private lateinit var expectedProfileDTO: ReadinessProfileDTO
     private lateinit var expectedPrisonNumber: String
@@ -210,11 +211,11 @@ class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
   }
 
   @Nested
-  @DisplayName("Given a readiness profile with support accepted")
+  @DisplayName("Given a readiness profile with support accepted history")
   @Transactional(propagation = Propagation.NOT_SUPPORTED)
   inner class GivenAProfileWithSupportAccepted {
     @Test
-    fun `reply 200 (OK) and no unexpected data exposed via SAR response (supportAccepted, supportAccepted_history)`() {
+    fun `reply 200 (OK) and no unexpected data exposed via SAR response (supportAccepted)`() {
       val profileDTO = givenAProfileWithAcceptedHistory()
       val prisonNumber = profileDTO.offenderId
 
