@@ -180,6 +180,7 @@ class ProfileV2Service(
       throw IllegalArgumentException("fromDate cannot be after toDate")
     }
 
+    val instantFrom = fromDate?.atStartOfDay(ZoneOffset.UTC)?.toInstant()
     val instantTo = toDate?.plusDays(1)?.atStartOfDay(ZoneOffset.UTC)?.toInstant()
     val readinessProfileRevisions = readinessProfileRepository.findRevisions(prisonNumber)
 
@@ -187,12 +188,7 @@ class ProfileV2Service(
       throw NotFoundException("No profile found for prison number $prisonNumber")
     }
 
-    readinessProfileRevisions.forEach { revision ->
-      println("Entity at Revision: ${revision.entity}")
-      println("------")
-    }
-
-    val profileSnapshots: List<SARContentDTO> = getSortedProfileHistory(readinessProfileRevisions, instantTo).map { revision ->
+    val profileSnapshots: List<SARContentDTO> = getSortedProfileHistory(readinessProfileRevisions, instantFrom, instantTo).map { revision ->
       val parseSARProfile = parseSARProfile(revision.profileData)
       val profileDataJson = parseSARProfile.json()
 
@@ -207,10 +203,11 @@ class ProfileV2Service(
     return profileSnapshots
   }
 
-  private fun getSortedProfileHistory(revision: Revisions<Long, ReadinessProfile>, endDate: Instant?): List<ReadinessProfile> = revision.content
+  private fun getSortedProfileHistory(revision: Revisions<Long, ReadinessProfile>, startDate: Instant?, endDate: Instant?): List<ReadinessProfile> = revision.content
     .filter { revision ->
       val revisionInstant = revision.metadata.revisionInstant.orElse(null)
-      endDate == null || (revisionInstant != null && !revisionInstant.isAfter(endDate))
+      (startDate == null || (revisionInstant != null && !revisionInstant.isBefore(startDate))) &&
+        (endDate == null || (revisionInstant != null && !revisionInstant.isAfter(endDate)))
     }
     .sortedByDescending { it.metadata.revisionInstant.orElse(Instant.EPOCH) }
     .map { it.entity }

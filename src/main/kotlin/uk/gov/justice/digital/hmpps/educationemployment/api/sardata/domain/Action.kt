@@ -7,15 +7,21 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.A
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.IDocs
 
 data class Action(
-  @get:JsonIgnore
   val todoItem: ActionTodo,
 
-  @get:JsonIgnore
   val status: ActionStatus,
 
-  val other: String,
-  val id: List<IDocs>,
+  val other: String?,
+  val id: List<IDocs>?,
 ) {
+  @get:JsonIgnore
+  val getTodoItem: ActionTodo
+    get() = todoItem
+
+  @get:JsonIgnore
+  val getStatus: ActionStatus
+    get() = status
+
   @get:JsonProperty("todoItem")
   val todoItemAsList: List<ActionTodo>
     get() = listOf(todoItem)

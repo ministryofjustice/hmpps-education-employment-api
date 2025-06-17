@@ -1,0 +1,200 @@
+{
+  "offenderId": "A1234AA",
+  "profileData": {
+    "status": "SUPPORT_DECLINED",
+    "statusChange": true,
+    "statusChangeDate": [
+      2023,
+      8,
+      22,
+      16,
+      37,
+      37,
+      394930834
+    ],
+    "prisonId": null,
+    "prisonName": "Kirkham (HMP)",
+    "within12Weeks": null,
+    "statusChangeType": "ACCEPTED_TO_DECLINED",
+    "supportDeclined": {
+      "modifiedDateTime": [
+        2023,
+        8,
+        22,
+        16,
+        37,
+        37,
+        394906692
+      ],
+      "supportToWorkDeclinedReason": [
+        "ALREADY_HAS_WORK",
+        "RETIRED"
+      ],
+      "supportToWorkDeclinedReasonOther": "",
+      "circumstanceChangesRequiredToWork": [
+        "HOUSING_ON_RELEASE"
+      ],
+      "circumstanceChangesRequiredToWorkOther": ""
+    },
+    "supportAccepted": {
+      "modifiedDateTime": [
+        2023,
+        8,
+        22,
+        16,
+        36,
+        45,
+        813974433
+      ],
+      "actionsRequired": {
+        "modifiedDateTime": [
+          2023,
+          8,
+          22,
+          15,
+          36,
+          45,
+          768000000
+        ],
+        "actions": [
+          {
+            "todoItem": [
+              null
+            ],
+            "status": [
+              null
+            ],
+            "other": null,
+            "id": null
+          },
+          {
+            "todoItem": [
+              null
+            ],
+            "status": [
+              null
+            ],
+            "other": null,
+            "id": null
+          },
+          {
+            "todoItem": [
+              null
+            ],
+            "status": [
+              null
+            ],
+            "other": null,
+            "id": null
+          },
+          {
+            "todoItem": [
+              null
+            ],
+            "status": [
+              null
+            ],
+            "other": null,
+            "id": null
+          },
+          {
+            "todoItem": [
+              null
+            ],
+            "status": [
+              null
+            ],
+            "other": null,
+            "id": null
+          },
+          {
+            "todoItem": [
+              null
+            ],
+            "status": [
+              null
+            ],
+            "other": "something",
+            "id": [
+              "BIRTH_CERTIFICATE",
+              "PASSPORT",
+              "DRIVING_LICENCE",
+              "OTHER"
+            ]
+          },
+          {
+            "todoItem": [
+              null
+            ],
+            "status": [
+              null
+            ],
+            "other": null,
+            "id": null
+          }
+        ]
+      },
+      "workImpacts": {
+        "modifiedDateTime": [
+          2023,
+          8,
+          22,
+          15,
+          35,
+          54,
+          710000000
+        ],
+        "abilityToWorkImpactedBy": [
+          "FAMILY_ISSUES",
+          "CARING_RESPONSIBILITIES",
+          "MENTAL_HEALTH_ISSUES",
+          "DEPENDENCY_ISSUES"
+        ],
+        "caringResponsibilitiesFullTime": false,
+        "ableToManageMentalHealth": false,
+        "ableToManageDependencies": true
+      },
+      "workInterests": {
+        "modifiedDateTime": [
+          2023,
+          8,
+          22,
+          15,
+          35,
+          54,
+          710000000
+        ],
+        "workTypesOfInterest": [
+          "HOSPITALITY",
+          "MANUFACTURING",
+          "OFFICE"
+        ],
+        "workTypesOfInterestOther": "",
+        "jobOfParticularInterest": ""
+      },
+      "workExperience": {
+        "modifiedDateTime": [
+          2023,
+          8,
+          22,
+          15,
+          35,
+          54,
+          710000000
+        ],
+        "previousWorkOrVolunteering": "Some job",
+        "qualificationsAndTraining": [
+          "CSCS",
+          "DRIVING_LICENSE"
+        ],
+        "qualificationsAndTrainingOther": ""
+      }
+    },
+    "statusChangeAsList": [
+      "ACCEPTED_TO_DECLINED"
+    ],
+    "statusAsList": [
+      "SUPPORT_DECLINED"
+    ]
+  }
+}

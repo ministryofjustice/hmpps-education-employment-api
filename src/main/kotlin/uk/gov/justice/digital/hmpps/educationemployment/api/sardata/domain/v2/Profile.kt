@@ -11,18 +11,25 @@ import java.time.LocalDateTime
 
 @Schema(name = "SARProfile", description = "The SAR Readiness Profile")
 data class Profile(
-  @get:JsonIgnore
+
   var status: ProfileStatus,
   var statusChange: Boolean?,
   var statusChangeDate: LocalDateTime?,
   var prisonId: String?,
   var prisonName: String?,
   var within12Weeks: Boolean?,
-  @get:JsonIgnore
   var statusChangeType: StatusChange?,
   var supportDeclined: SupportDeclined?,
   var supportAccepted: SupportAccepted?,
 ) {
+  @get:JsonIgnore
+  val getStatus: ProfileStatus
+    get() = status
+
+  @get:JsonIgnore
+  val getStatusChangeType: StatusChange?
+    get() = statusChangeType
+
   @get:JsonProperty("status")
   val statusAsList: List<ProfileStatus>
     get() = listOf(status)

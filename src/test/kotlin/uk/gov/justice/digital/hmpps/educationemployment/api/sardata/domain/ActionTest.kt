@@ -23,7 +23,6 @@ class ActionTest {
     )
 
     val json = objectMapper.writeValueAsString(action)
-    println("Serialized JSON: $json")
 
     assertTrue(json.contains("\"todoItem\":[\"ID\"]"))
     assertTrue(json.contains("\"status\":[\"COMPLETED\"]"))

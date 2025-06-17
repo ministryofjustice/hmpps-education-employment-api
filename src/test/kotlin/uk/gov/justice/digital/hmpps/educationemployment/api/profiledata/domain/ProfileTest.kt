@@ -26,7 +26,6 @@ class ProfileTest {
     )
 
     val json = objectMapper.writeValueAsString(profile)
-    println("Serialized Profile JSON: $json")
 
     assertTrue(json.contains("\"status\":[\"NO_RIGHT_TO_WORK\"]"))
     assertTrue(json.contains("\"statusChangeType\":[\"NEW\"]"))
