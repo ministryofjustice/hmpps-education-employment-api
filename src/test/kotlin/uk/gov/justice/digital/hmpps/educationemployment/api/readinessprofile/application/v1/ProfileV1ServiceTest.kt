@@ -238,14 +238,14 @@ class ProfileV1ServiceTest : UnitTestBase() {
 
     @Test
     fun `retrieve readiness profile with full history, when no period is specified`() {
-      val profile = profileService.getProfileForOffenderFilterByPeriod(prisonNumber)
+      val profile = profileService.getProfileForOffenderFilterByPeriod(prisonNumber).first()
 
       assertThat(profile).usingRecursiveComparison().isEqualTo(expectedProfile)
     }
 
     @Test
     fun `retrieve readiness profile with full history, sorted in descending order`() {
-      val profile = profileService.getProfileForOffenderFilterByPeriod(prisonNumber)
+      val profile = profileService.getProfileForOffenderFilterByPeriod(prisonNumber).first()
 
       assertThat(profile)
         .usingRecursiveComparison().ignoringFields("profileData")
@@ -263,7 +263,7 @@ class ProfileV1ServiceTest : UnitTestBase() {
       val fromDate = expectedProfile.createdDateTime.toLocalDate().minusDays(1)
       val toDate = expectedProfile.modifiedDateTime.toLocalDate().plusDays(1)
 
-      val profile = profileService.getProfileForOffenderFilterByPeriod(prisonNumber, fromDate, toDate)
+      val profile = profileService.getProfileForOffenderFilterByPeriod(prisonNumber, fromDate, toDate).first()
 
       assertThat(profile).usingRecursiveComparison().isEqualTo(expectedProfile)
       assertThat(profile.createdDateTime).isBeforeOrEqualTo(toDate.atStartOfDay())
@@ -278,7 +278,7 @@ class ProfileV1ServiceTest : UnitTestBase() {
       val fromDate = modifiedAgainTime.toLocalDate().minusDays(1)
       val toDate = null
 
-      val profile = profileService.getProfileForOffenderFilterByPeriod(prisonNumber, fromDate, toDate)
+      val profile = profileService.getProfileForOffenderFilterByPeriod(prisonNumber, fromDate, toDate).first()
 
       assertThat(profile)
         .usingRecursiveComparison().ignoringFields("profileData")
@@ -294,7 +294,7 @@ class ProfileV1ServiceTest : UnitTestBase() {
       val fromDate = expectedProfile.modifiedDateTime.toLocalDate().plusDays(1)
       val toDate = null
 
-      val profile = profileService.getProfileForOffenderFilterByPeriod(prisonNumber, fromDate, toDate)
+      val profile = profileService.getProfileForOffenderFilterByPeriod(prisonNumber, fromDate, toDate).first()
 
       assertThat(profile.profileData.findPath("supportDeclined_history")).isEmpty()
     }
@@ -304,7 +304,7 @@ class ProfileV1ServiceTest : UnitTestBase() {
       val fromDate = expectedProfile.createdDateTime.toLocalDate()
       val toDate = modifiedTime.toLocalDate().minusDays(1)
 
-      val profile = profileService.getProfileForOffenderFilterByPeriod(prisonNumber, fromDate, toDate)
+      val profile = profileService.getProfileForOffenderFilterByPeriod(prisonNumber, fromDate, toDate).first()
       assertThat(profile.createdDateTime.toLocalDate()).isBeforeOrEqualTo(fromDate)
 
       profileV1JsonToValue(profile.profileData).let {

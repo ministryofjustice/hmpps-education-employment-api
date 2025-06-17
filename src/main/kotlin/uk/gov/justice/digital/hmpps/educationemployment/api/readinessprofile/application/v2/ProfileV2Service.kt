@@ -17,6 +17,8 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.dom
 import uk.gov.justice.digital.hmpps.educationemployment.api.shared.domain.TimeProvider
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.temporal.ChronoUnit
 
 const val PROFILE_SCHEMA_VERSION = "2.0"
 private const val PROFILE_SCHEMA_PREVIOUS_VERSION = "1.0"
@@ -30,6 +32,7 @@ class ProfileV2Service(
   private val typeRefProfile by lazy { object : TypeReference<Profile>() {} }
 
   private val emptyJsonArray: JsonNode get() = objectMapper.readTree("[]")
+  private val atEndOfDay = LocalTime.MAX.truncatedTo(ChronoUnit.MICROS)
 
   override fun createProfileForOffender(
     userId: String,
@@ -155,12 +158,27 @@ class ProfileV2Service(
 
   override fun getProfileForOffender(offenderId: String): ReadinessProfile = readinessProfileRepository.findById(offenderId).orElseThrow(NotFoundException(offenderId)).migrateSchema()
 
+  @Throws(NotFoundException::class, IllegalArgumentException::class)
   override fun getProfileForOffenderFilterByPeriod(
     prisonNumber: String,
     fromDate: LocalDate?,
     toDate: LocalDate?,
-  ): ReadinessProfile {
-    TODO("Not yet implemented")
+  ): List<ReadinessProfile> {
+    if (fromDate != null && toDate != null && fromDate.isAfter(toDate)) {
+      throw IllegalArgumentException("fromDate cannot be after toDate")
+    }
+
+    val endTime = toDate?.endAt
+    return when {
+      endTime != null -> readinessProfileRepository.existsByOffenderIdAndCreatedDateTimeLessThanEqual(prisonNumber, endTime)
+      else -> readinessProfileRepository.existsById(prisonNumber)
+    }.let { exists ->
+      if (exists) {
+        readinessProfileRepository.findRevisions(prisonNumber).reverse().map { it.entity }.toList()
+      } else {
+        throw NotFoundException(prisonNumber)
+      }
+    }
   }
 
   private fun checkDeclinedProfileStatus(profile: Profile, offenderId: String) = when {
@@ -283,4 +301,6 @@ class ProfileV2Service(
   }
 
   private fun Profile.json(): JsonNode = objectMapper.valueToTree(this)
+
+  private val LocalDate.endAt: LocalDateTime get() = this.atTime(atEndOfDay)
 }

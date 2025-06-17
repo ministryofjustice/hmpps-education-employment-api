@@ -1,0 +1,25 @@
+{
+  "bookingId": "654321",
+  "profileData": {
+    "status": "SUPPORT_DECLINED",
+    "statusChange": false,
+    "statusChangeDate": null,
+    "statusChangeType": "NEW",
+    "prisonId": "prison2",
+    "prisonName":"Prison 2",
+    "within12Weeks": true,
+    "supportDeclined": {
+      "modifiedBy": "test-client",
+      "modifiedDateTime": "2024-10-02T10:16:06.90103",
+      "supportToWorkDeclinedReason": [
+        "FULL_TIME_CARER"
+      ],
+      "supportToWorkDeclinedReasonOther": "modified the n-th (6) times",
+      "circumstanceChangesRequiredToWork": [
+        "DEPENDENCY_SUPPORT"
+      ],
+      "circumstanceChangesRequiredToWorkOther": ""
+    },
+    "supportAccepted": null
+  }
+}

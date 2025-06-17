@@ -1,5 +1,3 @@
-@file:Suppress("DEPRECATION")
-
 package uk.gov.justice.digital.hmpps.educationemployment.api.resource
 
 import org.assertj.core.api.Assertions.assertThat
@@ -18,7 +16,7 @@ import org.springframework.test.web.servlet.ResultMatcher
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.NotFoundException
-import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v1.ProfileV1Service
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v2.ProfileV2Service
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.V1Profiles.readinessProfileForSAR
 
@@ -28,7 +26,7 @@ const val SAR_ENDPOINT = "/subject-access-request"
 @ContextConfiguration(classes = [SARResourceController::class])
 class SARResourceControllerTest : ControllerTestBase() {
   @MockitoBean
-  private lateinit var profileService: ProfileV1Service
+  private lateinit var profileService: ProfileV2Service
 
   companion object {
     private const val ROLE_SAR = "ROLE_SAR_DATA_ACCESS"
@@ -43,19 +41,17 @@ class SARResourceControllerTest : ControllerTestBase() {
   @Test
   fun `Test Get profile of an Offender for SAR`() {
     val prn = ProfileObjects.anotherPrisonNumber
-    whenever(profileService.getProfileForOffenderFilterByPeriod(eq(prn), isNull(), isNull())).thenReturn(readinessProfileForSAR)
+    whenever(profileService.getProfileForOffenderFilterByPeriod(eq(prn), isNull(), isNull())).thenReturn(listOf(readinessProfileForSAR))
 
     val result = assertRetrieveSARProfileIsOk(prn)
 
     val jsonSARProfile = objectMapper.readTree(result.response.contentAsString)
     val jsonContent = jsonSARProfile.findPath("content")
     assertThat(jsonContent.isMissingNode).isFalse()
-    assertThat(jsonContent.get("offenderId").textValue()).isEqualTo(prn)
+    assertThat(jsonContent[0].get("offenderId").textValue()).isEqualTo(prn)
     jsonContent.findPath("profileData").let { jsonProfile ->
       assertThat(jsonProfile.isMissingNode).isFalse()
       assertThat(jsonProfile.get("supportDeclined")).isNotEmpty
-      assertThat(jsonProfile.get("supportDeclined_history")).isNotEmpty
-      assertThat(jsonProfile.get("supportAccepted_history")).isNotEmpty
     }
   }
 

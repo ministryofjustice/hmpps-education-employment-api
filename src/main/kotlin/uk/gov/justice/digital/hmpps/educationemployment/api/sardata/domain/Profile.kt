@@ -10,10 +10,10 @@ data class Profile(
   var status: ProfileStatus,
   var statusChange: Boolean?,
   var statusChangeDate: LocalDateTime?,
-  var prisonName: String?,
   var statusChangeType: StatusChange?,
-  var supportDeclined_history: MutableList<SupportDeclined>?,
-  var supportAccepted_history: MutableList<SupportAccepted>?,
+  var prisonId: String?,
+  var prisonName: String?,
+  var within12Weeks: Boolean?,
   var supportDeclined: SupportDeclined?,
   var supportAccepted: SupportAccepted?,
 )

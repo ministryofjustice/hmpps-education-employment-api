@@ -8,12 +8,8 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.sardata.domain.Profi
 import java.time.LocalDateTime
 
 data class SARReadinessProfileDTO(
-  val content: SARContent,
-) {
-  constructor(profileEntity: ReadinessProfile) : this(
-    content = SARContent(profileEntity),
-  )
-}
+  val content: List<SARContent>,
+)
 
 data class SARContent(
   @Schema(description = "Offender Id", example = "ABC12345")

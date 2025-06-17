@@ -1,5 +1,3 @@
-@file:Suppress("DEPRECATION")
-
 package uk.gov.justice.digital.hmpps.educationemployment.api.resource
 
 import io.swagger.v3.oas.annotations.Operation
@@ -23,8 +21,9 @@ import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.educationemployment.api.config.CapturedSpringConfigValues
 import uk.gov.justice.digital.hmpps.educationemployment.api.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.NotFoundException
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.SARContent
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.SARReadinessProfileDTO
-import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v1.ProfileV1Service
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v2.ProfileV2Service
 import java.time.LocalDate
 
 @Validated
@@ -32,7 +31,7 @@ import java.time.LocalDate
 @RequestMapping("/subject-access-request", produces = [MediaType.APPLICATION_JSON_VALUE])
 @Tag(name = "SAR")
 class SARResourceController(
-  private val profileService: ProfileV1Service,
+  private val profileService: ProfileV2Service,
 ) {
   private val objectMapperSAR = CapturedSpringConfigValues.objectMapperSAR
 
@@ -111,7 +110,7 @@ class SARResourceController(
     if (!prn.isNullOrEmpty()) {
       return try {
         SARReadinessProfileDTO(
-          profileEntity = profileService.getProfileForOffenderFilterByPeriod(prn, fromDate, toDate),
+          content = profileService.getProfileForOffenderFilterByPeriod(prn, fromDate, toDate).map { SARContent(it) },
         ).let { objectMapperSAR.writeValueAsString(it) }.let { ResponseEntity.ok(it) }
       } catch (ex: NotFoundException) {
         return ResponseEntity.noContent().build()

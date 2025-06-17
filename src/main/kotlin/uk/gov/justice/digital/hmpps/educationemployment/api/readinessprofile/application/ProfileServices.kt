@@ -27,7 +27,7 @@ interface ProfileService<P> {
     prisonNumber: String,
     fromDate: LocalDate? = null,
     toDate: LocalDate? = null,
-  ): ReadinessProfile?
+  ): List<ReadinessProfile>
 }
 
 @Service

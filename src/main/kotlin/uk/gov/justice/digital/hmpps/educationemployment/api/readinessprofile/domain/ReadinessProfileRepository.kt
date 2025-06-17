@@ -7,11 +7,16 @@ import org.springframework.stereotype.Repository
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.MetricsSummaryCount
 import uk.gov.justice.digital.hmpps.educationemployment.api.shared.infrastructure.MetricsCountByStringField
 import java.time.Instant
+import java.time.LocalDateTime
 
 @Repository
 interface ReadinessProfileRepository :
   JpaRepository<ReadinessProfile, String>,
   RevisionRepository<ReadinessProfile, String, Long> {
+  fun existsByOffenderIdAndCreatedDateTimeLessThanEqual(
+    offenderId: String,
+    end: LocalDateTime,
+  ): Boolean
 
   @Query(
     """

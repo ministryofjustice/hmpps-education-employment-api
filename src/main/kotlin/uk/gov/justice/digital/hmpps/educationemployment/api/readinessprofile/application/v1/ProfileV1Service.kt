@@ -149,7 +149,7 @@ class ProfileV1Service(
     prisonNumber: String,
     fromDate: LocalDate?,
     toDate: LocalDate?,
-  ): ReadinessProfile {
+  ): List<ReadinessProfile> {
     if (fromDate != null && toDate != null && fromDate.isAfter(toDate)) {
       throw IllegalArgumentException("fromDate cannot be after toDate")
     }
@@ -198,7 +198,7 @@ class ProfileV1Service(
     profile.supportDeclined_history?.sortByDescending { it.modifiedDateTime }
 
     readinessProfile.profileData = profile.json()
-    return readinessProfile
+    return listOf(readinessProfile)
   }
 
   fun parseProfile(profileData: JsonNode): Profile = objectMapper.treeToValue(profileData, typeRefProfile)
