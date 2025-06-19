@@ -194,8 +194,8 @@ class ProfileV2Service(
 
       SARContentDTO(
         offenderId = revision.offenderId,
-        bookingId = revision.bookingId,
-        schemaVersion = revision.schemaVersion,
+        createdDateTime = revision.createdDateTime,
+        modifiedDateTime = revision.modifiedDateTime,
         profileData = profileDataJson,
       )
     }

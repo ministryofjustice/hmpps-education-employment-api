@@ -11,14 +11,12 @@ import java.io.FileNotFoundException
 
 object ProfileObjects {
   const val KNOWN_PRISON_NUMBER = "A1234BB"
-  const val ANOTHER_PRISON_NUMBER = "A1234CC"
-  const val SUPPORT_DECLINED_PRISON_NUMBER = "D1234EE"
+  const val ANOTHER_PRISON_NUMBER = "A1234DD"
 
   private val objectMapper = CapturedSpringConfigValues.objectMapper
 
   val knownPrisonNumber = KNOWN_PRISON_NUMBER
   val anotherPrisonNumber = ANOTHER_PRISON_NUMBER
-  val declinedPrisonNumber = SUPPORT_DECLINED_PRISON_NUMBER
   val unknownPrisonNumber = "A1234AA"
 
   val prisonId = "prison2"
@@ -31,10 +29,10 @@ object ProfileObjects {
 
   val createProfileJsonRequest = readJsonProfile("CreateProfile_correct.json")
   val createProfileV1JsonRequest = readJsonProfile("CreateProfile_correct_v1.json")
-  val createProfileV2JsonRequest = readJsonProfile("testdata-version2.json") // CreateProfile_correct_v2b.json
+  val createProfileV2JsonRequest = readJsonProfile("testdata-version2.json")
   val createProfileV1JsonRequestWithSupportDeclined = readJsonProfile("CreateProfileDeclinedHistories.json")
-  val createProfileV1JsonRequestWithSupportAccepted = readJsonProfile("CreateProfileAcceptedHistories.json")
-  val createProfileV2JsonRequestWithSupportAccepted = readJsonProfile("CreateProfileAccepted_v2.json")
+  val createProfileV2JsonRequestWithSupportAccepted = readJsonProfile("CreateProfileAccepted-version2.json") // "CreateProfileAccepted_v2.json"
+  val createProfileV2JsonRequestWithSupportDeclined = readJsonProfile("CreateProfileDeclined.json")
 
   val profileJsonSample = readJsonProfile("sampleprofile.json")
   val profileJsonSample2 = readJsonProfile("sample2.json")

@@ -9,6 +9,7 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.app
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.createProfileV1JsonRequestWithSupportDeclined
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.createProfileV2JsonRequest
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.createProfileV2JsonRequestWithSupportAccepted
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.createProfileV2JsonRequestWithSupportDeclined
 
 object SARTestData {
   private val objectMapperSAR = CapturedSpringConfigValues.objectMapperSAR
@@ -20,7 +21,7 @@ object SARTestData {
   val profileJsonOfKnownPrisonNumber = objectMapperSAR.valueToTree<JsonNode>(profileRequestOfKnownPrisonNumber).get("profileData")
 
   val profileOfAnotherPrisonNumber =
-    makeProfileRequestDTO(createProfileV1JsonRequestWithSupportDeclined).profileData
+    makeProfileRequestDTO(createProfileV2JsonRequestWithSupportDeclined).profileData
   val profileJsonOfAnotherPrisonNumber = objectMapperSAR.valueToTree<JsonNode>(profileOfAnotherPrisonNumber)
 
   val profileWithSupportAccepted =
@@ -28,6 +29,12 @@ object SARTestData {
   val profileJsonWithSupportAccepted = objectMapperSAR.valueToTree<JsonNode>(profileWithSupportAccepted)
 
   fun makeProfileRequestOfAnotherPrisonNumber() = makeProfileRequestDTO(createProfileV1JsonRequestWithSupportDeclined).apply {
+    profileData.supportDeclined!!.let {
+      profileData.supportDeclined = it.copy(supportToWorkDeclinedReasonOther = "another reason to decline support")
+    }
+  }
+
+  fun makeProfileRequestWithSupportDeclined() = makeProfileRequestDTO(createProfileV2JsonRequestWithSupportDeclined).apply {
     profileData.supportDeclined!!.let {
       profileData.supportDeclined = it.copy(supportToWorkDeclinedReasonOther = "another reason to decline support")
     }

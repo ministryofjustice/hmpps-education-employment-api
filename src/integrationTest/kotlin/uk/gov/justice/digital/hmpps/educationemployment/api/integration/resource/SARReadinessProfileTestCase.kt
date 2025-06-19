@@ -27,18 +27,8 @@ abstract class SARReadinessProfileTestCase : ReadinessProfileV2TestCase() {
     val request = HttpEntity<HttpHeaders>(setAuthorisation(roles = roles))
 
     val result = restTemplate.exchange(url, HttpMethod.GET, request, SARReadinessProfileDTO::class.java)
-
     assertThat(result).isNotNull
     assertThat(result.statusCode).isEqualTo(HttpStatus.OK)
-
-//    expectedProfileAsJson?.let { expectedProfile ->
-//      val jsonProfileData =
-//        objectMapperSAR.readTree(result.body!!.content.profileData.let { objectMapperSAR.writeValueAsString(it) })
-//      assertThat(jsonProfileData)
-//        .usingRecursiveComparison()
-//        .ignoringFieldsMatchingRegexes(".*createdBy", ".*createdDateTime", ".*modifiedBy", ".*modifiedDateTime")
-//        .isEqualTo(expectedProfile)
-//    }
 
     return result
   }
@@ -81,7 +71,7 @@ abstract class SARReadinessProfileTestCase : ReadinessProfileV2TestCase() {
     toDate?.let { requestParams["toDate"] = toDate }
   }.toMap()
 
-  protected fun SARReadinessProfileDTO.asJson(): String = objectMapper.writeValueAsString(this)
+  protected fun SARReadinessProfileDTO.asJson(): String = objectMapperSAR.writeValueAsString(this)
 }
 
 private const val SAR_ENDPOINT = "/subject-access-request"

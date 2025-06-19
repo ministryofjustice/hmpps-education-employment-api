@@ -12,8 +12,8 @@
       37,
       394930834
     ],
-    "prisonId": "P002",
-    "prisonName": "Kirkham (HMP)",
+    "prisonId":"P001",
+    "prisonName": "Prison 2",
     "within12Weeks": null,
     "statusChangeType": "ACCEPTED_TO_DECLINED",
     "supportAccepted": {
@@ -141,6 +141,7 @@
         ],
         "qualificationsAndTrainingOther": ""
       }
-    }
+    },
+    "supportDeclined": null
   }
 }
