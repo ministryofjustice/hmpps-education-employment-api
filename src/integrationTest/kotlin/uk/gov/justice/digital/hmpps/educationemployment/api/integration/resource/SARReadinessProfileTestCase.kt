@@ -8,13 +8,11 @@ import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatusCode
 import org.springframework.http.ResponseEntity
-import uk.gov.justice.digital.hmpps.educationemployment.api.config.CapturedSpringConfigValues
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.v2.ReadinessProfileV2TestCase
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.SARReadinessProfileDTO
 import java.time.LocalDate
 
 abstract class SARReadinessProfileTestCase : ReadinessProfileV2TestCase() {
-  protected val objectMapperSAR = CapturedSpringConfigValues.objectMapperSAR
 
   protected fun assertGetSARResponseIsOk(
     prn: String,
@@ -32,7 +30,7 @@ abstract class SARReadinessProfileTestCase : ReadinessProfileV2TestCase() {
 
     expectedProfileAsJson?.let { expectedProfile ->
       val jsonProfileData =
-        objectMapperSAR.readTree(result.body!!.content.first().profileData.let { objectMapperSAR.writeValueAsString(it) })
+        objectMapper.readTree(result.body!!.content.first().profileData.let { objectMapper.writeValueAsString(it) })
       assertThat(jsonProfileData)
         .usingRecursiveComparison()
         .ignoringFieldsMatchingRegexes(".*createdBy", ".*createdDateTime", ".*modifiedBy", ".*modifiedDateTime")
