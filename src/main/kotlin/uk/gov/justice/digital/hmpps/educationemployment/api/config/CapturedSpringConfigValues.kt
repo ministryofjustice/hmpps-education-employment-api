@@ -8,7 +8,13 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.core.context.SecurityContextHolder
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.Action
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.WorkExperience
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.WorkImpacts
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.WorkInterests
+import uk.gov.justice.digital.hmpps.educationemployment.api.sardata.domain.ActionMixin
 import uk.gov.justice.digital.hmpps.educationemployment.api.sardata.domain.ActionsRequired
+import uk.gov.justice.digital.hmpps.educationemployment.api.sardata.domain.ModifiedByExclusionMixIn
 import uk.gov.justice.digital.hmpps.educationemployment.api.sardata.domain.OptionalModifiedByExclusionMixIn
 import uk.gov.justice.digital.hmpps.educationemployment.api.sardata.domain.SupportAccepted
 
@@ -20,13 +26,19 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.sardata.domain.Suppo
 class CapturedSpringConfigValues {
   companion object {
     var objectMapper: ObjectMapper = configObjectMapper().apply {
-      // addMixIn(Action::class.java, ActionMixin::class.java)
       listOf(
         SupportAccepted::class.java,
         ActionsRequired::class.java,
       ).forEach {
         this.addMixIn(it, OptionalModifiedByExclusionMixIn::class.java)
+        this.addMixIn(Action::class.java, ActionMixin::class.java)
       }
+      listOf(
+        uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ActionsRequired::class.java,
+        WorkExperience::class.java,
+        WorkImpacts::class.java,
+        WorkInterests::class.java,
+      ).forEach { this.addMixIn(it, ModifiedByExclusionMixIn::class.java) }
     }
 
     fun getDPSPrincipal(): DpsPrincipal = SecurityContextHolder.getContext().authentication.principal as DpsPrincipal
