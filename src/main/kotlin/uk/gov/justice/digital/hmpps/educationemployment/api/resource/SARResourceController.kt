@@ -24,7 +24,7 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.config.CapturedSprin
 import uk.gov.justice.digital.hmpps.educationemployment.api.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.NotFoundException
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.SARReadinessProfileDTO
-import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v1.ProfileV1Service
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v2.ProfileV2Service
 import java.time.LocalDate
 
 @Validated
@@ -32,9 +32,9 @@ import java.time.LocalDate
 @RequestMapping("/subject-access-request", produces = [MediaType.APPLICATION_JSON_VALUE])
 @Tag(name = "SAR")
 class SARResourceController(
-  private val profileService: ProfileV1Service,
+  private val profileService: ProfileV2Service,
 ) {
-  private val objectMapperSAR = CapturedSpringConfigValues.objectMapperSAR
+  private val objectMapperSAR = CapturedSpringConfigValues.objectMapper
 
   @PreAuthorize("hasAnyRole('SAR_DATA_ACCESS', @environment.getProperty('hmpps.sar.additionalAccessRole', 'SAR_DATA_ACCESS'))")
   @GetMapping
@@ -110,9 +110,9 @@ class SARResourceController(
 
     if (!prn.isNullOrEmpty()) {
       return try {
-        SARReadinessProfileDTO(
-          profileEntity = profileService.getProfileForOffenderFilterByPeriod(prn, fromDate, toDate),
-        ).let { objectMapperSAR.writeValueAsString(it) }.let { ResponseEntity.ok(it) }
+        val sarContentList = profileService.getProfileForOffenderFilterByPeriod(prn, fromDate, toDate)
+        val responseDto = SARReadinessProfileDTO(sarContentList)
+        ResponseEntity.ok(responseDto)
       } catch (ex: NotFoundException) {
         return ResponseEntity.noContent().build()
       }

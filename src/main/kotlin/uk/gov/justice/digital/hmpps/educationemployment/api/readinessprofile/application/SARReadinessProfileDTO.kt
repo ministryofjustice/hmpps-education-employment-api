@@ -1,21 +1,14 @@
 package uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application
 
-import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.JsonNode
 import io.swagger.v3.oas.annotations.media.Schema
-import uk.gov.justice.digital.hmpps.educationemployment.api.config.CapturedSpringConfigValues.Companion.objectMapperSAR
-import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ReadinessProfile
-import uk.gov.justice.digital.hmpps.educationemployment.api.sardata.domain.Profile
 import java.time.LocalDateTime
 
 data class SARReadinessProfileDTO(
-  val content: SARContent,
-) {
-  constructor(profileEntity: ReadinessProfile) : this(
-    content = SARContent(profileEntity),
-  )
-}
+  val content: List<SARContentDTO>,
+)
 
-data class SARContent(
+data class SARContentDTO(
   @Schema(description = "Offender Id", example = "ABC12345")
   val offenderId: String,
 
@@ -26,12 +19,5 @@ data class SARContent(
   val modifiedDateTime: LocalDateTime,
 
   @Schema(description = "Work readiness profile JSON data", example = "{...}")
-  val profileData: Profile,
-) {
-  constructor(profileEntity: ReadinessProfile) : this(
-    offenderId = profileEntity.offenderId,
-    createdDateTime = profileEntity.createdDateTime,
-    modifiedDateTime = profileEntity.modifiedDateTime,
-    profileData = objectMapperSAR.treeToValue(profileEntity.profileData, object : TypeReference<Profile>() {}),
-  )
-}
+  val profileData: JsonNode,
+)

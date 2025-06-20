@@ -30,7 +30,7 @@ class ProfileV1Service(
   private val readinessProfileRepository: ReadinessProfileRepository,
   private val timeProvider: TimeProvider,
   private val objectMapper: ObjectMapper,
-) : ProfileService<Profile> {
+) : ProfileService<Profile, ReadinessProfile> {
   private val typeRefProfile by lazy { object : TypeReference<Profile>() {} }
   private val emptyJsonArray: JsonNode get() = objectMapper.readTree("[]")
 

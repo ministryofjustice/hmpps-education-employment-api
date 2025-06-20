@@ -1,0 +1,152 @@
+{
+  "offenderId": "A1234AA",
+  "profileData": {
+    "status": "SUPPORT_DECLINED",
+    "statusChange": true,
+    "statusChangeDate": [
+      2023,
+      8,
+      22,
+      16,
+      37,
+      37,
+      394930834
+    ],
+    "prisonId":"P001",
+    "prisonName": "Prison 2",
+    "within12Weeks": false,
+    "statusChangeType": "ACCEPTED_TO_DECLINED",
+    "supportAccepted": {
+      "modifiedBy":"BJDEV",
+      "modifiedDateTime": [
+        2023,
+        8,
+        22,
+        16,
+        36,
+        45,
+        813974433
+      ],
+      "actionsRequired": {
+        "modifiedBy": "BJDEV",
+        "modifiedDateTime": [
+          2023,
+          8,
+          22,
+          15,
+          36,
+          45,
+          768000000
+        ],
+        "actions": [
+          {
+            "todoItem": "EMAIL",
+            "status": "NOT_STARTED",
+            "other": null,
+            "id": null
+          },
+          {
+            "todoItem": "PHONE",
+            "status": "IN_PROGRESS",
+            "other": null,
+            "id": null
+          },
+          {
+            "todoItem": "EMAIL",
+            "status": "IN_PROGRESS",
+            "other": null,
+            "id": null
+          },
+          {
+            "todoItem": "PHONE",
+            "status": "IN_PROGRESS",
+            "other": null,
+            "id": null
+          },
+          {
+            "todoItem": "PHONE",
+            "status": "NOT_STARTED",
+            "other": null,
+            "id": null
+          },
+          {
+            "todoItem": "EMAIL",
+            "status": "NOT_STARTED",
+            "other": "something",
+            "id": [
+              "BIRTH_CERTIFICATE",
+              "PASSPORT",
+              "DRIVING_LICENCE",
+              "OTHER"
+            ]
+          },
+          {
+            "todoItem": "PHONE",
+            "status": "NOT_STARTED",
+            "other": null,
+            "id": null
+          }
+        ]
+      },
+      "workImpacts": {
+        "modifiedBy":"BJDEV",
+        "modifiedDateTime": [
+          2023,
+          8,
+          22,
+          15,
+          35,
+          54,
+          710000000
+        ],
+        "abilityToWorkImpactedBy": [
+          "FAMILY_ISSUES",
+          "CARING_RESPONSIBILITIES",
+          "MENTAL_HEALTH_ISSUES",
+          "DEPENDENCY_ISSUES"
+        ],
+        "caringResponsibilitiesFullTime": false,
+        "ableToManageMentalHealth": false,
+        "ableToManageDependencies": true
+      },
+      "workInterests": {
+        "modifiedBy":"BJDEV",
+        "modifiedDateTime": [
+          2023,
+          8,
+          22,
+          15,
+          35,
+          54,
+          710000000
+        ],
+        "workTypesOfInterest": [
+          "HOSPITALITY",
+          "MANUFACTURING",
+          "OFFICE"
+        ],
+        "workTypesOfInterestOther": "",
+        "jobOfParticularInterest": ""
+      },
+      "workExperience": {
+        "modifiedBy":"BJDEV",
+        "modifiedDateTime": [
+          2023,
+          8,
+          22,
+          15,
+          35,
+          54,
+          710000000
+        ],
+        "previousWorkOrVolunteering": "Some job",
+        "qualificationsAndTraining": [
+          "CSCS",
+          "DRIVING_LICENSE"
+        ],
+        "qualificationsAndTrainingOther": ""
+      }
+    },
+    "supportDeclined": null
+  }
+}

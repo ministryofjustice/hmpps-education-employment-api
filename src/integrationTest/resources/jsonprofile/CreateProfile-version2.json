@@ -1,0 +1,40 @@
+{
+  "offenderId": "A1235AA",
+  "profileData": {
+    "status": "SUPPORT_DECLINED",
+    "statusChange": [true],
+    "statusChangeDate": [
+      2023,
+      8,
+      22,
+      16,
+      37,
+      37,
+      394930834
+    ],
+    "prisonId":"P001",
+    "prisonName": "Prison 2",
+    "within12Weeks": false,
+    "statusChangeType": ["ACCEPTED_TO_DECLINED"],
+    "supportDeclined": {
+      "modifiedDateTime": [
+        2023,
+        8,
+        22,
+        16,
+        37,
+        37,
+        394906692
+      ],
+      "supportToWorkDeclinedReason": [
+        "ALREADY_HAS_WORK",
+        "RETIRED"
+      ],
+      "supportToWorkDeclinedReasonOther": "",
+      "circumstanceChangesRequiredToWork": [
+        "HOUSING_ON_RELEASE"
+      ],
+      "circumstanceChangesRequiredToWorkOther": ""
+    }
+  }
+}

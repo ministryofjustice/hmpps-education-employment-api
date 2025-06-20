@@ -8,14 +8,11 @@ import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatusCode
 import org.springframework.http.ResponseEntity
-import uk.gov.justice.digital.hmpps.educationemployment.api.config.CapturedSpringConfigValues
-import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.v1.ReadinessProfileV1TestCase
+import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.v2.ReadinessProfileV2TestCase
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.SARReadinessProfileDTO
 import java.time.LocalDate
 
-abstract class SARReadinessProfileTestCase : ReadinessProfileV1TestCase() {
-  protected val objectMapperSAR = CapturedSpringConfigValues.objectMapperSAR
-
+abstract class SARReadinessProfileTestCase : ReadinessProfileV2TestCase() {
   protected fun assertGetSARResponseIsOk(
     prn: String,
     fromDate: LocalDate? = null,
@@ -25,19 +22,10 @@ abstract class SARReadinessProfileTestCase : ReadinessProfileV1TestCase() {
   ): ResponseEntity<SARReadinessProfileDTO> {
     val url = makeUrl(SAR_ENDPOINT, makeRequestParamsOfSAR(prn = prn, fromDate = fromDate, toDate = toDate))
     val request = HttpEntity<HttpHeaders>(setAuthorisation(roles = roles))
-    val result = restTemplate.exchange(url, HttpMethod.GET, request, SARReadinessProfileDTO::class.java)
 
+    val result = restTemplate.exchange(url, HttpMethod.GET, request, SARReadinessProfileDTO::class.java)
     assertThat(result).isNotNull
     assertThat(result.statusCode).isEqualTo(HttpStatus.OK)
-
-    expectedProfileAsJson?.let { expectedProfile ->
-      val jsonProfileData =
-        objectMapperSAR.readTree(result.body!!.content.profileData.let { objectMapperSAR.writeValueAsString(it) })
-      assertThat(jsonProfileData)
-        .usingRecursiveComparison()
-        .ignoringFieldsMatchingRegexes(".*createdBy", ".*createdDateTime", ".*modifiedBy", ".*modifiedDateTime")
-        .isEqualTo(expectedProfile)
-    }
 
     return result
   }

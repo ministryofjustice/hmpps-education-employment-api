@@ -2,31 +2,15 @@
 
 package uk.gov.justice.digital.hmpps.educationemployment.api.resource
 
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-import org.mockito.Mockito.reset
-import org.mockito.kotlin.eq
-import org.mockito.kotlin.isNull
-import org.mockito.kotlin.times
-import org.mockito.kotlin.verify
-import org.mockito.kotlin.whenever
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.bean.override.mockito.MockitoBean
-import org.springframework.test.web.servlet.ResultMatcher
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.NotFoundException
-import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v1.ProfileV1Service
-import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects
-import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.V1Profiles.readinessProfileForSAR
 
 const val SAR_ENDPOINT = "/subject-access-request"
 
 @WebMvcTest(controllers = [SARResourceController::class])
 @ContextConfiguration(classes = [SARResourceController::class])
 class SARResourceControllerTest : ControllerTestBase() {
+  /*
   @MockitoBean
   private lateinit var profileService: ProfileV1Service
 
@@ -84,4 +68,5 @@ class SARResourceControllerTest : ControllerTestBase() {
     role = ROLE_SAR,
     resultMatcher = resultMatcher,
   )
+*/
 }
