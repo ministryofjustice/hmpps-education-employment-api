@@ -9,7 +9,7 @@ import java.time.LocalDateTime
 
 class ProfileTest {
 
-  private val objectMapper = CapturedSpringConfigValues.objectMapperSAR
+  private val objectMapper = CapturedSpringConfigValues.objectMapper
 
   @Test
   fun `should serialize status and statusChangeType as arrays`() {

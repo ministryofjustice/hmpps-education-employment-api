@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.data.history.Revisions
 import org.springframework.stereotype.Service
-import uk.gov.justice.digital.hmpps.educationemployment.api.config.CapturedSpringConfigValues.Companion.objectMapperSAR
 import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.AlreadyExistsException
 import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.InvalidStateException
 import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.NotFoundException
@@ -32,7 +31,7 @@ class ProfileV2Service(
   private val readinessProfileRepository: ReadinessProfileRepository,
   private val timeProvider: TimeProvider,
   private val objectMapper: ObjectMapper,
-) : ProfileService<Profile> {
+) : ProfileService<Profile, List<SARContentDTO>> {
   private val typeRefProfile by lazy { object : TypeReference<Profile>() {} }
   private val typeRefSARProfile by lazy { object : TypeReference<SARProfile>() {} }
 
@@ -166,15 +165,6 @@ class ProfileV2Service(
     prisonNumber: String,
     fromDate: LocalDate?,
     toDate: LocalDate?,
-  ): ReadinessProfile? {
-    // No longer used in this version — returning null or throwing is an option
-    return null
-  }
-
-  fun getSARProfileForOffenderFilterByPeriod(
-    prisonNumber: String,
-    fromDate: LocalDate?,
-    toDate: LocalDate?,
   ): List<SARContentDTO> {
     if (fromDate != null && toDate != null && fromDate.isAfter(toDate)) {
       throw IllegalArgumentException("fromDate cannot be after toDate")
@@ -188,7 +178,7 @@ class ProfileV2Service(
       throw NotFoundException("No profile found for prison number $prisonNumber")
     }
 
-    val profileSnapshots: List<SARContentDTO> = getSortedProfileHistory(readinessProfileRevisions, instantFrom, instantTo).map { revision ->
+    val profileSnapshots: List<SARContentDTO> = getSortedProfileHistory(readinessProfileRevisions).map { revision ->
       val parseSARProfile = parseSARProfile(revision.profileData)
       val profileDataJson = parseSARProfile.json()
 
@@ -203,12 +193,7 @@ class ProfileV2Service(
     return profileSnapshots
   }
 
-  private fun getSortedProfileHistory(revision: Revisions<Long, ReadinessProfile>, startDate: Instant?, endDate: Instant?): List<ReadinessProfile> = revision.content
-    .filter { revision ->
-      val revisionInstant = revision.metadata.revisionInstant.orElse(null)
-      (startDate == null || (revisionInstant != null && !revisionInstant.isBefore(startDate))) &&
-        (endDate == null || (revisionInstant != null && !revisionInstant.isAfter(endDate)))
-    }
+  private fun getSortedProfileHistory(revision: Revisions<Long, ReadinessProfile>): List<ReadinessProfile> = revision.content
     .sortedByDescending { it.metadata.revisionInstant.orElse(Instant.EPOCH) }
     .map { it.entity }
 
@@ -313,7 +298,7 @@ class ProfileV2Service(
 
   private fun parseProfile(profileData: JsonNode): Profile = objectMapper.treeToValue(profileData, typeRefProfile)
 
-  private fun parseSARProfile(profileData: JsonNode): SARProfile = objectMapperSAR.treeToValue(profileData, typeRefSARProfile)
+  private fun parseSARProfile(profileData: JsonNode): SARProfile = objectMapper.treeToValue(profileData, typeRefSARProfile)
 
   private fun List<ReadinessProfile>.migrateSchema() = map { it.migrateSchema() }.toList()
 
@@ -333,7 +318,7 @@ class ProfileV2Service(
     }
   }
 
-  private fun SARProfile.json(): JsonNode = objectMapperSAR.valueToTree(this)
+  private fun SARProfile.json(): JsonNode = objectMapper.valueToTree(this)
 
   private fun Profile.json(): JsonNode = objectMapper.valueToTree(this)
 }

@@ -8,7 +8,11 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
+import org.springframework.transaction.annotation.Propagation
+import org.springframework.transaction.annotation.Transactional
+import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.knownCaseReferenceNumber
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.makeProfileRequestWithSupportAccepted
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.makeProfileRequestWithSupportDeclined
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.profileJsonOfAnotherPrisonNumber
@@ -21,14 +25,20 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.S
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.SupportDeclined
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.SupportToWorkDeclinedReason
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.v2.Profile
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v2.ProfileV2Service
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v2.ReadinessProfileDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v2.ReadinessProfileRequestDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.anotherPrisonNumber
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.knownPrisonNumber
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.unknownPrisonNumber
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ReadinessProfile
 import java.time.LocalDateTime
 
 class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
+
+  @Autowired
+  private lateinit var profileService: ProfileV2Service
+
   @Nested
   @DisplayName("Given an unknown prisoner without readiness profile")
   inner class GivenAnUnknownPrisoner {
@@ -39,7 +49,7 @@ class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
 
     @Test
     fun `reply 209 (Subject Identifier is not recognised by this service), when requesting a SAR with CRN only`() {
-      assertGetSARResponseStatusAndBody(expectedStatusCodeValue = 209, crn = knownPrisonNumber)
+      assertGetSARResponseStatusAndBody(expectedStatusCodeValue = 209, crn = knownCaseReferenceNumber)
     }
   }
 
@@ -84,6 +94,7 @@ class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
 
   @Nested
   @DisplayName("Given another readiness profile with support declined")
+  @Transactional(propagation = Propagation.NOT_SUPPORTED)
   inner class GivenAnotherProfileWithSupportDeclined {
     private lateinit var expectedProfileDTO: ReadinessProfileDTO
     private lateinit var expectedPrisonNumber: String
@@ -108,7 +119,7 @@ class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
       }
 
       val sarResult = assertGetSARResponseIsOk(expectedProfileAsJson = expectedProfile, prn = prisonNumber)
-      val jsonContent = objectMapperSAR.readTree(sarResult.body!!.asJson()).get("content")
+      val jsonContent = objectMapper.readTree(sarResult.body!!.asJson()).get("content")
 
       listOf("bookingId", "createdBy", "modifiedBy", "noteData").forEach {
         val node = jsonContent.findParent(it)
@@ -165,7 +176,7 @@ class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
       val expectedProfile = profileJsonWithSupportAccepted
 
       val sarResult = assertGetSARResponseIsOk(expectedProfileAsJson = expectedProfile, prn = prisonNumber)
-      val jsonContent = objectMapperSAR.readTree(sarResult.body!!.asJson()).get("content")
+      val jsonContent = objectMapper.readTree(sarResult.body!!.asJson()).get("content")
 
       listOf("bookingId", "createdBy", "modifiedBy", "noteData").forEach {
         val node = jsonContent.findParent(it)
@@ -176,7 +187,8 @@ class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
 
   private fun givenTheKnownProfile(): ReadinessProfileDTO {
     val prisonNumber = knownPrisonNumber
-    val profile = addProfileV2(prisonNumber, profileRequestOfKnownPrisonNumber)
+    val profileRequest = profileRequestOfKnownPrisonNumber
+    val profile = addProfile(prisonNumber, profileRequest)
     return ReadinessProfileDTO(profile)
   }
 
@@ -205,7 +217,7 @@ class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
   private fun givenAnotherProfileWithSupportDeclined(): ReadinessProfileDTO {
     val prisonNumber = anotherPrisonNumber
     val request = makeProfileRequestWithSupportDeclined()
-    val result = addProfileV2(prisonNumber, request)
+    val result = addProfile(prisonNumber, request)
     repeat(6) { times ->
       request.profileData.supportDeclined!!.let {
         request.profileData.supportDeclined =
@@ -218,7 +230,7 @@ class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
   private fun givenAProfileWithSupportAccepted(): ReadinessProfileDTO {
     val prisonNumber = anotherPrisonNumber
     val request = makeProfileRequestWithSupportAccepted()
-    val result = addProfileV2(prisonNumber, request)
+    val result = addProfile(prisonNumber, request)
     repeat(6) { times ->
       request.profileData.supportAccepted!!.let {
         request.profileData.supportAccepted =
@@ -227,4 +239,11 @@ class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
     }
     return ReadinessProfileDTO(result)
   }
+
+  private fun addProfile(prisonNumber: String, profileRequest: ReadinessProfileRequestDTO): ReadinessProfile = profileService.createProfileForOffender(
+    userId = "test user",
+    offenderId = prisonNumber,
+    bookingId = profileRequest.bookingId,
+    profile = profileRequest.profileData,
+  )
 }

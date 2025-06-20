@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.educationemployment.api.config
 
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
@@ -18,9 +19,8 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.sardata.domain.Suppo
 @Configuration
 class CapturedSpringConfigValues {
   companion object {
-    var objectMapper: ObjectMapper = configObjectMapper()
-    var objectMapperSAR: ObjectMapper = configObjectMapper().apply {
-
+    var objectMapper: ObjectMapper = configObjectMapper().apply {
+      // addMixIn(Action::class.java, ActionMixin::class.java)
       listOf(
         SupportAccepted::class.java,
         ActionsRequired::class.java,
@@ -33,7 +33,7 @@ class CapturedSpringConfigValues {
     fun configObjectMapper() = JsonMapper.builder()
       .addModules(JavaTimeModule())
       .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-      .enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+      .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
       .build()
       .registerKotlinModule()
   }

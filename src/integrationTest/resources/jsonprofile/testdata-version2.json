@@ -14,9 +14,10 @@
     ],
     "prisonId": "P002",
     "prisonName": "Kirkham (HMP)",
-    "within12Weeks": null,
+    "within12Weeks": false,
     "statusChangeType": "ACCEPTED_TO_DECLINED",
     "supportAccepted": {
+      "modifiedBy":"BJDEV",
       "modifiedDateTime": [
         2023,
         8,
@@ -27,6 +28,7 @@
         813974433
       ],
       "actionsRequired": {
+        "modifiedBy":"BJDEV",
         "modifiedDateTime": [
           2023,
           8,
@@ -87,6 +89,7 @@
         ]
       },
       "workImpacts": {
+        "modifiedBy":"BJDEV",
         "modifiedDateTime": [
           2023,
           8,
@@ -107,6 +110,7 @@
         "ableToManageDependencies": true
       },
       "workInterests": {
+        "modifiedBy":"BJDEV",
         "modifiedDateTime": [
           2023,
           8,
@@ -125,6 +129,7 @@
         "jobOfParticularInterest": ""
       },
       "workExperience": {
+        "modifiedBy":"BJDEV",
         "modifiedDateTime": [
           2023,
           8,
@@ -141,6 +146,7 @@
         ],
         "qualificationsAndTrainingOther": ""
       }
-    }
+    },
+    "supportDeclined": null
   }
 }

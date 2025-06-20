@@ -1,8 +1,8 @@
 {
-  "offenderId": "A1234FF",
+  "offenderId": "A1235AA",
   "profileData": {
     "status": "SUPPORT_DECLINED",
-    "statusChange": true,
+    "statusChange": [true],
     "statusChangeDate": [
       2023,
       8,
@@ -12,12 +12,11 @@
       37,
       394930834
     ],
-    "prisonId": "P002",
-    "prisonName": "Kirkham (HMP)",
+    "prisonId":"P001",
+    "prisonName": "Prison 2",
     "within12Weeks": false,
-    "statusChangeType": "ACCEPTED_TO_DECLINED",
+    "statusChangeType": ["ACCEPTED_TO_DECLINED"],
     "supportDeclined": {
-      "modifiedBy": "BJDEV",
       "modifiedDateTime": [
         2023,
         8,
@@ -36,7 +35,6 @@
         "HOUSING_ON_RELEASE"
       ],
       "circumstanceChangesRequiredToWorkOther": ""
-    },
-    "supportAccepted": null
+    }
   }
 }

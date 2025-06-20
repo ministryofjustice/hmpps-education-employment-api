@@ -1,5 +1,5 @@
 {
-  "offenderId": "A1234FF",
+  "offenderId": "A1234AA",
   "profileData": {
     "status": "SUPPORT_DECLINED",
     "statusChange": true,
@@ -14,10 +14,9 @@
     ],
     "prisonId": "P002",
     "prisonName": "Kirkham (HMP)",
-    "within12Weeks": false,
+    "within12Weeks": null,
     "statusChangeType": "ACCEPTED_TO_DECLINED",
     "supportDeclined": {
-      "modifiedBy": "BJDEV",
       "modifiedDateTime": [
         2023,
         8,

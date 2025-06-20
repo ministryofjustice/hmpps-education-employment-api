@@ -14,7 +14,6 @@ import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -34,9 +33,9 @@ import java.time.LocalDate
 class SARResourceController(
   private val profileService: ProfileV2Service,
 ) {
-  private val objectMapperSAR = CapturedSpringConfigValues.objectMapperSAR
+  private val objectMapperSAR = CapturedSpringConfigValues.objectMapper
 
-  @PreAuthorize("hasAnyRole('SAR_DATA_ACCESS', @environment.getProperty('hmpps.sar.additionalAccessRole', 'SAR_DATA_ACCESS'))")
+  // @PreAuthorize("hasAnyRole('SAR_DATA_ACCESS', @environment.getProperty('hmpps.sar.additionalAccessRole', 'SAR_DATA_ACCESS'))")
   @GetMapping
   @Operation(
     summary = "Provides content for a prisoner to satisfy the needs of a subject access request on their behalf",
@@ -110,7 +109,7 @@ class SARResourceController(
 
     if (!prn.isNullOrEmpty()) {
       return try {
-        val sarContentList = profileService.getSARProfileForOffenderFilterByPeriod(prn, fromDate, toDate)
+        val sarContentList = profileService.getProfileForOffenderFilterByPeriod(prn, fromDate, toDate)
         val responseDto = SARReadinessProfileDTO(sarContentList)
         ResponseEntity.ok(responseDto)
       } catch (ex: NotFoundException) {

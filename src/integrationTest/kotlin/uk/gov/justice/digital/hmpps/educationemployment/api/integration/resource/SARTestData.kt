@@ -12,21 +12,20 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.dom
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.createProfileV2JsonRequestWithSupportDeclined
 
 object SARTestData {
-  private val objectMapperSAR = CapturedSpringConfigValues.objectMapperSAR
   private val objectMapper = CapturedSpringConfigValues.objectMapper
 
-  val knownnCaseReferenceNumber = "A000AA"
+  val knownCaseReferenceNumber = "A000AA"
 
   val profileRequestOfKnownPrisonNumber = makeProfileRequestDTO(createProfileV2JsonRequest)
-  val profileJsonOfKnownPrisonNumber = objectMapperSAR.valueToTree<JsonNode>(profileRequestOfKnownPrisonNumber).get("profileData")
+  val profileJsonOfKnownPrisonNumber = objectMapper.valueToTree<JsonNode>(profileRequestOfKnownPrisonNumber).get("profileData")
 
   val profileOfAnotherPrisonNumber =
     makeProfileRequestDTO(createProfileV2JsonRequestWithSupportDeclined).profileData
-  val profileJsonOfAnotherPrisonNumber = objectMapperSAR.valueToTree<JsonNode>(profileOfAnotherPrisonNumber)
+  val profileJsonOfAnotherPrisonNumber = objectMapper.valueToTree<JsonNode>(profileOfAnotherPrisonNumber)
 
   val profileWithSupportAccepted =
     makeProfileRequestDTO(createProfileV2JsonRequestWithSupportAccepted).profileData
-  val profileJsonWithSupportAccepted = objectMapperSAR.valueToTree<JsonNode>(profileWithSupportAccepted)
+  val profileJsonWithSupportAccepted = objectMapper.valueToTree<JsonNode>(profileWithSupportAccepted)
 
   fun makeProfileRequestOfAnotherPrisonNumber() = makeProfileRequestDTO(createProfileV1JsonRequestWithSupportDeclined).apply {
     profileData.supportDeclined!!.let {
