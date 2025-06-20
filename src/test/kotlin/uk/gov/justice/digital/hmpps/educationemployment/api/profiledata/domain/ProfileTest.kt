@@ -27,8 +27,8 @@ class ProfileTest {
 
     val json = objectMapper.writeValueAsString(profile)
 
-    assertTrue(json.contains("\"status\":[\"NO_RIGHT_TO_WORK\"]"))
-    assertTrue(json.contains("\"statusChangeType\":[\"NEW\"]"))
+    assertTrue(json.contains("\"status\":\"NO_RIGHT_TO_WORK\""))
+    assertTrue(json.contains("\"statusChangeType\":\"NEW\""))
     assertFalse(json.contains("statusAsList"))
     assertFalse(json.contains("statusChangeAsList"))
   }
