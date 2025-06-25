@@ -1,12 +1,12 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "8.2.0"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "8.3.0"
   kotlin("plugin.spring") version "2.1.21"
   kotlin("plugin.jpa") version "2.1.21"
   id("jacoco")
 }
 
 dependencies {
-  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:5.4.5") {
+  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:5.4.6") {
     implementation("org.apache.commons:commons-compress:1.27.1")
   }
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
@@ -18,7 +18,7 @@ dependencies {
   implementation("io.jsonwebtoken:jjwt-jackson:0.12.6")
 
   runtimeOnly("org.flywaydb:flyway-database-postgresql")
-  runtimeOnly("org.postgresql:postgresql:42.7.5")
+  runtimeOnly("org.postgresql:postgresql")
   testImplementation("org.testcontainers:localstack")
   testImplementation("org.testcontainers:postgresql")
   testImplementation("org.testcontainers:testcontainers")
