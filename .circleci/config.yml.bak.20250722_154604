@@ -1,0 +1,141 @@
+version: 2.1
+orbs:
+  hmpps: ministryofjustice/hmpps@10
+parameters:
+  alerts-slack-channel:
+    type: string
+    default: education-skills-work-employment-dev
+  releases-slack-channel:
+    type: string
+    default: education-skills-work-employment-dev
+  java-version:
+    type: string
+    default: "21.0"
+  postgres-version:
+    type: string
+    default: "16"
+  localstack-version:
+    type: string
+    default: "4"
+jobs:
+  validate:
+    executor:
+      name: hmpps/java_localstack_postgres_with_db_name
+      jdk_tag: << pipeline.parameters.java-version >>
+      postgres_tag: << pipeline.parameters.postgres-version >>
+      postgres_db: "education-employment"
+      postgres_username: "education-employment"
+      postgres_password: "education-employment"
+      localstack_tag: << pipeline.parameters.localstack-version >>
+    environment:
+      DATABASE_ENDPOINT: localhost:5432
+      DATABASE_NAME: education-employment
+      DATABASE_USERNAME: education-employment
+      DATABASE_PASSWORD: education-employment
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - gradle-{{ checksum "build.gradle.kts" }}
+            - gradle-
+      - run:
+          command: ./gradlew check
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: gradle-{{ checksum "build.gradle.kts" }}
+      - store_test_results:
+          path: build/test-results
+      - store_artifacts:
+          path: build/reports/tests
+workflows:
+  version: 2
+  build-test-and-deploy:
+    jobs:
+      - validate:
+          filters:
+            tags:
+              ignore: /.*/
+      - hmpps/helm_lint:
+          name: helm_lint
+      - hmpps/build_multiplatform_docker:
+          name: build_docker
+          filters:
+            branches:
+              only:
+                - main
+      - hmpps/deploy_env:
+          name: deploy_dev
+          env: "dev"
+          context: hmpps-common-vars
+          filters:
+            branches:
+              only:
+                - main
+          requires:
+            - validate
+            - build_docker
+            - helm_lint
+      - request-preprod-approval:
+          type: approval
+          requires:
+            - deploy_dev
+      - hmpps/deploy_env:
+          name: deploy_preprod
+          env: "preprod"
+          context:
+            - hmpps-common-vars
+            - hmpps-education-employment-api-preprod
+          requires:
+            - request-preprod-approval
+      - request-prod-approval:
+          type: approval
+          requires:
+            - deploy_preprod
+      - hmpps/deploy_env:
+          name: deploy_prod
+          env: "prod"
+          slack_notification: true
+          slack_channel_name: << pipeline.parameters.releases-slack-channel >>
+          context:
+            - hmpps-common-vars
+            - hmpps-education-employment-api-prod
+          requires:
+            - request-prod-approval
+  security:
+    triggers:
+      - schedule:
+          cron: "22 4 * * 1-5"
+          filters:
+            branches:
+              only:
+                - main
+    jobs:
+      - hmpps/gradle_owasp_dependency_check:
+          slack_channel: << pipeline.parameters.alerts-slack-channel >>
+          context:
+            - hmpps-common-vars
+          jdk_tag: "21.0"
+      - hmpps/trivy_latest_scan:
+          slack_channel: << pipeline.parameters.alerts-slack-channel >>
+          context:
+            - hmpps-common-vars
+      - hmpps/veracode_pipeline_scan:
+          slack_channel: << pipeline.parameters.alerts-slack-channel >>
+          context:
+            - veracode-credentials
+            - hmpps-common-vars
+  security-weekly:
+    triggers:
+      - schedule:
+          cron: "38 4 * * 1"
+          filters:
+            branches:
+              only:
+                - main
+    jobs:
+      - hmpps/veracode_policy_scan:
+          slack_channel: << pipeline.parameters.alerts-slack-channel >>
+          context:
+            - veracode-credentials
+            - hmpps-common-vars
