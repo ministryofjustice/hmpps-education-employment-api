@@ -30,6 +30,7 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.dom
 import uk.gov.justice.digital.hmpps.educationemployment.api.shared.application.UnitTestBase
 import java.util.*
 import kotlin.test.assertFailsWith
+import kotlin.test.assertNull
 
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 class ProfileV2ServiceTest : UnitTestBase() {
@@ -184,49 +185,194 @@ class ProfileV2ServiceTest : UnitTestBase() {
     }
 
     @Nested
-    @DisplayName("And the readiness profile with decline is found")
+    @DisplayName("And the readiness profile with 'support declined' is found")
     inner class AndProfileWithDeclineIsFound {
       private val profileWithDecline = V2Profiles.readinessProfileAndDeclined1
 
       private val profileDataWithAcceptance = V2Profiles.profileAcceptedAndModified
-      private val profileWithAcceptance = V2Profiles.updatedReadinessProfileAndAccepted1
+      private val profileDataReadyToWork = V2Profiles.profileReadyToWorkAndModified
+      private val profileDataNoRightToWork = V2Profiles.profileNoRightToWorkAndModified
+      private val profileDataWithDecline = V2Profiles.profileDeclinedAndModified
 
       @BeforeEach
       internal fun setUp() {
-        givenProfileFound(profileWithDecline)
+        givenProfileFound(profileWithDecline.copy())
+        mockSaveProfile()
       }
 
       @Test
-      fun `set statusChangeType to DECLINED_TO_ACCEPTED, on Update of acceptedSupport in readiness profile`() {
-        givenSavedProfile(profileWithAcceptance)
+      fun `set statusChangeType to DECLINED_TO_ACCEPTED, on Update of 'support accepted' in readiness profile`() {
 
-        val actual = assertProfileIsUpdated(userId, prisonNumber, bookingId, profileDataWithAcceptance)
+        // Before update, expect StatusChangeType is NEW and statusChange is false
+        val profileBefore: ReadinessProfile = profileWithDecline
+        profileJsonToValue(profileBefore.profileData) . let {
+          assertThat(it.statusChangeType!!).isEqualTo(StatusChange.NEW)
+          assertThat(it.statusChange!!).isEqualTo(false)
+        }
 
-        profileJsonToValue(actual.profileData).let {
+        val profileAfter = assertProfileIsUpdated(userId, prisonNumber, bookingId, profileDataWithAcceptance)
+
+        // After update, expect StatusChangeType and statusChange to have been updated correctly.
+        profileJsonToValue(profileAfter.profileData).let {
           assertThat(it.statusChangeType!!).isEqualTo(StatusChange.DECLINED_TO_ACCEPTED)
+          assertThat(it.statusChange!!).isEqualTo(true)
+        }
+      }
+
+      @Test
+      fun `set statusChangeType to DECLINED_TO_ACCEPTED, on Update of 'ready to work' in readiness profile`() {
+
+        // Before update, expect StatusChangeType is NEW and statusChange is false
+        val profileBefore: ReadinessProfile = profileWithDecline
+        profileJsonToValue(profileBefore.profileData) . let {
+          assertThat(it.statusChangeType!!).isEqualTo(StatusChange.NEW)
+          assertThat(it.statusChange!!).isEqualTo(false)
+        }
+
+        val profileAfter = assertProfileIsUpdated(userId, prisonNumber, bookingId, profileDataReadyToWork)
+
+        // After update, expect StatusChangeType and statusChange to have been updated correctly.
+        profileJsonToValue(profileAfter.profileData).let {
+          assertThat(it.statusChangeType!!).isEqualTo(StatusChange.DECLINED_TO_ACCEPTED)
+          assertThat(it.statusChange!!).isEqualTo(true)
+        }
+      }
+
+      @Test
+      fun `set statusChangeType to NULL, on Update of 'no right to work' in readiness profile`() {
+
+        // Before update, expect StatusChangeType is NEW and statusChange is false
+        val profileBefore: ReadinessProfile = profileWithDecline
+        profileJsonToValue(profileBefore.profileData) . let {
+          assertThat(it.statusChangeType!!).isEqualTo(StatusChange.NEW)
+          assertThat(it.statusChange!!).isEqualTo(false)
+        }
+
+        val profileAfter = assertProfileIsUpdated(userId, prisonNumber, bookingId, profileDataNoRightToWork)
+
+        // After update, expect StatusChangeType and statusChange to have been updated correctly.
+        profileJsonToValue(profileAfter.profileData).let {
+          assertNull(it.statusChangeType)
+          assertThat(it.statusChange!!).isEqualTo(true)
+        }
+      }
+
+      @Test
+      fun `set statusChangeType to NULL, on no change from 'support declined' in readiness profile`() {
+
+        // Before update, expect StatusChangeType is NEW and statusChange is false
+        val profileBefore: ReadinessProfile = profileWithDecline
+        profileJsonToValue(profileBefore.profileData).let {
+          assertThat(it.statusChangeType!!).isEqualTo(StatusChange.NEW)
+          assertThat(it.statusChange!!).isEqualTo(false)
+        }
+
+        val profileAfter = assertProfileIsUpdated(userId, prisonNumber, bookingId, profileDataWithDecline)
+
+        // After update, expect StatusChangeType and statusChange to have been updated correctly.
+        profileJsonToValue(profileAfter.profileData).let {
+          assertNull(it.statusChangeType)
+          assertThat(it.statusChange!!).isEqualTo(false)
         }
       }
     }
 
     @Nested
-    @DisplayName("And the readiness profile with acceptance is found")
+    @DisplayName("And the readiness profile with 'support accepted' is found")
     inner class AndProfileWithAcceptanceIsFound {
       private val profileWithAcceptance = V2Profiles.readinessProfileAndAccepted1
-      private val profileDataWithAcceptance = V2Profiles.profileAcceptedAndModified
+      private val profileDataWithDecline = V2Profiles.profileDeclinedAndModified
 
       @BeforeEach
       internal fun setUp() {
         givenProfileFound(profileWithAcceptance)
+        mockSaveProfile()
       }
 
       @Test
       fun `set statusChangeType to ACCEPTED_TO_DECLINED, on Update of declinedSupport in readiness profile`() {
-        givenSavedProfile(updatedProfileWithDecline)
 
-        val actual = assertProfileIsUpdated(userId, prisonNumber, bookingId, profileDataWithAcceptance)
 
-        profileJsonToValue(actual.profileData).let {
-          assertThat(it.statusChangeType!!.equals(StatusChange.ACCEPTED_TO_DECLINED))
+        // Before update, expect StatusChangeType is NEW and statusChange is false
+        val profileBefore: ReadinessProfile = profileWithAcceptance
+        profileJsonToValue(profileBefore.profileData) . let {
+          assertThat(it.statusChangeType!!).isEqualTo(StatusChange.NEW)
+          assertThat(it.statusChange!!).isEqualTo(false)
+        }
+
+        val profileAfter = assertProfileIsUpdated(userId, prisonNumber, bookingId, profileDataWithDecline)
+
+        // After update, expect StatusChangeType and statusChange to have been updated correctly.
+        profileJsonToValue(profileAfter.profileData).let {
+          assertThat(it.statusChangeType!!).isEqualTo(StatusChange.ACCEPTED_TO_DECLINED)
+          assertThat(it.statusChange!!).isEqualTo(true)
+        }
+      }
+    }
+
+    @Nested
+    @DisplayName("And the readiness profile with 'no right to work' is found")
+    inner class AndProfileWithNoRightToWorkIsFound {
+      private val profileWithNoRightToWork = V2Profiles.readinessProfileAndNoRightToWork1
+
+      private val profileDataWithAcceptance = V2Profiles.profileAcceptedAndModified
+
+      @BeforeEach
+      internal fun setUp() {
+        givenProfileFound(profileWithNoRightToWork)
+        mockSaveProfile()
+      }
+
+      @Test
+      fun `set statusChangeType to DECLINED_TO_ACCEPTED, on Update of acceptedSupport in readiness profile`() {
+
+
+        // Before update, expect StatusChangeType is NEW and statusChange is false
+        val profileBefore: ReadinessProfile = profileWithNoRightToWork
+        profileJsonToValue(profileBefore.profileData) . let {
+          assertThat(it.statusChangeType!!).isEqualTo(StatusChange.NEW)
+          assertThat(it.statusChange!!).isEqualTo(false)
+        }
+
+        val profileAfter = assertProfileIsUpdated(userId, prisonNumber, bookingId, profileDataWithAcceptance)
+
+        // After update, expect StatusChangeType and statusChange to have been updated correctly.
+        profileJsonToValue(profileAfter.profileData).let {
+          assertThat(it.statusChangeType!!).isEqualTo(StatusChange.DECLINED_TO_ACCEPTED)
+          assertThat(it.statusChange!!).isEqualTo(true)
+        }
+      }
+    }
+
+    @Nested
+    @DisplayName("And the readiness profile with 'ready to work' is found")
+    inner class AndProfileWithReadyToWorkIsFound {
+      private val profileWithReadyToWork = V2Profiles.readinessProfileAndReadyToWork1
+      private val profileDataWithDecline = V2Profiles.profileDeclinedAndModified
+
+      @BeforeEach
+      internal fun setUp() {
+        givenProfileFound(profileWithReadyToWork)
+        mockSaveProfile()
+      }
+
+      @Test
+      fun `set statusChangeType to ACCEPTED_TO_DECLINED, on Update of declinedSupport in readiness profile`() {
+
+
+        // Before update, expect StatusChangeType is NEW and statusChange is false
+        val profileBefore: ReadinessProfile = profileWithReadyToWork
+        profileJsonToValue(profileBefore.profileData) . let {
+          assertThat(it.statusChangeType!!).isEqualTo(StatusChange.NEW)
+          assertThat(it.statusChange!!).isEqualTo(false)
+        }
+
+        val profileAfter = assertProfileIsUpdated(userId, prisonNumber, bookingId, profileDataWithDecline)
+
+        // After update, expect StatusChangeType and statusChange to have been updated correctly.
+        profileJsonToValue(profileAfter.profileData).let {
+          assertThat(it.statusChangeType!!).isEqualTo(StatusChange.ACCEPTED_TO_DECLINED)
+          assertThat(it.statusChange!!).isEqualTo(true)
         }
       }
     }
@@ -334,6 +480,10 @@ class ProfileV2ServiceTest : UnitTestBase() {
   private fun givenProfileExistence(prisonNumber: String, isExisting: Boolean) = whenever(readinessProfileRepository.existsById(prisonNumber)).thenReturn(isExisting)
 
   private fun givenSavedProfile(profile: ReadinessProfile) = whenever(readinessProfileRepository.save(any())).thenReturn(profile)
+
+  private fun mockSaveProfile() {
+    whenever(readinessProfileRepository.save(any())).thenAnswer { it.arguments[0] as ReadinessProfile }
+  }
 
   private fun givenProfileFound(profile: ReadinessProfile) = lenient().whenever(readinessProfileRepository.findById(any())).thenReturn(Optional.of(profile))
 }
