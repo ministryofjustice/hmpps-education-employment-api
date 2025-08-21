@@ -202,10 +202,9 @@ class ProfileV2ServiceTest : UnitTestBase() {
 
       @Test
       fun `set statusChangeType to DECLINED_TO_ACCEPTED, on Update of 'support accepted' in readiness profile`() {
-
         // Before update, expect StatusChangeType is NEW and statusChange is false
         val profileBefore: ReadinessProfile = profileWithDecline
-        profileJsonToValue(profileBefore.profileData) . let {
+        profileJsonToValue(profileBefore.profileData).let {
           assertThat(it.statusChangeType!!).isEqualTo(StatusChange.NEW)
           assertThat(it.statusChange!!).isEqualTo(false)
         }
@@ -221,10 +220,9 @@ class ProfileV2ServiceTest : UnitTestBase() {
 
       @Test
       fun `set statusChangeType to DECLINED_TO_ACCEPTED, on Update of 'ready to work' in readiness profile`() {
-
         // Before update, expect StatusChangeType is NEW and statusChange is false
         val profileBefore: ReadinessProfile = profileWithDecline
-        profileJsonToValue(profileBefore.profileData) . let {
+        profileJsonToValue(profileBefore.profileData).let {
           assertThat(it.statusChangeType!!).isEqualTo(StatusChange.NEW)
           assertThat(it.statusChange!!).isEqualTo(false)
         }
@@ -240,10 +238,9 @@ class ProfileV2ServiceTest : UnitTestBase() {
 
       @Test
       fun `set statusChangeType to NULL, on Update of 'no right to work' in readiness profile`() {
-
         // Before update, expect StatusChangeType is NEW and statusChange is false
         val profileBefore: ReadinessProfile = profileWithDecline
-        profileJsonToValue(profileBefore.profileData) . let {
+        profileJsonToValue(profileBefore.profileData).let {
           assertThat(it.statusChangeType!!).isEqualTo(StatusChange.NEW)
           assertThat(it.statusChange!!).isEqualTo(false)
         }
@@ -259,7 +256,6 @@ class ProfileV2ServiceTest : UnitTestBase() {
 
       @Test
       fun `set statusChangeType to NULL, on no change from 'support declined' in readiness profile`() {
-
         // Before update, expect StatusChangeType is NEW and statusChange is false
         val profileBefore: ReadinessProfile = profileWithDecline
         profileJsonToValue(profileBefore.profileData).let {
@@ -291,11 +287,9 @@ class ProfileV2ServiceTest : UnitTestBase() {
 
       @Test
       fun `set statusChangeType to ACCEPTED_TO_DECLINED, on Update of declinedSupport in readiness profile`() {
-
-
         // Before update, expect StatusChangeType is NEW and statusChange is false
         val profileBefore: ReadinessProfile = profileWithAcceptance
-        profileJsonToValue(profileBefore.profileData) . let {
+        profileJsonToValue(profileBefore.profileData).let {
           assertThat(it.statusChangeType!!).isEqualTo(StatusChange.NEW)
           assertThat(it.statusChange!!).isEqualTo(false)
         }
@@ -325,11 +319,9 @@ class ProfileV2ServiceTest : UnitTestBase() {
 
       @Test
       fun `set statusChangeType to DECLINED_TO_ACCEPTED, on Update of acceptedSupport in readiness profile`() {
-
-
         // Before update, expect StatusChangeType is NEW and statusChange is false
         val profileBefore: ReadinessProfile = profileWithNoRightToWork
-        profileJsonToValue(profileBefore.profileData) . let {
+        profileJsonToValue(profileBefore.profileData).let {
           assertThat(it.statusChangeType!!).isEqualTo(StatusChange.NEW)
           assertThat(it.statusChange!!).isEqualTo(false)
         }
@@ -358,11 +350,9 @@ class ProfileV2ServiceTest : UnitTestBase() {
 
       @Test
       fun `set statusChangeType to ACCEPTED_TO_DECLINED, on Update of declinedSupport in readiness profile`() {
-
-
         // Before update, expect StatusChangeType is NEW and statusChange is false
         val profileBefore: ReadinessProfile = profileWithReadyToWork
-        profileJsonToValue(profileBefore.profileData) . let {
+        profileJsonToValue(profileBefore.profileData).let {
           assertThat(it.statusChangeType!!).isEqualTo(StatusChange.NEW)
           assertThat(it.statusChange!!).isEqualTo(false)
         }
