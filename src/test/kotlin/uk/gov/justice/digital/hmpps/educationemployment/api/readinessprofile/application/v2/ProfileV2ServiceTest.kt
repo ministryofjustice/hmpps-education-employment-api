@@ -189,10 +189,10 @@ class ProfileV2ServiceTest : UnitTestBase() {
     inner class AndProfileWithDeclineIsFound {
       private val profileWithDecline = V2Profiles.readinessProfileAndDeclined1
 
-      private val profileDataWithAcceptance = V2Profiles.profileAcceptedAndModified
-      private val profileDataReadyToWork = V2Profiles.profileReadyToWorkAndModified
-      private val profileDataNoRightToWork = V2Profiles.profileNoRightToWorkAndModified
-      private val profileDataWithDecline = V2Profiles.profileDeclinedAndModified
+      private val profileDataWithAcceptance = V2Profiles.profileAcceptedAndModified.copy()
+      private val profileDataReadyToWork = V2Profiles.profileReadyToWorkAndModified.copy()
+      private val profileDataNoRightToWork = V2Profiles.profileNoRightToWorkAndModified.copy()
+      private val profileDataWithDecline = V2Profiles.profileDeclinedAndModified.copy()
 
       @BeforeEach
       internal fun setUp() {
@@ -277,7 +277,7 @@ class ProfileV2ServiceTest : UnitTestBase() {
     @DisplayName("And the readiness profile with 'support accepted' is found")
     inner class AndProfileWithAcceptanceIsFound {
       private val profileWithAcceptance = V2Profiles.readinessProfileAndAccepted1
-      private val profileDataWithDecline = V2Profiles.profileDeclinedAndModified
+      private val profileDataWithDecline = V2Profiles.profileDeclinedAndModified.copy()
 
       @BeforeEach
       internal fun setUp() {
@@ -340,7 +340,7 @@ class ProfileV2ServiceTest : UnitTestBase() {
     @DisplayName("And the readiness profile with 'ready to work' is found")
     inner class AndProfileWithReadyToWorkIsFound {
       private val profileWithReadyToWork = V2Profiles.readinessProfileAndReadyToWork1
-      private val profileDataWithDecline = V2Profiles.profileDeclinedAndModified
+      private val profileDataWithDecline = V2Profiles.profileDeclinedAndModified.copy()
 
       @BeforeEach
       internal fun setUp() {
