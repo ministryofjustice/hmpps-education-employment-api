@@ -281,7 +281,6 @@ class ProfileV2ServiceTest : UnitTestBase() {
       private val profileDataReadyToWork = V2Profiles.profileReadyToWorkAndModified.copy()
       private val profileDataNoRightToWork = V2Profiles.profileNoRightToWorkAndModified.copy()
 
-
       @BeforeEach
       internal fun setUp() {
         givenProfileFound(profileWithAcceptance.copy())
