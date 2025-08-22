@@ -71,7 +71,9 @@ object ProfileObjects {
   val actionModified = Action(ActionTodo.CV_AND_COVERING_LETTER, ActionStatus.IN_PROGRESS, null, null)
 
   val profileStatusNoRightToWork = ProfileStatus.NO_RIGHT_TO_WORK
+  val profileStatusSupportDeclined = ProfileStatus.SUPPORT_DECLINED
   val profileStatusSupportNeeded = ProfileStatus.SUPPORT_NEEDED
+  val profileStatusReadyToWork = ProfileStatus.READY_TO_WORK
 
   val supportDeclinedReasonList = listOf(SupportToWorkDeclinedReason.FULL_TIME_CARER)
   val supportDeclinedReasonModifiedList = listOf(SupportToWorkDeclinedReason.HEALTH)
@@ -178,11 +180,16 @@ object ProfileObjects {
   // Latest V2 profiles
   object V2Profiles {
     val profile: Profile = makeProfile(
-      status = profileStatusNoRightToWork,
+      status = profileStatusSupportDeclined,
       supportDeclined = supportDeclined,
     )
 
     val profileDeclined = profile.copy()
+
+    val profileNoRightToWork: Profile = makeProfile(
+      status = profileStatusNoRightToWork,
+      supportDeclined = supportDeclined,
+    )
 
     val profileDeclinedModified = makeProfile(
       status = profileStatusNoRightToWork,
@@ -194,11 +201,33 @@ object ProfileObjects {
       supportAccepted = supportAccepted,
     )
 
+    val profileReadyToWork = makeProfile(
+      status = profileStatusReadyToWork,
+      supportAccepted = supportAccepted,
+    )
+
     val profileAcceptedAndModified = makeProfile(
       status = profileStatusSupportNeeded,
       supportAccepted = supportAcceptedModified,
-      supportDeclined = supportDeclined,
-      statusChangeType = StatusChange.DECLINED_TO_ACCEPTED,
+      statusChangeType = null,
+    )
+
+    val profileReadyToWorkAndModified = makeProfile(
+      status = profileStatusReadyToWork,
+      supportAccepted = supportAcceptedModified,
+      statusChangeType = null,
+    )
+
+    val profileDeclinedAndModified = makeProfile(
+      status = profileStatusSupportDeclined,
+      supportDeclined = supportDeclinedModified,
+      statusChangeType = null,
+    )
+
+    val profileNoRightToWorkAndModified = makeProfile(
+      status = profileStatusNoRightToWork,
+      supportDeclined = supportDeclinedModified,
+      statusChangeType = null,
     )
 
     val profileStatusNewAndBothStateIncorrect = makeProfile(
@@ -287,6 +316,19 @@ object ProfileObjects {
       true,
     )
 
+    val readinessProfileAndNoRightToWork1 = ReadinessProfile(
+      newOffenderId,
+      newBookingId,
+      createdBy,
+      createdTime,
+      createdBy,
+      modifiedTime,
+      "2.0",
+      objectMapper.valueToTree(profileNoRightToWork),
+      emptyJsonArray,
+      true,
+    )
+
     val readinessProfileAndAccepted1 = ReadinessProfile(
       newOffenderId,
       newBookingId,
@@ -296,6 +338,19 @@ object ProfileObjects {
       modifiedTime,
       "2.0",
       objectMapper.valueToTree(profileAccepted),
+      emptyJsonArray,
+      true,
+    )
+
+    val readinessProfileAndReadyToWork1 = ReadinessProfile(
+      newOffenderId,
+      newBookingId,
+      createdBy,
+      createdTime,
+      createdBy,
+      modifiedTime,
+      "2.0",
+      objectMapper.valueToTree(profileReadyToWork),
       emptyJsonArray,
       true,
     )
@@ -326,7 +381,7 @@ object ProfileObjects {
   object V1Profiles {
     // V1 profiles
     val profile = makeProfileV1(
-      status = profileStatusNoRightToWork,
+      status = profileStatusSupportDeclined,
       supportDeclined = supportDeclined,
       supportDeclined_history = mutableListOf(supportDeclined),
       supportAccepted_history = mutableListOf(supportAccepted),
@@ -344,6 +399,7 @@ object ProfileObjects {
       supportAccepted = supportAcceptedModified,
       supportDeclined = supportDeclined,
       statusChangeType = StatusChange.DECLINED_TO_ACCEPTED,
+      statusChange = true,
     )
 
     val profileDeclinedModified = makeProfileV1(

@@ -110,6 +110,11 @@ class ProfileV2Service(
         updateProfileAcceptStatusChange(profile, userId, offenderId, profileToUpdate, currentTime)
     }
 
+    if (storedCoreProfile.status != profile.status) {
+      profile.statusChange = true
+      profile.statusChangeDate = currentTime
+    }
+
     with(profileToUpdate) {
       profile.within12Weeks ?: run { profile.within12Weeks = true }
       schemaVersion = PROFILE_SCHEMA_VERSION

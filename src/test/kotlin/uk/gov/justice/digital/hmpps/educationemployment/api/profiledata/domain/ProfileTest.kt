@@ -29,6 +29,7 @@ class ProfileTest {
 
     assertTrue(json.contains("\"status\":\"NO_RIGHT_TO_WORK\""))
     assertTrue(json.contains("\"statusChangeType\":\"NEW\""))
+    assertTrue(json.contains("\"statusChange\":true"))
     assertFalse(json.contains("statusAsList"))
     assertFalse(json.contains("statusChangeAsList"))
   }
