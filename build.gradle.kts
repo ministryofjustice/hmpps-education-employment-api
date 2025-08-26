@@ -1,7 +1,8 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "8.3.4"
-  kotlin("plugin.spring") version "2.2.0"
-  kotlin("plugin.jpa") version "2.2.0"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "8.3.7"
+  kotlin("plugin.spring") version "2.2.10"
+  kotlin("plugin.jpa") version "2.2.10"
+  id("org.owasp.dependencycheck") version "12.1.3"
   id("jacoco")
 }
 
@@ -96,4 +97,5 @@ dependencyCheck {
   suppressionFiles.add("test-suppressions.xml")
   format = "ALL"
   analyzers.assemblyEnabled = false
+  nvd.datafeedUrl = "file:///opt/vulnz/cache"
 }
