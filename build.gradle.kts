@@ -98,5 +98,4 @@ dependencyCheck {
   format = "ALL"
   analyzers.assemblyEnabled = false
   nvd.datafeedUrl = "file:///opt/vulnz/cache"
-
 }
