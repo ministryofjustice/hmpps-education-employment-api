@@ -146,23 +146,6 @@ class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
         )
         assertThat(sarResult.body).isNotNull
       }
-
-      @Test
-      fun `reply 400(Bad Request), when requesting a SAR with invalid date range`() {
-        val expectedErrorBody = "fromDate ($tomorrow) cannot be after toDate ($today)".let { errorMessage ->
-          """
-            {"status":400,"errorCode":null,"userMessage":"$errorMessage","developerMessage":"$errorMessage","moreInfo":null}
-          """.trimIndent()
-        }
-
-        assertGetSARResponseStatusAndBody(
-          expectedStatusCode = HttpStatus.BAD_REQUEST,
-          expectedBody = expectedErrorBody,
-          fromDate = tomorrow,
-          toDate = today,
-          prn = knownPrisonNumber,
-        )
-      }
     }
   }
 

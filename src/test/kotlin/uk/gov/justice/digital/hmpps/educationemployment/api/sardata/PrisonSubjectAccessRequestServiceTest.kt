@@ -59,7 +59,7 @@ class PrisonSubjectAccessRequestServiceTest {
 
   @Test
   fun `when a NotFoundException is thrown return null`() {
-    whenever(profileService.getProfileForOffenderFilterByPeriod(anyString(), isNull(), isNull())).thenAnswer { throw NotFoundException("prn3") }
+    whenever(profileService.getProfileForOffenderFilterByPeriod(anyString(), isNull(), isNull())).thenAnswer { throw NotFoundException("prn") }
 
     val result = sarService.getPrisonContentFor("prn", null, null)
 
