@@ -1,13 +1,17 @@
 package uk.gov.justice.digital.hmpps.educationemployment.api.sardata
 
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.ArgumentMatchers.anyString
 import org.mockito.InjectMocks
 import org.mockito.Mock
-import org.mockito.Mockito.lenient
+import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.any
+import org.mockito.kotlin.isNull
 import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.educationemployment.api.config.CapturedSpringConfigValues.Companion.objectMapper
 import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.NotFoundException
@@ -25,6 +29,11 @@ class PrisonSubjectAccessRequestServiceTest {
   @InjectMocks
   private lateinit var sarService: PrisonSubjectAccessRequestService
 
+  @AfterEach
+  fun afterEach() {
+    Mockito.reset(profileService)
+  }
+
   @Test
   fun `when we have prisoner data return it`() {
     val sarContent = SARContentDTO(
@@ -34,7 +43,7 @@ class PrisonSubjectAccessRequestServiceTest {
       profileData = objectMapper.readTree("{}"),
     )
 
-    lenient().whenever(profileService.getProfileForOffenderFilterByPeriod(any(), any(), any())).thenReturn(listOf(sarContent))
+    whenever(profileService.getProfileForOffenderFilterByPeriod(anyString(), isNull(), isNull())).thenReturn(listOf(sarContent))
 
     val result = sarService.getPrisonContentFor("prn", null, null)
 
@@ -43,7 +52,7 @@ class PrisonSubjectAccessRequestServiceTest {
 
   @Test
   fun `when there is no prisoner data return null`() {
-    lenient().whenever(profileService.getProfileForOffenderFilterByPeriod(any(), any(), any())).thenReturn(emptyList())
+    whenever(profileService.getProfileForOffenderFilterByPeriod(anyString(), isNull(), isNull())).thenReturn(emptyList())
 
     val result = sarService.getPrisonContentFor("prn", null, null)
 
@@ -52,7 +61,7 @@ class PrisonSubjectAccessRequestServiceTest {
 
   @Test
   fun `when a NotFoundException is thrown return null`() {
-    lenient().whenever(profileService.getProfileForOffenderFilterByPeriod(any(), any(), any())).thenThrow(NotFoundException("prn3"))
+    whenever(profileService.getProfileForOffenderFilterByPeriod(anyString(), isNull(), isNull())).thenThrow(NotFoundException("prn3"))
 
     val result = sarService.getPrisonContentFor("prn", null, null)
 
