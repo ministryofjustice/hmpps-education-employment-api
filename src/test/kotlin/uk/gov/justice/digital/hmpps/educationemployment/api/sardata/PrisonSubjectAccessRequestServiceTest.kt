@@ -2,7 +2,6 @@ package uk.gov.justice.digital.hmpps.educationemployment.api.sardata
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.ArgumentMatchers.anyString
@@ -10,7 +9,6 @@ import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
-import org.mockito.kotlin.any
 import org.mockito.kotlin.isNull
 import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.educationemployment.api.config.CapturedSpringConfigValues.Companion.objectMapper
@@ -61,7 +59,7 @@ class PrisonSubjectAccessRequestServiceTest {
 
   @Test
   fun `when a NotFoundException is thrown return null`() {
-    whenever(profileService.getProfileForOffenderFilterByPeriod(anyString(), isNull(), isNull())).thenThrow(NotFoundException("prn3"))
+    whenever(profileService.getProfileForOffenderFilterByPeriod(anyString(), isNull(), isNull())).thenAnswer { throw NotFoundException("prn3") }
 
     val result = sarService.getPrisonContentFor("prn", null, null)
 
