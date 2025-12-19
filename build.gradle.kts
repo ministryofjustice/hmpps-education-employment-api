@@ -5,6 +5,8 @@ plugins {
   id("jacoco")
 }
 
+ext["netty.version"] = "4.1.130.Final"
+
 dependencies {
   implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:5.6.1") {
     implementation("org.apache.commons:commons-compress:1.27.1")
