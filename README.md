@@ -1,10 +1,11 @@
-[![CircleCI](https://circleci.com/gh/ministryofjustice/hmpps-education-employment-api/tree/main.svg?style=svg)](https://circleci.com/gh/ministryofjustice/hmpps-education-employment-api)
-[![Docker](https://quay.io/repository/hmpps/hmpps-education-employment-api/status)](https://quay.io/repository/hmpps/hmpps-education-employment-api/status)
-[![API docs](https://img.shields.io/badge/API_docs_-view-85EA2D.svg?logo=swagger)](https://education-employment-api-dev.hmpps.service.justice.gov.uk/webjars/swagger-ui/index.html)
-                                                                                  
-
 # hmpps-education-employment-api
 
+[![Ministry of Justice Repository Compliance Badge](https://github-community.service.justice.gov.uk/repository-standards/api/hmpps-education-employment-api/badge?style=flat)](https://github-community.service.justice.gov.uk/repository-standards/hmpps-education-employment-api)
+[![Docker Repository on ghcr](https://img.shields.io/badge/ghcr.io-repository-2496ED.svg?logo=docker)](https://ghcr.io/ministryofjustice/hmpps-education-employment-api)
+[![API docs](https://img.shields.io/badge/API_docs_-view-85EA2D.svg?logo=swagger)](https://education-employment-api-dev.hmpps.service.justice.gov.uk/swagger-ui/index.html)
+[![Pipeline [test -> build -> deploy]](https://github.com/ministryofjustice/hmpps-education-employment-api/actions/workflows/pipeline.yml/badge.svg?branch=main)](https://github.com/ministryofjustice/hmpps-education-employment-api/actions/workflows/pipeline.yml)
+                                                                                  
+# About 
 **Education & Employment Domain Microservice - resource server for offender work readiness data**
 
 # Instructions
