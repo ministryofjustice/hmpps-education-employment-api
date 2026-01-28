@@ -14,7 +14,7 @@ generic-service:
   postgresDatabaseRestore:
     enabled: true
     namespace_secrets:
-      rds-postgresql-instance-output:
+      edu-rds-instance-output:
         DB_NAME: "database_name"
         DB_USER: "database_username"
         DB_PASS: "database_password"
