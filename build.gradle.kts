@@ -8,52 +8,45 @@ plugins {
 ext["netty.version"] = "4.1.130.Final"
 
 dependencies {
-  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:5.6.1") {
-    implementation("org.apache.commons:commons-compress:1.27.1")
-  }
   implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:1.8.1")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-  implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
   implementation("org.springframework.data:spring-data-envers")
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.13")
   implementation("com.fasterxml.jackson.core:jackson-databind")
-  implementation("io.jsonwebtoken:jjwt-impl:0.12.6")
-  implementation("io.jsonwebtoken:jjwt-jackson:0.12.6")
+  testImplementation("io.jsonwebtoken:jjwt-api:0.12.6")
 
   runtimeOnly("org.flywaydb:flyway-database-postgresql")
   runtimeOnly("org.postgresql:postgresql")
 
   testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:1.8.1")
-  testImplementation("org.testcontainers:localstack")
-  testImplementation("org.testcontainers:postgresql")
-  testImplementation("org.testcontainers:testcontainers")
-  developmentOnly("org.springframework.boot:spring-boot-devtools")
   testImplementation("org.springframework.security:spring-security-test")
-  testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
-  testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-  testImplementation("com.h2database:h2")
+  testImplementation("org.jetbrains.kotlin:kotlin-test")
 }
 
 testing {
   suites {
-    @Suppress("UnstableApiUsage")
+    @Suppress("UnstableApiUsage", "unused")
     val test by getting(JvmTestSuite::class) {
       useJUnitJupiter()
     }
 
-    @Suppress("UnstableApiUsage")
+    @Suppress("UnstableApiUsage", "unused")
     val integrationTest by registering(JvmTestSuite::class) {
       dependencies {
         kotlin.target.compilations { named("integrationTest") { associateWith(getByName("main")) } }
         implementation("org.springframework.boot:spring-boot-starter-test")
         implementation("org.springframework.security:spring-security-test")
-        implementation("com.microsoft.azure:applicationinsights-logging-logback:2.6.4")
+        runtimeOnly("com.microsoft.azure:applicationinsights-logging-logback:2.6.4")
         implementation("org.flywaydb:flyway-core")
         runtimeOnly("org.flywaydb:flyway-database-postgresql")
         implementation("org.testcontainers:postgresql") {
           implementation("org.apache.commons:commons-compress:1.27.1")
         }
         implementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
+
+        implementation("io.jsonwebtoken:jjwt-api:0.12.6")
+        runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.6")
+        runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.6")
       }
 
       targets {

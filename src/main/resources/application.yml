@@ -43,7 +43,6 @@ spring:
       local:
         - "developer"
         - "localdb"
-        - "localstack"
       test:
         - "stdout"
 

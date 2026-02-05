@@ -9,15 +9,15 @@ data class SARReadinessProfileDTO(
 )
 
 data class SARContentDTO(
-  @Schema(description = "Offender Id", example = "ABC12345")
+  @param:Schema(description = "Offender Id", example = "ABC12345")
   val offenderId: String,
 
-  @Schema(description = "Created date time", type = "string", pattern = "yyyy-MM-dd'T'HH:mm:ss", example = "2018-12-01T13:45:00", required = true)
+  @param:Schema(description = "Created date time", type = "string", pattern = "yyyy-MM-dd'T'HH:mm:ss", example = "2018-12-01T13:45:00", required = true)
   val createdDateTime: LocalDateTime,
 
-  @Schema(description = "Last modified date time", type = "string", pattern = "yyyy-MM-dd'T'HH:mm:ss", example = "2018-12-01T13:45:00", required = true)
+  @param:Schema(description = "Last modified date time", type = "string", pattern = "yyyy-MM-dd'T'HH:mm:ss", example = "2018-12-01T13:45:00", required = true)
   val modifiedDateTime: LocalDateTime,
 
-  @Schema(description = "Work readiness profile JSON data", example = "{...}")
+  @param:Schema(description = "Work readiness profile JSON data", example = "{...}")
   val profileData: JsonNode,
 )

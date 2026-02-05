@@ -26,9 +26,9 @@ class HealthCheckIntTest : IntegrationTestBase() {
     assert(result != null)
     assert(result.hasBody())
     assert(result.statusCode.is2xxSuccessful)
-    var stringcompanion = CapturedSpringConfigValues.objectMapper.readTree(result.body!!.toString())
-    var version = stringcompanion.get("components").get("healthInfo").get("details").get("version")
-    assertThat(version.asText().toString()).startsWith(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE))
+    val stringcompanion = CapturedSpringConfigValues.objectMapper.readTree(result.body!!)
+    val version = stringcompanion.get("components").get("healthInfo").get("details").get("version")
+    assertThat(version.asText()).startsWith(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE))
   }
 
   @Test
@@ -37,9 +37,9 @@ class HealthCheckIntTest : IntegrationTestBase() {
     assert(result != null)
     assert(result.hasBody())
     assert(result.statusCode.is2xxSuccessful)
-    var stringcompanion = CapturedSpringConfigValues.objectMapper.readTree(result.body!!.toString())
-    var status = stringcompanion.get("status")
-    assertThat(status.asText().toString()).isEqualTo("UP")
+    val stringcompanion = CapturedSpringConfigValues.objectMapper.readTree(result.body!!)
+    val status = stringcompanion.get("status")
+    assertThat(status.asText()).isEqualTo("UP")
   }
 
   @Test
@@ -48,9 +48,9 @@ class HealthCheckIntTest : IntegrationTestBase() {
     assert(result != null)
     assert(result.hasBody())
     assert(result.statusCode.is2xxSuccessful)
-    var stringcompanion = CapturedSpringConfigValues.objectMapper.readTree(result.body!!.toString())
-    var status = stringcompanion.get("status")
-    assertThat(status.asText().toString()).isEqualTo("UP")
+    val stringcompanion = CapturedSpringConfigValues.objectMapper.readTree(result.body!!)
+    val status = stringcompanion.get("status")
+    assertThat(status.asText()).isEqualTo("UP")
   }
 
   @Test
@@ -59,8 +59,8 @@ class HealthCheckIntTest : IntegrationTestBase() {
     assert(result != null)
     assert(result.hasBody())
     assert(result.statusCode.is2xxSuccessful)
-    var stringcompanion = CapturedSpringConfigValues.objectMapper.readTree(result.body!!.toString())
-    var status = stringcompanion.get("status")
-    assertThat(status.asText().toString()).isEqualTo("UP")
+    val stringcompanion = CapturedSpringConfigValues.objectMapper.readTree(result.body!!)
+    val status = stringcompanion.get("status")
+    assertThat(status.asText()).isEqualTo("UP")
   }
 }

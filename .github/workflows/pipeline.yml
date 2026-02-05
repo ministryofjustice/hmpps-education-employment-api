@@ -33,10 +33,9 @@ jobs:
       environment: ${{ matrix.environments }}
   kotlin_validate:
     name: Validate the kotlin
-    uses: ministryofjustice/hmpps-github-actions/.github/workflows/gradle_localstack_postgres_verify.yml@v2 # WORKFLOW_VERSION
+    uses: ministryofjustice/hmpps-github-actions/.github/workflows/gradle_postgres_verify.yml@v2 # WORKFLOW_VERSION
     secrets: inherit
     with:
-      localstack-tag: "4"
       postgres-tag: "16"
       postgres-db: education-employment
       postgres-username: education-employment
