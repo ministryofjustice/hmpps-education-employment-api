@@ -8,9 +8,6 @@ plugins {
 ext["netty.version"] = "4.1.130.Final"
 
 dependencies {
-  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:5.6.1") {
-    implementation("org.apache.commons:commons-compress:1.27.1")
-  }
   implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:1.8.1")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
@@ -36,12 +33,12 @@ dependencies {
 
 testing {
   suites {
-    @Suppress("UnstableApiUsage")
+    @Suppress("UnstableApiUsage", "unused")
     val test by getting(JvmTestSuite::class) {
       useJUnitJupiter()
     }
 
-    @Suppress("UnstableApiUsage")
+    @Suppress("UnstableApiUsage", "unused")
     val integrationTest by registering(JvmTestSuite::class) {
       dependencies {
         kotlin.target.compilations { named("integrationTest") { associateWith(getByName("main")) } }

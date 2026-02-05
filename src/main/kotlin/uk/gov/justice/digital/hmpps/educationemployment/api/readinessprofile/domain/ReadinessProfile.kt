@@ -80,6 +80,6 @@ data class ReadinessProfile(
   var notesData: JsonNode,
 
   @Transient
-  @Value("false")
+  @param:Value("false")
   val new: Boolean,
 )

@@ -13,28 +13,28 @@ import java.time.LocalDateTime
   replaceWith = ReplaceWith("ReadinessProfileDTO", "uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v2"),
 )
 data class ReadinessProfileDTO(
-  @Schema(description = "Offender Id", example = "ABC12345")
+  @param:Schema(description = "Offender Id", example = "ABC12345")
   val offenderId: String,
 
-  @Schema(description = "Booking Id", example = "1234567")
+  @param:Schema(description = "Booking Id", example = "1234567")
   val bookingId: Long,
 
-  @Schema(description = "Author of original profile", example = "user4")
+  @param:Schema(description = "Author of original profile", example = "user4")
   val createdBy: String,
 
-  @Schema(description = "Created date time", type = "string", pattern = "yyyy-MM-dd'T'HH:mm:ss", example = "2018-12-01T13:45:00", required = true)
+  @param:Schema(description = "Created date time", type = "string", pattern = "yyyy-MM-dd'T'HH:mm:ss", example = "2018-12-01T13:45:00", required = true)
   val createdDateTime: LocalDateTime,
 
-  @Schema(description = "Author of last modification", example = "user4")
+  @param:Schema(description = "Author of last modification", example = "user4")
   val modifiedBy: String,
 
-  @Schema(description = "Last modified date time", type = "string", pattern = "yyyy-MM-dd'T'HH:mm:ss", example = "2018-12-01T13:45:00", required = true)
+  @param:Schema(description = "Last modified date time", type = "string", pattern = "yyyy-MM-dd'T'HH:mm:ss", example = "2018-12-01T13:45:00", required = true)
   val modifiedDateTime: LocalDateTime,
 
-  @Schema(description = "Version of the JSON schema", example = "1.1.1")
+  @param:Schema(description = "Version of the JSON schema", example = "1.1.1")
   val schemaVersion: String,
 
-  @Schema(description = "Work readiness profile JSON data", example = "{...}")
+  @param:Schema(description = "Work readiness profile JSON data", example = "{...}")
   val profileData: Profile,
 ) {
   constructor(profileEntity: ReadinessProfile) : this(
