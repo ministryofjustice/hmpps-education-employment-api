@@ -2,20 +2,12 @@
   "offenderId": "A1234FF",
   "profileData": {
     "status": "SUPPORT_DECLINED",
-    "statusChange": true,
-    "statusChangeDate": [
-      2023,
-      8,
-      22,
-      16,
-      37,
-      37,
-      394930834
-    ],
+    "statusChange": false,
+    "statusChangeDate": null,
     "prisonId": "P002",
     "prisonName": "Kirkham (HMP)",
     "within12Weeks": false,
-    "statusChangeType": "ACCEPTED_TO_DECLINED",
+    "statusChangeType": "NEW",
     "supportDeclined": {
       "modifiedBy": "BJDEV",
       "modifiedDateTime": [
@@ -31,7 +23,7 @@
         "ALREADY_HAS_WORK",
         "RETIRED"
       ],
-      "supportToWorkDeclinedReasonOther": "",
+      "supportToWorkDeclinedReasonOther": "another reason to decline support",
       "circumstanceChangesRequiredToWork": [
         "HOUSING_ON_RELEASE"
       ],

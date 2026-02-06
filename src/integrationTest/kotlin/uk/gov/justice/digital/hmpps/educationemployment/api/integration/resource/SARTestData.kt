@@ -6,7 +6,6 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import uk.gov.justice.digital.hmpps.educationemployment.api.config.CapturedSpringConfigValues
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v2.ReadinessProfileRequestDTO
-import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.createProfileV1JsonRequestWithSupportDeclined
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.createProfileV2JsonRequest
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.createProfileV2JsonRequestWithSupportAccepted
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.createProfileV2JsonRequestWithSupportDeclined
@@ -17,7 +16,8 @@ object SARTestData {
   val knownCaseReferenceNumber = "A000AA"
 
   val profileRequestOfKnownPrisonNumber = makeProfileRequestDTO(createProfileV2JsonRequest)
-  val profileJsonOfKnownPrisonNumber = objectMapper.valueToTree<JsonNode>(profileRequestOfKnownPrisonNumber).get("profileData")
+  val profileOfKnownPrisonNumber = profileRequestOfKnownPrisonNumber.profileData
+  val profileJsonOfKnownPrisonNumber = objectMapper.valueToTree<JsonNode>(profileOfKnownPrisonNumber)
 
   val profileOfAnotherPrisonNumber =
     makeProfileRequestDTO(createProfileV2JsonRequestWithSupportDeclined).profileData
@@ -26,12 +26,6 @@ object SARTestData {
   val profileWithSupportAccepted =
     makeProfileRequestDTO(createProfileV2JsonRequestWithSupportAccepted).profileData
   val profileJsonWithSupportAccepted = objectMapper.valueToTree<JsonNode>(profileWithSupportAccepted)
-
-  fun makeProfileRequestOfAnotherPrisonNumber() = makeProfileRequestDTO(createProfileV1JsonRequestWithSupportDeclined).apply {
-    profileData.supportDeclined!!.let {
-      profileData.supportDeclined = it.copy(supportToWorkDeclinedReasonOther = "another reason to decline support")
-    }
-  }
 
   fun makeProfileRequestWithSupportDeclined() = makeProfileRequestDTO(createProfileV2JsonRequestWithSupportDeclined).apply {
     profileData.supportDeclined!!.let {

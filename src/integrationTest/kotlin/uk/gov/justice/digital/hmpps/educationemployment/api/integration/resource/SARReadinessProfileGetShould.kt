@@ -3,6 +3,8 @@
 package uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource
 
 import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.node.ObjectNode
+import com.fasterxml.jackson.databind.node.TextNode
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -16,14 +18,10 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.makeProfileRequestWithSupportAccepted
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.makeProfileRequestWithSupportDeclined
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.profileJsonOfAnotherPrisonNumber
+import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.profileJsonOfKnownPrisonNumber
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.profileJsonWithSupportAccepted
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.profileOfAnotherPrisonNumber
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.profileRequestOfKnownPrisonNumber
-import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.CircumstanceChangesRequiredToWork
-import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ProfileStatus
-import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.StatusChange
-import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.SupportDeclined
-import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.SupportToWorkDeclinedReason
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.v2.Profile
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v2.ProfileV2Service
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v2.ReadinessProfileDTO
@@ -32,7 +30,6 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.dom
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.knownPrisonNumber
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.unknownPrisonNumber
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ReadinessProfile
-import java.time.LocalDateTime
 
 class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
 
@@ -79,9 +76,9 @@ class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
     @Test
     fun `reply 200 (Ok), when requesting SAR with a profile of known prisoner, and PRN is provided`() {
       val prisonNumber = givenTheKnownProfile().offenderId
+      val expectedProfile = profileJsonOfKnownPrisonNumber
 
-      val sarResult = assertGetSARResponseIsOk(prn = prisonNumber)
-      assertThat(sarResult.body).isNotNull
+      assertGetSARResponseIsOk(prn = prisonNumber, expectedProfileAsJson = expectedProfile)
     }
 
     @Test
@@ -156,7 +153,7 @@ class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
     @Test
     fun `reply 200 (OK) and no unexpected data exposed via SAR response (supportAccepted)`() {
       val prisonNumber = givenAProfileWithSupportAccepted().offenderId
-      val expectedProfile = profileJsonWithSupportAccepted
+      val expectedProfile = expectedProfileWithSupportAccepted
 
       val sarResult = assertGetSARResponseIsOk(expectedProfileAsJson = expectedProfile, prn = prisonNumber)
       val jsonContent = objectMapper.readTree(sarResult.body!!.asJson()).get("content")
@@ -174,28 +171,6 @@ class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
     val profile = addProfile(prisonNumber, profileRequest)
     return ReadinessProfileDTO(profile)
   }
-
-  private fun buildDeclinedSupportProfile(): ReadinessProfileRequestDTO = ReadinessProfileRequestDTO(
-    bookingId = 123456L,
-    profileData = Profile(
-      status = ProfileStatus.NO_RIGHT_TO_WORK,
-      statusChange = false,
-      statusChangeDate = null,
-      prisonId = "C012",
-      prisonName = "Sample Prison",
-      statusChangeType = StatusChange.NEW,
-      supportDeclined = SupportDeclined(
-        modifiedDateTime = LocalDateTime.of(2025, 6, 1, 10, 15, 30),
-        supportToWorkDeclinedReason = listOf(SupportToWorkDeclinedReason.FULL_TIME_CARER),
-        supportToWorkDeclinedReasonOther = "",
-        circumstanceChangesRequiredToWork = listOf(CircumstanceChangesRequiredToWork.DEPENDENCY_SUPPORT),
-        circumstanceChangesRequiredToWorkOther = "",
-        modifiedBy = "A User",
-      ),
-      supportAccepted = null,
-      within12Weeks = true,
-    ),
-  )
 
   private fun givenAnotherProfileWithSupportDeclined(): ReadinessProfileDTO {
     val prisonNumber = anotherPrisonNumber
@@ -221,6 +196,10 @@ class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
       }
     }
     return ReadinessProfileDTO(result)
+  }
+  private val expectedProfileWithSupportAccepted get() = profileJsonWithSupportAccepted.deepCopy<JsonNode>().apply {
+    val workExperienceNode = get("supportAccepted").get("workExperience") as ObjectNode
+    workExperienceNode.set("previousWorkOrVolunteering", TextNode("")) as JsonNode
   }
 
   private fun addProfile(prisonNumber: String, profileRequest: ReadinessProfileRequestDTO): ReadinessProfile = profileService.createProfileForOffender(

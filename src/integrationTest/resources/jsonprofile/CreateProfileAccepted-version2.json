@@ -1,21 +1,13 @@
 {
   "offenderId": "A1234AA",
   "profileData": {
-    "status": "SUPPORT_DECLINED",
-    "statusChange": true,
-    "statusChangeDate": [
-      2023,
-      8,
-      22,
-      16,
-      37,
-      37,
-      394930834
-    ],
+    "status": "SUPPORT_NEEDED",
+    "statusChange": false,
+    "statusChangeDate": null,
     "prisonId":"P001",
     "prisonName": "Prison 2",
     "within12Weeks": false,
-    "statusChangeType": "ACCEPTED_TO_DECLINED",
+    "statusChangeType": "NEW",
     "supportAccepted": {
       "modifiedBy":"BJDEV",
       "modifiedDateTime": [
