@@ -73,19 +73,22 @@ class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
   @Nested
   @DisplayName("Given the known readiness profile")
   inner class GivenTheKnownProfile {
+    private lateinit var prisonNumber: String
+    private val expectedProfile = profileJsonOfKnownPrisonNumber
+
+    @BeforeEach
+    internal fun setUp() {
+      prisonNumber = givenTheKnownProfile().offenderId
+    }
+
     @Test
     fun `reply 200 (Ok), when requesting SAR with a profile of known prisoner, and PRN is provided`() {
-      val prisonNumber = givenTheKnownProfile().offenderId
-      val expectedProfile = profileJsonOfKnownPrisonNumber
-
       assertGetSARResponseIsOk(prn = prisonNumber, expectedProfileAsJson = expectedProfile)
     }
 
     @Test
     fun `reply 200 (OK), when requesting a SAR with required role and more irrelevant roles`() {
-      val prisonNumber = givenTheKnownProfile().offenderId
-
-      assertGetSARResponseIsOk(prn = prisonNumber, roles = listOf(SAR_ROLE, WR_VIEW_ROLE, WR_EDIT_ROLE))
+      assertGetSARResponseIsOk(prn = prisonNumber, expectedProfileAsJson = expectedProfile, roles = listOf(SAR_ROLE, WR_VIEW_ROLE, WR_EDIT_ROLE))
     }
   }
 
