@@ -15,7 +15,6 @@ class InfoIntTest : IntegrationTestBase() {
   @Test
   fun `Info page is accessible`() {
     val result = restTemplate.exchange("/info", HttpMethod.GET, HttpEntity<HttpHeaders>(setAuthorisation(roles = listOf("ROLE_WORK_READINESS_EDIT", "ROLE_WORK_READINESS_VIEW"))), String::class.java)
-    assert(result != null)
     assert(result.hasBody())
     assert(result.statusCode.is2xxSuccessful)
     val stringcompanion = CapturedSpringConfigValues.objectMapper.readTree(result.body!!)
@@ -26,7 +25,6 @@ class InfoIntTest : IntegrationTestBase() {
   @Test
   fun `Info page reports version`() {
     val result = restTemplate.exchange("/info", HttpMethod.GET, HttpEntity<HttpHeaders>(setAuthorisation(roles = listOf("ROLE_WORK_READINESS_EDIT", "ROLE_WORK_READINESS_VIEW"))), String::class.java)
-    assert(result != null)
     assert(result.hasBody())
     assert(result.statusCode.is2xxSuccessful)
     val stringcompanion = CapturedSpringConfigValues.objectMapper.readTree(result.body!!)

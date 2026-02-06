@@ -9,8 +9,8 @@ import org.junit.jupiter.api.TestInstance
 import org.mockito.Mockito.lenient
 import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
+import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest
+import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase
 import org.springframework.context.annotation.Import
 import org.springframework.data.auditing.DateTimeProvider
 import org.springframework.data.domain.AuditorAware
@@ -50,7 +50,7 @@ abstract class RepositoryTestCase {
   protected final val defaultCurrentTimeLocal: LocalDateTime get() = defaultCurrentTime.atZone(defaultTimezoneId).toLocalDateTime()
   protected final val defaultAuditor = AuditObjects.defaultAuditor
 
-  protected val currentTime: Instant get() = defaultCurrentTime
+  protected open val currentTime: Instant get() = defaultCurrentTime
   protected val currentTimeLocal: LocalDateTime get() = defaultCurrentTimeLocal
 
   protected var auditor = AuditObjects.defaultAuditor
@@ -72,7 +72,7 @@ abstract class RepositoryTestCase {
   }
 
   @BeforeEach
-  internal fun setUp() {
+  internal open fun setUp() {
     readinessProfileRepository.deleteAll()
     auditCleaner.deleteAllRevisions()
 

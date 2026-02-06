@@ -4,9 +4,10 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType.APPLICATION_JSON
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
@@ -30,6 +31,7 @@ import java.security.Principal
 @AutoConfigureMockMvc(addFilters = false)
 @ActiveProfiles("test")
 @WebAppConfiguration
+@EnableWebSecurity
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 abstract class ControllerTestBase : UnitTestBase() {
   @Autowired

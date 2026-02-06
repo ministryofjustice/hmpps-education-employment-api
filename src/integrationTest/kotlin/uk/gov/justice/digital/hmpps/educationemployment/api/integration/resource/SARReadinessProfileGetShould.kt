@@ -127,25 +127,21 @@ class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
       }
     }
 
-    @Nested
-    @DisplayName("And period filter (fromDate, toDate) has been set")
-    inner class AndPeriodFilterHasBeenSet {
-      private val today = defaultCurrentTimeLocal.toLocalDate()
-      private val tomorrow = today.plusDays(1)
+    @Test
+    fun `reply 200(OK), when requesting a SAR with specified period`() {
+      val today = defaultCurrentTimeLocal.toLocalDate()
+      val tomorrow = today.plusDays(1)
 
-      @Test
-      fun `reply 200(OK), when requesting a SAR with specified period`() {
-        val prisonNumber = expectedPrisonNumber
-        val expectedProfile = expectedProfileJson
+      val prisonNumber = expectedPrisonNumber
+      val expectedProfile = expectedProfileJson
 
-        val sarResult = assertGetSARResponseIsOk(
-          expectedProfileAsJson = expectedProfile,
-          prn = prisonNumber,
-          fromDate = today,
-          toDate = tomorrow,
-        )
-        assertThat(sarResult.body).isNotNull
-      }
+      val sarResult = assertGetSARResponseIsOk(
+        expectedProfileAsJson = expectedProfile,
+        prn = prisonNumber,
+        fromDate = today,
+        toDate = tomorrow,
+      )
+      assertThat(sarResult.body).isNotNull
     }
   }
 

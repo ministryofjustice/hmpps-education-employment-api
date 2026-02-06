@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
+import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.core.context.SecurityContextHolder
 
@@ -18,7 +19,7 @@ class CapturedSpringConfigValues {
   companion object {
     var objectMapper: ObjectMapper = configObjectMapper()
 
-    fun getDPSPrincipal(): DpsPrincipal = SecurityContextHolder.getContext().authentication.principal as DpsPrincipal
+    fun getDPSPrincipal(): DpsPrincipal = SecurityContextHolder.getContext().authentication!!.principal as DpsPrincipal
     fun configObjectMapper() = JsonMapper.builder()
       .addModules(JavaTimeModule())
       .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
@@ -26,4 +27,12 @@ class CapturedSpringConfigValues {
       .build()
       .registerKotlinModule()
   }
+
+  /**
+   * Custom objectMapper bean as Jackson2 is no longer provided by default since Spring Boot 4.
+   *
+   * This could be removed along with Jackson3 migration (replacing [ObjectMapper] with [JsonMapper])
+   */
+  @Bean
+  fun objectMapper() = configObjectMapper()
 }

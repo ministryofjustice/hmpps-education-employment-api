@@ -15,7 +15,6 @@ class HealthCheckIntTest : IntegrationTestBase() {
   @Test
   fun `Health page reports ok`() {
     val result = restTemplate.getForEntity("/health", String::class.java)
-    assert(result != null)
     assert(result.hasBody())
     assert(result.statusCode.is2xxSuccessful)
   }
@@ -23,7 +22,6 @@ class HealthCheckIntTest : IntegrationTestBase() {
   @Test
   fun `Health info reports version`() {
     val result = restTemplate.exchange("/health", HttpMethod.GET, HttpEntity<HttpHeaders>(setAuthorisation(roles = listOf("ROLE_WORK_READINESS_EDIT", "ROLE_WORK_READINESS_VIEW"))), String::class.java)
-    assert(result != null)
     assert(result.hasBody())
     assert(result.statusCode.is2xxSuccessful)
     val stringcompanion = CapturedSpringConfigValues.objectMapper.readTree(result.body!!)
@@ -34,7 +32,6 @@ class HealthCheckIntTest : IntegrationTestBase() {
   @Test
   fun `Health ping page is accessible`() {
     val result = restTemplate.exchange("/health/ping", HttpMethod.GET, HttpEntity<HttpHeaders>(setAuthorisation(roles = listOf("ROLE_WORK_READINESS_EDIT", "ROLE_WORK_READINESS_VIEW"))), String::class.java)
-    assert(result != null)
     assert(result.hasBody())
     assert(result.statusCode.is2xxSuccessful)
     val stringcompanion = CapturedSpringConfigValues.objectMapper.readTree(result.body!!)
@@ -45,7 +42,6 @@ class HealthCheckIntTest : IntegrationTestBase() {
   @Test
   fun `readiness reports ok`() {
     val result = restTemplate.exchange("/health/readiness", HttpMethod.GET, HttpEntity<HttpHeaders>(setAuthorisation(roles = listOf("ROLE_WORK_READINESS_EDIT", "ROLE_WORK_READINESS_VIEW"))), String::class.java)
-    assert(result != null)
     assert(result.hasBody())
     assert(result.statusCode.is2xxSuccessful)
     val stringcompanion = CapturedSpringConfigValues.objectMapper.readTree(result.body!!)
@@ -56,7 +52,6 @@ class HealthCheckIntTest : IntegrationTestBase() {
   @Test
   fun `liveness reports ok`() {
     val result = restTemplate.exchange("/health/liveness", HttpMethod.GET, HttpEntity<HttpHeaders>(setAuthorisation(roles = listOf("ROLE_WORK_READINESS_EDIT", "ROLE_WORK_READINESS_VIEW"))), String::class.java)
-    assert(result != null)
     assert(result.hasBody())
     assert(result.statusCode.is2xxSuccessful)
     val stringcompanion = CapturedSpringConfigValues.objectMapper.readTree(result.body!!)

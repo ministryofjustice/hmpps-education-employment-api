@@ -1,26 +1,28 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "9.3.0"
-  kotlin("plugin.spring") version "2.2.21"
-  kotlin("plugin.jpa") version "2.2.21"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "10.0.3"
+  kotlin("plugin.spring") version "2.3.0"
+  kotlin("plugin.jpa") version "2.3.0"
   id("jacoco")
 }
 
-ext["netty.version"] = "4.1.130.Final"
-
 dependencies {
-  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:1.8.1")
+  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:2.0.0")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+  implementation("org.springframework.boot:spring-boot-starter-flyway")
   implementation("org.springframework.data:spring-data-envers")
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.13")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.1")
   implementation("com.fasterxml.jackson.core:jackson-databind")
   testImplementation("io.jsonwebtoken:jjwt-api:0.12.6")
 
   runtimeOnly("org.flywaydb:flyway-database-postgresql")
   runtimeOnly("org.postgresql:postgresql")
 
-  testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:1.8.1")
+  testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:2.0.0")
   testImplementation("org.springframework.security:spring-security-test")
+  testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
   testImplementation("org.jetbrains.kotlin:kotlin-test")
+
+  testRuntimeOnly("org.springframework.boot:spring-boot-starter-data-jpa-test")
 }
 
 testing {
@@ -35,14 +37,14 @@ testing {
       dependencies {
         kotlin.target.compilations { named("integrationTest") { associateWith(getByName("main")) } }
         implementation("org.springframework.boot:spring-boot-starter-test")
+        implementation("org.springframework.boot:spring-boot-starter-data-jpa-test")
+        implementation("org.springframework.boot:spring-boot-restclient")
+        implementation("org.springframework.boot:spring-boot-resttestclient")
         implementation("org.springframework.security:spring-security-test")
         runtimeOnly("com.microsoft.azure:applicationinsights-logging-logback:2.6.4")
-        implementation("org.flywaydb:flyway-core")
         runtimeOnly("org.flywaydb:flyway-database-postgresql")
-        implementation("org.testcontainers:postgresql") {
-          implementation("org.apache.commons:commons-compress:1.27.1")
-        }
-        implementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
+        implementation("org.testcontainers:testcontainers-postgresql")
+        implementation("org.mockito.kotlin:mockito-kotlin:6.2.3")
 
         implementation("io.jsonwebtoken:jjwt-api:0.12.6")
         runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.6")

@@ -30,7 +30,7 @@ import java.time.LocalDateTime
 abstract class ReadinessProfileRepositoryTestCase : RepositoryTestCase() {
   private val typeRefProfile by lazy { object : TypeReference<Profile>() {} }
 
-  protected val testClock: TestClock = TestClock.defaultClock()
+  protected open val testClock: TestClock = TestClock.defaultClock()
   override val currentTime: Instant get() = testClock.instant
   protected val currentLocalDateTime: LocalDateTime get() = testClock.localDateTime
 
