@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.ap
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import org.springframework.data.history.Revision
 import org.springframework.data.history.Revisions
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.AlreadyExistsException
@@ -16,10 +17,10 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.app
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ReadinessProfile
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ReadinessProfileRepository
 import uk.gov.justice.digital.hmpps.educationemployment.api.shared.domain.TimeProvider
-import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneOffset
+import kotlin.jvm.optionals.getOrNull
 
 const val PROFILE_SCHEMA_VERSION = "2.0"
 private const val PROFILE_SCHEMA_PREVIOUS_VERSION = "1.0"
@@ -184,7 +185,10 @@ class ProfileV2Service(
   }
 
   private fun getSortedProfileHistory(revision: Revisions<Long, ReadinessProfile>): List<ReadinessProfile> = revision.content
-    .sortedByDescending { it.metadata.revisionInstant.orElse(Instant.EPOCH) }
+    .sortedWith(
+      compareByDescending<Revision<Long, ReadinessProfile>>({ it.entity.modifiedDateTime })
+        .thenByDescending { it.metadata.revisionInstant.getOrNull() },
+    )
     .map { it.entity }
 
   private fun checkDeclinedProfileStatus(profile: Profile, offenderId: String) = when {
