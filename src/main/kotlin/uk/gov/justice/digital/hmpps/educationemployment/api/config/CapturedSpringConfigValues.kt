@@ -8,9 +8,6 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.core.context.SecurityContextHolder
-import uk.gov.justice.digital.hmpps.educationemployment.api.sardata.domain.ActionsRequired
-import uk.gov.justice.digital.hmpps.educationemployment.api.sardata.domain.OptionalModifiedByExclusionMixIn
-import uk.gov.justice.digital.hmpps.educationemployment.api.sardata.domain.SupportAccepted
 
 /**
  * This class is used as a way to capture the Spring Jackson mapper in a way that
@@ -19,14 +16,7 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.sardata.domain.Suppo
 @Configuration
 class CapturedSpringConfigValues {
   companion object {
-    var objectMapper: ObjectMapper = configObjectMapper().apply {
-      listOf(
-        SupportAccepted::class.java,
-        ActionsRequired::class.java,
-      ).forEach {
-        this.addMixIn(it, OptionalModifiedByExclusionMixIn::class.java)
-      }
-    }
+    var objectMapper: ObjectMapper = configObjectMapper()
 
     fun getDPSPrincipal(): DpsPrincipal = SecurityContextHolder.getContext().authentication.principal as DpsPrincipal
     fun configObjectMapper() = JsonMapper.builder()
