@@ -20,9 +20,9 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.app
 
 abstract class ReadinessProfileTestCase<RP, REQ>(
   protected val endpoint: String = READINESS_PROFILE_ENDPOINT,
-  val responseType: Class<RP>,
-  val requestTypeReference: TypeReference<REQ>,
-  val profileListTypeReference: ParameterizedTypeReference<List<RP>>,
+  val responseType: Class<RP & Any>,
+  val requestTypeReference: TypeReference<REQ & Any>,
+  val profileListTypeReference: ParameterizedTypeReference<List<RP & Any>>,
 ) : ApplicationTestCase() {
   protected val errorResponseType = ErrorResponse::class.java
   protected val noteRequestTypeReference by lazy { object : TypeReference<NoteRequestDTO>() {} }
@@ -47,11 +47,11 @@ abstract class ReadinessProfileTestCase<RP, REQ>(
     prisonNumber: String,
     method: HttpMethod,
     request: REQ,
-    responseClass: Class<R>,
+    responseClass: Class<R & Any>,
     expectedStatus: HttpStatus,
-  ) = assertRequest(profileUrl(prisonNumber), method, HttpEntity(request, readWriteHeaders), responseClass, expectedStatus)
+  ): ResponseEntity<R & Any> = assertRequest(profileUrl(prisonNumber), method, HttpEntity(request, readWriteHeaders), responseClass, expectedStatus)
 
-  protected fun assertGetReadinessProfileIsOk(prisonNumber: String): ResponseEntity<RP> = assertGetReadinessProfileIsExpected(prisonNumber, responseType, HttpStatus.OK)
+  protected fun assertGetReadinessProfileIsOk(prisonNumber: String): ResponseEntity<RP & Any> = assertGetReadinessProfileIsExpected(prisonNumber, responseType, HttpStatus.OK)
   protected fun assertGetReadinessProfileFailed(
     prisonNumber: String,
     expectedStatus: HttpStatus = HttpStatus.BAD_REQUEST,
@@ -62,12 +62,12 @@ abstract class ReadinessProfileTestCase<RP, REQ>(
 
   private fun <R> assertGetReadinessProfileIsExpected(
     prisonNumber: String,
-    responseClass: Class<R>,
+    responseClass: Class<R & Any>,
     expectedStatus: HttpStatus,
-  ): ResponseEntity<R> = assertRequest(profileUrl(prisonNumber), HttpMethod.GET, readOnlyRequestNoBody, responseClass, expectedStatus)
+  ): ResponseEntity<R & Any> = assertRequest(profileUrl(prisonNumber), HttpMethod.GET, readOnlyRequestNoBody, responseClass, expectedStatus)
 
   protected fun assertSearchReadinessProfileIsOk(prisonNumber: String) = assertSearchReadinessProfileIsOk(listOf(prisonNumber))
-  protected fun assertSearchReadinessProfileIsOk(prisonNumbers: List<String>): ResponseEntity<List<RP>> = assertRequest(
+  protected fun assertSearchReadinessProfileIsOk(prisonNumbers: List<String>): ResponseEntity<List<RP & Any>> = assertRequest(
     searchUrl,
     HttpMethod.POST,
     HttpEntity(prisonNumbers, readOnlyHeaders),
@@ -80,9 +80,15 @@ abstract class ReadinessProfileTestCase<RP, REQ>(
   private fun <R> assertChangeStatusIsExpected(
     prisonNumber: String,
     request: StatusChangeUpdateRequestDTO,
-    responseClass: Class<R>,
+    responseClass: Class<R & Any>,
     expectedStatus: HttpStatus,
-  ): ResponseEntity<R> = assertRequest(profileStatusUrl(prisonNumber), HttpMethod.PUT, HttpEntity(request, readWriteHeaders), responseClass, expectedStatus)
+  ): ResponseEntity<R & Any> = assertRequest(
+    url = profileStatusUrl(prisonNumber),
+    method = HttpMethod.PUT,
+    requestEntity = HttpEntity(request, readWriteHeaders),
+    responseType = responseClass,
+    expectedStatus = expectedStatus,
+  )
 
   protected fun assertAddNoteIsOk(prisonNumber: String, attribute: ActionTodo, noteText: String) = assertAddNoteIsOk(prisonNumber, attribute.name, noteText)
   protected fun assertAddNoteIsOk(prisonNumber: String, attribute: String, noteText: String) = assertRequest(
@@ -139,11 +145,14 @@ abstract class ReadinessProfileTestCase<RP, REQ>(
   private fun makeNoteRequestDTO(noteText: String) = noteText.replace("\"", "\\\"").let { "{\"text\": \"$it\"}" }
     .let { noteTextJson -> parseProfileNoteDTO(noteTextJson) }
 
-  private fun profileUrl(prisonNumber: String) = "/$endpoint/$prisonNumber"
-  private fun profileStatusUrl(prisonNumber: String) = "/$endpoint/status-change/$prisonNumber"
-  private fun notesUrl(prisonNumber: String, attribute: String) = "/$READINESS_PROFILE_ENDPOINT/$prisonNumber/notes/$attribute"
+  private fun profileUrl(prisonNumber: String) = "/$endpoint/$prisonNumber".cleansedUrl()
+  private fun profileStatusUrl(prisonNumber: String) = "/$endpoint/status-change/$prisonNumber".cleansedUrl()
+  private fun notesUrl(prisonNumber: String, attribute: String) = "/$READINESS_PROFILE_ENDPOINT/$prisonNumber/notes/$attribute".cleansedUrl()
+
+  private fun String.cleansedUrl() = this.replacePrefix("//", "/")
 
   protected fun Any.asJson(): String = objectMapper.writeValueAsString(this)
+  protected fun String.replacePrefix(prefix: String, replacement: String = "") = if (this.startsWith(prefix)) "$replacement${this.substring(prefix.length)}" else this
 }
 
 const val READINESS_PROFILE_ENDPOINT = "/readiness-profiles"

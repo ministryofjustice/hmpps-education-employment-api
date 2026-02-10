@@ -1,16 +1,16 @@
 package uk.gov.justice.digital.hmpps.educationemployment.api.integration.testcontainers
 
 import org.slf4j.LoggerFactory
-import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.containers.wait.strategy.Wait
+import org.testcontainers.postgresql.PostgreSQLContainer
 import java.io.IOException
 import java.net.ServerSocket
 
 object PostgresContainer {
-  val flywayContainer: PostgreSQLContainer<Nothing>? by lazy { startPostgresqlContainer() }
-  val repositoryContainer: PostgreSQLContainer<Nothing>? by lazy { startPostgresqlContainer() }
+  val flywayContainer: PostgreSQLContainer? by lazy { startPostgresqlContainer() }
+  val repositoryContainer: PostgreSQLContainer? by lazy { startPostgresqlContainer() }
 
-  private fun startPostgresqlContainer(): PostgreSQLContainer<Nothing>? {
+  private fun startPostgresqlContainer(): PostgreSQLContainer? {
     if (isPostgresRunning()) {
       log.warn("Using existing PostgreSQL database")
       return null
@@ -18,7 +18,7 @@ object PostgresContainer {
 
     log.info("Creating a TestContainers PostgreSQL database")
 
-    return PostgreSQLContainer<Nothing>("postgres:16").apply {
+    return PostgreSQLContainer("postgres:16").apply {
       withEnv("HOSTNAME_EXTERNAL", "localhost")
       withDatabaseName("education-employment")
       withUsername("education-employment")

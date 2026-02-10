@@ -48,7 +48,7 @@ class UserPrincipalAuditorAwareShould {
     private fun setAuthentication() {
       val principal = DpsPrincipal(username = username, displayName = displayName)
       val roles = emptyList<GrantedAuthority>()
-      val authentication = TestingAuthenticationToken(principal, null, roles)
+      val authentication = TestingAuthenticationToken(principal, "none", roles)
       SecurityContextHolder.getContext().authentication = authentication
     }
   }

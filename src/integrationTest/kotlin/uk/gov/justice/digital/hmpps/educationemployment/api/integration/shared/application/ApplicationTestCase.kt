@@ -64,8 +64,8 @@ abstract class ApplicationTestCase : IntegrationTestBase() {
   protected fun <RESP, REQ> assertRequest(
     url: String,
     method: HttpMethod,
-    requestEntity: HttpEntity<REQ>,
-    responseType: Class<RESP>,
+    requestEntity: HttpEntity<REQ & Any>,
+    responseType: Class<RESP & Any>,
     expectedStatus: HttpStatus,
   ) = restTemplate.exchange(url, method, requestEntity, responseType).also { result ->
     assertThat(result).isNotNull
@@ -75,8 +75,8 @@ abstract class ApplicationTestCase : IntegrationTestBase() {
   protected fun <RESP, REQ> assertRequest(
     url: String,
     method: HttpMethod,
-    requestEntity: HttpEntity<REQ>,
-    responseType: ParameterizedTypeReference<RESP>,
+    requestEntity: HttpEntity<REQ & Any>,
+    responseType: ParameterizedTypeReference<RESP & Any>,
     expectedStatus: HttpStatus,
   ) = restTemplate.exchange(url, method, requestEntity, responseType).also { result ->
     assertThat(result).isNotNull

@@ -1,8 +1,8 @@
 package uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application
 
 import io.swagger.v3.oas.annotations.media.Schema
+import jakarta.annotation.Nullable
 import jakarta.validation.Valid
-import org.springframework.lang.Nullable
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ProfileStatus
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.SupportAccepted
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.SupportDeclined
