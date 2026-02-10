@@ -1,8 +1,8 @@
-package uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application
+package uk.gov.justice.digital.hmpps.educationemployment.api.sar.application
 
-import com.fasterxml.jackson.databind.JsonNode
 import io.swagger.v3.oas.annotations.media.Schema
 import java.time.LocalDateTime
+import uk.gov.justice.digital.hmpps.educationemployment.api.sardata.domain.v2.Profile as SARProfile
 
 data class SARReadinessProfileDTO(
   val content: List<SARContentDTO>,
@@ -19,5 +19,5 @@ data class SARContentDTO(
   val modifiedDateTime: LocalDateTime,
 
   @param:Schema(description = "Work readiness profile JSON data", example = "{...}")
-  val profileData: JsonNode,
+  val profileData: SARProfile,
 )

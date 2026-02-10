@@ -145,7 +145,7 @@ class ProfileV1Service(
   override fun getProfileForOffender(offenderId: String): ReadinessProfile = readinessProfileRepository.findById(offenderId).orElseThrow(NotFoundException(offenderId))
 
   @Throws(NotFoundException::class, IllegalArgumentException::class)
-  override fun getProfileForOffenderFilterByPeriod(
+  override fun getProfilesForOffenderFilterByPeriod(
     prisonNumber: String,
     fromDate: LocalDate?,
     toDate: LocalDate?,

@@ -18,5 +18,5 @@ class ProfileV2Helper(
 
   fun updateReadinessProfileForTest(userId: String, offenderId: String, bookingId: Long, profile: Profile) = profileV2Service.updateProfileForOffender(userId, offenderId, bookingId, profile)
 
-  fun getProfileForOffenderFilterByPeriodForTest(offenderId: String, fromDate: LocalDate?, toDate: LocalDate?) = profileV2Service.getProfileForOffenderFilterByPeriod(offenderId, fromDate, toDate)
+  fun getProfileForOffenderFilterByPeriodForTest(offenderId: String, fromDate: LocalDate?, toDate: LocalDate?) = profileV2Service.getProfilesForOffenderFilterByPeriod(offenderId, fromDate, toDate)
 }

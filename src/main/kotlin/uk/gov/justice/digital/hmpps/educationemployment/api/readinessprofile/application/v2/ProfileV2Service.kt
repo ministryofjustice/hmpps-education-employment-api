@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.ap
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import org.springframework.data.history.Revision
 import org.springframework.data.history.Revisions
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.AlreadyExistsException
@@ -12,16 +13,14 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.P
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.StatusChange
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.v2.Profile
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.ProfileService
-import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.SARContentDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.StatusChangeUpdateRequestDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ReadinessProfile
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ReadinessProfileRepository
 import uk.gov.justice.digital.hmpps.educationemployment.api.shared.domain.TimeProvider
-import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneOffset
-import uk.gov.justice.digital.hmpps.educationemployment.api.sardata.domain.v2.Profile as SARProfile
+import kotlin.jvm.optionals.getOrNull
 
 const val PROFILE_SCHEMA_VERSION = "2.0"
 private const val PROFILE_SCHEMA_PREVIOUS_VERSION = "1.0"
@@ -31,9 +30,8 @@ class ProfileV2Service(
   private val readinessProfileRepository: ReadinessProfileRepository,
   private val timeProvider: TimeProvider,
   private val objectMapper: ObjectMapper,
-) : ProfileService<Profile, List<SARContentDTO>> {
+) : ProfileService<Profile, List<ReadinessProfile>> {
   private val typeRefProfile by lazy { object : TypeReference<Profile>() {} }
-  private val typeRefSARProfile by lazy { object : TypeReference<SARProfile>() {} }
 
   private val emptyJsonArray: JsonNode get() = objectMapper.readTree("[]")
 
@@ -166,11 +164,11 @@ class ProfileV2Service(
 
   override fun getProfileForOffender(offenderId: String): ReadinessProfile = readinessProfileRepository.findById(offenderId).orElseThrow(NotFoundException(offenderId)).migrateSchema()
 
-  override fun getProfileForOffenderFilterByPeriod(
+  override fun getProfilesForOffenderFilterByPeriod(
     prisonNumber: String,
     fromDate: LocalDate?,
     toDate: LocalDate?,
-  ): List<SARContentDTO> {
+  ): List<ReadinessProfile> {
     if (fromDate != null && toDate != null && fromDate.isAfter(toDate)) {
       throw IllegalArgumentException("fromDate cannot be after toDate")
     }
@@ -183,23 +181,14 @@ class ProfileV2Service(
       throw NotFoundException("No profile found for prison number $prisonNumber")
     }
 
-    val profileSnapshots: List<SARContentDTO> = getSortedProfileHistory(readinessProfileRevisions).map { revision ->
-      val parseSARProfile = parseSARProfile(revision.profileData)
-      val profileDataJson = parseSARProfile.json()
-
-      SARContentDTO(
-        offenderId = revision.offenderId,
-        createdDateTime = revision.createdDateTime,
-        modifiedDateTime = revision.modifiedDateTime,
-        profileData = profileDataJson,
-      )
-    }
-
-    return profileSnapshots
+    return getSortedProfileHistory(readinessProfileRevisions)
   }
 
   private fun getSortedProfileHistory(revision: Revisions<Long, ReadinessProfile>): List<ReadinessProfile> = revision.content
-    .sortedByDescending { it.metadata.revisionInstant.orElse(Instant.EPOCH) }
+    .sortedWith(
+      compareByDescending<Revision<Long, ReadinessProfile>>({ it.entity.modifiedDateTime })
+        .thenByDescending { it.metadata.revisionInstant.getOrNull() },
+    )
     .map { it.entity }
 
   private fun checkDeclinedProfileStatus(profile: Profile, offenderId: String) = when {
@@ -303,8 +292,6 @@ class ProfileV2Service(
 
   private fun parseProfile(profileData: JsonNode): Profile = objectMapper.treeToValue(profileData, typeRefProfile)
 
-  private fun parseSARProfile(profileData: JsonNode): SARProfile = objectMapper.treeToValue(profileData, typeRefSARProfile)
-
   private fun List<ReadinessProfile>.migrateSchema() = map { it.migrateSchema() }.toList()
 
   private fun ReadinessProfile.migrateSchema() = when (schemaVersion) {
@@ -322,8 +309,6 @@ class ProfileV2Service(
       throw IllegalArgumentException(lazyMessage().toString())
     }
   }
-
-  private fun SARProfile.json(): JsonNode = objectMapper.valueToTree(this)
 
   private fun Profile.json(): JsonNode = objectMapper.valueToTree(this)
 }

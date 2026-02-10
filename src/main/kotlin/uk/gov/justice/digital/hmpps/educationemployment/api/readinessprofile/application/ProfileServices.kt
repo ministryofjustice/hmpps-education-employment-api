@@ -12,7 +12,7 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.dom
 import uk.gov.justice.digital.hmpps.educationemployment.api.shared.domain.TimeProvider
 import java.time.LocalDate
 
-interface ProfileService<ProfileType, SARResponseType> {
+interface ProfileService<ProfileType, ByPeriodResponseType> {
   fun createProfileForOffender(userId: String, offenderId: String, bookingId: Long, profile: ProfileType): ReadinessProfile
 
   fun updateProfileForOffender(userId: String, offenderId: String, bookingId: Long, profile: ProfileType): ReadinessProfile
@@ -23,11 +23,11 @@ interface ProfileService<ProfileType, SARResponseType> {
 
   fun getProfileForOffender(offenderId: String): ReadinessProfile?
 
-  fun getProfileForOffenderFilterByPeriod(
+  fun getProfilesForOffenderFilterByPeriod(
     prisonNumber: String,
     fromDate: LocalDate? = null,
     toDate: LocalDate? = null,
-  ): SARResponseType
+  ): ByPeriodResponseType
 }
 
 @Service
