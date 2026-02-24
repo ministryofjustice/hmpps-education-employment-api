@@ -20,7 +20,6 @@ class OpenApiConfiguration(buildProperties: BuildProperties) {
         Tag().name("v2").description("Profile APIs version 2"),
         Tag().name("v1").description("(Deprecated) Profile APIs version 1"),
         Tag().name("Notes").description("Profile Notes APIs"),
-        Tag().name("SAR").description("Subject Access Request API"),
         Tag().name("Dashboard").description("Reporting Dashboard API"),
       ),
     )
