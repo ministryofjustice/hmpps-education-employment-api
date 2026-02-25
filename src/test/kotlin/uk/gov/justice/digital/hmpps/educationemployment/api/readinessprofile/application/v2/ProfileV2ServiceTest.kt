@@ -638,10 +638,10 @@ class ProfileV2ServiceTest : UnitTestBase() {
   private fun givenProfileExist(prisonNumber: String) = givenProfileExistence(prisonNumber, true)
   private fun givenProfileExistence(prisonNumber: String, isExisting: Boolean) = whenever(readinessProfileRepository.existsById(prisonNumber)).thenReturn(isExisting)
 
-  private fun givenSavedProfile(profile: ReadinessProfile) = whenever(readinessProfileRepository.save(any())).thenReturn(profile)
+  private fun givenSavedProfile(profile: ReadinessProfile) = whenever<ReadinessProfile>(readinessProfileRepository.save(any<ReadinessProfile>())).thenReturn(profile)
 
   private fun mockSaveProfile() {
-    whenever(readinessProfileRepository.save(any())).thenAnswer { it.arguments[0] as ReadinessProfile }
+    whenever<ReadinessProfile>(readinessProfileRepository.save(any<ReadinessProfile>())).thenAnswer { it.arguments[0] as ReadinessProfile }
   }
 
   private fun givenProfileFound(profile: ReadinessProfile) = lenient().whenever(readinessProfileRepository.findById(any())).thenReturn(Optional.of(profile))
