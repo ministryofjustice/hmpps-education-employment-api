@@ -356,7 +356,7 @@ class ProfileV1ServiceTest : UnitTestBase() {
   private fun givenProfileExist(prisonNumber: String) = givenProfileExistence(prisonNumber, true)
   private fun givenProfileExistence(prisonNumber: String, isExisting: Boolean) = whenever(readinessProfileRepository.existsById(prisonNumber)).thenReturn(isExisting)
 
-  private fun givenSavedProfile(profile: ReadinessProfile) = whenever(readinessProfileRepository.save(any())).thenReturn(profile)
+  private fun givenSavedProfile(profile: ReadinessProfile) = whenever<ReadinessProfile>(readinessProfileRepository.save(any<ReadinessProfile>())).thenReturn(profile)
 
   private fun givenProfileFound(profile: ReadinessProfile) = whenever(readinessProfileRepository.findById(any())).thenReturn(Optional.of(profile))
 
