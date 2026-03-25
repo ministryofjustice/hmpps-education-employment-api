@@ -1,0 +1,18 @@
+{
+  "ReadinessProfile": {
+    "bookingId": "long",
+    "createdBy": "String",
+    "createdDateTime": "LocalDateTime",
+    "modifiedBy": "String",
+    "modifiedDateTime": "LocalDateTime",
+    "notesData": "JsonNode",
+    "offenderId": "String",
+    "profileData": "JsonNode",
+    "schemaVersion": "String"
+  },
+  "RevisionInfo": {
+    "createdBy": "String",
+    "revNumber": "int",
+    "revTime": "long"
+  }
+}

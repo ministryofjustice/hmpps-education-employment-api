@@ -1,0 +1,669 @@
+[
+  {
+    "offenderId": "A1234BB",
+    "createdDateTime": "2025-01-01T00:00:00",
+    "modifiedDateTime": "2025-01-01T00:06:00",
+    "profileData": {
+      "status": "READY_TO_WORK",
+      "statusChange": true,
+      "statusChangeDate": "2025-01-01T00:06:00",
+      "statusChangeType": "DECLINED_TO_ACCEPTED",
+      "prisonId": "prison2",
+      "prisonName": "Prison 2",
+      "within12Weeks": true,
+      "supportDeclined": {
+        "modifiedDateTime": "2025-01-01T00:01:00",
+        "supportToWorkDeclinedReason": [
+          "HEALTH",
+          "OTHER"
+        ],
+        "supportToWorkDeclinedReasonOther": "Some other reasons",
+        "circumstanceChangesRequiredToWork": [
+          "MENTAL_HEALTH_SUPPORT",
+          "OTHER"
+        ],
+        "circumstanceChangesRequiredToWorkOther": "Some other circumstance changes"
+      },
+      "supportAccepted": {
+        "modifiedDateTime": "2025-01-01T00:05:00",
+        "actionsRequired": {
+          "modifiedDateTime": "2025-01-01T00:02:00",
+          "actions": [
+            {
+              "todoItem": "BANK_ACCOUNT",
+              "status": "COMPLETED",
+              "other": null,
+              "id": null
+            },
+            {
+              "todoItem": "HOUSING",
+              "status": "COMPLETED",
+              "other": null,
+              "id": null
+            },
+            {
+              "todoItem": "ID",
+              "status": "COMPLETED",
+              "other": "Some other ID documents",
+              "id": [
+                "DRIVING_LICENCE",
+                "PASSPORT",
+                "BIRTH_CERTIFICATE",
+                "OTHER"
+              ]
+            }
+          ]
+        },
+        "workImpacts": {
+          "modifiedDateTime": "2025-01-01T00:02:00",
+          "abilityToWorkImpactedBy": [
+            "MENTAL_HEALTH_ISSUES",
+            "PHYSICAL_HEALTH_ISSUES"
+          ],
+          "caringResponsibilitiesFullTime": true,
+          "ableToManageMentalHealth": true,
+          "ableToManageDependencies": false
+        },
+        "workInterests": {
+          "modifiedDateTime": "2025-01-01T00:02:00",
+          "workTypesOfInterest": [
+            "CONSTRUCTION",
+            "MANUFACTURING",
+            "OTHER"
+          ],
+          "workTypesOfInterestOther": "Some other work types of interest",
+          "jobOfParticularInterest": "A dummy job"
+        },
+        "workExperience": {
+          "modifiedDateTime": "2025-01-01T00:02:00",
+          "previousWorkOrVolunteering": "Admin in a NGO",
+          "qualificationsAndTraining": [
+            "DRIVING_LICENSE",
+            "HGV_LICENSE",
+            "MACHINERY",
+            "OTHER"
+          ],
+          "qualificationsAndTrainingOther": "Some other training"
+        }
+      }
+    }
+  },
+  {
+    "offenderId": "A1234BB",
+    "createdDateTime": "2025-01-01T00:00:00",
+    "modifiedDateTime": "2025-01-01T00:05:00",
+    "profileData": {
+      "status": "SUPPORT_NEEDED",
+      "statusChange": true,
+      "statusChangeDate": "2025-01-01T00:02:00",
+      "statusChangeType": "DECLINED_TO_ACCEPTED",
+      "prisonId": "prison2",
+      "prisonName": "Prison 2",
+      "within12Weeks": true,
+      "supportDeclined": {
+        "modifiedDateTime": "2025-01-01T00:01:00",
+        "supportToWorkDeclinedReason": [
+          "HEALTH",
+          "OTHER"
+        ],
+        "supportToWorkDeclinedReasonOther": "Some other reasons",
+        "circumstanceChangesRequiredToWork": [
+          "MENTAL_HEALTH_SUPPORT",
+          "OTHER"
+        ],
+        "circumstanceChangesRequiredToWorkOther": "Some other circumstance changes"
+      },
+      "supportAccepted": {
+        "modifiedDateTime": "2025-01-01T00:05:00",
+        "actionsRequired": {
+          "modifiedDateTime": "2025-01-01T00:02:00",
+          "actions": [
+            {
+              "todoItem": "BANK_ACCOUNT",
+              "status": "COMPLETED",
+              "other": null,
+              "id": null
+            },
+            {
+              "todoItem": "HOUSING",
+              "status": "COMPLETED",
+              "other": null,
+              "id": null
+            },
+            {
+              "todoItem": "ID",
+              "status": "COMPLETED",
+              "other": "Some other ID documents",
+              "id": [
+                "DRIVING_LICENCE",
+                "PASSPORT",
+                "BIRTH_CERTIFICATE",
+                "OTHER"
+              ]
+            }
+          ]
+        },
+        "workImpacts": {
+          "modifiedDateTime": "2025-01-01T00:02:00",
+          "abilityToWorkImpactedBy": [
+            "MENTAL_HEALTH_ISSUES",
+            "PHYSICAL_HEALTH_ISSUES"
+          ],
+          "caringResponsibilitiesFullTime": true,
+          "ableToManageMentalHealth": true,
+          "ableToManageDependencies": false
+        },
+        "workInterests": {
+          "modifiedDateTime": "2025-01-01T00:02:00",
+          "workTypesOfInterest": [
+            "CONSTRUCTION",
+            "MANUFACTURING",
+            "OTHER"
+          ],
+          "workTypesOfInterestOther": "Some other work types of interest",
+          "jobOfParticularInterest": "A dummy job"
+        },
+        "workExperience": {
+          "modifiedDateTime": "2025-01-01T00:02:00",
+          "previousWorkOrVolunteering": "Admin in a NGO",
+          "qualificationsAndTraining": [
+            "DRIVING_LICENSE",
+            "HGV_LICENSE",
+            "MACHINERY",
+            "OTHER"
+          ],
+          "qualificationsAndTrainingOther": "Some other training"
+        }
+      }
+    }
+  },
+  {
+    "offenderId": "A1234BB",
+    "createdDateTime": "2025-01-01T00:00:00",
+    "modifiedDateTime": "2025-01-01T00:04:00",
+    "profileData": {
+      "status": "SUPPORT_NEEDED",
+      "statusChange": true,
+      "statusChangeDate": "2025-01-01T00:02:00",
+      "statusChangeType": "DECLINED_TO_ACCEPTED",
+      "prisonId": "prison2",
+      "prisonName": "Prison 2",
+      "within12Weeks": true,
+      "supportDeclined": {
+        "modifiedDateTime": "2025-01-01T00:01:00",
+        "supportToWorkDeclinedReason": [
+          "HEALTH",
+          "OTHER"
+        ],
+        "supportToWorkDeclinedReasonOther": "Some other reasons",
+        "circumstanceChangesRequiredToWork": [
+          "MENTAL_HEALTH_SUPPORT",
+          "OTHER"
+        ],
+        "circumstanceChangesRequiredToWorkOther": "Some other circumstance changes"
+      },
+      "supportAccepted": {
+        "modifiedDateTime": "2025-01-01T00:04:00",
+        "actionsRequired": {
+          "modifiedDateTime": "2025-01-01T00:02:00",
+          "actions": [
+            {
+              "todoItem": "BANK_ACCOUNT",
+              "status": "IN_PROGRESS",
+              "other": null,
+              "id": null
+            },
+            {
+              "todoItem": "HOUSING",
+              "status": "IN_PROGRESS",
+              "other": null,
+              "id": null
+            },
+            {
+              "todoItem": "ID",
+              "status": "IN_PROGRESS",
+              "other": "Some other ID documents",
+              "id": [
+                "DRIVING_LICENCE",
+                "PASSPORT",
+                "BIRTH_CERTIFICATE",
+                "OTHER"
+              ]
+            }
+          ]
+        },
+        "workImpacts": {
+          "modifiedDateTime": "2025-01-01T00:02:00",
+          "abilityToWorkImpactedBy": [
+            "MENTAL_HEALTH_ISSUES",
+            "PHYSICAL_HEALTH_ISSUES"
+          ],
+          "caringResponsibilitiesFullTime": true,
+          "ableToManageMentalHealth": true,
+          "ableToManageDependencies": false
+        },
+        "workInterests": {
+          "modifiedDateTime": "2025-01-01T00:02:00",
+          "workTypesOfInterest": [
+            "CONSTRUCTION",
+            "MANUFACTURING",
+            "OTHER"
+          ],
+          "workTypesOfInterestOther": "Some other work types of interest",
+          "jobOfParticularInterest": "A dummy job"
+        },
+        "workExperience": {
+          "modifiedDateTime": "2025-01-01T00:02:00",
+          "previousWorkOrVolunteering": "Admin in a NGO",
+          "qualificationsAndTraining": [
+            "DRIVING_LICENSE",
+            "HGV_LICENSE",
+            "MACHINERY",
+            "OTHER"
+          ],
+          "qualificationsAndTrainingOther": "Some other training"
+        }
+      }
+    }
+  },
+  {
+    "offenderId": "A1234BB",
+    "createdDateTime": "2025-01-01T00:00:00",
+    "modifiedDateTime": "2025-01-01T00:03:00",
+    "profileData": {
+      "status": "SUPPORT_NEEDED",
+      "statusChange": true,
+      "statusChangeDate": "2025-01-01T00:02:00",
+      "statusChangeType": "DECLINED_TO_ACCEPTED",
+      "prisonId": "prison2",
+      "prisonName": "Prison 2",
+      "within12Weeks": true,
+      "supportDeclined": {
+        "modifiedDateTime": "2025-01-01T00:01:00",
+        "supportToWorkDeclinedReason": [
+          "HEALTH",
+          "OTHER"
+        ],
+        "supportToWorkDeclinedReasonOther": "Some other reasons",
+        "circumstanceChangesRequiredToWork": [
+          "MENTAL_HEALTH_SUPPORT",
+          "OTHER"
+        ],
+        "circumstanceChangesRequiredToWorkOther": "Some other circumstance changes"
+      },
+      "supportAccepted": {
+        "modifiedDateTime": "2025-01-01T00:02:00",
+        "actionsRequired": {
+          "modifiedDateTime": "2025-01-01T00:02:00",
+          "actions": [
+            {
+              "todoItem": "BANK_ACCOUNT",
+              "status": "NOT_STARTED",
+              "other": null,
+              "id": null
+            },
+            {
+              "todoItem": "HOUSING",
+              "status": "NOT_STARTED",
+              "other": null,
+              "id": null
+            },
+            {
+              "todoItem": "ID",
+              "status": "NOT_STARTED",
+              "other": "Some other ID documents",
+              "id": [
+                "DRIVING_LICENCE",
+                "PASSPORT",
+                "BIRTH_CERTIFICATE",
+                "OTHER"
+              ]
+            }
+          ]
+        },
+        "workImpacts": {
+          "modifiedDateTime": "2025-01-01T00:02:00",
+          "abilityToWorkImpactedBy": [
+            "MENTAL_HEALTH_ISSUES",
+            "PHYSICAL_HEALTH_ISSUES"
+          ],
+          "caringResponsibilitiesFullTime": true,
+          "ableToManageMentalHealth": true,
+          "ableToManageDependencies": false
+        },
+        "workInterests": {
+          "modifiedDateTime": "2025-01-01T00:02:00",
+          "workTypesOfInterest": [
+            "CONSTRUCTION",
+            "MANUFACTURING",
+            "OTHER"
+          ],
+          "workTypesOfInterestOther": "Some other work types of interest",
+          "jobOfParticularInterest": "A dummy job"
+        },
+        "workExperience": {
+          "modifiedDateTime": "2025-01-01T00:02:00",
+          "previousWorkOrVolunteering": "Admin in a NGO",
+          "qualificationsAndTraining": [
+            "DRIVING_LICENSE",
+            "HGV_LICENSE",
+            "MACHINERY",
+            "OTHER"
+          ],
+          "qualificationsAndTrainingOther": "Some other training"
+        }
+      }
+    }
+  },
+  {
+    "offenderId": "A1234BB",
+    "createdDateTime": "2025-01-01T00:00:00",
+    "modifiedDateTime": "2025-01-01T00:03:00",
+    "profileData": {
+      "status": "SUPPORT_NEEDED",
+      "statusChange": true,
+      "statusChangeDate": "2025-01-01T00:02:00",
+      "statusChangeType": "DECLINED_TO_ACCEPTED",
+      "prisonId": "prison2",
+      "prisonName": "Prison 2",
+      "within12Weeks": true,
+      "supportDeclined": {
+        "modifiedDateTime": "2025-01-01T00:01:00",
+        "supportToWorkDeclinedReason": [
+          "HEALTH",
+          "OTHER"
+        ],
+        "supportToWorkDeclinedReasonOther": "Some other reasons",
+        "circumstanceChangesRequiredToWork": [
+          "MENTAL_HEALTH_SUPPORT",
+          "OTHER"
+        ],
+        "circumstanceChangesRequiredToWorkOther": "Some other circumstance changes"
+      },
+      "supportAccepted": {
+        "modifiedDateTime": "2025-01-01T00:02:00",
+        "actionsRequired": {
+          "modifiedDateTime": "2025-01-01T00:02:00",
+          "actions": [
+            {
+              "todoItem": "BANK_ACCOUNT",
+              "status": "NOT_STARTED",
+              "other": null,
+              "id": null
+            },
+            {
+              "todoItem": "HOUSING",
+              "status": "NOT_STARTED",
+              "other": null,
+              "id": null
+            },
+            {
+              "todoItem": "ID",
+              "status": "NOT_STARTED",
+              "other": "Some other ID documents",
+              "id": [
+                "DRIVING_LICENCE",
+                "PASSPORT",
+                "BIRTH_CERTIFICATE",
+                "OTHER"
+              ]
+            }
+          ]
+        },
+        "workImpacts": {
+          "modifiedDateTime": "2025-01-01T00:02:00",
+          "abilityToWorkImpactedBy": [
+            "MENTAL_HEALTH_ISSUES",
+            "PHYSICAL_HEALTH_ISSUES"
+          ],
+          "caringResponsibilitiesFullTime": true,
+          "ableToManageMentalHealth": true,
+          "ableToManageDependencies": false
+        },
+        "workInterests": {
+          "modifiedDateTime": "2025-01-01T00:02:00",
+          "workTypesOfInterest": [
+            "CONSTRUCTION",
+            "MANUFACTURING",
+            "OTHER"
+          ],
+          "workTypesOfInterestOther": "Some other work types of interest",
+          "jobOfParticularInterest": "A dummy job"
+        },
+        "workExperience": {
+          "modifiedDateTime": "2025-01-01T00:02:00",
+          "previousWorkOrVolunteering": "Admin in a NGO",
+          "qualificationsAndTraining": [
+            "DRIVING_LICENSE",
+            "HGV_LICENSE",
+            "MACHINERY",
+            "OTHER"
+          ],
+          "qualificationsAndTrainingOther": "Some other training"
+        }
+      }
+    }
+  },
+  {
+    "offenderId": "A1234BB",
+    "createdDateTime": "2025-01-01T00:00:00",
+    "modifiedDateTime": "2025-01-01T00:03:00",
+    "profileData": {
+      "status": "SUPPORT_NEEDED",
+      "statusChange": true,
+      "statusChangeDate": "2025-01-01T00:02:00",
+      "statusChangeType": "DECLINED_TO_ACCEPTED",
+      "prisonId": "prison2",
+      "prisonName": "Prison 2",
+      "within12Weeks": true,
+      "supportDeclined": {
+        "modifiedDateTime": "2025-01-01T00:01:00",
+        "supportToWorkDeclinedReason": [
+          "HEALTH",
+          "OTHER"
+        ],
+        "supportToWorkDeclinedReasonOther": "Some other reasons",
+        "circumstanceChangesRequiredToWork": [
+          "MENTAL_HEALTH_SUPPORT",
+          "OTHER"
+        ],
+        "circumstanceChangesRequiredToWorkOther": "Some other circumstance changes"
+      },
+      "supportAccepted": {
+        "modifiedDateTime": "2025-01-01T00:02:00",
+        "actionsRequired": {
+          "modifiedDateTime": "2025-01-01T00:02:00",
+          "actions": [
+            {
+              "todoItem": "BANK_ACCOUNT",
+              "status": "NOT_STARTED",
+              "other": null,
+              "id": null
+            },
+            {
+              "todoItem": "HOUSING",
+              "status": "NOT_STARTED",
+              "other": null,
+              "id": null
+            },
+            {
+              "todoItem": "ID",
+              "status": "NOT_STARTED",
+              "other": "Some other ID documents",
+              "id": [
+                "DRIVING_LICENCE",
+                "PASSPORT",
+                "BIRTH_CERTIFICATE",
+                "OTHER"
+              ]
+            }
+          ]
+        },
+        "workImpacts": {
+          "modifiedDateTime": "2025-01-01T00:02:00",
+          "abilityToWorkImpactedBy": [
+            "MENTAL_HEALTH_ISSUES",
+            "PHYSICAL_HEALTH_ISSUES"
+          ],
+          "caringResponsibilitiesFullTime": true,
+          "ableToManageMentalHealth": true,
+          "ableToManageDependencies": false
+        },
+        "workInterests": {
+          "modifiedDateTime": "2025-01-01T00:02:00",
+          "workTypesOfInterest": [
+            "CONSTRUCTION",
+            "MANUFACTURING",
+            "OTHER"
+          ],
+          "workTypesOfInterestOther": "Some other work types of interest",
+          "jobOfParticularInterest": "A dummy job"
+        },
+        "workExperience": {
+          "modifiedDateTime": "2025-01-01T00:02:00",
+          "previousWorkOrVolunteering": "Admin in a NGO",
+          "qualificationsAndTraining": [
+            "DRIVING_LICENSE",
+            "HGV_LICENSE",
+            "MACHINERY",
+            "OTHER"
+          ],
+          "qualificationsAndTrainingOther": "Some other training"
+        }
+      }
+    }
+  },
+  {
+    "offenderId": "A1234BB",
+    "createdDateTime": "2025-01-01T00:00:00",
+    "modifiedDateTime": "2025-01-01T00:02:00",
+    "profileData": {
+      "status": "SUPPORT_NEEDED",
+      "statusChange": true,
+      "statusChangeDate": "2025-01-01T00:02:00",
+      "statusChangeType": "DECLINED_TO_ACCEPTED",
+      "prisonId": "prison2",
+      "prisonName": "Prison 2",
+      "within12Weeks": true,
+      "supportDeclined": {
+        "modifiedDateTime": "2025-01-01T00:01:00",
+        "supportToWorkDeclinedReason": [
+          "HEALTH",
+          "OTHER"
+        ],
+        "supportToWorkDeclinedReasonOther": "Some other reasons",
+        "circumstanceChangesRequiredToWork": [
+          "MENTAL_HEALTH_SUPPORT",
+          "OTHER"
+        ],
+        "circumstanceChangesRequiredToWorkOther": "Some other circumstance changes"
+      },
+      "supportAccepted": {
+        "modifiedDateTime": "2025-01-01T00:02:00",
+        "actionsRequired": {
+          "modifiedDateTime": "2025-01-01T00:02:00",
+          "actions": [
+            {
+              "todoItem": "BANK_ACCOUNT",
+              "status": "NOT_STARTED",
+              "other": null,
+              "id": null
+            },
+            {
+              "todoItem": "HOUSING",
+              "status": "NOT_STARTED",
+              "other": null,
+              "id": null
+            },
+            {
+              "todoItem": "ID",
+              "status": "NOT_STARTED",
+              "other": "Some other ID documents",
+              "id": [
+                "DRIVING_LICENCE",
+                "PASSPORT",
+                "BIRTH_CERTIFICATE",
+                "OTHER"
+              ]
+            }
+          ]
+        },
+        "workImpacts": {
+          "modifiedDateTime": "2025-01-01T00:02:00",
+          "abilityToWorkImpactedBy": [
+            "MENTAL_HEALTH_ISSUES",
+            "PHYSICAL_HEALTH_ISSUES"
+          ],
+          "caringResponsibilitiesFullTime": true,
+          "ableToManageMentalHealth": true,
+          "ableToManageDependencies": false
+        },
+        "workInterests": {
+          "modifiedDateTime": "2025-01-01T00:02:00",
+          "workTypesOfInterest": [
+            "CONSTRUCTION",
+            "MANUFACTURING",
+            "OTHER"
+          ],
+          "workTypesOfInterestOther": "Some other work types of interest",
+          "jobOfParticularInterest": "A dummy job"
+        },
+        "workExperience": {
+          "modifiedDateTime": "2025-01-01T00:02:00",
+          "previousWorkOrVolunteering": "Admin in a NGO",
+          "qualificationsAndTraining": [
+            "DRIVING_LICENSE",
+            "HGV_LICENSE",
+            "MACHINERY",
+            "OTHER"
+          ],
+          "qualificationsAndTrainingOther": "Some other training"
+        }
+      }
+    }
+  },
+  {
+    "offenderId": "A1234BB",
+    "createdDateTime": "2025-01-01T00:00:00",
+    "modifiedDateTime": "2025-01-01T00:01:00",
+    "profileData": {
+      "status": "SUPPORT_DECLINED",
+      "statusChange": true,
+      "statusChangeDate": "2025-01-01T00:01:00",
+      "statusChangeType": "NEW",
+      "prisonId": "prison2",
+      "prisonName": "Prison 2",
+      "within12Weeks": true,
+      "supportDeclined": {
+        "modifiedDateTime": "2025-01-01T00:01:00",
+        "supportToWorkDeclinedReason": [
+          "HEALTH",
+          "OTHER"
+        ],
+        "supportToWorkDeclinedReasonOther": "Some other reasons",
+        "circumstanceChangesRequiredToWork": [
+          "MENTAL_HEALTH_SUPPORT",
+          "OTHER"
+        ],
+        "circumstanceChangesRequiredToWorkOther": "Some other circumstance changes"
+      },
+      "supportAccepted": null
+    }
+  },
+  {
+    "offenderId": "A1234BB",
+    "createdDateTime": "2025-01-01T00:00:00",
+    "modifiedDateTime": "2025-01-01T00:00:00",
+    "profileData": {
+      "status": "NO_RIGHT_TO_WORK",
+      "statusChange": false,
+      "statusChangeDate": null,
+      "statusChangeType": "NEW",
+      "prisonId": "prison2",
+      "prisonName": "Prison 2",
+      "within12Weeks": true,
+      "supportDeclined": null,
+      "supportAccepted": null
+    }
+  }
+]

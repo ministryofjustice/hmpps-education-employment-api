@@ -25,14 +25,14 @@ abstract class ReadinessProfileV1TestCase :
   private val typeRefProfile by lazy { object : TypeReference<Profile>() {} }
 
   protected fun addProfile(prisonNumber: String, request: ReadinessProfileRequestDTO) = profileV1Helper.addReadinessProfileForTest(
-    userId = authUser,
+    userId = currentUser,
     offenderId = prisonNumber,
     bookingId = request.bookingId,
     profile = request.profileData,
   )
 
   protected fun updateProfile(prisonNumber: String, request: ReadinessProfileRequestDTO) = profileV1Helper.updateReadinessProfileForTest(
-    userId = authUser,
+    userId = currentUser,
     offenderId = prisonNumber,
     bookingId = request.bookingId,
     profile = request.profileData,

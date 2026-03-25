@@ -32,3 +32,11 @@ spring:
     enabled: true
     user: '${DATABASE_USERNAME:education-employment}'
     password: '${DATABASE_PASSWORD:education-employment}'
+
+hmpps.sar:
+  tests:
+    expected-flyway-schema-version: "1.3"
+    expected-jpa-entity-schema.path: "/sar/entity-schema.json"
+    expected-render-result.path: "/sar/sar-generated-report.html"
+    expected-api-response.path: "/sar/sar-api-response.json"
+    attachments-expected: false

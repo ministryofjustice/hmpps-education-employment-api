@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource
 
 import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity
 import uk.gov.justice.digital.hmpps.educationemployment.api.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.shared.application.ApplicationTestCase
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ActionTodo
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.v2.Profile
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.NoteDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.NoteRequestDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.StatusChangeUpdateRequestDTO
@@ -32,8 +34,8 @@ abstract class ReadinessProfileTestCase<RP, REQ>(
   @Autowired
   protected lateinit var objectMapper: ObjectMapper
 
-  private val readWriteHeaders get() = setAuthorisationOfRoles(WR_EDIT_ROLE, WR_VIEW_ROLE)
-  private val readOnlyHeaders get() = setAuthorisationOfRoles(WR_VIEW_ROLE)
+  private val readWriteHeaders get() = httpHeaders(WR_EDIT_ROLE, WR_VIEW_ROLE)
+  private val readOnlyHeaders get() = httpHeaders(WR_VIEW_ROLE)
   private val readOnlyRequestNoBody get() = HttpEntity<HttpHeaders>(readOnlyHeaders)
 
   protected fun assertAddReadinessProfileIsOk(prisonNumber: String, request: REQ) = assertAddReadinessProfileIsSuccesful(prisonNumber, request, HttpStatus.OK)
@@ -153,6 +155,8 @@ abstract class ReadinessProfileTestCase<RP, REQ>(
 
   protected fun Any.asJson(): String = objectMapper.writeValueAsString(this)
   protected fun String.replacePrefix(prefix: String, replacement: String = "") = if (this.startsWith(prefix)) "$replacement${this.substring(prefix.length)}" else this
+
+  protected fun Profile.json(): JsonNode = objectMapper.valueToTree(this)
 }
 
 const val READINESS_PROFILE_ENDPOINT = "/readiness-profiles"
