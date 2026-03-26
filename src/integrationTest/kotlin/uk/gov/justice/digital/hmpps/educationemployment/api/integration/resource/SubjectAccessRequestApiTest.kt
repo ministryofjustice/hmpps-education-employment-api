@@ -100,20 +100,7 @@ class SubjectAccessRequestApiTest {
       }
       // 2) Update WR profile: status change to `SUPPORT_DECLINED`
       updatedDto.profileData.status = ProfileStatus.SUPPORT_DECLINED
-      updatedDto.profileData.supportDeclined = SupportDeclined(
-        modifiedBy = currentUser,
-        modifiedDateTime = sarCurrentTimeLocal,
-        supportToWorkDeclinedReason = listOf(
-          SupportToWorkDeclinedReason.HEALTH,
-          SupportToWorkDeclinedReason.OTHER,
-        ),
-        supportToWorkDeclinedReasonOther = "Some other reasons",
-        circumstanceChangesRequiredToWork = listOf(
-          CircumstanceChangesRequiredToWork.MENTAL_HEALTH_SUPPORT,
-          CircumstanceChangesRequiredToWork.OTHER,
-        ),
-        circumstanceChangesRequiredToWorkOther = "Some other circumstance changes",
-      )
+      updatedDto.profileData.supportDeclined = makeSupportDeclined()
       updateReadinessProfile()
       timeTicking()
 
@@ -123,63 +110,7 @@ class SubjectAccessRequestApiTest {
         status = ProfileStatus.SUPPORT_NEEDED
         statusChangeType = StatusChange.DECLINED_TO_ACCEPTED
       }
-      updatedDto.profileData.supportAccepted = SupportAccepted(
-        modifiedBy = currentUser,
-        modifiedDateTime = sarCurrentTimeLocal,
-        actionsRequired = ActionsRequired(
-          modifiedBy = currentUser,
-          modifiedDateTime = sarCurrentTimeLocal,
-          actions = listOf(
-            makeAction(ActionTodo.BANK_ACCOUNT),
-            makeAction(ActionTodo.HOUSING),
-            makeAction(
-              ActionTodo.ID,
-              id = listOf(
-                IDocs.DRIVING_LICENCE,
-                IDocs.PASSPORT,
-                IDocs.BIRTH_CERTIFICATE,
-                IDocs.OTHER,
-              ),
-              other = "Some other ID documents",
-            ),
-          ),
-        ),
-        workImpacts = WorkImpacts(
-          modifiedBy = currentUser,
-          modifiedDateTime = sarCurrentTimeLocal,
-          abilityToWorkImpactedBy = listOf(
-            AbilityToWorkImpactedBy.MENTAL_HEALTH_ISSUES,
-            AbilityToWorkImpactedBy.PHYSICAL_HEALTH_ISSUES,
-          ),
-          caringResponsibilitiesFullTime = true,
-          ableToManageMentalHealth = true,
-          ableToManageDependencies = false,
-        ),
-        workInterests = WorkInterests(
-          modifiedBy = currentUser,
-          modifiedDateTime = sarCurrentTimeLocal,
-          workTypesOfInterest = listOf(
-            WorkTypesOfInterest.CONSTRUCTION,
-            WorkTypesOfInterest.MANUFACTURING,
-            WorkTypesOfInterest.OTHER,
-          ),
-          workTypesOfInterestOther = "Some other work types of interest",
-          jobOfParticularInterest = "A dummy job",
-        ),
-        workExperience = WorkExperience(
-          modifiedBy = currentUser,
-          modifiedDateTime = sarCurrentTimeLocal,
-          previousWorkOrVolunteering = "Admin in a NGO",
-          qualificationsAndTraining = listOf(
-            QualificationsAndTraining.DRIVING_LICENSE,
-            QualificationsAndTraining.HGV_LICENSE,
-            QualificationsAndTraining.MACHINERY,
-            QualificationsAndTraining.OTHER,
-          ),
-          qualificationsAndTrainingOther = "Some other training",
-        ),
-      )
-      // updatedReadinessProfileDto = assertChangeStatusIsOk(sarPrisonNumber, sarProfile.statusChangeRequestToAccepted()).body!!
+      updatedDto.profileData.supportAccepted = makeSupportAccepted()
       updateReadinessProfile()
       timeTicking()
 
@@ -202,13 +133,84 @@ class SubjectAccessRequestApiTest {
       }
 
       // 7) Update WR profile: status change to `READY_TO_WORK`
-      // assertChangeStatusIsOk(sarPrisonNumber, StatusChangeUpdateRequestDTO(null, null, ProfileStatus.READY_TO_WORK))
       updatedDto.profileData.status = ProfileStatus.READY_TO_WORK
       updateReadinessProfile()
       timeTicking()
     }
 
     override fun getPrn(): String? = sarPrisonNumber
+
+    private fun makeSupportAccepted(): SupportAccepted = SupportAccepted(
+      modifiedBy = currentUser,
+      modifiedDateTime = sarCurrentTimeLocal,
+      actionsRequired = ActionsRequired(
+        modifiedBy = currentUser,
+        modifiedDateTime = sarCurrentTimeLocal,
+        actions = listOf(
+          makeAction(ActionTodo.BANK_ACCOUNT),
+          makeAction(ActionTodo.HOUSING),
+          makeAction(
+            ActionTodo.ID,
+            id = listOf(
+              IDocs.DRIVING_LICENCE,
+              IDocs.PASSPORT,
+              IDocs.BIRTH_CERTIFICATE,
+              IDocs.OTHER,
+            ),
+            other = "Some other ID documents",
+          ),
+        ),
+      ),
+      workImpacts = WorkImpacts(
+        modifiedBy = currentUser,
+        modifiedDateTime = sarCurrentTimeLocal,
+        abilityToWorkImpactedBy = listOf(
+          AbilityToWorkImpactedBy.MENTAL_HEALTH_ISSUES,
+          AbilityToWorkImpactedBy.PHYSICAL_HEALTH_ISSUES,
+        ),
+        caringResponsibilitiesFullTime = true,
+        ableToManageMentalHealth = true,
+        ableToManageDependencies = false,
+      ),
+      workInterests = WorkInterests(
+        modifiedBy = currentUser,
+        modifiedDateTime = sarCurrentTimeLocal,
+        workTypesOfInterest = listOf(
+          WorkTypesOfInterest.CONSTRUCTION,
+          WorkTypesOfInterest.MANUFACTURING,
+          WorkTypesOfInterest.OTHER,
+        ),
+        workTypesOfInterestOther = "Some other work types of interest",
+        jobOfParticularInterest = "A dummy job",
+      ),
+      workExperience = WorkExperience(
+        modifiedBy = currentUser,
+        modifiedDateTime = sarCurrentTimeLocal,
+        previousWorkOrVolunteering = "Admin in a NGO",
+        qualificationsAndTraining = listOf(
+          QualificationsAndTraining.DRIVING_LICENSE,
+          QualificationsAndTraining.HGV_LICENSE,
+          QualificationsAndTraining.MACHINERY,
+          QualificationsAndTraining.OTHER,
+        ),
+        qualificationsAndTrainingOther = "Some other training",
+      ),
+    )
+
+    private fun makeSupportDeclined(): SupportDeclined = SupportDeclined(
+      modifiedBy = currentUser,
+      modifiedDateTime = sarCurrentTimeLocal,
+      supportToWorkDeclinedReason = listOf(
+        SupportToWorkDeclinedReason.HEALTH,
+        SupportToWorkDeclinedReason.OTHER,
+      ),
+      supportToWorkDeclinedReasonOther = "Some other reasons",
+      circumstanceChangesRequiredToWork = listOf(
+        CircumstanceChangesRequiredToWork.MENTAL_HEALTH_SUPPORT,
+        CircumstanceChangesRequiredToWork.OTHER,
+      ),
+      circumstanceChangesRequiredToWorkOther = "Some other circumstance changes",
+    )
 
     private fun makeAction(
       todoItem: ActionTodo,
