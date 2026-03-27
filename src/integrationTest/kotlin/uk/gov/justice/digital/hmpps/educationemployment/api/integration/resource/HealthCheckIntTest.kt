@@ -11,6 +11,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 class HealthCheckIntTest : IntegrationTestBase() {
+  private val requestEntity get() = HttpEntity<HttpHeaders>(httpHeaders("ROLE_WORK_READINESS_EDIT", "ROLE_WORK_READINESS_VIEW"))
 
   @Test
   fun `Health page reports ok`() {
@@ -21,7 +22,7 @@ class HealthCheckIntTest : IntegrationTestBase() {
 
   @Test
   fun `Health info reports version`() {
-    val result = restTemplate.exchange("/health", HttpMethod.GET, HttpEntity<HttpHeaders>(setAuthorisation(roles = listOf("ROLE_WORK_READINESS_EDIT", "ROLE_WORK_READINESS_VIEW"))), String::class.java)
+    val result = restTemplate.exchange("/health", HttpMethod.GET, requestEntity, String::class.java)
     assert(result.hasBody())
     assert(result.statusCode.is2xxSuccessful)
     val stringcompanion = CapturedSpringConfigValues.objectMapper.readTree(result.body!!)
@@ -31,7 +32,7 @@ class HealthCheckIntTest : IntegrationTestBase() {
 
   @Test
   fun `Health ping page is accessible`() {
-    val result = restTemplate.exchange("/health/ping", HttpMethod.GET, HttpEntity<HttpHeaders>(setAuthorisation(roles = listOf("ROLE_WORK_READINESS_EDIT", "ROLE_WORK_READINESS_VIEW"))), String::class.java)
+    val result = restTemplate.exchange("/health/ping", HttpMethod.GET, requestEntity, String::class.java)
     assert(result.hasBody())
     assert(result.statusCode.is2xxSuccessful)
     val stringcompanion = CapturedSpringConfigValues.objectMapper.readTree(result.body!!)
@@ -41,7 +42,7 @@ class HealthCheckIntTest : IntegrationTestBase() {
 
   @Test
   fun `readiness reports ok`() {
-    val result = restTemplate.exchange("/health/readiness", HttpMethod.GET, HttpEntity<HttpHeaders>(setAuthorisation(roles = listOf("ROLE_WORK_READINESS_EDIT", "ROLE_WORK_READINESS_VIEW"))), String::class.java)
+    val result = restTemplate.exchange("/health/readiness", HttpMethod.GET, requestEntity, String::class.java)
     assert(result.hasBody())
     assert(result.statusCode.is2xxSuccessful)
     val stringcompanion = CapturedSpringConfigValues.objectMapper.readTree(result.body!!)
@@ -51,7 +52,7 @@ class HealthCheckIntTest : IntegrationTestBase() {
 
   @Test
   fun `liveness reports ok`() {
-    val result = restTemplate.exchange("/health/liveness", HttpMethod.GET, HttpEntity<HttpHeaders>(setAuthorisation(roles = listOf("ROLE_WORK_READINESS_EDIT", "ROLE_WORK_READINESS_VIEW"))), String::class.java)
+    val result = restTemplate.exchange("/health/liveness", HttpMethod.GET, requestEntity, String::class.java)
     assert(result.hasBody())
     assert(result.statusCode.is2xxSuccessful)
     val stringcompanion = CapturedSpringConfigValues.objectMapper.readTree(result.body!!)

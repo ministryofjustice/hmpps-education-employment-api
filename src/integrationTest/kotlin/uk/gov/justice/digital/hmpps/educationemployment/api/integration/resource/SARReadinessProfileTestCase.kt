@@ -21,7 +21,7 @@ abstract class SARReadinessProfileTestCase : ReadinessProfileV2TestCase() {
     roles: List<String> = listOf(SAR_ROLE),
   ): ResponseEntity<HmppsSubjectAccessRequestContent> {
     val url = makeUrl(SAR_ENDPOINT, makeRequestParamsOfSAR(prn = prn, fromDate = fromDate, toDate = toDate))
-    val request = HttpEntity<HttpHeaders>(setAuthorisation(roles = roles))
+    val request = HttpEntity<HttpHeaders>(httpHeaders(roles))
 
     val result = restTemplate.exchange(url, HttpMethod.GET, request, HmppsSubjectAccessRequestContent::class.java)
     assertThat(result).isNotNull
@@ -54,7 +54,7 @@ abstract class SARReadinessProfileTestCase : ReadinessProfileV2TestCase() {
     authorised: Boolean = true,
     roles: List<String> = listOf(SAR_ROLE),
   ): ResponseEntity<Any> {
-    val request = (if (authorised) setAuthorisation(roles = roles) else null)?.let { HttpEntity<HttpHeaders>(it) }
+    val request = if (authorised) HttpEntity<HttpHeaders>(httpHeaders(roles)) else null
     val url = makeUrl(SAR_ENDPOINT, makeRequestParamsOfSAR(prn = prn, crn = crn, fromDate = fromDate, toDate = toDate))
     val result = restTemplate.exchange(url, HttpMethod.GET, request, Any::class.java)
 

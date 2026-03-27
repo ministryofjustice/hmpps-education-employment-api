@@ -7,13 +7,19 @@ import org.springframework.boot.resttestclient.TestRestTemplate
 import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
+import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient
+import org.springframework.context.annotation.Import
 import org.springframework.http.HttpHeaders
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import uk.gov.justice.digital.hmpps.educationemployment.api.HmppsEducationEmploymentApi
-import uk.gov.justice.digital.hmpps.educationemployment.api.integration.helpers.JwtAuthHelper
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.testcontainers.PostgresContainer
+import uk.gov.justice.digital.hmpps.subjectaccessrequest.SarIntegrationTestHelper
+import uk.gov.justice.digital.hmpps.subjectaccessrequest.SarIntegrationTestHelperConfig
+import uk.gov.justice.hmpps.test.kotlin.auth.JwtAuthorisationHelper
+
+const val DEFAULT_USER = "test-client"
 
 @SpringBootTest(
   webEnvironment = RANDOM_PORT,
@@ -22,8 +28,10 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.integration.testcont
   ),
 )
 @AutoConfigureTestRestTemplate
+@AutoConfigureWebTestClient
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles("integration-test")
+@Import(SarIntegrationTestHelperConfig::class)
 abstract class IntegrationTestBase internal constructor() {
   @Autowired
   private lateinit var flyway: Flyway
@@ -52,16 +60,21 @@ abstract class IntegrationTestBase internal constructor() {
   lateinit var restTemplate: TestRestTemplate
 
   @Autowired
-  lateinit var jwtAuthHelper: JwtAuthHelper
+  protected lateinit var jwtAuthorisationHelper: JwtAuthorisationHelper
 
-  internal fun setAuthorisationOfRoles(vararg roles: String, user: String = authUser): HttpHeaders = setAuthorisation(user, listOf(*roles))
+  @Autowired
+  protected lateinit var sarIntegrationTestHelper: SarIntegrationTestHelper
+
+  protected fun httpHeaders(vararg roles: String, user: String = currentUser) = httpHeaders(listOf(*roles), user)
+  protected fun httpHeaders(roles: List<String>, user: String = currentUser) = HttpHeaders().also { setAuthorisation(user, roles).invoke(it) }
 
   internal fun setAuthorisation(
-    user: String = authUser,
+    username: String? = DEFAULT_USER,
     roles: List<String> = listOf(),
-  ): (HttpHeaders) = jwtAuthHelper.setAuthorisationForUnitTests(user, roles)
+    scopes: List<String> = listOf("read"),
+  ): (HttpHeaders) -> Unit = jwtAuthorisationHelper.setAuthorisationHeader(username = username, scope = scopes, roles = roles)
 
-  protected val authUser = "test-client"
+  protected var currentUser = DEFAULT_USER
 
   @BeforeAll
   internal fun beforeAll() {

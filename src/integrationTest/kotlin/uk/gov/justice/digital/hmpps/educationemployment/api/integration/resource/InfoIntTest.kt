@@ -11,10 +11,11 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 class InfoIntTest : IntegrationTestBase() {
+  private val requestEntity get() = HttpEntity<HttpHeaders>(httpHeaders("ROLE_WORK_READINESS_EDIT", "ROLE_WORK_READINESS_VIEW"))
 
   @Test
   fun `Info page is accessible`() {
-    val result = restTemplate.exchange("/info", HttpMethod.GET, HttpEntity<HttpHeaders>(setAuthorisation(roles = listOf("ROLE_WORK_READINESS_EDIT", "ROLE_WORK_READINESS_VIEW"))), String::class.java)
+    val result = restTemplate.exchange("/info", HttpMethod.GET, requestEntity, String::class.java)
     assert(result.hasBody())
     assert(result.statusCode.is2xxSuccessful)
     val stringcompanion = CapturedSpringConfigValues.objectMapper.readTree(result.body!!)
@@ -24,7 +25,7 @@ class InfoIntTest : IntegrationTestBase() {
 
   @Test
   fun `Info page reports version`() {
-    val result = restTemplate.exchange("/info", HttpMethod.GET, HttpEntity<HttpHeaders>(setAuthorisation(roles = listOf("ROLE_WORK_READINESS_EDIT", "ROLE_WORK_READINESS_VIEW"))), String::class.java)
+    val result = restTemplate.exchange("/info", HttpMethod.GET, requestEntity, String::class.java)
     assert(result.hasBody())
     assert(result.statusCode.is2xxSuccessful)
     val stringcompanion = CapturedSpringConfigValues.objectMapper.readTree(result.body!!)

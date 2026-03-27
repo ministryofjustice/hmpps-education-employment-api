@@ -36,10 +36,13 @@ testing {
     val integrationTest by registering(JvmTestSuite::class) {
       dependencies {
         kotlin.target.compilations { named("integrationTest") { associateWith(getByName("main")) } }
+        implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:2.0.1")
+        implementation("uk.gov.justice.service.hmpps:hmpps-subject-access-request-test-support:2.1.1")
         implementation("org.springframework.boot:spring-boot-starter-test")
         implementation("org.springframework.boot:spring-boot-starter-data-jpa-test")
         implementation("org.springframework.boot:spring-boot-restclient")
         implementation("org.springframework.boot:spring-boot-resttestclient")
+        implementation("org.springframework.boot:spring-boot-webtestclient")
         implementation("org.springframework.security:spring-security-test")
         runtimeOnly("com.microsoft.azure:applicationinsights-logging-logback:2.6.4")
         runtimeOnly("org.flywaydb:flyway-database-postgresql")

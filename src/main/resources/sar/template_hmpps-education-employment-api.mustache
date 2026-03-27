@@ -1,0 +1,141 @@
+<h1 class="title">Work Readiness</h1>
+{{#.}}
+    <br/>
+    <h2>Readiness profile</h2>
+    <table class="data-table">
+        <tr>
+            <td class="data-column-25">Created date</td>
+            <td class="data-column-25">Modified date</td>
+        </tr>
+        <tr>
+            <td>{{ optionalValue (formatDate createdDateTime)}}</td>
+            <td>{{ optionalValue (formatDate modifiedDateTime)}}</td>
+        </tr>
+    </table>
+
+    <h3>Profile data</h3>
+    {{#profileData}}
+        <table class="summary-list">
+            <tr><td>Prison name</td><td>{{ getPrisonName prisonId }}</td></tr>
+            <tr><td>Status</td><td>{{ optionalValue status }}</td></tr>
+            <tr><td>Status change</td><td>{{ convertBoolean statusChange }}</td></tr>
+            <tr><td>Status change type</td><td>{{ optionalValue statusChangeType }}</td></tr>
+            <tr><td>Status change date</td><td>{{ optionalValue (formatDate statusChangeDate) }}</td></tr>
+            <tr><td>Is within 12 weeks</td><td>{{ convertBoolean within12Weeks }}</td></tr>
+        </table>
+
+        <h4>Support Accepted</h4>
+        {{#supportAccepted}}
+            <table class="summary-list">
+                <tr><td>Modified date</td><td>{{ optionalValue (formatDate modifiedDateTime) }}</td></tr>
+            </table>
+
+            <h5>Actions Required</h5>
+            {{#actionsRequired}}
+                <table class="summary-list">
+                    <tr><td>Modified date</td><td>{{ optionalValue (formatDate modifiedDateTime) }}</td></tr>
+                </table>
+                <p><b>Actions</b></p>
+                {{#actions}}
+                    <table class="data-table">
+                        <tr>
+                            <td class="data-column-20">Todo Item</td>
+                            <td class="data-column-20">Status</td>
+                            <td class="data-column-20">Other</td>
+                            <td class="data-column-40">Identity documents</td>
+                        </tr>
+                        <tr>
+                            <td>{{ optionalValue todoItem }}</td>
+                            <td>{{ optionalValue status }}</td>
+                            <td>{{ optionalValue other }}</td>
+                            <td>{{#id}}{{.}}{{#unless @last}}, {{/unless}}{{/id}}{{^id}}No Data Held{{/id}}</td>
+                        </tr>
+                    </table>
+                {{/actions}}
+                {{^actions}}
+                    <p>No Data Held</p>
+                {{/actions}}
+            {{/actionsRequired}}
+            {{^actionsRequired}}
+                <p>No Data Held</p>
+            {{/actionsRequired}}
+
+            <h4>Work Impacts</h4>
+            {{#workImpacts}}
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-50">Modified date</td>
+                        <td class="data-column-50">Caring responsibilities full time</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue (formatDate modifiedDateTime) }}</td>
+                        <td>{{ convertBoolean caringResponsibilitiesFullTime }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-50">Able to manage mental health</td>
+                        <td class="data-column-50">Able to manage dependencies</td>
+                    </tr>
+                    <tr>
+                        <td>{{ convertBoolean ableToManageMentalHealth }}</td>
+                        <td>{{ convertBoolean ableToManageDependencies }}</td>
+                    </tr>
+                </table>
+                <table class="summary-list">
+                    <tr><td>Ability to work impacted by</td><td>{{#abilityToWorkImpactedBy}}{{.}}{{#unless @last}}, {{/unless}}{{/abilityToWorkImpactedBy}}{{^abilityToWorkImpactedBy}}No Data Held{{/abilityToWorkImpactedBy}}</td></tr>
+                </table>
+            {{/workImpacts}}
+            {{^workImpacts}}
+                <p>No Data Held</p>
+            {{/workImpacts}}
+
+            <h5>Work Interests</h5>
+            {{#workInterests}}
+                <table class="summary-list">
+                    <tr><td>Modified date</td><td>{{ optionalValue (formatDate modifiedDateTime) }}</td></tr>
+                    <tr><td>Work types of interest</td><td>{{#workTypesOfInterest}}{{.}}{{#unless @last}}, {{/unless}}{{/workTypesOfInterest}}{{^workTypesOfInterest}}No Data Held{{/workTypesOfInterest}}</td></tr>
+                    <tr><td>Work types of interest other</td><td>{{ optionalValue workTypesOfInterestOther }}</td></tr>
+                    <tr><td>Job of particular interest</td><td>{{ optionalValue jobOfParticularInterest }}</td></tr>
+                </table>
+            {{/workInterests}}
+            {{^workInterests}}
+                <p>No Data Held</p>
+            {{/workInterests}}
+
+            <h5>Work Experience</h5>
+            {{#workExperience}}
+                <table class="summary-list">
+                    <tr><td>Modified date</td><td>{{ optionalValue (formatDate modifiedDateTime) }}</td></tr>
+                    <tr><td>Qualifications and training</td><td>{{#qualificationsAndTraining}}{{.}}{{#unless @last}}, {{/unless}}{{/qualificationsAndTraining}}{{^qualificationsAndTraining}}No Data Held{{/qualificationsAndTraining}}</td></tr>
+                    <tr><td>Previous work or volunteering</td><td>{{ optionalValue previousWorkOrVolunteering }}</td></tr>
+                    <tr><td>Qualifications and training other</td><td>{{ optionalValue qualificationsAndTrainingOther }}</td></tr>
+                </table>
+            {{/workExperience}}
+            {{^workExperience}}
+                <p>No Data Held</p>
+            {{/workExperience}}
+        {{/supportAccepted}}
+        {{^supportAccepted}}
+            <p>No Data Held</p>
+        {{/supportAccepted}}
+
+        <h4>Support Declined</h4>
+        {{#supportDeclined}}
+            <table class="summary-list">
+                <tr><td>Modified date</td><td>{{ optionalValue (formatDate modifiedDateTime) }}</td></tr>
+                <tr><td>Support to work declined reason</td><td>{{#supportToWorkDeclinedReason}}{{.}}{{#unless @last}}, {{/unless}}{{/supportToWorkDeclinedReason}}{{^supportToWorkDeclinedReason}}No Data Held{{/supportToWorkDeclinedReason}}</td></tr>
+                <tr><td>Support to work declined reason other</td><td>{{ optionalValue supportToWorkDeclinedReasonOther }}</td></tr>
+                <tr><td>Circumstance changes required to work</td><td>{{#circumstanceChangesRequiredToWork}}{{.}}{{#unless @last}}, {{/unless}}{{/circumstanceChangesRequiredToWork}}{{^circumstanceChangesRequiredToWork}}No Data Held{{/circumstanceChangesRequiredToWork}}</td></tr>
+                <tr><td>Circumstance changes required to work other</td><td>{{ optionalValue circumstanceChangesRequiredToWorkOther }}</td></tr>
+            </table>
+        {{/supportDeclined}}
+        {{^supportDeclined}}
+            <p>No Data Held</p>
+        {{/supportDeclined}}
+
+    {{/profileData}}
+    {{^profileData}}
+        <p>No Data Held</p>
+    {{/profileData}}
+{{/.}}

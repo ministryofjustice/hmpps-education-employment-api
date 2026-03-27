@@ -21,7 +21,7 @@ abstract class DashboardTestCase : ReadinessProfileV2TestCase() {
   protected val currentTime: Instant get() = testClock.instant
   protected val currentDate: LocalDate get() = LocalDate.ofInstant(currentTime, ZoneOffset.UTC)
 
-  private val readOnlyHeaders get() = setAuthorisationOfRoles(WR_VIEW_ROLE)
+  private val readOnlyHeaders get() = httpHeaders(WR_VIEW_ROLE)
   private val readOnlyRequestNoBody get() = HttpEntity<HttpHeaders>(readOnlyHeaders)
 
   @BeforeEach

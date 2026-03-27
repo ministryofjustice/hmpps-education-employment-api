@@ -111,3 +111,9 @@ management:
     info:
       cache:
         time-to-live: 2000ms
+
+hmpps:
+  sar:
+    template:
+      path: /sar/template_hmpps-education-employment-api.mustache
+      enabled: true
