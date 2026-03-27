@@ -21,7 +21,7 @@ abstract class SARReadinessProfileTestCase : ReadinessProfileV2TestCase() {
     roles: List<String> = listOf(SAR_ROLE),
   ): ResponseEntity<HmppsSubjectAccessRequestContent> {
     val url = makeUrl(SAR_ENDPOINT, makeRequestParamsOfSAR(prn = prn, fromDate = fromDate, toDate = toDate))
-    val request = HttpEntity<HttpHeaders>(httpHeaders(*roles.toTypedArray()))
+    val request = HttpEntity<HttpHeaders>(httpHeaders(roles))
 
     val result = restTemplate.exchange(url, HttpMethod.GET, request, HmppsSubjectAccessRequestContent::class.java)
     assertThat(result).isNotNull
