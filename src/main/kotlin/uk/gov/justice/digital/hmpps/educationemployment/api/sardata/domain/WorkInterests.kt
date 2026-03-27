@@ -6,6 +6,7 @@ import java.time.LocalDateTime
 
 @Schema(name = "SARWorkInterests", description = "Work interests of the SAR Readiness Profile")
 data class WorkInterests(
+  val modifiedBy: String,
   val modifiedDateTime: LocalDateTime,
 
   val workTypesOfInterest: List<WorkTypesOfInterest>,

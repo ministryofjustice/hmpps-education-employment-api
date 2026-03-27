@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.NotFoundException
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v2.ProfileV2Service
+import uk.gov.justice.digital.hmpps.educationemployment.api.sardata.domain.Note
 import uk.gov.justice.digital.hmpps.educationemployment.api.sardata.domain.v2.Profile
 import uk.gov.justice.hmpps.kotlin.sar.HmppsPrisonSubjectAccessRequestService
 import uk.gov.justice.hmpps.kotlin.sar.HmppsSubjectAccessRequestContent
@@ -16,6 +17,7 @@ class PrisonSubjectAccessRequestService(
   private val objectMapper: ObjectMapper,
 ) : HmppsPrisonSubjectAccessRequestService {
   private val typeRefSARProfile by lazy { object : TypeReference<Profile>() {} }
+  private val typeRefSARProfileNotes by lazy { object : TypeReference<List<Note>>() {} }
 
   override fun getPrisonContentFor(
     prn: String,
@@ -26,12 +28,15 @@ class PrisonSubjectAccessRequestService(
       .map {
         SARContentDTO(
           offenderId = it.offenderId,
+          createdBy = it.createdBy,
           createdDateTime = it.createdDateTime,
+          modifiedBy = it.modifiedBy,
           modifiedDateTime = it.modifiedDateTime,
           profileData = objectMapper.treeToValue(it.profileData, typeRefSARProfile),
+          notesData = objectMapper.treeToValue<List<Note>>(it.notesData, typeRefSARProfileNotes),
         )
       }
-      .ifEmpty { null }?.let { it -> HmppsSubjectAccessRequestContent(it) }
+      .ifEmpty { null }?.let { HmppsSubjectAccessRequestContent(it) }
   } catch (_: NotFoundException) {
     null
   }

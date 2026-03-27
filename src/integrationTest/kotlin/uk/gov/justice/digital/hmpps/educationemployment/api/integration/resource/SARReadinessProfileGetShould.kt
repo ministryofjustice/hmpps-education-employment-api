@@ -10,7 +10,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
@@ -22,19 +21,20 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.profileJsonWithSupportAccepted
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.profileOfAnotherPrisonNumber
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.profileRequestOfKnownPrisonNumber
+import uk.gov.justice.digital.hmpps.educationemployment.api.notesdata.domain.Note
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ActionTodo
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.v2.Profile
-import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v2.ProfileV2Service
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v2.ReadinessProfileDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v2.ReadinessProfileRequestDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.anotherPrisonNumber
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.knownPrisonNumber
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.unknownPrisonNumber
-import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ReadinessProfile
+import java.time.format.DateTimeFormatter
 
 class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
-
-  @Autowired
-  private lateinit var profileService: ProfileV2Service
+  init {
+    currentUser = "BJDEV"
+  }
 
   @Nested
   @DisplayName("Given an unknown prisoner without readiness profile")
@@ -83,7 +83,21 @@ class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
 
     @Test
     fun `reply 200 (Ok), when requesting SAR with a profile of known prisoner, and PRN is provided`() {
-      assertGetSARResponseIsOk(prn = prisonNumber, expectedProfileAsJson = expectedProfile)
+      val result = assertGetSARResponseIsOk(prn = prisonNumber, expectedProfileAsJson = expectedProfile)
+
+      val sarContent = result.sarContent()
+      assertThat(sarContent).isNotEmpty
+
+      val sarProfile = result.sarContent().let { objectMapper.valueToTree<JsonNode>(it.first()) }
+      val expectedTimestamp = defaultCurrentTimeLocal.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))
+      val assertTextField: (String, String) -> Unit = { field, expected -> assertThat(sarProfile.get(field).textValue()).isEqualTo(expected) }
+      assertTextField("offenderId", prisonNumber)
+      assertTextField("createdBy", currentUser)
+      assertTextField("createdDateTime", expectedTimestamp)
+      assertTextField("modifiedBy", currentUser)
+      assertTextField("modifiedDateTime", expectedTimestamp)
+
+      assertThat(sarProfile.get("notesData")).isEmpty()
     }
 
     @Test
@@ -121,7 +135,7 @@ class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
       val sarResult = assertGetSARResponseIsOk(expectedProfileAsJson = expectedProfile, prn = prisonNumber)
       val jsonContent = objectMapper.readTree(sarResult.body!!.asJson()).get("content")
 
-      listOf("bookingId", "createdBy", "modifiedBy", "noteData").forEach {
+      listOf("bookingId").forEach {
         val node = jsonContent.findParent(it)
         assertThat(node).withFailMessage { "$it was not excluded! Found at:\n $node" }.isNull()
       }
@@ -148,16 +162,36 @@ class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
   @Nested
   @DisplayName("Given a readiness profile with support accepted")
   inner class GivenAProfileWithSupportAccepted {
+    private lateinit var prisonNumber: String
+    private val expectedProfileWithSupportAccepted get() = profileJsonWithSupportAccepted.deepCopy<JsonNode>().apply {
+      val workExperienceNode = get("supportAccepted").get("workExperience") as ObjectNode
+      workExperienceNode.set("previousWorkOrVolunteering", TextNode("")) as JsonNode
+    }
+    private val expectedNotes: List<Note> get() = mapOf(
+      ActionTodo.BANK_ACCOUNT to "Bank account will be opened in ABC Bank.",
+      ActionTodo.HOUSING to "Housing request has been submitted.",
+      ActionTodo.ID to "ID document has been verified.",
+    ).map { (attribute, text) -> makeNote(attribute, text) }
+
+    @BeforeEach
+    internal fun setUp() {
+      prisonNumber = givenAProfileWithSupportAccepted().offenderId
+      expectedNotes.forEach { addProfileNote(prisonNumber, it.attribute, it.text) }
+    }
 
     @Test
     fun `reply 200 (OK) and no unexpected data exposed via SAR response (supportAccepted)`() {
-      val prisonNumber = givenAProfileWithSupportAccepted().offenderId
       val expectedProfile = expectedProfileWithSupportAccepted
+      val expectedNotesAsJson = objectMapper.valueToTree<JsonNode>(expectedNotes)
 
-      val sarResult = assertGetSARResponseIsOk(expectedProfileAsJson = expectedProfile, prn = prisonNumber)
+      val sarResult = assertGetSARResponseIsOk(
+        expectedProfileAsJson = expectedProfile,
+        expectedNotesAsJson = expectedNotesAsJson,
+        prn = prisonNumber,
+      )
       val jsonContent = objectMapper.readTree(sarResult.body!!.asJson()).get("content")
 
-      listOf("bookingId", "createdBy", "modifiedBy", "noteData").forEach {
+      listOf("bookingId").forEach {
         val node = jsonContent.findParent(it)
         assertThat(node).withFailMessage { "$it was not excluded! Found at:\n $node" }.isNull()
       }
@@ -167,8 +201,7 @@ class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
   private fun givenTheKnownProfile(): ReadinessProfileDTO {
     val prisonNumber = knownPrisonNumber
     val profileRequest = profileRequestOfKnownPrisonNumber
-    val profile = addProfile(prisonNumber, profileRequest)
-    return ReadinessProfileDTO(profile)
+    return addProfile(prisonNumber, profileRequest)
   }
 
   private fun givenAnotherProfileWithSupportDeclined(): ReadinessProfileDTO {
@@ -181,7 +214,7 @@ class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
           it.copy(supportToWorkDeclinedReasonOther = "modified the n-th (${times + 1}) times")
       }
     }
-    return ReadinessProfileDTO(result)
+    return result
   }
 
   private fun givenAProfileWithSupportAccepted(): ReadinessProfileDTO {
@@ -194,17 +227,21 @@ class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
           it.copy(workExperience = it.workExperience.copy(previousWorkOrVolunteering = "modified the n-th (${times + 1}) times"))
       }
     }
-    return ReadinessProfileDTO(result)
-  }
-  private val expectedProfileWithSupportAccepted get() = profileJsonWithSupportAccepted.deepCopy<JsonNode>().apply {
-    val workExperienceNode = get("supportAccepted").get("workExperience") as ObjectNode
-    workExperienceNode.set("previousWorkOrVolunteering", TextNode("")) as JsonNode
+    return result
   }
 
-  private fun addProfile(prisonNumber: String, profileRequest: ReadinessProfileRequestDTO): ReadinessProfile = profileService.createProfileForOffender(
-    userId = "test user",
-    offenderId = prisonNumber,
-    bookingId = profileRequest.bookingId,
-    profile = profileRequest.profileData,
+  private fun addProfile(prisonNumber: String, profileRequest: ReadinessProfileRequestDTO) = assertAddReadinessProfileIsOk(prisonNumber, profileRequest).body!!
+
+  private fun addProfileNote(prisonNumber: String, attribute: ActionTodo, noteText: String) = assertAddNoteIsOk(
+    prisonNumber = prisonNumber,
+    attribute = attribute,
+    noteText = noteText,
+  )
+
+  private fun makeNote(attribute: ActionTodo, text: String) = Note(
+    createdBy = currentUser,
+    createdDateTime = defaultCurrentTimeLocal,
+    attribute = attribute,
+    text = text,
   )
 }

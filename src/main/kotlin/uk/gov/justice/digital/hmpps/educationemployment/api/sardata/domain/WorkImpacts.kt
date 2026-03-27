@@ -6,6 +6,7 @@ import java.time.LocalDateTime
 
 @Schema(name = "SARWorkImpacts", description = "Work impacts of the SAR Readiness Profile")
 data class WorkImpacts(
+  val modifiedBy: String,
   val modifiedDateTime: LocalDateTime,
 
   val abilityToWorkImpactedBy: List<AbilityToWorkImpactedBy>,

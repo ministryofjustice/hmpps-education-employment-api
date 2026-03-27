@@ -1,7 +1,9 @@
 [
   {
     "offenderId": "A1234BB",
+    "createdBy":"USER1_GEN",
     "createdDateTime": "2025-01-01T00:00:00",
+    "modifiedBy":"USER2_GEN",
     "modifiedDateTime": "2025-01-01T00:06:00",
     "profileData": {
       "status": "READY_TO_WORK",
@@ -12,6 +14,7 @@
       "prisonName": "Prison 2",
       "within12Weeks": true,
       "supportDeclined": {
+        "modifiedBy":"USER1_GEN",
         "modifiedDateTime": "2025-01-01T00:01:00",
         "supportToWorkDeclinedReason": [
           "HEALTH",
@@ -25,8 +28,10 @@
         "circumstanceChangesRequiredToWorkOther": "Some other circumstance changes"
       },
       "supportAccepted": {
+        "modifiedBy":"USER2_GEN",
         "modifiedDateTime": "2025-01-01T00:05:00",
         "actionsRequired": {
+          "modifiedBy":"USER2_GEN",
           "modifiedDateTime": "2025-01-01T00:02:00",
           "actions": [
             {
@@ -55,6 +60,7 @@
           ]
         },
         "workImpacts": {
+          "modifiedBy":"USER2_GEN",
           "modifiedDateTime": "2025-01-01T00:02:00",
           "abilityToWorkImpactedBy": [
             "MENTAL_HEALTH_ISSUES",
@@ -65,6 +71,7 @@
           "ableToManageDependencies": false
         },
         "workInterests": {
+          "modifiedBy":"USER2_GEN",
           "modifiedDateTime": "2025-01-01T00:02:00",
           "workTypesOfInterest": [
             "CONSTRUCTION",
@@ -75,6 +82,7 @@
           "jobOfParticularInterest": "A dummy job"
         },
         "workExperience": {
+          "modifiedBy":"USER2_GEN",
           "modifiedDateTime": "2025-01-01T00:02:00",
           "previousWorkOrVolunteering": "Admin in a NGO",
           "qualificationsAndTraining": [
@@ -86,11 +94,33 @@
           "qualificationsAndTrainingOther": "Some other training"
         }
       }
-    }
+    },
+    "notesData": [
+      {
+        "attribute": "BANK_ACCOUNT",
+        "createdBy": "USER2_GEN",
+        "createdDateTime": "2025-01-01T00:03:00",
+        "text": "adding some notes"
+      },
+      {
+        "attribute": "HOUSING",
+        "createdBy": "USER2_GEN",
+        "createdDateTime": "2025-01-01T00:03:00",
+        "text": "adding some notes"
+      },
+      {
+        "attribute": "ID",
+        "createdBy": "USER2_GEN",
+        "createdDateTime": "2025-01-01T00:03:00",
+        "text": "adding some notes"
+      }
+    ]
   },
   {
     "offenderId": "A1234BB",
+    "createdBy":"USER1_GEN",
     "createdDateTime": "2025-01-01T00:00:00",
+    "modifiedBy":"USER2_GEN",
     "modifiedDateTime": "2025-01-01T00:05:00",
     "profileData": {
       "status": "SUPPORT_NEEDED",
@@ -101,6 +131,7 @@
       "prisonName": "Prison 2",
       "within12Weeks": true,
       "supportDeclined": {
+        "modifiedBy":"USER1_GEN",
         "modifiedDateTime": "2025-01-01T00:01:00",
         "supportToWorkDeclinedReason": [
           "HEALTH",
@@ -114,8 +145,10 @@
         "circumstanceChangesRequiredToWorkOther": "Some other circumstance changes"
       },
       "supportAccepted": {
+        "modifiedBy":"USER2_GEN",
         "modifiedDateTime": "2025-01-01T00:05:00",
         "actionsRequired": {
+          "modifiedBy":"USER2_GEN",
           "modifiedDateTime": "2025-01-01T00:02:00",
           "actions": [
             {
@@ -144,6 +177,7 @@
           ]
         },
         "workImpacts": {
+          "modifiedBy":"USER2_GEN",
           "modifiedDateTime": "2025-01-01T00:02:00",
           "abilityToWorkImpactedBy": [
             "MENTAL_HEALTH_ISSUES",
@@ -154,6 +188,7 @@
           "ableToManageDependencies": false
         },
         "workInterests": {
+          "modifiedBy":"USER2_GEN",
           "modifiedDateTime": "2025-01-01T00:02:00",
           "workTypesOfInterest": [
             "CONSTRUCTION",
@@ -164,6 +199,7 @@
           "jobOfParticularInterest": "A dummy job"
         },
         "workExperience": {
+          "modifiedBy":"USER2_GEN",
           "modifiedDateTime": "2025-01-01T00:02:00",
           "previousWorkOrVolunteering": "Admin in a NGO",
           "qualificationsAndTraining": [
@@ -175,11 +211,33 @@
           "qualificationsAndTrainingOther": "Some other training"
         }
       }
-    }
+    },
+    "notesData": [
+      {
+        "attribute": "BANK_ACCOUNT",
+        "createdBy": "USER2_GEN",
+        "createdDateTime": "2025-01-01T00:03:00",
+        "text": "adding some notes"
+      },
+      {
+        "attribute": "HOUSING",
+        "createdBy": "USER2_GEN",
+        "createdDateTime": "2025-01-01T00:03:00",
+        "text": "adding some notes"
+      },
+      {
+        "attribute": "ID",
+        "createdBy": "USER2_GEN",
+        "createdDateTime": "2025-01-01T00:03:00",
+        "text": "adding some notes"
+      }
+    ]
   },
   {
     "offenderId": "A1234BB",
+    "createdBy":"USER1_GEN",
     "createdDateTime": "2025-01-01T00:00:00",
+    "modifiedBy":"USER2_GEN",
     "modifiedDateTime": "2025-01-01T00:04:00",
     "profileData": {
       "status": "SUPPORT_NEEDED",
@@ -190,6 +248,7 @@
       "prisonName": "Prison 2",
       "within12Weeks": true,
       "supportDeclined": {
+        "modifiedBy":"USER1_GEN",
         "modifiedDateTime": "2025-01-01T00:01:00",
         "supportToWorkDeclinedReason": [
           "HEALTH",
@@ -203,8 +262,10 @@
         "circumstanceChangesRequiredToWorkOther": "Some other circumstance changes"
       },
       "supportAccepted": {
+        "modifiedBy":"USER2_GEN",
         "modifiedDateTime": "2025-01-01T00:04:00",
         "actionsRequired": {
+          "modifiedBy":"USER2_GEN",
           "modifiedDateTime": "2025-01-01T00:02:00",
           "actions": [
             {
@@ -233,6 +294,7 @@
           ]
         },
         "workImpacts": {
+          "modifiedBy":"USER2_GEN",
           "modifiedDateTime": "2025-01-01T00:02:00",
           "abilityToWorkImpactedBy": [
             "MENTAL_HEALTH_ISSUES",
@@ -243,6 +305,7 @@
           "ableToManageDependencies": false
         },
         "workInterests": {
+          "modifiedBy":"USER2_GEN",
           "modifiedDateTime": "2025-01-01T00:02:00",
           "workTypesOfInterest": [
             "CONSTRUCTION",
@@ -253,6 +316,7 @@
           "jobOfParticularInterest": "A dummy job"
         },
         "workExperience": {
+          "modifiedBy":"USER2_GEN",
           "modifiedDateTime": "2025-01-01T00:02:00",
           "previousWorkOrVolunteering": "Admin in a NGO",
           "qualificationsAndTraining": [
@@ -264,11 +328,33 @@
           "qualificationsAndTrainingOther": "Some other training"
         }
       }
-    }
+    },
+    "notesData": [
+      {
+        "attribute": "BANK_ACCOUNT",
+        "createdBy": "USER2_GEN",
+        "createdDateTime": "2025-01-01T00:03:00",
+        "text": "adding some notes"
+      },
+      {
+        "attribute": "HOUSING",
+        "createdBy": "USER2_GEN",
+        "createdDateTime": "2025-01-01T00:03:00",
+        "text": "adding some notes"
+      },
+      {
+        "attribute": "ID",
+        "createdBy": "USER2_GEN",
+        "createdDateTime": "2025-01-01T00:03:00",
+        "text": "adding some notes"
+      }
+    ]
   },
   {
     "offenderId": "A1234BB",
+    "createdBy":"USER1_GEN",
     "createdDateTime": "2025-01-01T00:00:00",
+    "modifiedBy":"USER2_GEN",
     "modifiedDateTime": "2025-01-01T00:03:00",
     "profileData": {
       "status": "SUPPORT_NEEDED",
@@ -279,6 +365,7 @@
       "prisonName": "Prison 2",
       "within12Weeks": true,
       "supportDeclined": {
+        "modifiedBy":"USER1_GEN",
         "modifiedDateTime": "2025-01-01T00:01:00",
         "supportToWorkDeclinedReason": [
           "HEALTH",
@@ -292,8 +379,10 @@
         "circumstanceChangesRequiredToWorkOther": "Some other circumstance changes"
       },
       "supportAccepted": {
+        "modifiedBy":"USER2_GEN",
         "modifiedDateTime": "2025-01-01T00:02:00",
         "actionsRequired": {
+          "modifiedBy":"USER2_GEN",
           "modifiedDateTime": "2025-01-01T00:02:00",
           "actions": [
             {
@@ -322,6 +411,7 @@
           ]
         },
         "workImpacts": {
+          "modifiedBy":"USER2_GEN",
           "modifiedDateTime": "2025-01-01T00:02:00",
           "abilityToWorkImpactedBy": [
             "MENTAL_HEALTH_ISSUES",
@@ -332,6 +422,7 @@
           "ableToManageDependencies": false
         },
         "workInterests": {
+          "modifiedBy":"USER2_GEN",
           "modifiedDateTime": "2025-01-01T00:02:00",
           "workTypesOfInterest": [
             "CONSTRUCTION",
@@ -342,6 +433,7 @@
           "jobOfParticularInterest": "A dummy job"
         },
         "workExperience": {
+          "modifiedBy":"USER2_GEN",
           "modifiedDateTime": "2025-01-01T00:02:00",
           "previousWorkOrVolunteering": "Admin in a NGO",
           "qualificationsAndTraining": [
@@ -353,11 +445,33 @@
           "qualificationsAndTrainingOther": "Some other training"
         }
       }
-    }
+    },
+    "notesData": [
+      {
+        "attribute": "BANK_ACCOUNT",
+        "createdBy": "USER2_GEN",
+        "createdDateTime": "2025-01-01T00:03:00",
+        "text": "adding some notes"
+      },
+      {
+        "attribute": "HOUSING",
+        "createdBy": "USER2_GEN",
+        "createdDateTime": "2025-01-01T00:03:00",
+        "text": "adding some notes"
+      },
+      {
+        "attribute": "ID",
+        "createdBy": "USER2_GEN",
+        "createdDateTime": "2025-01-01T00:03:00",
+        "text": "adding some notes"
+      }
+    ]
   },
   {
     "offenderId": "A1234BB",
+    "createdBy":"USER1_GEN",
     "createdDateTime": "2025-01-01T00:00:00",
+    "modifiedBy":"USER2_GEN",
     "modifiedDateTime": "2025-01-01T00:03:00",
     "profileData": {
       "status": "SUPPORT_NEEDED",
@@ -368,6 +482,7 @@
       "prisonName": "Prison 2",
       "within12Weeks": true,
       "supportDeclined": {
+        "modifiedBy": "USER1_GEN",
         "modifiedDateTime": "2025-01-01T00:01:00",
         "supportToWorkDeclinedReason": [
           "HEALTH",
@@ -381,8 +496,10 @@
         "circumstanceChangesRequiredToWorkOther": "Some other circumstance changes"
       },
       "supportAccepted": {
+        "modifiedBy": "USER2_GEN",
         "modifiedDateTime": "2025-01-01T00:02:00",
         "actionsRequired": {
+          "modifiedBy": "USER2_GEN",
           "modifiedDateTime": "2025-01-01T00:02:00",
           "actions": [
             {
@@ -411,6 +528,7 @@
           ]
         },
         "workImpacts": {
+          "modifiedBy": "USER2_GEN",
           "modifiedDateTime": "2025-01-01T00:02:00",
           "abilityToWorkImpactedBy": [
             "MENTAL_HEALTH_ISSUES",
@@ -421,6 +539,7 @@
           "ableToManageDependencies": false
         },
         "workInterests": {
+          "modifiedBy": "USER2_GEN",
           "modifiedDateTime": "2025-01-01T00:02:00",
           "workTypesOfInterest": [
             "CONSTRUCTION",
@@ -431,6 +550,7 @@
           "jobOfParticularInterest": "A dummy job"
         },
         "workExperience": {
+          "modifiedBy": "USER2_GEN",
           "modifiedDateTime": "2025-01-01T00:02:00",
           "previousWorkOrVolunteering": "Admin in a NGO",
           "qualificationsAndTraining": [
@@ -442,11 +562,27 @@
           "qualificationsAndTrainingOther": "Some other training"
         }
       }
-    }
+    },
+    "notesData": [
+      {
+        "attribute": "BANK_ACCOUNT",
+        "createdBy": "USER2_GEN",
+        "createdDateTime": "2025-01-01T00:03:00",
+        "text": "adding some notes"
+      },
+      {
+        "attribute": "HOUSING",
+        "createdBy": "USER2_GEN",
+        "createdDateTime": "2025-01-01T00:03:00",
+        "text": "adding some notes"
+      }
+    ]
   },
   {
     "offenderId": "A1234BB",
+    "createdBy": "USER1_GEN",
     "createdDateTime": "2025-01-01T00:00:00",
+    "modifiedBy": "USER2_GEN",
     "modifiedDateTime": "2025-01-01T00:03:00",
     "profileData": {
       "status": "SUPPORT_NEEDED",
@@ -457,6 +593,7 @@
       "prisonName": "Prison 2",
       "within12Weeks": true,
       "supportDeclined": {
+        "modifiedBy": "USER1_GEN",
         "modifiedDateTime": "2025-01-01T00:01:00",
         "supportToWorkDeclinedReason": [
           "HEALTH",
@@ -470,8 +607,10 @@
         "circumstanceChangesRequiredToWorkOther": "Some other circumstance changes"
       },
       "supportAccepted": {
+        "modifiedBy": "USER2_GEN",
         "modifiedDateTime": "2025-01-01T00:02:00",
         "actionsRequired": {
+          "modifiedBy": "USER2_GEN",
           "modifiedDateTime": "2025-01-01T00:02:00",
           "actions": [
             {
@@ -500,6 +639,7 @@
           ]
         },
         "workImpacts": {
+          "modifiedBy": "USER2_GEN",
           "modifiedDateTime": "2025-01-01T00:02:00",
           "abilityToWorkImpactedBy": [
             "MENTAL_HEALTH_ISSUES",
@@ -510,6 +650,7 @@
           "ableToManageDependencies": false
         },
         "workInterests": {
+          "modifiedBy": "USER2_GEN",
           "modifiedDateTime": "2025-01-01T00:02:00",
           "workTypesOfInterest": [
             "CONSTRUCTION",
@@ -520,6 +661,7 @@
           "jobOfParticularInterest": "A dummy job"
         },
         "workExperience": {
+          "modifiedBy": "USER2_GEN",
           "modifiedDateTime": "2025-01-01T00:02:00",
           "previousWorkOrVolunteering": "Admin in a NGO",
           "qualificationsAndTraining": [
@@ -531,11 +673,21 @@
           "qualificationsAndTrainingOther": "Some other training"
         }
       }
-    }
+    },
+    "notesData": [
+      {
+        "attribute": "BANK_ACCOUNT",
+        "createdBy": "USER2_GEN",
+        "createdDateTime": "2025-01-01T00:03:00",
+        "text": "adding some notes"
+      }
+    ]
   },
   {
     "offenderId": "A1234BB",
+    "createdBy":"USER1_GEN",
     "createdDateTime": "2025-01-01T00:00:00",
+    "modifiedBy":"USER2_GEN",
     "modifiedDateTime": "2025-01-01T00:02:00",
     "profileData": {
       "status": "SUPPORT_NEEDED",
@@ -546,6 +698,7 @@
       "prisonName": "Prison 2",
       "within12Weeks": true,
       "supportDeclined": {
+        "modifiedBy":"USER1_GEN",
         "modifiedDateTime": "2025-01-01T00:01:00",
         "supportToWorkDeclinedReason": [
           "HEALTH",
@@ -559,8 +712,10 @@
         "circumstanceChangesRequiredToWorkOther": "Some other circumstance changes"
       },
       "supportAccepted": {
+        "modifiedBy":"USER2_GEN",
         "modifiedDateTime": "2025-01-01T00:02:00",
         "actionsRequired": {
+          "modifiedBy":"USER2_GEN",
           "modifiedDateTime": "2025-01-01T00:02:00",
           "actions": [
             {
@@ -589,6 +744,7 @@
           ]
         },
         "workImpacts": {
+          "modifiedBy":"USER2_GEN",
           "modifiedDateTime": "2025-01-01T00:02:00",
           "abilityToWorkImpactedBy": [
             "MENTAL_HEALTH_ISSUES",
@@ -599,6 +755,7 @@
           "ableToManageDependencies": false
         },
         "workInterests": {
+          "modifiedBy":"USER2_GEN",
           "modifiedDateTime": "2025-01-01T00:02:00",
           "workTypesOfInterest": [
             "CONSTRUCTION",
@@ -609,6 +766,7 @@
           "jobOfParticularInterest": "A dummy job"
         },
         "workExperience": {
+          "modifiedBy":"USER2_GEN",
           "modifiedDateTime": "2025-01-01T00:02:00",
           "previousWorkOrVolunteering": "Admin in a NGO",
           "qualificationsAndTraining": [
@@ -620,11 +778,14 @@
           "qualificationsAndTrainingOther": "Some other training"
         }
       }
-    }
+    },
+    "notesData": []
   },
   {
     "offenderId": "A1234BB",
+    "createdBy":"USER1_GEN",
     "createdDateTime": "2025-01-01T00:00:00",
+    "modifiedBy":"USER1_GEN",
     "modifiedDateTime": "2025-01-01T00:01:00",
     "profileData": {
       "status": "SUPPORT_DECLINED",
@@ -635,6 +796,7 @@
       "prisonName": "Prison 2",
       "within12Weeks": true,
       "supportDeclined": {
+        "modifiedBy":"USER1_GEN",
         "modifiedDateTime": "2025-01-01T00:01:00",
         "supportToWorkDeclinedReason": [
           "HEALTH",
@@ -648,11 +810,14 @@
         "circumstanceChangesRequiredToWorkOther": "Some other circumstance changes"
       },
       "supportAccepted": null
-    }
+    },
+    "notesData": []
   },
   {
     "offenderId": "A1234BB",
+    "createdBy":"USER1_GEN",
     "createdDateTime": "2025-01-01T00:00:00",
+    "modifiedBy":"USER1_GEN",
     "modifiedDateTime": "2025-01-01T00:00:00",
     "profileData": {
       "status": "NO_RIGHT_TO_WORK",
@@ -664,6 +829,7 @@
       "within12Weeks": true,
       "supportDeclined": null,
       "supportAccepted": null
-    }
+    },
+    "notesData": []
   }
 ]
