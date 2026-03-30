@@ -48,6 +48,9 @@ testing {
         runtimeOnly("org.flywaydb:flyway-database-postgresql")
         implementation("org.testcontainers:testcontainers-postgresql")
         implementation("org.mockito.kotlin:mockito-kotlin:6.2.3")
+        implementation("io.swagger.parser.v3:swagger-parser:2.1.39") {
+          exclude(group = "io.swagger.core.v3")
+        }
 
         implementation("io.jsonwebtoken:jjwt-api:0.12.6")
         runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.6")

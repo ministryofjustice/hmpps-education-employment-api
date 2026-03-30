@@ -25,7 +25,7 @@ data class SARContentDTO(
   @field:Schema(description = "Last modified date time", type = "string", pattern = "yyyy-MM-dd'T'HH:mm:ss", example = "2018-12-01T13:45:00", required = true)
   val modifiedDateTime: LocalDateTime,
 
-  @field:Schema(description = "Work readiness profile data", example = "{...}")
+  @field:Schema(description = "Work readiness profile data")
   val profileData: SARProfile,
 
   @field:Schema(description = "Work readiness profile notes")
