@@ -4,11 +4,15 @@
     <h2>Readiness profile</h2>
     <table class="data-table">
         <tr>
+            <td class="data-column-25">Created by</td>
             <td class="data-column-25">Created date</td>
+            <td class="data-column-25">Modified by</td>
             <td class="data-column-25">Modified date</td>
         </tr>
         <tr>
+            <td>{{ getUserLastName createdBy }}</td>
             <td>{{ optionalValue (formatDate createdDateTime)}}</td>
+            <td>{{ getUserLastName modifiedBy }}</td>
             <td>{{ optionalValue (formatDate modifiedDateTime)}}</td>
         </tr>
     </table>
@@ -21,18 +25,20 @@
             <tr><td>Status change</td><td>{{ convertBoolean statusChange }}</td></tr>
             <tr><td>Status change type</td><td>{{ optionalValue statusChangeType }}</td></tr>
             <tr><td>Status change date</td><td>{{ optionalValue (formatDate statusChangeDate) }}</td></tr>
-            <tr><td>Is within 12 weeks</td><td>{{ convertBoolean within12Weeks }}</td></tr>
+            <tr><td>Within 12 weeks of release</td><td>{{ convertBoolean within12Weeks }}</td></tr>
         </table>
 
         <h4>Support Accepted</h4>
         {{#supportAccepted}}
             <table class="summary-list">
+                <tr><td>Modified by</td><td>{{ getUserLastName modifiedBy }}</td></tr>
                 <tr><td>Modified date</td><td>{{ optionalValue (formatDate modifiedDateTime) }}</td></tr>
             </table>
 
             <h5>Actions Required</h5>
             {{#actionsRequired}}
                 <table class="summary-list">
+                    <tr><td>Modified by</td><td>{{ getUserLastName modifiedBy }}</td></tr>
                     <tr><td>Modified date</td><td>{{ optionalValue (formatDate modifiedDateTime) }}</td></tr>
                 </table>
                 <p><b>Actions</b></p>
@@ -64,11 +70,19 @@
             {{#workImpacts}}
                 <table class="data-table">
                     <tr>
+                        <td class="data-column-50">Modified by</td>
                         <td class="data-column-50">Modified date</td>
+                    </tr>
+                    <tr>
+                        <td>{{ getUserLastName modifiedBy }}</td>
+                        <td>{{ optionalValue (formatDate modifiedDateTime) }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
                         <td class="data-column-50">Caring responsibilities full time</td>
                     </tr>
                     <tr>
-                        <td>{{ optionalValue (formatDate modifiedDateTime) }}</td>
                         <td>{{ convertBoolean caringResponsibilitiesFullTime }}</td>
                     </tr>
                 </table>
@@ -93,6 +107,7 @@
             <h5>Work Interests</h5>
             {{#workInterests}}
                 <table class="summary-list">
+                    <tr><td>Modified by</td><td>{{ getUserLastName modifiedBy }}</td></tr>
                     <tr><td>Modified date</td><td>{{ optionalValue (formatDate modifiedDateTime) }}</td></tr>
                     <tr><td>Work types of interest</td><td>{{#workTypesOfInterest}}{{.}}{{#unless @last}}, {{/unless}}{{/workTypesOfInterest}}{{^workTypesOfInterest}}No Data Held{{/workTypesOfInterest}}</td></tr>
                     <tr><td>Work types of interest other</td><td>{{ optionalValue workTypesOfInterestOther }}</td></tr>
@@ -106,6 +121,7 @@
             <h5>Work Experience</h5>
             {{#workExperience}}
                 <table class="summary-list">
+                    <tr><td>Modified by</td><td>{{ getUserLastName modifiedBy }}</td></tr>
                     <tr><td>Modified date</td><td>{{ optionalValue (formatDate modifiedDateTime) }}</td></tr>
                     <tr><td>Qualifications and training</td><td>{{#qualificationsAndTraining}}{{.}}{{#unless @last}}, {{/unless}}{{/qualificationsAndTraining}}{{^qualificationsAndTraining}}No Data Held{{/qualificationsAndTraining}}</td></tr>
                     <tr><td>Previous work or volunteering</td><td>{{ optionalValue previousWorkOrVolunteering }}</td></tr>
@@ -123,6 +139,7 @@
         <h4>Support Declined</h4>
         {{#supportDeclined}}
             <table class="summary-list">
+                <tr><td>Modified by</td><td>{{ getUserLastName modifiedBy }}</td></tr>
                 <tr><td>Modified date</td><td>{{ optionalValue (formatDate modifiedDateTime) }}</td></tr>
                 <tr><td>Support to work declined reason</td><td>{{#supportToWorkDeclinedReason}}{{.}}{{#unless @last}}, {{/unless}}{{/supportToWorkDeclinedReason}}{{^supportToWorkDeclinedReason}}No Data Held{{/supportToWorkDeclinedReason}}</td></tr>
                 <tr><td>Support to work declined reason other</td><td>{{ optionalValue supportToWorkDeclinedReasonOther }}</td></tr>
@@ -138,4 +155,25 @@
     {{^profileData}}
         <p>No Data Held</p>
     {{/profileData}}
+
+    <h3>Notes</h3>
+    {{#notesData}}
+        <table class="data-table">
+            <tr>
+                <td class="data-column-20">Attribute</td>
+                <td class="data-column-20">Created by</td>
+                <td class="data-column-20">Created date</td>
+                <td class="data-column-40">Details</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue attribute }}</td>
+                <td>{{ getUserLastName createdBy }}</td>
+                <td>{{ optionalValue (formatDate createdDateTime) }}</td>
+                <td>{{ optionalValue text }}</td>
+            </tr>
+        </table>
+    {{/notesData}}
+    {{^notesData}}
+        <p>No Data Held</p>
+    {{/notesData}}
 {{/.}}

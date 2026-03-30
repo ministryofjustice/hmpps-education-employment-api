@@ -18,6 +18,7 @@ abstract class SARReadinessProfileTestCase : ReadinessProfileV2TestCase() {
     fromDate: LocalDate? = null,
     toDate: LocalDate? = null,
     expectedProfileAsJson: JsonNode? = null,
+    expectedNotesAsJson: JsonNode? = null,
     roles: List<String> = listOf(SAR_ROLE),
   ): ResponseEntity<HmppsSubjectAccessRequestContent> {
     val url = makeUrl(SAR_ENDPOINT, makeRequestParamsOfSAR(prn = prn, fromDate = fromDate, toDate = toDate))
@@ -27,17 +28,27 @@ abstract class SARReadinessProfileTestCase : ReadinessProfileV2TestCase() {
     assertThat(result).isNotNull
     assertThat(result.statusCode).isEqualTo(HttpStatus.OK)
 
-    // Verify SAR content: profileData
-    expectedProfileAsJson?.let { expectedProfile ->
+    // Verify SAR content: profileData and/or notesData
+    if (expectedProfileAsJson != null || expectedNotesAsJson != null) {
       assertThat(result.body).isNotNull
       assertThat(result.body!!.content).isNotNull.isInstanceOfAny(List::class.java)
-      @Suppress("UNCHECKED_CAST")
-      val sarProfile = (result.body!!.content as List<*>).let { sarContent -> objectMapper.valueToTree<JsonNode>(sarContent.first()) }
-      assertThat(sarProfile.get("profileData"))
-        .isNotNull
-        .usingRecursiveComparison()
-        .ignoringFieldsMatchingRegexes(".*createdBy", ".*createdDateTime", ".*modifiedBy", ".*modifiedDateTime")
-        .isEqualTo(expectedProfile)
+
+      val sarProfile = result.sarContent().let { objectMapper.valueToTree<JsonNode>(it.first()) }
+
+      // verify profileData
+      expectedProfileAsJson?.let { expectedProfile ->
+        assertThat(sarProfile.get("profileData"))
+          .isNotNull
+          .usingRecursiveComparison()
+          .isEqualTo(expectedProfile)
+      }
+      // verify notesData
+      expectedNotesAsJson?.let { expectedNotes ->
+        assertThat(sarProfile.get("notesData"))
+          .isNotNull
+          .usingRecursiveComparison()
+          .isEqualTo(expectedNotes)
+      }
     }
 
     return result
@@ -82,6 +93,9 @@ abstract class SARReadinessProfileTestCase : ReadinessProfileV2TestCase() {
   }.toMap()
 
   protected fun HmppsSubjectAccessRequestContent.asJson(): String = objectMapper.writeValueAsString(this)
+
+  @Suppress("UNCHECKED_CAST")
+  protected fun ResponseEntity<HmppsSubjectAccessRequestContent>.sarContent() = this.body!!.content as List<*>
 }
 
 private const val SAR_ENDPOINT = "/subject-access-request"

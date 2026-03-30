@@ -5,7 +5,8 @@ import java.time.LocalDateTime
 
 @Schema(name = "SARSupportAccepted", description = "Support accepted of the SAR Readiness Profile")
 data class SupportAccepted(
-  var modifiedDateTime: LocalDateTime?,
+  val modifiedBy: String,
+  val modifiedDateTime: LocalDateTime,
   val actionsRequired: ActionsRequired,
   val workImpacts: WorkImpacts,
   val workInterests: WorkInterests,

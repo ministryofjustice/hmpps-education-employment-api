@@ -10,26 +10,10 @@
     "statusChangeType": "NEW",
     "supportAccepted": {
       "modifiedBy":"BJDEV",
-      "modifiedDateTime": [
-        2023,
-        8,
-        22,
-        16,
-        36,
-        45,
-        813974433
-      ],
+      "modifiedDateTime": "2025-01-01T00:00:00",
       "actionsRequired": {
         "modifiedBy": "BJDEV",
-        "modifiedDateTime": [
-          2023,
-          8,
-          22,
-          15,
-          36,
-          45,
-          768000000
-        ],
+        "modifiedDateTime": "2025-01-01T00:00:00",
         "actions": [
           {
             "todoItem": "EMAIL",
@@ -82,15 +66,7 @@
       },
       "workImpacts": {
         "modifiedBy":"BJDEV",
-        "modifiedDateTime": [
-          2023,
-          8,
-          22,
-          15,
-          35,
-          54,
-          710000000
-        ],
+        "modifiedDateTime": "2025-01-01T00:00:00",
         "abilityToWorkImpactedBy": [
           "FAMILY_ISSUES",
           "CARING_RESPONSIBILITIES",
@@ -103,15 +79,7 @@
       },
       "workInterests": {
         "modifiedBy":"BJDEV",
-        "modifiedDateTime": [
-          2023,
-          8,
-          22,
-          15,
-          35,
-          54,
-          710000000
-        ],
+        "modifiedDateTime": "2025-01-01T00:00:00",
         "workTypesOfInterest": [
           "HOSPITALITY",
           "MANUFACTURING",
@@ -122,15 +90,7 @@
       },
       "workExperience": {
         "modifiedBy":"BJDEV",
-        "modifiedDateTime": [
-          2023,
-          8,
-          22,
-          15,
-          35,
-          54,
-          710000000
-        ],
+        "modifiedDateTime": "2025-01-01T00:00:00",
         "previousWorkOrVolunteering": "Some job",
         "qualificationsAndTraining": [
           "CSCS",

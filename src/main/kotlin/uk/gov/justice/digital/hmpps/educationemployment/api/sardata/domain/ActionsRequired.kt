@@ -6,6 +6,7 @@ import java.time.LocalDateTime
 
 @Schema(name = "SARActionsRequired", description = "Actions required of the SAR Readiness Profile")
 data class ActionsRequired(
+  val modifiedBy: String,
   val modifiedDateTime: LocalDateTime,
   val actions: List<Action>,
 )

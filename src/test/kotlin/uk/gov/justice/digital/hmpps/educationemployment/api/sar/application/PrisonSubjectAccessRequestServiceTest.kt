@@ -5,7 +5,6 @@ import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.Mock
 import org.mockito.Mockito
@@ -41,9 +40,13 @@ class PrisonSubjectAccessRequestServiceTest {
   @Test
   fun `when we have prisoner data return it`() {
     val currentTime = LocalDateTime.now()
+    val userId = "TESTER"
+
     val sarContent = SARContentDTO(
       offenderId = "A1234BC",
+      createdBy = userId,
       createdDateTime = currentTime,
+      modifiedBy = userId,
       modifiedDateTime = currentTime,
       profileData = SARProfile(
         status = ProfileStatus.NO_RIGHT_TO_WORK,
@@ -56,8 +59,9 @@ class PrisonSubjectAccessRequestServiceTest {
         supportDeclined = null,
         supportAccepted = null,
       ),
+      notesData = emptyList(),
     )
-    val userId = "TESTER"
+
     val profileData: JsonNode = Profile(
       status = ProfileStatus.NO_RIGHT_TO_WORK,
       statusChange = false,
@@ -83,7 +87,7 @@ class PrisonSubjectAccessRequestServiceTest {
       new = false,
     )
 
-    whenever(profileService.getProfilesForOffenderFilterByPeriod(ArgumentMatchers.anyString(), isNull(), isNull())).thenReturn(listOf(readinessProfile))
+    whenever(profileService.getProfilesForOffenderFilterByPeriod(anyString(), isNull(), isNull())).thenReturn(listOf(readinessProfile))
 
     val result = sarService.getPrisonContentFor("prn", null, null)
 
@@ -92,7 +96,7 @@ class PrisonSubjectAccessRequestServiceTest {
 
   @Test
   fun `when there is no prisoner data return null`() {
-    whenever(profileService.getProfilesForOffenderFilterByPeriod(ArgumentMatchers.anyString(), isNull(), isNull())).thenReturn(emptyList())
+    whenever(profileService.getProfilesForOffenderFilterByPeriod(anyString(), isNull(), isNull())).thenReturn(emptyList())
 
     val result = sarService.getPrisonContentFor("prn", null, null)
 
