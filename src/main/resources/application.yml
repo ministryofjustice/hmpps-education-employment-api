@@ -117,3 +117,5 @@ hmpps:
     template:
       path: /sar/template_hmpps-education-employment-api.mustache
       enabled: true
+
+springdoc.swagger-ui.version: 5.32.1
