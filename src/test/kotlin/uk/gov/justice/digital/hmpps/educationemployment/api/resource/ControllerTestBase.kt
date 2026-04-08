@@ -23,8 +23,8 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.audit.domain.AuditOb
 import uk.gov.justice.digital.hmpps.educationemployment.api.audit.domain.AuditObjects.testPrincipal
 import uk.gov.justice.digital.hmpps.educationemployment.api.config.ControllerAdvice
 import uk.gov.justice.digital.hmpps.educationemployment.api.config.DpsPrincipal
-import uk.gov.justice.digital.hmpps.educationemployment.api.helpers.JwtAuthHelper
 import uk.gov.justice.digital.hmpps.educationemployment.api.shared.application.UnitTestBase
+import uk.gov.justice.hmpps.test.kotlin.auth.JwtAuthorisationHelper
 import java.security.Principal
 
 @ExtendWith(SpringExtension::class)
@@ -37,7 +37,7 @@ abstract class ControllerTestBase : UnitTestBase() {
   @Autowired
   protected lateinit var mvc: MockMvc
 
-  private lateinit var jwtAuthHelper: JwtAuthHelper
+  private lateinit var jwtAuthorisationHelper: JwtAuthorisationHelper
 
   protected lateinit var dpsPrincipal: DpsPrincipal
 
@@ -48,14 +48,15 @@ abstract class ControllerTestBase : UnitTestBase() {
 
   @BeforeAll
   internal fun beforeAll() {
-    jwtAuthHelper = JwtAuthHelper()
+    jwtAuthorisationHelper = JwtAuthorisationHelper()
     dpsPrincipal = DpsPrincipal(testPrincipal, testPrincipal)
   }
 
-  protected fun setAuthorisation(
-    user: String = testClient,
+  protected fun headers(vararg role: String) = headers(roles = listOf(*role))
+  protected fun headers(
     roles: List<String> = listOf(),
-  ): (HttpHeaders) = jwtAuthHelper.setAuthorisationForUnitTests(user, roles)
+    user: String = testClient,
+  ): (HttpHeaders) = HttpHeaders().apply { jwtAuthorisationHelper.setAuthorisationHeader(username = user, roles = roles).invoke(this) }
 
   protected fun initMvcMock(controller: Any) {
     SecurityMockMvcConfigurers.springSecurity()
@@ -87,7 +88,7 @@ abstract class ControllerTestBase : UnitTestBase() {
   ): MvcResult {
     requestJson?.let { requestBuilder.content(requestJson).contentType(APPLICATION_JSON) }
     principal?.let { requestBuilder.principal(principal) }
-    role?.let { requestBuilder.headers(setAuthorisation(roles = listOf(role))) }
+    role?.let { requestBuilder.headers(headers(role)) }
     return buildApiRequest(requestBuilder, resultMatcher).andExpect(content().contentType(APPLICATION_JSON)).andReturn()
   }
 
@@ -100,7 +101,7 @@ abstract class ControllerTestBase : UnitTestBase() {
   ): MvcResult {
     requestJson?.let { requestBuilder.content(requestJson).contentType(APPLICATION_JSON) }
     principal?.let { requestBuilder.principal(principal) }
-    role?.let { requestBuilder.headers(setAuthorisation(roles = listOf(role))) }
+    role?.let { requestBuilder.headers(headers(role)) }
     return buildApiRequest(requestBuilder, resultMatcher).andReturn()
   }
 
