@@ -102,6 +102,8 @@ class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
         .also { log.debug("SAR Profile = {}", it) }
         .let { objectMapper.valueToTree<JsonNode>(it.first()) }
 
+      log.debug("SAR Profile (jsonNode) = {}", sarProfile)
+
       val expectedTimestamp = defaultCurrentTime.toString()
       val assertTextField: (String, String) -> Unit = { field, expected -> assertThat(sarProfile.get(field).textValue()).isEqualTo(expected) }
       assertTextField("offenderId", prisonNumber)
