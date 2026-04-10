@@ -30,6 +30,7 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.dom
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.knownPrisonNumber
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.unknownPrisonNumber
 import java.time.Instant
+import java.time.LocalDateTime
 import java.time.ZoneId
 import uk.gov.justice.digital.hmpps.educationemployment.api.sardata.domain.Note as SARNote
 
@@ -41,6 +42,7 @@ class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
   // Test with DST (British Summer Time)
   override val defaultCurrentTime: Instant = Instant.parse("2025-05-01T23:00:00.00Z") // 11pm UTC (1 May), 12am BST (2 May)
   override val defaultTimezoneId: ZoneId = ZoneId.of("Europe/London")
+  override val defaultCurrentTimeLocal: LocalDateTime get() = defaultCurrentTime.atZone(defaultTimezoneId).toLocalDateTime()
 
   init {
     currentUser = "BJDEV"
@@ -216,6 +218,7 @@ class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
     val prisonNumber = knownPrisonNumber
     val profileRequest = profileRequestOfKnownPrisonNumber
     return addProfile(prisonNumber, profileRequest)
+      .also { log.debug("Known profile added: {}", it) }
   }
 
   private fun givenAnotherProfileWithSupportDeclined(): ReadinessProfileDTO {
