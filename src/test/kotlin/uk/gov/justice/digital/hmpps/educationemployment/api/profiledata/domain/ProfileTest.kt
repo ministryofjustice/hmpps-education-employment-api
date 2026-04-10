@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import uk.gov.justice.digital.hmpps.educationemployment.api.config.CapturedSpringConfigValues
 import uk.gov.justice.digital.hmpps.educationemployment.api.sardata.domain.v2.Profile
-import java.time.LocalDateTime
+import java.time.Instant
 
 class ProfileTest {
 
@@ -16,7 +16,7 @@ class ProfileTest {
     val profile = Profile(
       status = ProfileStatus.NO_RIGHT_TO_WORK,
       statusChange = true,
-      statusChangeDate = LocalDateTime.of(2024, 6, 14, 10, 0),
+      statusChangeDate = Instant.parse("2024-06-14T10:00:00Z"),
       statusChangeType = StatusChange.NEW,
       prisonId = "LEI",
       prisonName = "Leeds",

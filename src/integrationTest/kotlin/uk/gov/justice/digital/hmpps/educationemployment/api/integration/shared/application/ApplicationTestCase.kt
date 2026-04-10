@@ -57,7 +57,7 @@ abstract class ApplicationTestCase : IntegrationTestBase() {
     auditCleaner.deleteAllRevisions()
 
     lenient().whenever(dateTimeProvider.now).thenReturn(Optional.of(defaultCurrentTime))
-    lenient().whenever(timeProvider.timezoneId).thenReturn(defaultTimezoneId)
+    lenient().whenever(timeProvider.timeZoneId).thenReturn(defaultTimezoneId)
     lenient().whenever(timeProvider.now()).thenReturn(defaultCurrentTimeLocal)
   }
 

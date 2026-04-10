@@ -12,6 +12,7 @@ import java.time.LocalDateTime
   message = "Use v2 instead",
   replaceWith = ReplaceWith("ReadinessProfileDTO", "uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v2"),
 )
+@Schema(name = "ReadinessProfileV1DTO")
 data class ReadinessProfileDTO(
   @param:Schema(description = "Offender Id", example = "ABC12345")
   val offenderId: String,

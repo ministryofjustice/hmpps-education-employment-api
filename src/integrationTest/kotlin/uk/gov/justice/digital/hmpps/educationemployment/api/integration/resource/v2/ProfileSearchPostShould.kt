@@ -78,6 +78,8 @@ class ProfileSearchPostShould : ReadinessProfileV2TestCase() {
     private val prisonNumbers = listOf(prisonNumber1, prisonNumber2)
 
     private val profileDTO1 = ProfileObjects.migratedProfile
+      .apply { profileData.supportDeclined?.let { profileData.supportDeclined = it.copy(modifiedBy = currentUser, modifiedDateTime = defaultCurrentTime) } }
+
     private lateinit var profileDTOs: List<ReadinessProfileDTO>
 
     @BeforeEach

@@ -4,8 +4,10 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.mockito.Mockito.lenient
 import org.mockito.Mockito.reset
 import org.mockito.kotlin.any
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.isA
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
@@ -21,6 +23,9 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.v
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v2.ProfileV2Service
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.V2Profiles
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.V2Profiles.profileAccepted
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.V2Profiles.readinessProfileOfAnotherPrisoner
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.V2Profiles.readinessProfileOfKnownPrisoner
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.joinToJsonString
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ReadinessProfile
 import uk.gov.justice.digital.hmpps.educationemployment.api.resource.ControllerTestBase
@@ -39,20 +44,26 @@ class ProfileResourceControllerTest : ControllerTestBase() {
   @BeforeEach
   internal fun reset() {
     reset(profileService)
-    initMvcMock(ProfileResourceController(profileService))
+    initMvcMock(ProfileResourceController(profileService, timeProvider))
   }
 
   @Nested
   @DisplayName("Given a profile")
   inner class GivenAProfile {
-    private val profile = V2Profiles.readinessProfileOfKnownPrisoner
-    private val prisonNumber = profile.offenderId
-    private val bookingId = profile.bookingId
-    private val createdBy = profile.createdBy
+    private val readinessProfile = readinessProfileOfKnownPrisoner
+    private val prisonNumber = readinessProfile.offenderId
+    private val bookingId = readinessProfile.bookingId
+    private val createdBy = readinessProfile.createdBy
+    private val profile = V2Profiles.profile
+
+    @BeforeEach
+    internal fun setup() {
+      lenient().whenever(profileService.parseProfile(eq(readinessProfile.profileData))).thenReturn(profile)
+    }
 
     @Test
     fun `Test Post of a new profile `() {
-      whenever(profileService.createProfileForOffender(any(), any(), any(), isA<Profile>())).thenReturn(profile)
+      whenever(profileService.createProfileForOffender(any(), any(), any(), isA<Profile>())).thenReturn(readinessProfile)
       val createRequest = ProfileObjects.createProfileJsonRequest
 
       assertCreateProfileIsExpected(prisonNumber, createRequest)
@@ -60,7 +71,7 @@ class ProfileResourceControllerTest : ControllerTestBase() {
 
     @Test
     fun `Test Put of an update profile `() {
-      whenever(profileService.updateProfileForOffender(any(), any(), any(), isA<Profile>())).thenReturn(profile)
+      whenever(profileService.updateProfileForOffender(any(), any(), any(), isA<Profile>())).thenReturn(readinessProfile)
       val updateRequest = ProfileObjects.createProfileJsonRequest
 
       assertUpdateProfileIsExpected(prisonNumber, updateRequest)
@@ -68,7 +79,7 @@ class ProfileResourceControllerTest : ControllerTestBase() {
 
     @Test
     fun `Test Get profile of an Offender `() {
-      whenever(profileService.getProfileForOffender(any())).thenReturn(profile)
+      whenever(profileService.getProfileForOffender(any())).thenReturn(readinessProfile)
 
       assertRetrieveProfileIsExpected(prisonNumber)
     }
@@ -107,12 +118,19 @@ class ProfileResourceControllerTest : ControllerTestBase() {
   @Nested
   @DisplayName("Given some profiles")
   inner class GivenSomeProfiles {
-    private val prisonNumbers = ProfileObjects.offenderIdList
-    private val profileList = V2Profiles.profileList
+    private val prisonNumbers = ProfileObjects.run { listOf(knownPrisonNumber, anotherPrisonNumber) }
+    private val readinessProfileMap = mapOf(
+      readinessProfileOfKnownPrisoner.profileData to V2Profiles.profile,
+      readinessProfileOfAnotherPrisoner.profileData to profileAccepted,
+    )
+    private val profileList = listOf(readinessProfileOfKnownPrisoner, readinessProfileOfAnotherPrisoner)
 
     @Test
     fun `Test Get of profile list for offenders `() {
       whenever(profileService.getProfilesForOffenders(any())).thenReturn(profileList)
+      readinessProfileMap.forEach { (profileData, profile) ->
+        whenever(profileService.parseProfile(eq(profileData))).thenReturn(profile)
+      }
 
       assertSearchProfileIsExpected(prisonNumbers, profileList)
       verify(profileService, times(1)).getProfilesForOffenders(any())

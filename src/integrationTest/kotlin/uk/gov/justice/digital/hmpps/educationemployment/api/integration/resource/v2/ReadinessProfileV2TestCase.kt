@@ -9,6 +9,8 @@ import org.springframework.core.ParameterizedTypeReference
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.helpers.ProfileV1Helper
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.READINESS_PROFILE_ENDPOINT
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.ReadinessProfileTestCase
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.application.SupportAcceptedDTO
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.application.SupportDeclinedDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ProfileStatus
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.v2.Profile
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.StatusChangeUpdateRequestDTO
@@ -56,8 +58,16 @@ abstract class ReadinessProfileV2TestCase :
   protected fun parseProfileV1(profileData: JsonNode): ProfileV1 = objectMapper.treeToValue(profileData, typeRefProfileV1)
   protected fun parseProfileV1RequestDTO(profileJson: String) = objectMapper.readValue(profileJson, typeRefRequestV1)
 
-  protected fun Profile.statusChangeRequestToAccepted(newStatus: ProfileStatus = ProfileStatus.SUPPORT_NEEDED) = StatusChangeUpdateRequestDTO(supportAccepted, null, newStatus)
-  protected fun Profile.statusChangeRequestToDeclined() = StatusChangeUpdateRequestDTO(null, supportDeclined, ProfileStatus.SUPPORT_DECLINED)
+  protected fun Profile.statusChangeRequestToAccepted(newStatus: ProfileStatus = ProfileStatus.SUPPORT_NEEDED) = StatusChangeUpdateRequestDTO(
+    supportAccepted?.let { SupportAcceptedDTO(it, defaultTimezoneId) },
+    null,
+    newStatus,
+  )
+  protected fun Profile.statusChangeRequestToDeclined() = StatusChangeUpdateRequestDTO(
+    null,
+    supportDeclined?.let { SupportDeclinedDTO(it, defaultTimezoneId) },
+    ProfileStatus.SUPPORT_DECLINED,
+  )
 
   protected fun givenMoreProfilesFromMultiplePrisons() = (profilesFromPrison2 + profilesFromPrison1).toTypedArray().let { givenProfilesAreCreated(*it) }
 

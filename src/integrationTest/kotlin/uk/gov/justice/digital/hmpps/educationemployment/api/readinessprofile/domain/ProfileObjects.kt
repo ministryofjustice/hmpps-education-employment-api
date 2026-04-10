@@ -1,8 +1,11 @@
 package uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain
 
+import com.fasterxml.jackson.core.TreeNode
 import uk.gov.justice.digital.hmpps.educationemployment.api.audit.domain.AuditObjects.defaultAuditLocalTime
 import uk.gov.justice.digital.hmpps.educationemployment.api.audit.domain.AuditObjects.defaultAuditor
+import uk.gov.justice.digital.hmpps.educationemployment.api.audit.domain.AuditObjects.defaultTimezoneId
 import uk.gov.justice.digital.hmpps.educationemployment.api.config.CapturedSpringConfigValues
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.application.ProfileDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.CircumstanceChangesRequiredToWork
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.v2.Profile
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v2.ReadinessProfileDTO
@@ -30,7 +33,6 @@ object ProfileObjects {
   val createProfileJsonRequest = readJsonProfile("CreateProfile_correct.json")
   val createProfileV1JsonRequest = readJsonProfile("CreateProfile_correct_v1.json")
   val createProfileV2JsonRequest = readJsonProfile("testdata-version2.json")
-  val createProfileV1JsonRequestWithSupportDeclined = readJsonProfile("CreateProfileDeclinedHistories.json")
   val createProfileV2JsonRequestWithSupportAccepted = readJsonProfile("CreateProfileAccepted-version2.json")
   val createProfileV2JsonRequestWithSupportDeclined = readJsonProfile("CreateProfileDeclined.json")
 
@@ -51,7 +53,7 @@ object ProfileObjects {
     createdBy = "system",
     modifiedBy = "system",
     schemaVersion = "2.0",
-  ).let { ReadinessProfileDTO(it) }.apply {
+  ).let { ReadinessProfileDTO(it, parseProfile(it.profileData), defaultTimezoneId) }.apply {
     with(profileData) {
       prisonId = ""
       within12Weeks = true
@@ -73,7 +75,7 @@ object ProfileObjects {
 
   val ReadinessProfile.requestDto: ReadinessProfileRequestDTO get() = ReadinessProfileRequestDTO(
     bookingId,
-    objectMapper.treeToValue(profileData, Profile::class.java),
+    ProfileDTO(parseProfile(profileData), defaultTimezoneId),
   )
 
   private fun readJsonProfile(fileName: String) = readTextFromResource("jsonprofile/$fileName")
@@ -93,4 +95,6 @@ object ProfileObjects {
     notesData = objectMapper.readTree(notesData ?: "[]"),
     new = true,
   )
+
+  private fun parseProfile(profileData: TreeNode) = objectMapper.treeToValue(profileData, Profile::class.java)
 }

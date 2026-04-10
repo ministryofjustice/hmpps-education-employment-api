@@ -1,45 +1,46 @@
 package uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v2
 
-import com.fasterxml.jackson.module.kotlin.treeToValue
 import io.swagger.v3.oas.annotations.media.Schema
-import uk.gov.justice.digital.hmpps.educationemployment.api.config.CapturedSpringConfigValues
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.application.ProfileDTO
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.application.instantFromZone
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.v2.Profile
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ReadinessProfile
-import java.time.LocalDateTime
+import uk.gov.justice.digital.hmpps.educationemployment.api.shared.application.AuditedDTO
+import java.time.Instant
+import java.time.ZoneId
 
 data class ReadinessProfileDTO(
-  @param:Schema(description = "Offender Id", example = "ABC12345")
+  @field:Schema(description = "Offender Id", example = "ABC12345")
   val offenderId: String,
 
-  @param:Schema(description = "Booking Id", example = "1234567")
+  @field:Schema(description = "Booking Id", example = "1234567")
   val bookingId: Long,
 
-  @param:Schema(description = "Author of original profile", example = "user4")
-  val createdBy: String,
+  @field:Schema(description = "Author of original profile", example = "user4")
+  override val createdBy: String,
 
-  @param:Schema(description = "Created date time", type = "string", pattern = "yyyy-MM-dd'T'HH:mm:ss", example = "2018-12-01T13:45:00", required = true)
-  val createdDateTime: LocalDateTime,
+  override val createdDateTime: Instant,
 
-  @param:Schema(description = "Author of last modification", example = "user4")
-  val modifiedBy: String,
+  @get:Schema(description = "Author of last modification", example = "user4")
+  override val modifiedBy: String,
 
-  @param:Schema(description = "Last modified date time", type = "string", pattern = "yyyy-MM-dd'T'HH:mm:ss", example = "2018-12-01T13:45:00", required = true)
-  val modifiedDateTime: LocalDateTime,
+  @get:Schema(description = "Last modified date time", type = "string", format = "date-time", pattern = "yyyy-MM-dd'T'HH:mm:ssZ", example = "2018-12-01T13:45:00Z")
+  override val modifiedDateTime: Instant,
 
-  @param:Schema(description = "Version of the JSON schema", example = "1.1.1")
+  @field:Schema(description = "Version of the JSON schema", example = "2.0")
   val schemaVersion: String,
 
-  @param:Schema(description = "Work readiness profile JSON data", example = "{...}")
-  val profileData: Profile,
-) {
-  constructor(profileEntity: ReadinessProfile) : this(
+  @field:Schema(description = "Work readiness profile JSON data")
+  val profileData: ProfileDTO,
+) : AuditedDTO {
+  constructor(profileEntity: ReadinessProfile, profileData: Profile, timeZoneId: ZoneId) : this(
     offenderId = profileEntity.offenderId,
     bookingId = profileEntity.bookingId,
     createdBy = profileEntity.createdBy,
-    createdDateTime = profileEntity.createdDateTime,
+    createdDateTime = profileEntity.createdDateTime.instantFromZone(timeZoneId),
     modifiedBy = profileEntity.modifiedBy,
-    modifiedDateTime = profileEntity.modifiedDateTime,
+    modifiedDateTime = profileEntity.modifiedDateTime.instantFromZone(timeZoneId),
     schemaVersion = profileEntity.schemaVersion,
-    profileData = CapturedSpringConfigValues.objectMapper.treeToValue(profileEntity.profileData),
+    profileData = ProfileDTO(profileData, timeZoneId),
   )
 }

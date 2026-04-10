@@ -12,12 +12,12 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.dom
 import uk.gov.justice.digital.hmpps.educationemployment.api.shared.domain.TimeProvider
 import java.time.LocalDate
 
-interface ProfileService<ProfileType, ByPeriodResponseType> {
+interface ProfileService<ProfileType, ByPeriodResponseType, StatusChangeUpdateRequest> {
   fun createProfileForOffender(userId: String, offenderId: String, bookingId: Long, profile: ProfileType): ReadinessProfile
 
   fun updateProfileForOffender(userId: String, offenderId: String, bookingId: Long, profile: ProfileType): ReadinessProfile
 
-  fun changeStatusForOffender(userId: String, offenderId: String, statusChangeUpdateRequestDTO: StatusChangeUpdateRequestDTO?): ReadinessProfile
+  fun changeStatusForOffender(userId: String, offenderId: String, statusChangeUpdateRequestDTO: StatusChangeUpdateRequest?): ReadinessProfile
 
   fun getProfilesForOffenders(offenders: List<String>): List<ReadinessProfile>
 
@@ -27,7 +27,7 @@ interface ProfileService<ProfileType, ByPeriodResponseType> {
     prisonNumber: String,
     fromDate: LocalDate? = null,
     toDate: LocalDate? = null,
-  ): ByPeriodResponseType
+  ): ByPeriodResponseType?
 }
 
 @Service

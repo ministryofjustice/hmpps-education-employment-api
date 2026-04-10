@@ -19,19 +19,23 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.profileJsonOfAnotherPrisonNumber
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.profileJsonOfKnownPrisonNumber
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.profileJsonWithSupportAccepted
-import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.profileOfAnotherPrisonNumber
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.profileRequestOfKnownPrisonNumber
 import uk.gov.justice.digital.hmpps.educationemployment.api.notesdata.domain.Note
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ActionTodo
-import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.v2.Profile
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v2.ReadinessProfileDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v2.ReadinessProfileRequestDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.anotherPrisonNumber
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.knownPrisonNumber
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.unknownPrisonNumber
-import java.time.format.DateTimeFormatter
+import java.time.Instant
+import java.time.ZoneId
+import uk.gov.justice.digital.hmpps.educationemployment.api.sardata.domain.Note as SARNote
 
 class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
+  // Test with DST (British Summer Time)
+  override val defaultCurrentTime: Instant = Instant.parse("2025-05-01T23:00:00.00Z") // 11pm UTC (1 May), 12am BST (2 May)
+  override val defaultTimezoneId: ZoneId = ZoneId.of("Europe/London")
+
   init {
     currentUser = "BJDEV"
   }
@@ -89,7 +93,7 @@ class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
       assertThat(sarContent).isNotEmpty
 
       val sarProfile = result.sarContent().let { objectMapper.valueToTree<JsonNode>(it.first()) }
-      val expectedTimestamp = defaultCurrentTimeLocal.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))
+      val expectedTimestamp = defaultCurrentTime.toString()
       val assertTextField: (String, String) -> Unit = { field, expected -> assertThat(sarProfile.get(field).textValue()).isEqualTo(expected) }
       assertTextField("offenderId", prisonNumber)
       assertTextField("createdBy", currentUser)
@@ -113,14 +117,12 @@ class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
     private lateinit var expectedProfileDTO: ReadinessProfileDTO
     private lateinit var expectedPrisonNumber: String
     private lateinit var expectedProfileJson: JsonNode
-    private lateinit var expectedProfileData: Profile
 
     @BeforeEach
     fun beforeEach() {
       expectedProfileDTO = givenAnotherProfileWithSupportDeclined()
       expectedPrisonNumber = expectedProfileDTO.offenderId
       expectedProfileJson = profileJsonOfAnotherPrisonNumber
-      expectedProfileData = profileOfAnotherPrisonNumber
     }
 
     @Test
@@ -167,11 +169,12 @@ class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
       val workExperienceNode = get("supportAccepted").get("workExperience") as ObjectNode
       workExperienceNode.set("previousWorkOrVolunteering", TextNode("")) as JsonNode
     }
-    private val expectedNotes: List<Note> get() = mapOf(
+    private val expectedNotes: List<SARNote> get() = mapOf(
       ActionTodo.BANK_ACCOUNT to "Bank account will be opened in ABC Bank.",
       ActionTodo.HOUSING to "Housing request has been submitted.",
       ActionTodo.ID to "ID document has been verified.",
     ).map { (attribute, text) -> makeNote(attribute, text) }
+      .map { SARNote(it, defaultTimezoneId) }
 
     @BeforeEach
     internal fun setUp() {
