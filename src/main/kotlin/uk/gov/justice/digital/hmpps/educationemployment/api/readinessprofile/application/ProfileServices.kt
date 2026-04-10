@@ -27,7 +27,7 @@ interface ProfileService<ProfileType, ByPeriodResponseType, StatusChangeUpdateRe
     prisonNumber: String,
     fromDate: LocalDate? = null,
     toDate: LocalDate? = null,
-  ): ByPeriodResponseType?
+  ): ByPeriodResponseType
 }
 
 @Service

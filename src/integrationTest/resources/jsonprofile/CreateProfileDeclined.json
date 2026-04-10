@@ -1,5 +1,6 @@
 {
   "offenderId": "A1234FF",
+  "bookingId": 333333,
   "profileData": {
     "status": "SUPPORT_DECLINED",
     "statusChange": false,

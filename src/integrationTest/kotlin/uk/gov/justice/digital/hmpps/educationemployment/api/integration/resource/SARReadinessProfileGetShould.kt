@@ -10,6 +10,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
@@ -32,6 +34,10 @@ import java.time.ZoneId
 import uk.gov.justice.digital.hmpps.educationemployment.api.sardata.domain.Note as SARNote
 
 class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
+  companion object {
+    private val log: Logger = LoggerFactory.getLogger(this::class.java)
+  }
+
   // Test with DST (British Summer Time)
   override val defaultCurrentTime: Instant = Instant.parse("2025-05-01T23:00:00.00Z") // 11pm UTC (1 May), 12am BST (2 May)
   override val defaultTimezoneId: ZoneId = ZoneId.of("Europe/London")
@@ -92,7 +98,10 @@ class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
       val sarContent = result.sarContent()
       assertThat(sarContent).isNotEmpty
 
-      val sarProfile = result.sarContent().let { objectMapper.valueToTree<JsonNode>(it.first()) }
+      val sarProfile = result.sarContent()
+        .also { log.debug("SAR Profile = {}", it) }
+        .let { objectMapper.valueToTree<JsonNode>(it.first()) }
+
       val expectedTimestamp = defaultCurrentTime.toString()
       val assertTextField: (String, String) -> Unit = { field, expected -> assertThat(sarProfile.get(field).textValue()).isEqualTo(expected) }
       assertTextField("offenderId", prisonNumber)
