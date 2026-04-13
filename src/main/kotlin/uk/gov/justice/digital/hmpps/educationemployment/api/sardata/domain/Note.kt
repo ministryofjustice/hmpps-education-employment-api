@@ -8,6 +8,7 @@ import java.time.Instant
 import java.time.ZoneId
 import uk.gov.justice.digital.hmpps.educationemployment.api.notesdata.domain.Note as NoteEntity
 
+@Schema(name = "SARNote", description = "The note of work readiness profile for subject access request (SAR)")
 data class Note(
   @get:Schema(description = "userId of the note creator", example = "user4")
   override val createdBy: String,

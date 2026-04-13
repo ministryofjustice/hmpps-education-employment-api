@@ -10,10 +10,10 @@ import java.time.Instant
 import java.time.ZoneId
 
 data class ReadinessProfileDTO(
-  @field:Schema(description = "Offender Id", example = "ABC12345")
+  @param:Schema(description = "Offender Id", example = "ABC12345")
   val offenderId: String,
 
-  @field:Schema(description = "Booking Id", example = "1234567")
+  @param:Schema(description = "Booking Id", example = "1234567")
   val bookingId: Long,
 
   @field:Schema(description = "Author of original profile", example = "user4")
@@ -27,10 +27,10 @@ data class ReadinessProfileDTO(
   @get:Schema(description = "Last modified date time", type = "string", format = "date-time", pattern = "yyyy-MM-dd'T'HH:mm:ssZ", example = "2018-12-01T13:45:00Z")
   override val modifiedDateTime: Instant,
 
-  @field:Schema(description = "Version of the JSON schema", example = "2.0")
+  @param:Schema(description = "Version of the JSON schema", example = "2.0")
   val schemaVersion: String,
 
-  @field:Schema(description = "Work readiness profile JSON data")
+  @param:Schema(description = "Work readiness profile JSON data")
   val profileData: ProfileDTO,
 ) : AuditedDTO {
   constructor(profileEntity: ReadinessProfile, profileData: Profile, timeZoneId: ZoneId) : this(

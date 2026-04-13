@@ -6,10 +6,10 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.applicat
 
 data class ReadinessProfileRequestDTO(
 
-  @field:Schema(description = "Booking Id", example = "12345678")
+  @param:Schema(description = "Booking Id", example = "12345678")
   val bookingId: Long,
 
-  @field:Schema(description = "Work readiness profile JSON data")
-  @field:Valid
+  @param:Schema(description = "Work readiness profile JSON data")
+  @param:Valid
   val profileData: ProfileDTO,
 )

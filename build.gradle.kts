@@ -47,6 +47,9 @@ testing {
         runtimeOnly("org.flywaydb:flyway-database-postgresql")
         implementation("org.testcontainers:testcontainers-postgresql")
         implementation("org.mockito.kotlin:mockito-kotlin:6.3.0")
+        implementation("io.swagger.parser.v3:swagger-parser:2.1.39") {
+          exclude(group = "io.swagger.core.v3")
+        }
       }
 
       targets {

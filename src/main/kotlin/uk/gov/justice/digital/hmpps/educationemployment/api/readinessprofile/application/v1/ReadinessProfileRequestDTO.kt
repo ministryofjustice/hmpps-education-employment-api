@@ -15,7 +15,7 @@ data class ReadinessProfileRequestDTO(
   @param:Schema(description = "Booking Id", example = "12345678")
   val bookingId: Long,
 
-  @param:Schema(description = "Work readiness profile JSON data", example = "{...}")
+  @param:Schema(description = "Work readiness profile JSON data")
   @param:Valid
   val profileData: Profile,
 )

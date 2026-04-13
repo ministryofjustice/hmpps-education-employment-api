@@ -19,18 +19,25 @@ To run the service locally with Docker, it is assumed that the developer will wi
 
 - to run this application independently e.g. in IntelliJ:
 
-`docker-compose up --scale hmpps-education-employment-api=0`
+```shell
+docker compose up --scale hmpps-education-employment-api=0 -d
+```
 
 - else to run the application in docker also:
-
-`docker-compose up`
+```shell
+docker compose up
+```
 
 to run service with gradle
 - gradle bootRun with these environment variables: 
   - with IntelliJ IDEA: `spring.profiles.active=local`
 - run via command line: <br> 
-  - `SPRING_PROFILES_ACTIVE=local ./gradlew bootRun`
-  - `gradle bootRun --args='--spring.profiles.active=local'`
+  - ```shell
+    SPRING_PROFILES_ACTIVE= local ./gradlew bootRun
+    ```
+  - ```shell
+    gradle bootRun --args='--spring.profiles.active=local'
+    ```
 
 ## Purpose
 

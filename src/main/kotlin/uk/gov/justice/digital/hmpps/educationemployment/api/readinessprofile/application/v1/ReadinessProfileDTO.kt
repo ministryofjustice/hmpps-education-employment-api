@@ -35,7 +35,7 @@ data class ReadinessProfileDTO(
   @param:Schema(description = "Version of the JSON schema", example = "1.1.1")
   val schemaVersion: String,
 
-  @param:Schema(description = "Work readiness profile JSON data", example = "{...}")
+  @param:Schema(description = "Work readiness profile JSON data")
   val profileData: Profile,
 ) {
   constructor(profileEntity: ReadinessProfile) : this(
