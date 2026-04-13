@@ -12,7 +12,6 @@ api:
 
 logging:
   level:
-    uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARReadinessProfileGetShould: DEBUG
     uk.gov.justice.digital.hmpps.educationemployment.api: INFO
 
 spring:
