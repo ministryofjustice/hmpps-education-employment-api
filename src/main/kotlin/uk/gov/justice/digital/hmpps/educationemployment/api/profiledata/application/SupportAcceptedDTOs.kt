@@ -81,7 +81,7 @@ data class WorkImpactsDTO(
   val caringResponsibilitiesFullTime: Boolean,
   @get:Schema(description = "Able to manage mental health; Not in use", deprecated = true)
   val ableToManageMentalHealth: Boolean,
-  @get:Schema(description = "Able to manage dependencies (Reliant on drugs or alcohol); Not in use", deprecated = true)
+  @get:Schema(description = "Able to manage dependencies (Reliant on drugs or alcohol)")
   val ableToManageDependencies: Boolean,
 ) : ModificationAudited,
   EntityConvertible<WorkImpacts> {

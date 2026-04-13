@@ -5,6 +5,7 @@ import io.swagger.v3.oas.models.Components
 import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.info.Contact
 import io.swagger.v3.oas.models.info.Info
+import io.swagger.v3.oas.models.media.ArraySchema
 import io.swagger.v3.oas.models.security.SecurityRequirement
 import io.swagger.v3.oas.models.security.SecurityScheme
 import io.swagger.v3.oas.models.tags.Tag
@@ -71,7 +72,7 @@ class OpenApiConfiguration(buildProperties: BuildProperties) {
     }
     // Touch up the SAR schema
     openApi.components.schemas[HmppsSubjectAccessRequestContent::class.simpleName]?.let { sarSchema ->
-      sarSchema.properties["content"] = resolvedSchema.schema
+      sarSchema.properties["content"] = ArraySchema().items(resolvedSchema.schema)
       sarSchema.properties["attachments"]?.let {
         it.description = "(Not in use) ${it.description}"
         it.example = null

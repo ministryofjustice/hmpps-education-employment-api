@@ -11,10 +11,10 @@ data class NoteDTO(
   override val createdBy: String,
   override val createdDateTime: Instant,
 
-  @field:Schema(description = "The attribute the note relates to", example = "DISCLOSURE_LETTER")
+  @param:Schema(description = "The attribute the note relates to", example = "DISCLOSURE_LETTER")
   val attribute: String,
 
-  @field:Schema(description = "The notes text", example = "Will call manager to arrange this")
+  @param:Schema(description = "The notes text", example = "Will call manager to arrange this")
   val text: String,
 ) : CreationAudited {
   constructor(note: Note, timeZoneId: ZoneId) : this(
