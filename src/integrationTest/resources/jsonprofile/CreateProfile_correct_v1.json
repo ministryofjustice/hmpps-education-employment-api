@@ -1,5 +1,5 @@
 {
-  "bookingId": "111111",
+  "bookingId": 111111,
   "profileData": {
     "status": "NO_RIGHT_TO_WORK",
     "statusChange": false,
@@ -9,15 +9,7 @@
     "supportDeclined_history": [
       {
         "modifiedBy": "user-one",
-        "modifiedDateTime": [
-          2022,
-          12,
-          18,
-          9,
-          15,
-          56,
-          460988000
-        ],
+        "modifiedDateTime": "2022-12-18T09:15:56.460988000",
         "supportToWorkDeclinedReason": [
           "FULL_TIME_CARER"
         ],
@@ -29,15 +21,7 @@
       },
       {
         "modifiedBy": "user-one",
-        "modifiedDateTime": [
-          2022,
-          12,
-          18,
-          9,
-          15,
-          56,
-          460988000
-        ],
+        "modifiedDateTime": "2022-12-18T09:15:56.460988000",
         "supportToWorkDeclinedReason": [
           "FULL_TIME_CARER"
         ],
@@ -54,15 +38,7 @@
         "modifiedDateTime": null,
         "actionsRequired": {
           "modifiedBy": "user-two",
-          "modifiedDateTime": [
-            2022,
-            12,
-            18,
-            9,
-            15,
-            56,
-            460988000
-          ],
+          "modifiedDateTime": "2022-12-18T09:15:56.460988000",
           "actions": [
             {
               "todoItem": "BANK_ACCOUNT",
@@ -72,15 +48,7 @@
         },
         "workImpacts": {
           "modifiedBy": "user-two",
-          "modifiedDateTime": [
-            2022,
-            12,
-            18,
-            9,
-            15,
-            56,
-            460988000
-          ],
+          "modifiedDateTime": "2022-12-18T09:15:56.460988000",
           "abilityToWorkImpactedBy": [
             "CARING_RESPONSIBILITIES"
           ],
@@ -90,15 +58,7 @@
         },
         "workInterests": {
           "modifiedBy": "user-two",
-          "modifiedDateTime": [
-            2022,
-            12,
-            18,
-            9,
-            15,
-            56,
-            460988000
-          ],
+          "modifiedDateTime": "2022-12-18T09:15:56.460988000",
           "workTypesOfInterest": [
             "CONSTRUCTION"
           ],
@@ -107,15 +67,7 @@
         },
         "workExperience": {
           "modifiedBy": "user-two",
-          "modifiedDateTime": [
-            2022,
-            12,
-            18,
-            9,
-            15,
-            56,
-            460988000
-          ],
+          "modifiedDateTime": "2022-12-18T09:15:56.460988000",
           "previousWorkOrVolunteering": "NONE",
           "qualificationsAndTraining": [
             "ADVANCED_EDUCATION"
@@ -126,15 +78,7 @@
     ],
     "supportDeclined": {
       "modifiedBy": "user-one",
-      "modifiedDateTime": [
-        2022,
-        12,
-        18,
-        9,
-        16,
-        24,
-        581204000
-      ],
+      "modifiedDateTime": "2022-12-18T09:15:56.460988000",
       "supportToWorkDeclinedReason": [
         "FULL_TIME_CARER"
       ],

@@ -5,10 +5,6 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.sardata.domain.Note
 import java.time.LocalDateTime
 import uk.gov.justice.digital.hmpps.educationemployment.api.sardata.domain.v2.Profile as SARProfile
 
-data class SARReadinessProfileDTO(
-  val content: List<SARContentDTO>,
-)
-
 data class SARContentDTO(
   @field:Schema(description = "Offender Id", example = "ABC12345")
   val offenderId: String,
@@ -25,7 +21,7 @@ data class SARContentDTO(
   @field:Schema(description = "Last modified date time", type = "string", pattern = "yyyy-MM-dd'T'HH:mm:ss", example = "2018-12-01T13:45:00", required = true)
   val modifiedDateTime: LocalDateTime,
 
-  @field:Schema(description = "Work readiness profile data", example = "{...}")
+  @field:Schema(description = "Work readiness profile data")
   val profileData: SARProfile,
 
   @field:Schema(description = "Work readiness profile notes")

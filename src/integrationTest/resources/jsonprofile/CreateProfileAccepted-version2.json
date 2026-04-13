@@ -1,5 +1,6 @@
 {
   "offenderId": "A1234AA",
+  "bookingId": 222222,
   "profileData": {
     "status": "SUPPORT_NEEDED",
     "statusChange": false,

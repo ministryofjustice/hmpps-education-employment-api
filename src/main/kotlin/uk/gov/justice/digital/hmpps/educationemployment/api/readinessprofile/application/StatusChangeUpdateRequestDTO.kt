@@ -9,17 +9,17 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.S
 
 data class StatusChangeUpdateRequestDTO(
 
-  @param:Schema(description = "Work readiness support accepted JSON data", example = "{...}")
+  @param:Schema(description = "Work readiness support accepted JSON data")
   @param:Valid
   @param:Nullable
   val supportAccepted: SupportAccepted?,
 
-  @param:Schema(description = "Work readiness support declined JSON data", example = "{...}")
+  @param:Schema(description = "Work readiness support declined JSON data")
   @param:Valid
   @param:Nullable
   val supportDeclined: SupportDeclined?,
 
-  @param:Schema(description = "Work readiness status JSON data", example = "{...}")
+  @param:Schema(description = "Work readiness status JSON data")
   @param:Valid
   val status: ProfileStatus,
 )

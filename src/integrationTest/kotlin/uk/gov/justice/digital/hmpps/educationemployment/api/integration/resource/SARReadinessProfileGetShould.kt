@@ -19,11 +19,9 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.profileJsonOfAnotherPrisonNumber
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.profileJsonOfKnownPrisonNumber
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.profileJsonWithSupportAccepted
-import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.profileOfAnotherPrisonNumber
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.SARTestData.profileRequestOfKnownPrisonNumber
 import uk.gov.justice.digital.hmpps.educationemployment.api.notesdata.domain.Note
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ActionTodo
-import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.v2.Profile
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v2.ReadinessProfileDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v2.ReadinessProfileRequestDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.anotherPrisonNumber
@@ -113,14 +111,12 @@ class SARReadinessProfileGetShould : SARReadinessProfileTestCase() {
     private lateinit var expectedProfileDTO: ReadinessProfileDTO
     private lateinit var expectedPrisonNumber: String
     private lateinit var expectedProfileJson: JsonNode
-    private lateinit var expectedProfileData: Profile
 
     @BeforeEach
     fun beforeEach() {
       expectedProfileDTO = givenAnotherProfileWithSupportDeclined()
       expectedPrisonNumber = expectedProfileDTO.offenderId
       expectedProfileJson = profileJsonOfAnotherPrisonNumber
-      expectedProfileData = profileOfAnotherPrisonNumber
     }
 
     @Test

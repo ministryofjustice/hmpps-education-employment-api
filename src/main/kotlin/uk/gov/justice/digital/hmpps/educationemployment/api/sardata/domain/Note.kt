@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ActionTodo
 import java.time.LocalDateTime
 
+@Schema(name = "SARNote", description = "The note of work readiness profile for subject access request (SAR)")
 data class Note(
   @field:Schema(description = "userId of the note creator", example = "user4")
   val createdBy: String,

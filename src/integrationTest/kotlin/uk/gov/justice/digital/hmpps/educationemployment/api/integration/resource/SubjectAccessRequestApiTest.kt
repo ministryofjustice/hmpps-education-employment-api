@@ -240,7 +240,7 @@ abstract class SubjectAccessRequestApiTestCase :
   @BeforeEach
   internal fun setup() {
     whenever(dateTimeProvider.now).thenAnswer { Optional.of(sarCurrentTime) }
-    whenever(timeProvider.timezoneId).thenReturn(sarTimezoneId)
+    whenever(timeProvider.timeZoneId).thenReturn(sarTimezoneId)
     whenever(timeProvider.now()).thenAnswer { sarCurrentTimeLocal }
   }
 }

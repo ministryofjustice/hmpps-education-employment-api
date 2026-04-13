@@ -11,7 +11,7 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.shared.infrastructure.TestClock
 import java.time.Instant
 import java.time.LocalDate
-import java.time.ZoneOffset
+import java.time.ZoneId
 import java.util.*
 
 const val DASHBOARD_ENDPOINT = "/dashboard"
@@ -19,7 +19,7 @@ const val DASHBOARD_ENDPOINT = "/dashboard"
 abstract class DashboardTestCase : ReadinessProfileV2TestCase() {
   protected val testClock: TestClock = TestClock.defaultClock()
   protected val currentTime: Instant get() = testClock.instant
-  protected val currentDate: LocalDate get() = LocalDate.ofInstant(currentTime, ZoneOffset.UTC)
+  protected val currentDate: LocalDate get() = LocalDate.ofInstant(currentTime, ZoneId.of("Europe/London"))
 
   private val readOnlyHeaders get() = httpHeaders(WR_VIEW_ROLE)
   private val readOnlyRequestNoBody get() = HttpEntity<HttpHeaders>(readOnlyHeaders)
@@ -29,6 +29,7 @@ abstract class DashboardTestCase : ReadinessProfileV2TestCase() {
     whenever(dateTimeProvider.now).thenAnswer { Optional.of(currentTime) }
   }
 
+  @Suppress("SameParameterValue")
   protected fun assertRequestWithoutBody(
     url: String,
     method: HttpMethod,

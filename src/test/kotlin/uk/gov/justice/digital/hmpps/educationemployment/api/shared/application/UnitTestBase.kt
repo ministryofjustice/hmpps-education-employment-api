@@ -14,13 +14,14 @@ import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.educationemployment.api.config.CapturedSpringConfigValues
 import uk.gov.justice.digital.hmpps.educationemployment.api.notesdata.domain.Note
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.v2.Profile
-import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v1.ReadinessProfileDTO
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v2.ReadinessProfileDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.shared.domain.TimeProvider
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZoneOffset
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.v1.Profile as ProfileV1
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v1.ReadinessProfileDTO as ReadinessProfileV1DTO
 
 @ExtendWith(MockitoExtension::class)
 abstract class UnitTestBase {
@@ -39,16 +40,21 @@ abstract class UnitTestBase {
   internal open fun setUpBase() {
     lenient().whenever(timeProvider.nowAsInstant()).thenReturn(defaultCurrentTime)
     lenient().whenever(timeProvider.now()).thenReturn(defaultCurrentLocalTime)
-    lenient().whenever(timeProvider.timezoneId).thenReturn(defaultTimeZoneOffset)
+    lenient().whenever(timeProvider.timeZoneId).thenReturn(defaultTimeZoneOffset)
   }
 
   companion object {
     internal val typeReferenceOfProfileV1 by lazy { object : TypeReference<ProfileV1>() {} }
     internal val typeReferenceOfProfile by lazy { object : TypeReference<Profile>() {} }
     internal val typeReferenceOfNoteList by lazy { object : TypeReference<MutableList<Note>>() {} }
+    internal val typeReferenceOfReadinessProfileV1 by lazy { object : TypeReference<ReadinessProfileV1DTO>() {} }
+    internal val typeReferenceOfReadinessProfileV1List by lazy { object : TypeReference<List<ReadinessProfileV1DTO>>() {} }
     internal val typeReferenceOfReadinessProfile by lazy { object : TypeReference<ReadinessProfileDTO>() {} }
     internal val typeReferenceOfReadinessProfileList by lazy { object : TypeReference<List<ReadinessProfileDTO>>() {} }
   }
+
+  protected fun readinessProfileV1ToValue(jsonText: String) = jsonTextToValue(jsonText, typeReferenceOfReadinessProfileV1)
+  protected fun readinessProfileV1ToList(jsonText: String) = jsonTextToValue(jsonText, typeReferenceOfReadinessProfileV1List)
 
   protected fun readinessProfileToValue(jsonText: String) = jsonTextToValue(jsonText, typeReferenceOfReadinessProfile)
   protected fun readinessProfileToList(jsonText: String) = jsonTextToValue(jsonText, typeReferenceOfReadinessProfileList)

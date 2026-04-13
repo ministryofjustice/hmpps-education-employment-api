@@ -11,6 +11,6 @@ object AuditObjects {
   val defaultAuditor = username
 
   val defaultAuditTime = Instant.parse("2025-01-01T00:00:00.00Z")
-  val defaultTimezoneId = ZoneId.of("Z")
+  val defaultTimezoneId = ZoneId.of("Europe/London")
   val defaultAuditLocalTime = defaultAuditTime.atZone(defaultTimezoneId).toLocalDateTime()
 }
