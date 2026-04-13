@@ -32,18 +32,18 @@ object ProfileObjects {
 
   val createProfileJsonRequest = readJsonProfile("CreateProfile_correct.json")
   val createProfileV1JsonRequest = readJsonProfile("CreateProfile_correct_v1.json")
-  val createProfileV2JsonRequest = readJsonProfile("testdata-version2.json")
+  val createProfileV2JsonRequest = readJsonProfile("CreateProfile_v2.json")
   val createProfileV2JsonRequestWithSupportAccepted = readJsonProfile("CreateProfileAccepted-version2.json")
   val createProfileV2JsonRequestWithSupportDeclined = readJsonProfile("CreateProfileDeclined.json")
 
-  val profileJsonSample = readJsonProfile("sampleprofile.json")
-  val profileJsonSample2 = readJsonProfile("sample2.json")
-  val profileJsonSampleReadinessProfile = readJsonProfile("sampleReadinessprofile.json")
+  val profileJsonOfKnownPrisoner = readJsonProfile("profileOfKnownPrisoner.json")
+  val profileJsonOfAnotherPrisoner = readJsonProfile("profileOfAnotherPrisoner.json")
+  val profileJsonOfUnknownProfile = readJsonProfile("profileOfUnknownProfile.json")
   val profileJsonSupportDeclined = readJsonProfile("profileOfStateSupportDeclined.json")
 
-  val profileOfKnownPrisoner = makeProfile(knownPrisonNumber, 111111, profileJsonSample)
-  val profileOfAnotherPrisoner = makeProfile(anotherPrisonNumber, 222222, profileJsonSample2)
-  val profileOfUnknownPrisoner = makeProfile(unknownPrisonNumber, 333333, profileJsonSampleReadinessProfile)
+  val profileOfKnownPrisoner = makeProfile(knownPrisonNumber, 111111, profileJsonOfKnownPrisoner)
+  val profileOfAnotherPrisoner = makeProfile(anotherPrisonNumber, 222222, profileJsonOfAnotherPrisoner)
+  val profileOfUnknownPrisoner = makeProfile(unknownPrisonNumber, 333333, profileJsonOfUnknownProfile)
   val profileOfDeclinedSupportPrisoner = makeProfile(unknownPrisonNumber, 444444, profileJsonSupportDeclined)
 
   val profilesFromPrison2 = listOf(profileOfKnownPrisoner, profileOfAnotherPrisoner)
