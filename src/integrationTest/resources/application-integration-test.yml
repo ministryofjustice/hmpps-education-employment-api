@@ -9,6 +9,11 @@ api:
   base:
     url:
       oauth: http://localhost:9090/auth
+
+logging:
+  level:
+    uk.gov.justice.digital.hmpps.educationemployment.api: INFO
+
 spring:
   jpa:
     open-in-view: false

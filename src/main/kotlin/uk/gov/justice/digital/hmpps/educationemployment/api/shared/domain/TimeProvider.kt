@@ -5,11 +5,11 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 
 interface TimeProvider {
-  val timezoneId: ZoneId
+  val timeZoneId: ZoneId
 
   fun now(): LocalDateTime
 
-  fun nowAsInstant(): Instant = now().atZone(timezoneId).toInstant()
+  fun nowAsInstant(): Instant = now().atZone(timeZoneId).toInstant()
 
   fun today() = now().toLocalDate()
 }

@@ -7,7 +7,7 @@ import java.time.ZoneId
 
 @Component
 class DefaultTimeProvider(
-  override val timezoneId: ZoneId = ZoneId.systemDefault(),
+  override val timeZoneId: ZoneId = ZoneId.systemDefault(),
 ) : TimeProvider {
   override fun now(): LocalDateTime = LocalDateTime.now()
 }

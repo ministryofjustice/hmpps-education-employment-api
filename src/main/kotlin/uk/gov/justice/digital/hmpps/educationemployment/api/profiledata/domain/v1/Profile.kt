@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.v1
 
+import io.swagger.v3.oas.annotations.media.Schema
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ProfileStatus
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.StatusChange
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.SupportAccepted
@@ -10,6 +11,7 @@ import java.time.LocalDateTime
   message = "Use v2 instead",
   replaceWith = ReplaceWith("Profile", "uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.v2"),
 )
+@Schema(name = "ProfileV1")
 data class Profile(
   var status: ProfileStatus,
   var statusChange: Boolean?,

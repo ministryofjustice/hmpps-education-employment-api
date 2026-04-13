@@ -94,7 +94,7 @@ class ProfileResourceControllerV1Test : ControllerTestBase() {
 
     private fun assertRetrieveProfileIsExpected(prisonNumber: String) = assertReadOnlyApiReplyJson(get(PROFILE_ENDPOINT, prisonNumber))
       .also { result ->
-        readinessProfileToValue(result.response.contentAsString).let {
+        readinessProfileV1ToValue(result.response.contentAsString).let {
           assertEquals(createdBy, it.createdBy)
           assertEquals(prisonNumber, it.offenderId)
           assertEquals(bookingId, it.bookingId)
@@ -122,7 +122,7 @@ class ProfileResourceControllerV1Test : ControllerTestBase() {
       prisonNumbers: List<String>,
       expectedProfiles: List<ReadinessProfile>,
     ) = assertReadOnlyApiReplyJson(post(SEARCH_ENDPOINT), prisonNumbers.joinToJsonString()).also { result ->
-      readinessProfileToList(result.response.contentAsString).forEachIndexed { i, it ->
+      readinessProfileV1ToList(result.response.contentAsString).forEachIndexed { i, it ->
         with(expectedProfiles[i]) {
           assertEquals(createdBy, it.createdBy)
           assertEquals(offenderId, it.offenderId)

@@ -5,9 +5,9 @@ import java.time.Duration
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
-import java.time.ZoneOffset
 import java.util.concurrent.atomic.AtomicLong
 
+@Suppress("UNUSED")
 interface TestClock {
   val clock: Clock
   val instant: Instant get() = clock.instant()
@@ -17,6 +17,7 @@ interface TestClock {
 
   companion object {
     internal val defaultCurrentTime: Instant = Instant.parse("2025-01-01T00:00:00Z")
+    internal val defaultTimezoneId = ZoneId.of("Europe/London")
 
     fun defaultClock() = BasicTestClock.defaultClock()
     fun timeslotClock() = TimeslotClock.defaultClock()
@@ -27,6 +28,7 @@ interface TestClock {
     fun timeslotClock(startTime: Instant, timeslotLength: Duration, timezoneId: ZoneId) = TimeslotClock(startTime, timeslotLength, timezoneId)
   }
 
+  @Suppress("UNUSED")
   open class BasicTestClock(
     private val testClock: Clock,
     override val timezoneId: ZoneId,
@@ -41,12 +43,13 @@ interface TestClock {
     }
   }
 
-  class FixedTestClock(fixedInstant: Instant) : BasicTestClock(Clock.fixed(fixedInstant, ZoneOffset.UTC), ZoneOffset.UTC)
+  class FixedTestClock(fixedInstant: Instant) : BasicTestClock(Clock.fixed(fixedInstant, defaultTimezoneId), defaultTimezoneId)
 
+  @Suppress("UNUSED")
   class TimeslotClock(
     private val startTime: Instant,
     private val timeslotLength: Duration,
-    override val timezoneId: ZoneId = ZoneOffset.UTC,
+    override val timezoneId: ZoneId = defaultTimezoneId,
   ) : TestClock {
     private val baseClock: Clock get() = Clock.fixed(startTime, timezoneId)
 
@@ -59,11 +62,11 @@ interface TestClock {
 
       fun defaultClock() = incrementDailyCLock()
       fun incrementDailyCLock() = TimeslotClock(defaultCurrentTime, defaultDuration)
-      fun timeslotToClock(startTime: Instant, timeslotLength: Duration = defaultDuration, timezoneId: ZoneId = ZoneOffset.UTC) = TimeslotClock(startTime, timeslotLength, timezoneId)
+      fun timeslotToClock(startTime: Instant, timeslotLength: Duration = defaultDuration, timezoneId: ZoneId = defaultTimezoneId) = TimeslotClock(startTime, timeslotLength, timezoneId)
     }
 
-    fun timeslotToInstant(timeslot: Long) = startTime + timeslotLength.multipliedBy(timeslot)
-    fun timeslotToLocalDateTime(timeslot: Long) = timeslotToInstant(timeslot).atZone(timezoneId).toLocalDateTime()
+    fun timeslotToInstant(timeslot: Long): Instant = startTime + timeslotLength.multipliedBy(timeslot)
+    fun timeslotToLocalDateTime(timeslot: Long): LocalDateTime = timeslotToInstant(timeslot).atZone(timezoneId).toLocalDateTime()
 
     private fun timeslotToClock(timeslot: Long): Clock = Clock.offset(baseClock, timeslotLength.multipliedBy(timeslot))
   }

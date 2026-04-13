@@ -18,6 +18,7 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.integration.testcont
 import uk.gov.justice.digital.hmpps.subjectaccessrequest.SarIntegrationTestHelper
 import uk.gov.justice.digital.hmpps.subjectaccessrequest.SarIntegrationTestHelperConfig
 import uk.gov.justice.hmpps.test.kotlin.auth.JwtAuthorisationHelper
+import java.util.*
 
 const val DEFAULT_USER = "test-client"
 
@@ -40,6 +41,7 @@ abstract class IntegrationTestBase internal constructor() {
 
     private val postgresContainer = PostgresContainer.flywayContainer
 
+    @Suppress("UNUSED")
     @JvmStatic
     @DynamicPropertySource
     fun configureTestContainers(registry: DynamicPropertyRegistry) {
@@ -78,6 +80,8 @@ abstract class IntegrationTestBase internal constructor() {
 
   @BeforeAll
   internal fun beforeAll() {
+    // Set timezone to local for integration tests
+    TimeZone.setDefault(TimeZone.getTimeZone("Europe/London"))
     flyway.clean()
     flyway.migrate()
   }

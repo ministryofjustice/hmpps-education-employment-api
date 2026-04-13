@@ -26,10 +26,10 @@ data class ReadinessProfileDTO(
   @param:Schema(description = "Last modified date time", type = "string", pattern = "yyyy-MM-dd'T'HH:mm:ss", example = "2018-12-01T13:45:00", required = true)
   val modifiedDateTime: LocalDateTime,
 
-  @param:Schema(description = "Version of the JSON schema", example = "1.1.1")
+  @param:Schema(description = "Version of the JSON schema", example = "2.0")
   val schemaVersion: String,
 
-  @param:Schema(description = "Work readiness profile JSON data", example = "{...}")
+  @param:Schema(description = "Work readiness profile JSON data")
   val profileData: Profile,
 ) {
   constructor(profileEntity: ReadinessProfile) : this(
