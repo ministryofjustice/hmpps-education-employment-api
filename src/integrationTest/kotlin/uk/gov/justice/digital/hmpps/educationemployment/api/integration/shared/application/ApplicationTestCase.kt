@@ -56,9 +56,9 @@ abstract class ApplicationTestCase : IntegrationTestBase() {
     readinessProfileRepository.deleteAll()
     auditCleaner.deleteAllRevisions()
 
-    lenient().whenever(dateTimeProvider.now).thenAnswer { Optional.of(defaultCurrentTime) }
-    lenient().whenever(timeProvider.timeZoneId).thenAnswer { defaultTimezoneId }
-    lenient().whenever(timeProvider.now()).thenAnswer { defaultCurrentTimeLocal }
+    lenient().whenever(dateTimeProvider.now).thenReturn(Optional.of(defaultCurrentTime))
+    lenient().whenever(timeProvider.timeZoneId).thenReturn(defaultTimezoneId)
+    lenient().whenever(timeProvider.now()).thenReturn(defaultCurrentTimeLocal)
   }
 
   protected fun <RESP, REQ> assertRequest(
@@ -72,6 +72,7 @@ abstract class ApplicationTestCase : IntegrationTestBase() {
     assertThat(result.statusCode).isEqualTo(expectedStatus)
   }
 
+  @Suppress("SameParameterValue")
   protected fun <RESP, REQ> assertRequest(
     url: String,
     method: HttpMethod,
