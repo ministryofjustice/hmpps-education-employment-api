@@ -10,8 +10,8 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.S
 
 @Schema(name = "SARSupportDeclined", description = "Support declined of the SAR Readiness Profile")
 data class SupportDeclined(
-  val modifiedBy: String,
-  val modifiedDateTime: Instant,
+  val modifiedBy: String?,
+  val modifiedDateTime: Instant?,
 
   val supportToWorkDeclinedReason: List<SupportToWorkDeclinedReason>,
   val supportToWorkDeclinedReasonOther: String,
@@ -19,8 +19,8 @@ data class SupportDeclined(
   val circumstanceChangesRequiredToWorkOther: String,
 ) {
   constructor(entity: SupportDeclinedEntity, timeZoneId: ZoneId) : this(
-    modifiedBy = entity.modifiedBy!!,
-    modifiedDateTime = entity.modifiedDateTime!!.instantFromZone(timeZoneId),
+    modifiedBy = entity.modifiedBy,
+    modifiedDateTime = entity.modifiedDateTime?.instantFromZone(timeZoneId),
     supportToWorkDeclinedReason = entity.supportToWorkDeclinedReason.toList(),
     supportToWorkDeclinedReasonOther = entity.supportToWorkDeclinedReasonOther,
     circumstanceChangesRequiredToWork = entity.circumstanceChangesRequiredToWork.toList(),

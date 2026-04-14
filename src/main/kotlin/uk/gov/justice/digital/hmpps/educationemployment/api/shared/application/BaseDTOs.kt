@@ -5,10 +5,10 @@ import java.time.Instant
 import java.time.ZoneId
 
 interface ModificationAuditable {
-  @get:Schema(description = "Author of modification", example = "user4", required = true)
+  @get:Schema(description = "Author of modification", example = "user4")
   var modifiedBy: String?
 
-  @get:Schema(description = "Modified date and time", type = "string", format = "date-time", pattern = "yyyy-MM-dd'T'HH:mm:ssZ", example = "2018-12-01T13:45:00Z", required = true)
+  @get:Schema(description = "Modified date and time", type = "string", format = "date-time", pattern = "yyyy-MM-dd'T'HH:mm:ssZ", example = "2018-12-01T13:45:00Z")
   var modifiedDateTime: Instant?
 }
 
