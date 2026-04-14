@@ -24,14 +24,14 @@ const val NOTES_ENDPOINT = "/readiness-profiles/{id}/notes/{attribute}"
 
 @WebMvcTest(controllers = [ProfileNotesResourceController::class])
 @ContextConfiguration(classes = [ProfileNotesResourceController::class])
-class ProfileResourceControllerV1Test : ControllerTestBase() {
+class ProfileNotesResourceControllerTest : ControllerTestBase() {
   @MockitoBean
   private lateinit var noteService: ProfileNoteService
 
   @BeforeEach
   internal fun reset() {
     reset(noteService)
-    initMvcMock(ProfileNotesResourceController(noteService))
+    initMvcMock(ProfileNotesResourceController(noteService, timeProvider))
   }
 
   @Nested

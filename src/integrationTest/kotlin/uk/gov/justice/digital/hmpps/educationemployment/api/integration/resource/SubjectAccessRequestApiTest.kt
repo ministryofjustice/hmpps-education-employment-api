@@ -10,22 +10,22 @@ import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.v2.ReadinessProfileV2TestCase
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.application.ActionsRequiredDTO
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.application.SupportAcceptedDTO
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.application.SupportDeclinedDTO
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.application.WorkExperienceDTO
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.application.WorkImpactsDTO
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.application.WorkInterestsDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.AbilityToWorkImpactedBy
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.Action
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ActionStatus
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ActionTodo
-import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ActionsRequired
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.CircumstanceChangesRequiredToWork
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.IDocs
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ProfileStatus
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.QualificationsAndTraining
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.StatusChange
-import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.SupportAccepted
-import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.SupportDeclined
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.SupportToWorkDeclinedReason
-import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.WorkExperience
-import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.WorkImpacts
-import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.WorkInterests
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.WorkTypesOfInterest
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.v2.Profile
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v2.ReadinessProfileDTO
@@ -140,12 +140,12 @@ class SubjectAccessRequestApiTest {
 
     override fun getPrn(): String? = sarPrisonNumber
 
-    private fun makeSupportAccepted(): SupportAccepted = SupportAccepted(
+    private fun makeSupportAccepted(): SupportAcceptedDTO = SupportAcceptedDTO(
       modifiedBy = currentUser,
-      modifiedDateTime = sarCurrentTimeLocal,
-      actionsRequired = ActionsRequired(
+      modifiedDateTime = sarCurrentTime,
+      actionsRequired = ActionsRequiredDTO(
         modifiedBy = currentUser,
-        modifiedDateTime = sarCurrentTimeLocal,
+        modifiedDateTime = sarCurrentTime,
         actions = listOf(
           makeAction(ActionTodo.BANK_ACCOUNT),
           makeAction(ActionTodo.HOUSING),
@@ -161,9 +161,9 @@ class SubjectAccessRequestApiTest {
           ),
         ),
       ),
-      workImpacts = WorkImpacts(
+      workImpacts = WorkImpactsDTO(
         modifiedBy = currentUser,
-        modifiedDateTime = sarCurrentTimeLocal,
+        modifiedDateTime = sarCurrentTime,
         abilityToWorkImpactedBy = listOf(
           AbilityToWorkImpactedBy.MENTAL_HEALTH_ISSUES,
           AbilityToWorkImpactedBy.PHYSICAL_HEALTH_ISSUES,
@@ -172,9 +172,9 @@ class SubjectAccessRequestApiTest {
         ableToManageMentalHealth = true,
         ableToManageDependencies = false,
       ),
-      workInterests = WorkInterests(
+      workInterests = WorkInterestsDTO(
         modifiedBy = currentUser,
-        modifiedDateTime = sarCurrentTimeLocal,
+        modifiedDateTime = sarCurrentTime,
         workTypesOfInterest = listOf(
           WorkTypesOfInterest.CONSTRUCTION,
           WorkTypesOfInterest.MANUFACTURING,
@@ -183,9 +183,9 @@ class SubjectAccessRequestApiTest {
         workTypesOfInterestOther = "Some other work types of interest",
         jobOfParticularInterest = "A dummy job",
       ),
-      workExperience = WorkExperience(
+      workExperience = WorkExperienceDTO(
         modifiedBy = currentUser,
-        modifiedDateTime = sarCurrentTimeLocal,
+        modifiedDateTime = sarCurrentTime,
         previousWorkOrVolunteering = "Admin in a NGO",
         qualificationsAndTraining = listOf(
           QualificationsAndTraining.DRIVING_LICENSE,
@@ -197,9 +197,9 @@ class SubjectAccessRequestApiTest {
       ),
     )
 
-    private fun makeSupportDeclined(): SupportDeclined = SupportDeclined(
+    private fun makeSupportDeclined(): SupportDeclinedDTO = SupportDeclinedDTO(
       modifiedBy = currentUser,
-      modifiedDateTime = sarCurrentTimeLocal,
+      modifiedDateTime = sarCurrentTime,
       supportToWorkDeclinedReason = listOf(
         SupportToWorkDeclinedReason.HEALTH,
         SupportToWorkDeclinedReason.OTHER,

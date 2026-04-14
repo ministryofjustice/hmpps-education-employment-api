@@ -233,7 +233,6 @@ class ProfileV1ServiceTest : UnitTestBase() {
       expectedProfile = givenProfileWithSupportDeclinedTwiceInHistory()
       prisonNumber = expectedProfile.offenderId
       profile = parseProfileV1(expectedProfile.profileData)
-//      lenient().whenever(profileService.parseProfile(expectedProfile.profileData)).thenReturn(profile)
     }
 
     @Test

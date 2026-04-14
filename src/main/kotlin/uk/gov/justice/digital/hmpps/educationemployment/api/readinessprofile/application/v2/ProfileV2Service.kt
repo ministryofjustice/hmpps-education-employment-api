@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.AlreadyExistsException
 import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.InvalidStateException
 import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.NotFoundException
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.application.SupportAcceptedDTO
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.application.SupportDeclinedDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ProfileStatus
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.StatusChange
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.v2.Profile
@@ -16,6 +18,7 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.app
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.StatusChangeUpdateRequestDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ReadinessProfile
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ReadinessProfileRepository
+import uk.gov.justice.digital.hmpps.educationemployment.api.shared.application.EntityConvertible
 import uk.gov.justice.digital.hmpps.educationemployment.api.shared.domain.TimeProvider
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -30,7 +33,8 @@ class ProfileV2Service(
   private val readinessProfileRepository: ReadinessProfileRepository,
   private val timeProvider: TimeProvider,
   private val objectMapper: ObjectMapper,
-) : ProfileService<Profile, List<ReadinessProfile>> {
+) : ProfileService<Profile, List<ReadinessProfile>, StatusChangeUpdateRequestDTO> {
+  private val timeZoneId by lazy { timeProvider.timeZoneId }
   private val typeRefProfile by lazy { object : TypeReference<Profile>() {} }
 
   private val emptyJsonArray: JsonNode get() = objectMapper.readTree("[]")
@@ -227,7 +231,7 @@ class ProfileV2Service(
     statusChangeDate = currentTime
     statusChangeType = StatusChange.DECLINED_TO_ACCEPTED
     supportDeclined = null
-    supportAccepted = checkNotNull(statusChangeRequest.supportAccepted).apply {
+    supportAccepted = checkNotNull(statusChangeRequest.supportAccepted?.entity()).apply {
       modifiedBy = userId
       modifiedDateTime = currentTime
     }
@@ -243,7 +247,7 @@ class ProfileV2Service(
   ) = parseProfile(storedProfile.profileData).apply {
     statusChangeDate = currentTime
     statusChangeType = StatusChange.ACCEPTED_TO_DECLINED
-    supportDeclined = checkNotNull(statusChangeRequest.supportDeclined).apply {
+    supportDeclined = checkNotNull(statusChangeRequest.supportDeclined?.entity()).apply {
       modifiedBy = userId
       modifiedDateTime = currentTime
     }
@@ -257,7 +261,7 @@ class ProfileV2Service(
     storedProfile: ReadinessProfile,
     currentTime: LocalDateTime,
   ) {
-    val statusChangeRequest = StatusChangeUpdateRequestDTO(profile.supportAccepted!!, null, profile.status)
+    val statusChangeRequest = StatusChangeUpdateRequestDTO(SupportAcceptedDTO(profile.supportAccepted!!, timeZoneId), null, profile.status)
     transitToAcceptedForOffender(userId, offenderId, statusChangeRequest, storedProfile, currentTime)
       .also { setProfileValues(profile, it, currentTime) }
   }
@@ -269,7 +273,7 @@ class ProfileV2Service(
     storedProfile: ReadinessProfile,
     currentTime: LocalDateTime,
   ) {
-    val statusChangeRequest = StatusChangeUpdateRequestDTO(null, profile.supportDeclined!!, profile.status)
+    val statusChangeRequest = StatusChangeUpdateRequestDTO(null, SupportDeclinedDTO(profile.supportDeclined!!, timeZoneId), profile.status)
     transitToDeclinedForOffender(userId, offenderId, statusChangeRequest, storedProfile, currentTime)
       .also { setProfileValues(profile, it, currentTime) }
     checkDeclinedProfileStatus(profile, offenderId)
@@ -290,7 +294,7 @@ class ProfileV2Service(
     checkDeclinedProfileStatus(profile, offenderId)
   }
 
-  private fun parseProfile(profileData: JsonNode): Profile = objectMapper.treeToValue(profileData, typeRefProfile)
+  fun parseProfile(profileData: JsonNode): Profile = objectMapper.treeToValue(profileData, typeRefProfile)
 
   private fun List<ReadinessProfile>.migrateSchema() = map { it.migrateSchema() }.toList()
 
@@ -311,4 +315,5 @@ class ProfileV2Service(
   }
 
   private fun Profile.json(): JsonNode = objectMapper.valueToTree(this)
+  private fun <E> EntityConvertible<E>.entity() = entity(timeZoneId)
 }

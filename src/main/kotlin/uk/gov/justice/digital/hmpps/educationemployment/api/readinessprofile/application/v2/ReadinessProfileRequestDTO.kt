@@ -2,7 +2,7 @@ package uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.ap
 
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.Valid
-import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.v2.Profile
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.application.ProfileDTO
 
 data class ReadinessProfileRequestDTO(
 
@@ -11,5 +11,5 @@ data class ReadinessProfileRequestDTO(
 
   @param:Schema(description = "Work readiness profile JSON data")
   @param:Valid
-  val profileData: Profile,
+  val profileData: ProfileDTO,
 )

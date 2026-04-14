@@ -24,6 +24,8 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.A
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.NoteDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.NoteRequestDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.ProfileNoteService
+import uk.gov.justice.digital.hmpps.educationemployment.api.shared.domain.TimeProvider
+import java.time.ZoneId
 
 @Validated
 @RestController
@@ -31,7 +33,10 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.app
 @Tag(name = "Notes")
 class ProfileNotesResourceController(
   private val profileNoteService: ProfileNoteService,
+  timeProvider: TimeProvider,
 ) {
+  private val timeZoneId: ZoneId by lazy { timeProvider.timeZoneId }
+
   @PreAuthorize("hasRole('WORK_READINESS_EDIT')")
   @PostMapping("/{offenderId}/notes/{attribute}")
   @Operation(
@@ -76,7 +81,7 @@ class ProfileNotesResourceController(
     // TODO: validate the NoteRequestDTO - field length
 
     return profileNoteService.addProfileNoteForOffender(oauth2User.name, offenderId, attribute, requestDTO.text)
-      .map { note -> NoteDTO(note) }
+      .map { note -> NoteDTO(note, timeZoneId) }
   }
 
   @PreAuthorize("hasAnyRole('WORK_READINESS_VIEW','WORK_READINESS_EDIT')")
@@ -116,7 +121,7 @@ class ProfileNotesResourceController(
     @Schema(description = "attribute", example = "DISCLOSURE_LETTER", required = true)
     @PathVariable
     attribute: ActionTodo,
-  ): List<NoteDTO> = profileNoteService.getProfileNotesForOffender(offenderId, attribute).map { note -> NoteDTO(note) }
+  ): List<NoteDTO> = profileNoteService.getProfileNotesForOffender(offenderId, attribute).map { note -> NoteDTO(note, timeZoneId) }
 }
 
 private const val DESC_READ_WRITE_ROLE = "<b>WORK_READINESS_EDIT</b>"

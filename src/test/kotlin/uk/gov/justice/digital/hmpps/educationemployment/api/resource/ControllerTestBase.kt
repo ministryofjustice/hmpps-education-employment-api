@@ -4,7 +4,10 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Import
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
@@ -23,6 +26,7 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.audit.domain.AuditOb
 import uk.gov.justice.digital.hmpps.educationemployment.api.audit.domain.AuditObjects.testPrincipal
 import uk.gov.justice.digital.hmpps.educationemployment.api.config.ControllerAdvice
 import uk.gov.justice.digital.hmpps.educationemployment.api.config.DpsPrincipal
+import uk.gov.justice.digital.hmpps.educationemployment.api.shared.application.DefaultTimeProvider
 import uk.gov.justice.digital.hmpps.educationemployment.api.shared.application.UnitTestBase
 import uk.gov.justice.hmpps.test.kotlin.auth.JwtAuthorisationHelper
 import java.security.Principal
@@ -33,6 +37,7 @@ import java.security.Principal
 @WebAppConfiguration
 @EnableWebSecurity
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Import(ControllerTestConfig::class)
 abstract class ControllerTestBase : UnitTestBase() {
   @Autowired
   protected lateinit var mvc: MockMvc
@@ -109,4 +114,10 @@ abstract class ControllerTestBase : UnitTestBase() {
     requestBuilder: MockHttpServletRequestBuilder,
     resultMatcher: ResultMatcher = status().isOk,
   ) = mvc.perform(requestBuilder.accept(APPLICATION_JSON)).andExpect(resultMatcher)
+}
+
+@TestConfiguration
+class ControllerTestConfig {
+  @Bean
+  fun timeProvider() = DefaultTimeProvider()
 }

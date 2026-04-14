@@ -13,7 +13,6 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.P
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.StatusChange
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.v1.Profile
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.ProfileService
-import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.StatusChangeUpdateRequestDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ReadinessProfile
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ReadinessProfileRepository
 import uk.gov.justice.digital.hmpps.educationemployment.api.shared.domain.TimeProvider
@@ -30,7 +29,7 @@ class ProfileV1Service(
   private val readinessProfileRepository: ReadinessProfileRepository,
   private val timeProvider: TimeProvider,
   private val objectMapper: ObjectMapper,
-) : ProfileService<Profile, ReadinessProfile> {
+) : ProfileService<Profile, ReadinessProfile, StatusChangeUpdateRequestDTO> {
   private val typeRefProfile by lazy { object : TypeReference<Profile>() {} }
   private val emptyJsonArray: JsonNode get() = objectMapper.readTree("[]")
 

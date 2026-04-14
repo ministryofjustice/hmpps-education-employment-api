@@ -11,26 +11,22 @@ import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.isNull
 import org.mockito.kotlin.whenever
-import uk.gov.justice.digital.hmpps.educationemployment.api.config.CapturedSpringConfigValues
 import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.NotFoundException
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ProfileStatus
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.StatusChange
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v2.ProfileV2Service
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ReadinessProfile
 import uk.gov.justice.digital.hmpps.educationemployment.api.sardata.domain.v2.Profile
+import uk.gov.justice.digital.hmpps.educationemployment.api.shared.application.UnitTestBase
 import uk.gov.justice.hmpps.kotlin.sar.HmppsSubjectAccessRequestContent
-import java.time.LocalDateTime
 import uk.gov.justice.digital.hmpps.educationemployment.api.sardata.domain.v2.Profile as SARProfile
 
 @ExtendWith(MockitoExtension::class)
-class PrisonSubjectAccessRequestServiceTest {
-
-  private val objectMapper = CapturedSpringConfigValues.configObjectMapper()
-
+class PrisonSubjectAccessRequestServiceTest : UnitTestBase() {
   @Mock
   private lateinit var profileService: ProfileV2Service
 
-  private val sarService by lazy { PrisonSubjectAccessRequestService(profileService, objectMapper) }
+  private val sarService by lazy { PrisonSubjectAccessRequestService(profileService, objectMapper, timeProvider) }
 
   @AfterEach
   fun afterEach() {
@@ -39,15 +35,16 @@ class PrisonSubjectAccessRequestServiceTest {
 
   @Test
   fun `when we have prisoner data return it`() {
-    val currentTime = LocalDateTime.now()
+    val currentTimeInstant = timeProvider.nowAsInstant() // current instant
+    val currentTime = timeProvider.now() // current local time
     val userId = "TESTER"
 
     val sarContent = SARContentDTO(
       offenderId = "A1234BC",
       createdBy = userId,
-      createdDateTime = currentTime,
+      createdDateTime = currentTimeInstant,
       modifiedBy = userId,
-      modifiedDateTime = currentTime,
+      modifiedDateTime = currentTimeInstant,
       profileData = SARProfile(
         status = ProfileStatus.NO_RIGHT_TO_WORK,
         statusChange = false,

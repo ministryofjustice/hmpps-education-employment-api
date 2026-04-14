@@ -26,6 +26,8 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.app
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v2.ProfileV2Service
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v2.ReadinessProfileDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v2.ReadinessProfileRequestDTO
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ReadinessProfile
+import uk.gov.justice.digital.hmpps.educationemployment.api.shared.domain.TimeProvider
 import uk.gov.justice.digital.hmpps.educationemployment.api.shared.infrastructure.OffenderIdConstraint
 
 const val API_VERSION = "v2"
@@ -36,7 +38,10 @@ const val API_VERSION = "v2"
 @Tag(name = API_VERSION)
 class ProfileResourceController(
   private val profileService: ProfileV2Service,
+  timeProvider: TimeProvider,
 ) {
+  private val timeZoneId by lazy { timeProvider.timeZoneId }
+
   @PreAuthorize("hasAnyRole('WORK_READINESS_VIEW','WORK_READINESS_EDIT')")
   @PostMapping("/search")
   @Operation(
@@ -70,13 +75,7 @@ class ProfileResourceController(
     @RequestBody
     @OffenderIdConstraint(message = "Invalid Offender Id")
     offenderIds: List<@Valid String>,
-  ): List<ReadinessProfileDTO> {
-    val profiles = ArrayList<ReadinessProfileDTO>()
-    profileService.getProfilesForOffenders(offenderIds).forEach {
-      profiles.add(ReadinessProfileDTO(it))
-    }
-    return profiles
-  }
+  ): List<ReadinessProfileDTO> = profileService.getProfilesForOffenders(offenderIds).toDTO()
 
   @PreAuthorize("hasRole('WORK_READINESS_EDIT')")
   @PostMapping("/{offenderId}")
@@ -115,14 +114,12 @@ class ProfileResourceController(
     @RequestBody
     requestDTO: ReadinessProfileRequestDTO,
     @AuthenticationPrincipal oauth2User: DpsPrincipal,
-  ): ReadinessProfileDTO = ReadinessProfileDTO(
-    profileService.createProfileForOffender(
-      oauth2User.name,
-      offenderId,
-      requestDTO.bookingId,
-      requestDTO.profileData,
-    ),
-  )
+  ): ReadinessProfileDTO = profileService.createProfileForOffender(
+    oauth2User.name,
+    offenderId,
+    requestDTO.bookingId,
+    requestDTO.profileData.entity(timeZoneId),
+  ).toDTO()
 
   @PreAuthorize("hasRole('WORK_READINESS_EDIT')")
   @PutMapping("/{offenderId}")
@@ -163,14 +160,12 @@ class ProfileResourceController(
     @Parameter
     requestDTO: ReadinessProfileRequestDTO,
     @AuthenticationPrincipal oauth2User: DpsPrincipal,
-  ): ReadinessProfileDTO = ReadinessProfileDTO(
-    profileService.updateProfileForOffender(
-      oauth2User.name,
-      offenderId,
-      requestDTO.bookingId,
-      requestDTO.profileData,
-    ),
-  )
+  ): ReadinessProfileDTO = profileService.updateProfileForOffender(
+    oauth2User.name,
+    offenderId,
+    requestDTO.bookingId,
+    requestDTO.profileData.entity(timeZoneId),
+  ).toDTO()
 
   @PreAuthorize("hasRole('WORK_READINESS_EDIT')")
   @PutMapping("/status-change/{offenderId}")
@@ -211,13 +206,11 @@ class ProfileResourceController(
     @Parameter
     statusChangeUpdateRequestDTO: StatusChangeUpdateRequestDTO,
     @AuthenticationPrincipal oauth2User: DpsPrincipal,
-  ): ReadinessProfileDTO = ReadinessProfileDTO(
-    profileService.changeStatusForOffender(
-      oauth2User.name,
-      offenderId,
-      statusChangeUpdateRequestDTO,
-    ),
-  )
+  ): ReadinessProfileDTO = profileService.changeStatusForOffender(
+    oauth2User.name,
+    offenderId,
+    statusChangeUpdateRequestDTO,
+  ).toDTO()
 
   @PreAuthorize("hasAnyRole('WORK_READINESS_VIEW','WORK_READINESS_EDIT')")
   @GetMapping("/{offenderId}")
@@ -254,7 +247,10 @@ class ProfileResourceController(
     @Pattern(regexp = "^[A-Z]\\d{4}[A-Z]{2}\$")
     @PathVariable
     offenderId: String,
-  ): ReadinessProfileDTO = ReadinessProfileDTO(profileService.getProfileForOffender(offenderId))
+  ): ReadinessProfileDTO = profileService.getProfileForOffender(offenderId).toDTO()
+
+  fun List<ReadinessProfile>.toDTO() = map { it.toDTO() }
+  fun ReadinessProfile.toDTO() = ReadinessProfileDTO(this, profileService.parseProfile(profileData), timeZoneId)
 }
 
 private const val DESC_READ_WRITE_ROLE = "<b>WORK_READINESS_EDIT</b>"
