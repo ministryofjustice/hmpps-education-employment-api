@@ -53,7 +53,6 @@ BUILD_NUMBER=1_0_0 ./gradlew clean assemble && cp ./build/libs/*.jar .
 BUILD_NUMBER=1_0_0 docker build --build-arg BUILD_NUMBER=$BUILD_NUMBER . -t "hmpps-education-employment-api:local"
 ```
 ### Run a local docker image
-Set these in your env file (with actual OS API key)
 * In `.env.docker`
     ```dotenv
     SPRING_PROFILES_ACTIVE=developer
