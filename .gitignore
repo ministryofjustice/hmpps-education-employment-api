@@ -74,3 +74,5 @@ sonar-project.properties
 
 #ds store
 **/.DS_store
+
+/.env*

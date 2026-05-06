@@ -25,7 +25,7 @@ docker compose up --scale hmpps-education-employment-api=0 -d
 
 - else to run the application in docker also:
 ```shell
-docker compose up
+SPRING_PROFILES_ACTIVE=local docker compose up -d
 ```
 
 to run service with gradle
@@ -33,11 +33,40 @@ to run service with gradle
   - with IntelliJ IDEA: `spring.profiles.active=local`
 - run via command line: <br> 
   - ```shell
-    SPRING_PROFILES_ACTIVE= local ./gradlew bootRun
+    SPRING_PROFILES_ACTIVE=local ./gradlew bootRun
     ```
   - ```shell
     gradle bootRun --args='--spring.profiles.active=local'
     ```
+
+## Run docker image on local
+
+### Build a local docker image
+1. Build the app jar
+2. Copy jar to project root
+3. Build docker image
+
+```shell
+BUILD_NUMBER=1_0_0 ./gradlew clean assemble && cp ./build/libs/*.jar .
+```
+```shell
+BUILD_NUMBER=1_0_0 docker build --build-arg BUILD_NUMBER=$BUILD_NUMBER . -t "hmpps-education-employment-api:local"
+```
+### Run a local docker image
+Set these in your env file (with actual OS API key)
+* In `.env.docker`
+    ```dotenv
+    SPRING_PROFILES_ACTIVE=developer
+    PRODUCT_ID=DPS034
+    # `host.docker.internal` (instead of `localhost`) for connecting the image to local DB of host 
+    DATABASE_ENDPOINT=host.docker.internal:5432
+    HMPPS_SAR_ADDITIONALACCESSROLE=WORK_READINESS_VIEW
+    ```
+
+then run this
+```shell
+docker run --name hmpps-education-employment-api-app --env-file .env.docker -p 8080:8080 -d "hmpps-education-employment-api:local"
+```
 
 ## Purpose
 

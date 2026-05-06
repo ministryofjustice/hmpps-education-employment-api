@@ -14,4 +14,5 @@ jobs:
     with:
       nvd_feed_version: '2'
       channel_id: ${{ vars.SECURITY_ALERTS_SLACK_CHANNEL_ID || 'NO_SLACK' }}
+      java_version: '25'
     secrets: inherit
