@@ -25,7 +25,7 @@ docker compose up --scale hmpps-education-employment-api=0 -d
 
 - else to run the application in docker also:
 ```shell
-SPRING_PROFILES_ACTIVE=local docker compose up -d
+docker compose up -d
 ```
 
 to run service with gradle
