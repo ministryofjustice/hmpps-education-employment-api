@@ -10,6 +10,8 @@ class NotFoundException(var offenderId: String) :
   override fun get(): Throwable = throw NotFoundException(offenderId)
 }
 
+class ReadinessProfileGetNotFoundException(offenderId: String) : Exception("Readiness profile does not exist for offender $offenderId")
+
 class InvalidStateException(var offenderId: String) :
   Exception("Readiness profile is in an invalid state for  $offenderId"),
   Supplier<Throwable> {

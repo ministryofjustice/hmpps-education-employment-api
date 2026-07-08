@@ -20,6 +20,7 @@ import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.AlreadyEx
 import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.CustomValidationException
 import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.DeprecatedApiException
 import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.NotFoundException
+import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.ReadinessProfileGetNotFoundException
 import java.util.*
 
 @RestControllerAdvice
@@ -166,6 +167,12 @@ class ControllerAdvice {
   fun handleNotFoundException(e: NotFoundException): ResponseEntity<ErrorResponse> {
     log.info("NotFoundException: ${e.message}", e)
     return makeErrorResponse(e)
+  }
+
+  @ExceptionHandler(ReadinessProfileGetNotFoundException::class)
+  fun handleResponseStatusException(e: ReadinessProfileGetNotFoundException): ResponseEntity<ErrorResponse> {
+    log.info("ReadinessProfileGetNotFoundException: ${e.message}", e)
+    return makeErrorResponse(e, HttpStatus.NOT_FOUND)
   }
 
   @ExceptionHandler(AlreadyExistsException::class)

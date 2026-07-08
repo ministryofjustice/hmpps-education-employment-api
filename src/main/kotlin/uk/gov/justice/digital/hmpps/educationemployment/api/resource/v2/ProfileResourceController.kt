@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.educationemployment.api.config.DpsPrincipal
 import uk.gov.justice.digital.hmpps.educationemployment.api.config.ErrorResponse
+import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.NotFoundException
+import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.ReadinessProfileGetNotFoundException
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.StatusChangeUpdateRequestDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v2.ProfileV2Service
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v2.ReadinessProfileDTO
@@ -239,6 +241,11 @@ class ProfileResourceController(
         description = "Incorrect permissions to access this endpoint",
         content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
       ),
+      ApiResponse(
+        responseCode = "404",
+        description = "Readiness profile does not exist for offender",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
     ],
   )
   fun getOffenderProfile(
@@ -247,7 +254,11 @@ class ProfileResourceController(
     @Pattern(regexp = "^[A-Z]\\d{4}[A-Z]{2}\$")
     @PathVariable
     offenderId: String,
-  ): ReadinessProfileDTO = profileService.getProfileForOffender(offenderId).toDTO()
+  ): ReadinessProfileDTO = try {
+    profileService.getProfileForOffender(offenderId).toDTO()
+  } catch (_: NotFoundException) {
+    throw ReadinessProfileGetNotFoundException(offenderId)
+  }
 
   fun List<ReadinessProfile>.toDTO() = map { it.toDTO() }
   fun ReadinessProfile.toDTO() = ReadinessProfileDTO(this, profileService.parseProfile(profileData), timeZoneId)
