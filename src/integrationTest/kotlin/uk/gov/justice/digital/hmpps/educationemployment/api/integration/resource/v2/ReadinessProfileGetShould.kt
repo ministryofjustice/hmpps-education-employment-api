@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.springframework.http.HttpStatus
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v2.ReadinessProfileDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.createProfileJsonRequest
@@ -21,7 +22,7 @@ class ReadinessProfileGetShould : ReadinessProfileV2TestCase() {
     fun `return error when retrieve non-existing profile`() {
       val prisonNumber = unknownPrisonNumber
       val expectedError = "Readiness profile does not exist for offender $prisonNumber"
-      assertGetReadinessProfileFailed(prisonNumber, expectedUserMessage = expectedError)
+      assertGetReadinessProfileFailed(prisonNumber, expectedUserMessage = expectedError, expectedStatus = HttpStatus.NOT_FOUND)
     }
   }
 
