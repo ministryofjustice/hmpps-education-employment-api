@@ -1,8 +1,8 @@
 version: "3"
 services:
   hmpps-education-employment-api:
-    build:
-      context: .
+    image: ghcr.io/ministryofjustice/hmpps-education-employment-api:latest
+    profiles: [ api ]
     networks:
       - hmpps
     container_name: hmpps-education-employment-api
