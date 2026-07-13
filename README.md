@@ -10,34 +10,48 @@
 
 # Instructions
 
+## Running the application locally
+This backend application depends on several services to run.
 
-## Running locally
+| Dependency    | Description                                              | Default                              | Override Env Var                                                                  |
+|---------------|----------------------------------------------------------|--------------------------------------|-----------------------------------------------------------------------------------|
+| hmpps-auth    | OAuth2 API server for authenticating requests            |                                      | `API_BASE_URL_OAUTH`                                                              |
+| Database      | Database server (`postgres` on local, `RDS` on live env) |                                      | `DATABASE_NAME`, `DATABASE_ENDPOINT`, `DATABASE_USERNAME` and `DATABASE_PASSWORD` |
 
-The service has no external service dependencies currently other than HMPPS Auth and Postgres. The service will in the fullness of time send SQS audit events but does not currentlty do so. 
 
-To run the service locally with Docker, it is assumed that the developer will wish to use HMPPS Auth dev instance, Postgres in docker, for which docker compose can be used:
+---
+### Running with docker compose
+The easiest way to run the app is to use docker compose to create the service and all dependencies.
+1. Run
+   ```shell
+   docker compose --profile api up
+   ```
+   will run the application (from latest image) and PostgreSQL within a local docker instance.
+2. Check if application is up and running
+    * See `http://localhost:8080/health` to check the app is running.
+    * See `http://localhost:8080/swagger-ui/index.html` to explore the OpenAPI spec document.
+    * See `http://localhost:8080/info` to check the app info
 
-- to run this application independently e.g. in IntelliJ:
-
-```shell
-docker compose up --scale hmpps-education-employment-api=0 -d
-```
-
-- else to run the application in docker also:
-```shell
-docker compose up -d
-```
-
-to run service with gradle
-- gradle bootRun with these environment variables: 
-  - with IntelliJ IDEA: `spring.profiles.active=local`
-- run via command line: <br> 
-  - ```shell
-    SPRING_PROFILES_ACTIVE=local ./gradlew bootRun
+---
+### Running the application in IntelliJ
+1. Run this
+    ```shell
+   docker compose up -d 
     ```
-  - ```shell
-    gradle bootRun --args='--spring.profiles.active=local'
-    ```
+    * will start dependencies only without the API application
+    * `-d` for detached run
+2. Run `bootRun` with `local` profile group
+    * either IntelliJ
+        - run `bootRun`
+        - with this env var: `spring.profiles.active=local`
+    * or Gradle wrapper
+      ```shell
+      SPRING_PROFILES_ACTIVE=local ./gradlew bootRun
+      ```
+      or
+      ```shell
+      ./gradlew bootRun --args='--spring.profiles.active=local'
+      ```    
 
 ## Run docker image on local
 
@@ -53,18 +67,18 @@ BUILD_NUMBER=1_0_0 ./gradlew clean assemble && cp ./build/libs/*.jar .
 BUILD_NUMBER=1_0_0 docker build --build-arg BUILD_NUMBER=$BUILD_NUMBER . -t "hmpps-education-employment-api:local"
 ```
 ### Run a local docker image
-* In `.env.docker`
-    ```dotenv
-    SPRING_PROFILES_ACTIVE=developer
-    PRODUCT_ID=DPS034
-    # `host.docker.internal` (instead of `localhost`) for connecting the image to local DB of host 
-    DATABASE_ENDPOINT=host.docker.internal:5432
-    HMPPS_SAR_ADDITIONALACCESSROLE=WORK_READINESS_VIEW
-    ```
+* In `.env.docker.local`
+```dotenv
+SPRING_PROFILES_ACTIVE=developer
+PRODUCT_ID=DPS034
+# `host.docker.internal` (instead of `localhost`) for connecting the image to local DB of host 
+DATABASE_ENDPOINT=host.docker.internal:5432
+HMPPS_SAR_ADDITIONALACCESSROLE=WORK_READINESS_VIEW
+```
 
 then run this
 ```shell
-docker run --name hmpps-education-employment-api-app --env-file .env.docker -p 8080:8080 -d "hmpps-education-employment-api:local"
+docker run --name hmpps-education-employment-api-app --env-file .env.docker.local -p 8080:8080 -d "hmpps-education-employment-api:local"
 ```
 
 ## Purpose
