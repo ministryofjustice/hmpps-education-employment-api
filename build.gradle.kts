@@ -7,6 +7,7 @@ plugins {
 
 ext["postgresql.version"] = "42.7.12"
 ext["jackson-2-bom.version"] = "2.21.5"
+ext["jackson-bom.version"] = "3.1.5"
 ext["log4j2.version"] = "2.25.5"
 ext["tomcat.version"] = "11.0.24"
 
