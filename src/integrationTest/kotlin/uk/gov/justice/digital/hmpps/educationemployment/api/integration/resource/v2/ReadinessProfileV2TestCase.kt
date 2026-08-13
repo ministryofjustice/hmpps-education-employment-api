@@ -9,6 +9,7 @@ import org.springframework.core.ParameterizedTypeReference
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.helpers.ProfileV1Helper
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.READINESS_PROFILE_ENDPOINT
 import uk.gov.justice.digital.hmpps.educationemployment.api.integration.resource.ReadinessProfileTestCase
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.application.ProfileDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.application.SupportAcceptedDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.application.SupportDeclinedDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ProfileStatus
@@ -57,6 +58,8 @@ abstract class ReadinessProfileV2TestCase :
 
   protected fun parseProfileV1(profileData: JsonNode): ProfileV1 = objectMapper.treeToValue(profileData, typeRefProfileV1)
   protected fun parseProfileV1RequestDTO(profileJson: String) = objectMapper.readValue(profileJson, typeRefRequestV1)
+
+  protected fun Profile.toUpdateRequest(bookingId: Long) = ReadinessProfileRequestDTO(bookingId, ProfileDTO(this, defaultTimezoneId))
 
   protected fun Profile.statusChangeRequestToAccepted(newStatus: ProfileStatus = ProfileStatus.SUPPORT_NEEDED) = StatusChangeUpdateRequestDTO(
     supportAccepted?.let { SupportAcceptedDTO(it, defaultTimezoneId) },
