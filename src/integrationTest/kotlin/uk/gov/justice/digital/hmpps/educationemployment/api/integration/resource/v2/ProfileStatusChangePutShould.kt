@@ -16,17 +16,19 @@ class ProfileStatusChangePutShould : ReadinessProfileV2TestCase() {
 
   private val createProfileRequest = ProfileObjects.createProfileJsonRequest
 
+  private val apiDeprecatedError = "Gone: This API is no longer supported"
+
   @Nested
   inner class GivenNoProfileExist {
     private val prisonNumber = unknownPrisonNumber
     private val profile = profileOfUnknownPrisoner
 
     @Test
-    fun `NOT change status of non-existing readiness profile, and return error`() {
-      val expectedError = "Readiness profile does not exist for offender $prisonNumber"
+    fun `NOT change status of non-existing readiness profile, and return API deprecated error`() {
+      val expectedError = apiDeprecatedError
       val request = parseProfile(profile.profileData).statusChangeRequestToAccepted()
 
-      val result = assertChangeStatusFailed(prisonNumber, request)
+      val result = assertChangeStatusIsDeprecated(prisonNumber, request)
 
       assertErrorMessageIsExpected(result, expectedUserMessage = expectedError)
     }
@@ -44,19 +46,22 @@ class ProfileStatusChangePutShould : ReadinessProfileV2TestCase() {
     }
 
     @Test
-    fun `update status of readiness profile`() {
+    fun `NOT update status of existing readiness profile, and return API deprecated error`() {
+      val expectedError = apiDeprecatedError
       val request = parseProfile(profile.profileData).statusChangeRequestToDeclined()
 
-      assertChangeStatusIsOk(prisonNumber, request)
+      val result = assertChangeStatusIsDeprecated(prisonNumber, request)
+
+      assertErrorMessageIsExpected(result, expectedUserMessage = expectedError)
     }
 
     @Test
-    fun `NOT update status of another readiness profile, that is new and yet exist`() {
+    fun `NOT update status of non-existent readiness profile, and return API deprecated error`() {
       val thisPrisonNumber = anotherPrisonNumber
-      val expectedError = "Readiness profile does not exist for offender $thisPrisonNumber"
+      val expectedError = apiDeprecatedError
       val request = parseProfile(anotherProfile.profileData).statusChangeRequestToDeclined()
 
-      val result = assertChangeStatusFailed(thisPrisonNumber, request)
+      val result = assertChangeStatusIsDeprecated(thisPrisonNumber, request)
 
       assertErrorMessageIsExpected(result, expectedUserMessage = expectedError)
     }

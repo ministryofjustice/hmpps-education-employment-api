@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.educationemployment.api.config.DpsPrincipal
 import uk.gov.justice.digital.hmpps.educationemployment.api.config.ErrorResponse
+import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.DeprecatedApiException
 import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.NotFoundException
 import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.ReadinessProfileGetNotFoundException
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.StatusChangeUpdateRequestDTO
@@ -169,10 +170,12 @@ class ProfileResourceController(
     requestDTO.profileData.entity(timeZoneId),
   ).toDTO()
 
+  @Deprecated(message = "Deprecated", level = DeprecationLevel.WARNING, replaceWith = ReplaceWith("updateOffenderProfile(offenderId, requestDTO, oauth2User)"))
   @PreAuthorize("hasRole('WORK_READINESS_EDIT')")
   @PutMapping("/status-change/{offenderId}")
   @Tag(name = API_VERSION)
   @Operation(
+    deprecated = true,
     summary = "Update the work readiness profile for an offender",
     description = "Called to modify an offenders work readiness profile. Currently requires role $DESC_READ_WRITE_ROLE",
     responses = [
@@ -196,6 +199,11 @@ class ProfileResourceController(
         description = "Incorrect permissions to access this endpoint",
         content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
       ),
+      ApiResponse(
+        responseCode = "410",
+        description = "Gone - The API has been deprecated.",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
     ],
   )
   fun changeStatusOfOffender(
@@ -208,11 +216,7 @@ class ProfileResourceController(
     @Parameter
     statusChangeUpdateRequestDTO: StatusChangeUpdateRequestDTO,
     @AuthenticationPrincipal oauth2User: DpsPrincipal,
-  ): ReadinessProfileDTO = profileService.changeStatusForOffender(
-    oauth2User.name,
-    offenderId,
-    statusChangeUpdateRequestDTO,
-  ).toDTO()
+  ): ReadinessProfileDTO = throw DeprecatedApiException()
 
   @PreAuthorize("hasAnyRole('WORK_READINESS_VIEW','WORK_READINESS_EDIT')")
   @GetMapping("/{offenderId}")
