@@ -102,10 +102,13 @@ class MetricsWorkStatusGetShould : MetricsWorkStatusTestCase() {
     @BeforeEach
     fun setUp() {
       givenMoreProfilesFromMultiplePrisons()
-      // change one profile status (NO_RIGHT_TO_WORK -> SUPPORT_DECLINED)
+      // change one profile status (NO_RIGHT_TO_WORK -> SUPPORT_DECLINED), using Update-Profile API
       ProfileObjects.profileOfKnownPrisoner.let {
-        val statusChangeRequest = objectMapper.treeToValue(it.profileData, Profile::class.java).statusChangeRequestToDeclined()
-        assertChangeStatusIsOk(it.offenderId, statusChangeRequest)
+        val updateProfileRequest = objectMapper.treeToValue(it.profileData, Profile::class.java)
+          .apply { status = SUPPORT_DECLINED }
+          .toUpdateRequest(it.bookingId)
+
+        assertUpdateReadinessProfileIsOk(it.offenderId, updateProfileRequest)
       }
     }
 
