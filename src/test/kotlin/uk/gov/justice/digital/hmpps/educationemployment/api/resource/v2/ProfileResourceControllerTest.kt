@@ -9,17 +9,21 @@ import org.mockito.Mockito.reset
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.isA
+import org.mockito.kotlin.never
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.bean.override.mockito.MockitoBean
+import org.springframework.test.web.servlet.ResultMatcher
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.v2.Profile
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.StatusChangeUpdateRequestDTO
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.application.v2.ProfileV2Service
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.V2Profiles
@@ -34,6 +38,7 @@ import kotlin.test.assertEquals
 private const val READINESS_PROFILES_PATH = "/readiness-profiles"
 const val SEARCH_ENDPOINT = "$READINESS_PROFILES_PATH/search"
 const val PROFILE_ENDPOINT = "$READINESS_PROFILES_PATH/{id}"
+const val STATUS_CHANGE_ENDPOINT = "$READINESS_PROFILES_PATH/status-change/{id}"
 
 @WebMvcTest(controllers = [ProfileResourceController::class])
 @ContextConfiguration(classes = [ProfileResourceController::class])
@@ -84,6 +89,13 @@ class ProfileResourceControllerTest : ControllerTestBase() {
       assertRetrieveProfileIsExpected(prisonNumber)
     }
 
+    @Test
+    fun `Test Change-profile-status is deprecated`() {
+      whenever(profileService.changeStatusForOffender(any(), any(), any())).thenReturn(readinessProfile)
+
+      assertChangeProfileStatusIsDeprecated(prisonNumber)
+    }
+
     private fun assertCreateProfileIsExpected(prisonNumber: String, requestJson: String) = assertCreateOrUpdateProfileIsExpected(
       post(PROFILE_ENDPOINT, prisonNumber),
       requestJson,
@@ -113,6 +125,19 @@ class ProfileResourceControllerTest : ControllerTestBase() {
 
         verify(profileService, times(1)).getProfileForOffender(any())
       }
+
+    private fun assertChangeProfileStatusIsDeprecated(
+      prisonNumber: String,
+      requestJson: String = """
+        {
+          "supportAccepted": null, 
+          "supportDeclined": null,
+          "status": "NO_RIGHT_TO_WORK"
+        }
+      """.trimIndent(),
+      resultMatcher: ResultMatcher = status().isGone,
+    ) = assertReadWriteApiReplyJson(put(STATUS_CHANGE_ENDPOINT, prisonNumber), requestJson, resultMatcher)
+      .also { verify(profileService, never()).changeStatusForOffender(any(), any(), isA<StatusChangeUpdateRequestDTO>()) }
   }
 
   @Nested

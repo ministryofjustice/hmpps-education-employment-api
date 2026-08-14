@@ -77,8 +77,7 @@ abstract class ReadinessProfileTestCase<RP, REQ>(
     HttpStatus.OK,
   )
 
-  protected fun assertChangeStatusIsOk(prisonNumber: String, request: StatusChangeUpdateRequestDTO) = assertChangeStatusIsExpected(prisonNumber, request, responseType, HttpStatus.OK)
-  protected fun assertChangeStatusFailed(prisonNumber: String, request: StatusChangeUpdateRequestDTO) = assertChangeStatusIsExpected(prisonNumber, request, errorResponseType, HttpStatus.BAD_REQUEST)
+  protected fun assertChangeStatusIsDeprecated(prisonNumber: String, request: StatusChangeUpdateRequestDTO) = assertChangeStatusIsExpected(prisonNumber, request, errorResponseType, HttpStatus.GONE)
   private fun <R> assertChangeStatusIsExpected(
     prisonNumber: String,
     request: StatusChangeUpdateRequestDTO,
