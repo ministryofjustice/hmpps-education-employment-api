@@ -82,8 +82,6 @@ spring:
     error:
       include-message: always
 
-springdoc.swagger-ui.version: 5.32.11
-
 server:
   port: 8080
   servlet:
