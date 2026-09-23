@@ -89,21 +89,14 @@ class ProfileV2Service(
     val storedCoreProfile: Profile = parseProfile(profileToUpdate.profileData)
     val currentTime = timeProvider.now()
 
-    val hadExistingAccepted = storedCoreProfile.supportAccepted != null
-    val hadExistingDeclined = storedCoreProfile.supportDeclined != null
-    val hasIncomingAccepted = profile.supportAccepted != null
-    val isNoRightToWork = storedCoreProfile.status == ProfileStatus.NO_RIGHT_TO_WORK
-    val isNewAcceptedSupport = !hadExistingAccepted && !hadExistingDeclined && hasIncomingAccepted && isNoRightToWork
-
     when {
-      isNewAcceptedSupport -> {
-        // for profile with no existing supportAccepted status (NO_RIGHT_TO_WORK), if incoming profile has supportAccepted, we will update the profile to reflect that change
-        updateProfileAcceptStatusChange(profile, userId, offenderId, profileToUpdate, currentTime)
-      }
-
       storedCoreProfile.supportAccepted == null && storedCoreProfile.supportDeclined == null ->
         if (profile.supportAccepted != null && profile.supportDeclined != null) {
           throw InvalidStateException(offenderId)
+        } else if (profile.supportAccepted != null) {
+          updateProfileAcceptStatusChange(profile, userId, offenderId, profileToUpdate, currentTime)
+        } else if (profile.supportDeclined != null) {
+          updateDeclinedStatusList(profile, userId, offenderId, currentTime)
         }
 
       storedCoreProfile.supportAccepted != null && profile.supportAccepted != null ->
