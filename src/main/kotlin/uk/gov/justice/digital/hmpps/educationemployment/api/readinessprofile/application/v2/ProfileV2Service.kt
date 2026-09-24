@@ -94,19 +94,21 @@ class ProfileV2Service(
         if (profile.supportAccepted != null && profile.supportDeclined != null) {
           throw InvalidStateException(offenderId)
         } else if (profile.supportAccepted != null) {
-          updateProfileAcceptStatusChange(profile, userId, offenderId, profileToUpdate, currentTime)
+          createOrUpdateAcceptedStatusList(profile, userId, currentTime)
+          profile.statusChangeType ?: run { profile.statusChangeType = StatusChange.NEW }
         } else if (profile.supportDeclined != null) {
-          updateDeclinedStatusList(profile, userId, offenderId, currentTime)
+          createOrUpdateDeclinedStatusList(profile, userId, offenderId, currentTime)
+          profile.statusChangeType ?: run { profile.statusChangeType = StatusChange.NEW }
         }
 
       storedCoreProfile.supportAccepted != null && profile.supportAccepted != null ->
         if (profile.supportAccepted != storedCoreProfile.supportAccepted) {
-          updateAcceptedStatusList(profile, userId, currentTime)
+          createOrUpdateAcceptedStatusList(profile, userId, currentTime)
         }
 
       storedCoreProfile.supportDeclined != null && profile.supportDeclined != null ->
         if (profile.supportDeclined != storedCoreProfile.supportDeclined) {
-          updateDeclinedStatusList(profile, userId, offenderId, currentTime)
+          createOrUpdateDeclinedStatusList(profile, userId, offenderId, currentTime)
         }
 
       storedCoreProfile.supportAccepted != null && profile.supportDeclined != null ->
@@ -283,14 +285,14 @@ class ProfileV2Service(
     checkDeclinedProfileStatus(profile, offenderId)
   }
 
-  private fun updateAcceptedStatusList(profile: Profile, userId: String, currentTime: LocalDateTime) {
+  private fun createOrUpdateAcceptedStatusList(profile: Profile, userId: String, currentTime: LocalDateTime) {
     profile.supportAccepted?.apply {
       modifiedBy = userId
       modifiedDateTime = currentTime
     }
   }
 
-  private fun updateDeclinedStatusList(profile: Profile, userId: String, offenderId: String, currentTime: LocalDateTime) {
+  private fun createOrUpdateDeclinedStatusList(profile: Profile, userId: String, offenderId: String, currentTime: LocalDateTime) {
     profile.supportDeclined?.apply {
       modifiedBy = userId
       modifiedDateTime = currentTime

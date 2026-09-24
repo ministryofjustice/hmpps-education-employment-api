@@ -779,6 +779,9 @@ class ProfileV2ServiceTest : UnitTestBase() {
         assertThat(it.supportAccepted!!.modifiedBy).isEqualTo(userId)
         assertThat(it.supportAccepted!!.modifiedDateTime).isEqualTo(defaultCurrentLocalTime)
         assertThat(it.supportDeclined).isNull()
+        assertThat(it.statusChange).isTrue
+        assertThat(it.statusChangeType).isEqualTo(StatusChange.NEW)
+        assertThat(it.statusChangeDate).isEqualTo(defaultCurrentLocalTime)
       }
     }
 
@@ -797,6 +800,9 @@ class ProfileV2ServiceTest : UnitTestBase() {
         assertThat(it.supportDeclined!!.modifiedBy).isEqualTo(userId)
         assertThat(it.supportDeclined!!.modifiedDateTime).isEqualTo(defaultCurrentLocalTime)
         assertThat(it.supportAccepted).isNull()
+        assertThat(it.statusChange).isTrue
+        assertThat(it.statusChangeType).isEqualTo(StatusChange.NEW)
+        assertThat(it.statusChangeDate).isEqualTo(defaultCurrentLocalTime)
       }
     }
   }
