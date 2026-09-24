@@ -191,6 +191,12 @@ object ProfileObjects {
       supportDeclined = supportDeclined,
     )
 
+    val profileNoRightToWork1: Profile = makeProfile(
+      status = profileStatusNoRightToWork,
+      supportDeclined = null,
+      supportAccepted = null,
+    )
+
     val profileDeclinedModified = makeProfile(
       status = profileStatusNoRightToWork,
       supportDeclined = supportDeclinedModified,
@@ -227,6 +233,20 @@ object ProfileObjects {
     val profileNoRightToWorkAndModified = makeProfile(
       status = profileStatusNoRightToWork,
       supportDeclined = supportDeclinedModified,
+      statusChangeType = null,
+    )
+
+    val profileNoRightToWorkAndDeclined = makeProfile(
+      status = profileStatusSupportDeclined,
+      supportDeclined = supportDeclined,
+      supportAccepted = null,
+      statusChangeType = null,
+    )
+
+    val profileNoRightToWorkAndAccepted = makeProfile(
+      status = profileStatusSupportNeeded,
+      supportAccepted = supportAccepted,
+      supportDeclined = null,
       statusChangeType = null,
     )
 
@@ -325,6 +345,19 @@ object ProfileObjects {
       modifiedTime,
       "2.0",
       objectMapper.valueToTree(profileNoRightToWork),
+      emptyJsonArray,
+      true,
+    )
+
+    val readinessProfileAndNoRightToWork2 = ReadinessProfile(
+      newOffenderId,
+      newBookingId,
+      createdBy,
+      createdTime,
+      createdBy,
+      modifiedTime,
+      "2.0",
+      objectMapper.valueToTree(profileNoRightToWork1),
       emptyJsonArray,
       true,
     )
