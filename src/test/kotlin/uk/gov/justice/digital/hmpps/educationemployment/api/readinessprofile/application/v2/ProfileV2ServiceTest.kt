@@ -17,12 +17,14 @@ import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.AlreadyExistsException
 import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.InvalidStateException
 import uk.gov.justice.digital.hmpps.educationemployment.api.exceptions.NotFoundException
+import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.ProfileStatus
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.StatusChange
 import uk.gov.justice.digital.hmpps.educationemployment.api.profiledata.domain.v2.Profile
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.V1Profiles
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.V2Profiles
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.V2Profiles.profileIncorrectStatus
+import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.V2Profiles.profileNoRightToWorkAndAccepted
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.V2Profiles.profileStatusNewAndBothStateIncorrect
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ProfileObjects.offenderIdList
 import uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.domain.ReadinessProfile
@@ -628,6 +630,180 @@ class ProfileV2ServiceTest : UnitTestBase() {
         .isEqualTo(expected)
       assertThat(actual.get("prisonId")).isNotNull
       assertThat(actual.get("within12Weeks")).isEqualTo(BooleanNode.TRUE)
+    }
+  }
+
+  @Nested
+  @DisplayName("When updating support state audit fields")
+  inner class SupportStateAuditFieldUpdates {
+    private val prisonNumber = V2Profiles.readinessProfileAndNoRightToWork1.offenderId
+    private val bookingId = V2Profiles.readinessProfileAndNoRightToWork1.bookingId
+    private val userId = ProfileObjects.createdBy
+
+    @BeforeEach
+    internal fun setUp() {
+      mockSaveProfile()
+    }
+
+    @Test
+    fun `sets supportAccepted audit fields when updating existing accepted profile with missing fields`() {
+      val profileBefore: ReadinessProfile = V2Profiles.readinessProfileAndAccepted1.copy()
+      val storedProfileData = profileJsonToValue(profileBefore.profileData).apply {
+        supportAccepted!!.modifiedBy = null
+        supportAccepted!!.modifiedDateTime = null
+      }
+      givenProfileFound(profileBefore.copy(profileData = objectMapper.valueToTree(storedProfileData)))
+
+      val updatedProfileDataNoStatusChange = profileJsonToValue(profileBefore.profileData).apply {
+        status = ProfileStatus.SUPPORT_NEEDED
+        supportAccepted = V2Profiles.profileAcceptedAndModified.supportAccepted
+        supportAccepted!!.modifiedBy = null
+        supportAccepted!!.modifiedDateTime = null
+      }
+
+      val profileAfter = assertProfileIsUpdated(userId, prisonNumber, bookingId, updatedProfileDataNoStatusChange)
+
+      // check that supportAccepted modifiedBy and modifiedDateTime fields are now set to userId and defaultCurrentLocalTime
+      profileJsonToValue(profileAfter.profileData).let {
+        assertThat(it.supportAccepted).isNotNull()
+        assertThat(it.supportAccepted!!.modifiedBy).isEqualTo(userId)
+        assertThat(it.supportAccepted!!.modifiedDateTime).isEqualTo(defaultCurrentLocalTime)
+        assertThat(it.supportDeclined).isNull()
+      }
+    }
+
+    @Test
+    fun `sets supportDeclined audit fields when updating existing declined profile with missing fields`() {
+      val profileBefore: ReadinessProfile = V2Profiles.readinessProfileAndDeclined1.copy()
+      val storedProfileData = profileJsonToValue(profileBefore.profileData).apply {
+        supportDeclined!!.modifiedBy = null
+        supportDeclined!!.modifiedDateTime = null
+      }
+      givenProfileFound(profileBefore.copy(profileData = objectMapper.valueToTree(storedProfileData)))
+
+      val updatedProfileDataNoStatusChange = profileJsonToValue(profileBefore.profileData).apply {
+        status = ProfileStatus.SUPPORT_DECLINED
+        supportDeclined = V2Profiles.profileDeclinedAndModified.supportDeclined
+        supportDeclined!!.modifiedBy = null
+        supportDeclined!!.modifiedDateTime = null
+      }
+
+      val profileAfter = assertProfileIsUpdated(userId, prisonNumber, bookingId, updatedProfileDataNoStatusChange)
+
+      // check that supportDeclined modifiedBy and modifiedDateTime fields are now set to userId and defaultCurrentLocalTime
+      profileJsonToValue(profileAfter.profileData).let {
+        assertThat(it.supportDeclined).isNotNull()
+        assertThat(it.supportDeclined!!.modifiedBy).isEqualTo(userId)
+        assertThat(it.supportDeclined!!.modifiedDateTime).isEqualTo(defaultCurrentLocalTime)
+        assertThat(it.supportAccepted).isNull()
+      }
+    }
+
+    @Test
+    fun `set supportDeclined audit fields, with supportAccepted audit fields persisting, when updating supportAccepted to supportDeclined`() {
+      val storedProfile = V2Profiles.readinessProfileAndAccepted1.copy()
+      val storedData = profileJsonToValue(storedProfile.profileData).apply {
+        status = ProfileStatus.SUPPORT_NEEDED
+        supportAccepted = V2Profiles.profileAcceptedAndModified.supportAccepted?.copy()?.apply {
+          modifiedBy = userId
+          modifiedDateTime = defaultCurrentLocalTime
+        }
+        supportDeclined = null
+      }
+      givenProfileFound(storedProfile.copy(profileData = objectMapper.valueToTree(storedData)))
+
+      val incomingPayload = profileJsonToValue(storedProfile.profileData).apply {
+        status = ProfileStatus.SUPPORT_DECLINED
+        supportDeclined = V2Profiles.profileDeclinedAndModified.supportDeclined?.copy()?.apply {
+          modifiedBy = userId
+          modifiedDateTime = defaultCurrentLocalTime
+        }
+      }
+      val profileAfter = assertProfileIsUpdated(userId, prisonNumber, bookingId, incomingPayload)
+
+      // After update, expect audit fields to have been updated correctly
+      profileJsonToValue(profileAfter.profileData).let {
+        assertThat(it.supportAccepted).isNotNull()
+        assertThat(it.supportAccepted!!.modifiedBy).isNotNull()
+        assertThat(it.supportAccepted!!.modifiedDateTime).isNotNull()
+
+        assertThat(it.supportDeclined).isNotNull()
+        assertThat(it.supportDeclined!!.modifiedBy).isEqualTo(userId)
+        assertThat(it.supportDeclined!!.modifiedDateTime).isEqualTo(defaultCurrentLocalTime)
+      }
+    }
+
+    @Test
+    fun `set supportAccepted audit fields, WITHOUT supportDeclined audit fields persisting, when updating supportDeclined to supportAccepted`() {
+      val storedProfile = V2Profiles.readinessProfileAndDeclined1.copy()
+      val storedData = profileJsonToValue(storedProfile.profileData).apply {
+        status = ProfileStatus.SUPPORT_DECLINED
+        supportAccepted = null
+        supportDeclined = V2Profiles.profileDeclinedAndModified.supportDeclined?.copy()?.apply {
+          modifiedBy = "user-one"
+          modifiedDateTime = defaultCurrentLocalTime.minusMinutes(5)
+        }
+      }
+      givenProfileFound(storedProfile.copy(profileData = objectMapper.valueToTree(storedData)))
+
+      val incomingPayload = profileJsonToValue(storedProfile.profileData).apply {
+        status = ProfileStatus.SUPPORT_NEEDED
+        supportDeclined = null
+        supportAccepted = V2Profiles.profileAcceptedAndModified.supportAccepted?.copy()?.apply {
+          modifiedBy = userId
+          modifiedDateTime = defaultCurrentLocalTime
+        }
+      }
+      val profileAfter = assertProfileIsUpdated(userId, prisonNumber, bookingId, incomingPayload)
+      // After update, expect audit fields to have been updated correctly
+      profileJsonToValue(profileAfter.profileData).let {
+        assertThat(it.supportAccepted).isNotNull()
+        assertThat(it.supportAccepted!!.modifiedBy).isEqualTo(userId)
+        assertThat(it.supportAccepted!!.modifiedDateTime).isEqualTo(defaultCurrentLocalTime)
+
+        assertThat(it.supportDeclined).isNull()
+      }
+    }
+
+    @Test
+    fun `sets supportAccepted audit fields when no right to work profile with supportAccepted and supportDeclined = null is updated to support needed`() {
+      val storedProfile: ReadinessProfile = V2Profiles.readinessProfileAndNoRightToWork2.copy()
+      givenProfileFound(storedProfile.copy())
+
+      val incomingPayload = profileNoRightToWorkAndAccepted.copy()
+      val profileAfter = assertProfileIsUpdated(userId, prisonNumber, bookingId, incomingPayload)
+
+      profileJsonToValue(profileAfter.profileData).let {
+        assertThat(it.status).isEqualTo(ProfileStatus.SUPPORT_NEEDED)
+        assertThat(it.supportAccepted).isNotNull()
+        assertThat(it.supportAccepted!!.modifiedBy).isEqualTo(userId)
+        assertThat(it.supportAccepted!!.modifiedDateTime).isEqualTo(defaultCurrentLocalTime)
+        assertThat(it.supportDeclined).isNull()
+        assertThat(it.statusChange).isTrue
+        assertThat(it.statusChangeType).isEqualTo(StatusChange.NEW)
+        assertThat(it.statusChangeDate).isEqualTo(defaultCurrentLocalTime)
+      }
+    }
+
+    @Test
+    fun `sets supportDeclined audit fields when no right to work profile with supportAccepted and supportDeclined = null is updated to support declined`() {
+      val storedProfile: ReadinessProfile = V2Profiles.readinessProfileAndNoRightToWork2.copy()
+      givenProfileFound(storedProfile.copy())
+
+      val incomingPayload = V2Profiles.profileNoRightToWorkAndDeclined.copy()
+
+      val profileAfter = assertProfileIsUpdated(userId, prisonNumber, bookingId, incomingPayload)
+
+      profileJsonToValue(profileAfter.profileData).let {
+        assertThat(it.status).isEqualTo(ProfileStatus.SUPPORT_DECLINED)
+        assertThat(it.supportDeclined).isNotNull()
+        assertThat(it.supportDeclined!!.modifiedBy).isEqualTo(userId)
+        assertThat(it.supportDeclined!!.modifiedDateTime).isEqualTo(defaultCurrentLocalTime)
+        assertThat(it.supportAccepted).isNull()
+        assertThat(it.statusChange).isTrue
+        assertThat(it.statusChangeType).isEqualTo(StatusChange.NEW)
+        assertThat(it.statusChangeDate).isEqualTo(defaultCurrentLocalTime)
+      }
     }
   }
 
