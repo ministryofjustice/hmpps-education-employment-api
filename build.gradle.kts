@@ -1,5 +1,5 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "11.0.10"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "11.0.11"
   kotlin("plugin.spring") version "2.4.20"
   kotlin("plugin.jpa") version "2.4.20"
   id("jacoco")
@@ -36,7 +36,7 @@ testing {
       dependencies {
         kotlin.target.compilations { named("integrationTest") { associateWith(getByName("main")) } }
         implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:3.0.3")
-        implementation("uk.gov.justice.service.hmpps:hmpps-subject-access-request-test-support:2.8.3")
+        implementation("uk.gov.justice.service.hmpps:hmpps-subject-access-request-test-support:2.8.4")
         implementation("org.springframework.boot:spring-boot-starter-test")
         implementation("org.springframework.boot:spring-boot-starter-data-jpa-test")
         implementation("org.springframework.boot:spring-boot-restclient")
