@@ -24,6 +24,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import kotlin.jvm.optionals.getOrNull
+import org.slf4j.LoggerFactory
 
 const val PROFILE_SCHEMA_VERSION = "2.0"
 private const val PROFILE_SCHEMA_PREVIOUS_VERSION = "1.0"
@@ -38,6 +39,10 @@ class ProfileV2Service(
   private val typeRefProfile by lazy { object : TypeReference<Profile>() {} }
 
   private val emptyJsonArray: JsonNode get() = objectMapper.readTree("[]")
+
+  companion object {
+    private val log = LoggerFactory.getLogger(this::class.java)
+  }
 
   override fun createProfileForOffender(
     userId: String,
@@ -94,9 +99,11 @@ class ProfileV2Service(
         if (profile.supportAccepted != null && profile.supportDeclined != null) {
           throw InvalidStateException(offenderId)
         } else if (profile.supportAccepted != null) {
+          log.info("Profile update branch: NO RIGHT TO WORK -> ACCEPTED")
           createOrUpdateAcceptedStatusList(profile, userId, currentTime)
           profile.statusChangeType ?: run { profile.statusChangeType = StatusChange.NEW }
         } else if (profile.supportDeclined != null) {
+          log.info("Profile update branch: NO RIGHT TO WORK -> DECLINED")
           createOrUpdateDeclinedStatusList(profile, userId, offenderId, currentTime)
           profile.statusChangeType ?: run { profile.statusChangeType = StatusChange.NEW }
         }
@@ -104,21 +111,27 @@ class ProfileV2Service(
       // ACCEPTED -> ACCEPTED
       storedCoreProfile.supportAccepted != null && profile.supportAccepted != null && profile.supportDeclined == null ->
         if (profile.supportAccepted != storedCoreProfile.supportAccepted) {
+          log.info("Profile update branch: ACCEPTED -> ACCEPTED")
           createOrUpdateAcceptedStatusList(profile, userId, currentTime)
         }
       // DECLINED -> DECLINED
       storedCoreProfile.supportDeclined != null && profile.supportDeclined != null ->
         if (profile.supportDeclined != storedCoreProfile.supportDeclined) {
+          log.info("Profile update branch: DECLINED -> DECLINED")
           createOrUpdateDeclinedStatusList(profile, userId, offenderId, currentTime)
         }
 
       // ACCEPTED -> DECLINED
-      storedCoreProfile.supportDeclined == null && profile.supportDeclined != null ->
+      storedCoreProfile.supportDeclined == null && profile.supportDeclined != null -> {
+        log.info("Profile update branch: ACCEPTED -> DECLINED")
         updateProfileDeclinedStatusChange(profile, userId, offenderId, profileToUpdate, currentTime)
+      }
 
       // DECLINED -> ACCEPTED
-      storedCoreProfile.supportDeclined != null && profile.supportAccepted != null ->
+      storedCoreProfile.supportDeclined != null && profile.supportAccepted != null -> {
+        log.info("Profile update branch: DECLINED -> ACCEPTED")
         updateProfileAcceptStatusChange(profile, userId, offenderId, profileToUpdate, currentTime)
+      }
     }
 
     if (storedCoreProfile.status != profile.status) {
