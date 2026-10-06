@@ -101,26 +101,22 @@ class ProfileV2Service(
           profile.statusChangeType ?: run { profile.statusChangeType = StatusChange.NEW }
         }
 
-      storedCoreProfile.supportAccepted != null &&
-        profile.supportAccepted != null &&
-        profile.supportDeclined != null &&
-        storedCoreProfile.status != ProfileStatus.SUPPORT_DECLINED &&
-        profile.status == ProfileStatus.SUPPORT_DECLINED ->
-        updateProfileDeclinedStatusChange(profile, userId, offenderId, profileToUpdate, currentTime)
-
-      storedCoreProfile.supportAccepted != null && profile.supportAccepted != null ->
+      // ACCEPTED -> ACCEPTED
+      storedCoreProfile.supportAccepted != null && profile.supportAccepted != null && profile.supportDeclined == null ->
         if (profile.supportAccepted != storedCoreProfile.supportAccepted) {
           createOrUpdateAcceptedStatusList(profile, userId, currentTime)
         }
-
+      // DECLINED -> DECLINED
       storedCoreProfile.supportDeclined != null && profile.supportDeclined != null ->
         if (profile.supportDeclined != storedCoreProfile.supportDeclined) {
           createOrUpdateDeclinedStatusList(profile, userId, offenderId, currentTime)
         }
 
-      storedCoreProfile.supportAccepted != null && profile.supportDeclined != null ->
+      // ACCEPTED -> DECLINED
+      storedCoreProfile.supportDeclined == null && profile.supportDeclined != null ->
         updateProfileDeclinedStatusChange(profile, userId, offenderId, profileToUpdate, currentTime)
 
+      // DECLINED -> ACCEPTED
       storedCoreProfile.supportDeclined != null && profile.supportAccepted != null ->
         updateProfileAcceptStatusChange(profile, userId, offenderId, profileToUpdate, currentTime)
     }

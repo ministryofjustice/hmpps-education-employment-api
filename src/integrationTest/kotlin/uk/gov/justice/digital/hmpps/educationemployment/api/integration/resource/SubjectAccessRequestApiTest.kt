@@ -111,6 +111,7 @@ class SubjectAccessRequestApiTest {
         statusChangeType = StatusChange.DECLINED_TO_ACCEPTED
       }
       updatedDto.profileData.supportAccepted = makeSupportAccepted()
+      updatedDto.profileData.supportDeclined = null
       updateReadinessProfile()
       timeTicking()
 

@@ -13,20 +13,7 @@
       "prisonId": "prison2",
       "prisonName": "Prison 2",
       "within12Weeks": true,
-      "supportDeclined": {
-        "modifiedBy":"USER1_GEN",
-        "modifiedDateTime": "2025-01-01T00:01:00Z",
-        "supportToWorkDeclinedReason": [
-          "HEALTH",
-          "OTHER"
-        ],
-        "supportToWorkDeclinedReasonOther": "Some other reasons",
-        "circumstanceChangesRequiredToWork": [
-          "MENTAL_HEALTH_SUPPORT",
-          "OTHER"
-        ],
-        "circumstanceChangesRequiredToWorkOther": "Some other circumstance changes"
-      },
+      "supportDeclined": null,
       "supportAccepted": {
         "modifiedBy":"USER2_GEN",
         "modifiedDateTime": "2025-01-01T00:05:00Z",
@@ -130,20 +117,7 @@
       "prisonId": "prison2",
       "prisonName": "Prison 2",
       "within12Weeks": true,
-      "supportDeclined": {
-        "modifiedBy":"USER1_GEN",
-        "modifiedDateTime": "2025-01-01T00:01:00Z",
-        "supportToWorkDeclinedReason": [
-          "HEALTH",
-          "OTHER"
-        ],
-        "supportToWorkDeclinedReasonOther": "Some other reasons",
-        "circumstanceChangesRequiredToWork": [
-          "MENTAL_HEALTH_SUPPORT",
-          "OTHER"
-        ],
-        "circumstanceChangesRequiredToWorkOther": "Some other circumstance changes"
-      },
+      "supportDeclined": null,
       "supportAccepted": {
         "modifiedBy":"USER2_GEN",
         "modifiedDateTime": "2025-01-01T00:05:00Z",
@@ -247,20 +221,7 @@
       "prisonId": "prison2",
       "prisonName": "Prison 2",
       "within12Weeks": true,
-      "supportDeclined": {
-        "modifiedBy":"USER1_GEN",
-        "modifiedDateTime": "2025-01-01T00:01:00Z",
-        "supportToWorkDeclinedReason": [
-          "HEALTH",
-          "OTHER"
-        ],
-        "supportToWorkDeclinedReasonOther": "Some other reasons",
-        "circumstanceChangesRequiredToWork": [
-          "MENTAL_HEALTH_SUPPORT",
-          "OTHER"
-        ],
-        "circumstanceChangesRequiredToWorkOther": "Some other circumstance changes"
-      },
+      "supportDeclined": null,
       "supportAccepted": {
         "modifiedBy":"USER2_GEN",
         "modifiedDateTime": "2025-01-01T00:04:00Z",
@@ -364,20 +325,7 @@
       "prisonId": "prison2",
       "prisonName": "Prison 2",
       "within12Weeks": true,
-      "supportDeclined": {
-        "modifiedBy":"USER1_GEN",
-        "modifiedDateTime": "2025-01-01T00:01:00Z",
-        "supportToWorkDeclinedReason": [
-          "HEALTH",
-          "OTHER"
-        ],
-        "supportToWorkDeclinedReasonOther": "Some other reasons",
-        "circumstanceChangesRequiredToWork": [
-          "MENTAL_HEALTH_SUPPORT",
-          "OTHER"
-        ],
-        "circumstanceChangesRequiredToWorkOther": "Some other circumstance changes"
-      },
+      "supportDeclined": null,
       "supportAccepted": {
         "modifiedBy":"USER2_GEN",
         "modifiedDateTime": "2025-01-01T00:02:00Z",
@@ -481,20 +429,7 @@
       "prisonId": "prison2",
       "prisonName": "Prison 2",
       "within12Weeks": true,
-      "supportDeclined": {
-        "modifiedBy": "USER1_GEN",
-        "modifiedDateTime": "2025-01-01T00:01:00Z",
-        "supportToWorkDeclinedReason": [
-          "HEALTH",
-          "OTHER"
-        ],
-        "supportToWorkDeclinedReasonOther": "Some other reasons",
-        "circumstanceChangesRequiredToWork": [
-          "MENTAL_HEALTH_SUPPORT",
-          "OTHER"
-        ],
-        "circumstanceChangesRequiredToWorkOther": "Some other circumstance changes"
-      },
+      "supportDeclined": null,
       "supportAccepted": {
         "modifiedBy": "USER2_GEN",
         "modifiedDateTime": "2025-01-01T00:02:00Z",
@@ -592,20 +527,7 @@
       "prisonId": "prison2",
       "prisonName": "Prison 2",
       "within12Weeks": true,
-      "supportDeclined": {
-        "modifiedBy": "USER1_GEN",
-        "modifiedDateTime": "2025-01-01T00:01:00Z",
-        "supportToWorkDeclinedReason": [
-          "HEALTH",
-          "OTHER"
-        ],
-        "supportToWorkDeclinedReasonOther": "Some other reasons",
-        "circumstanceChangesRequiredToWork": [
-          "MENTAL_HEALTH_SUPPORT",
-          "OTHER"
-        ],
-        "circumstanceChangesRequiredToWorkOther": "Some other circumstance changes"
-      },
+      "supportDeclined": null,
       "supportAccepted": {
         "modifiedBy": "USER2_GEN",
         "modifiedDateTime": "2025-01-01T00:02:00Z",
@@ -697,20 +619,7 @@
       "prisonId": "prison2",
       "prisonName": "Prison 2",
       "within12Weeks": true,
-      "supportDeclined": {
-        "modifiedBy":"USER1_GEN",
-        "modifiedDateTime": "2025-01-01T00:01:00Z",
-        "supportToWorkDeclinedReason": [
-          "HEALTH",
-          "OTHER"
-        ],
-        "supportToWorkDeclinedReasonOther": "Some other reasons",
-        "circumstanceChangesRequiredToWork": [
-          "MENTAL_HEALTH_SUPPORT",
-          "OTHER"
-        ],
-        "circumstanceChangesRequiredToWorkOther": "Some other circumstance changes"
-      },
+      "supportDeclined": null,
       "supportAccepted": {
         "modifiedBy":"USER2_GEN",
         "modifiedDateTime": "2025-01-01T00:02:00Z",
