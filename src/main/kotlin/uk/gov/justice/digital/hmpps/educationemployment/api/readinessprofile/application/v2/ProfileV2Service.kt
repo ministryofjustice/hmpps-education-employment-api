@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.ap
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import org.slf4j.LoggerFactory
 import org.springframework.data.history.Revision
 import org.springframework.data.history.Revisions
 import org.springframework.stereotype.Service
@@ -24,7 +25,6 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import kotlin.jvm.optionals.getOrNull
-import org.slf4j.LoggerFactory
 
 const val PROFILE_SCHEMA_VERSION = "2.0"
 private const val PROFILE_SCHEMA_PREVIOUS_VERSION = "1.0"
