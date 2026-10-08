@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.educationemployment.api.readinessprofile.ap
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import org.slf4j.LoggerFactory
 import org.springframework.data.history.Revision
 import org.springframework.data.history.Revisions
 import org.springframework.stereotype.Service
@@ -38,6 +39,10 @@ class ProfileV2Service(
   private val typeRefProfile by lazy { object : TypeReference<Profile>() {} }
 
   private val emptyJsonArray: JsonNode get() = objectMapper.readTree("[]")
+
+  companion object {
+    private val log = LoggerFactory.getLogger(this::class.java)
+  }
 
   override fun createProfileForOffender(
     userId: String,
@@ -94,28 +99,39 @@ class ProfileV2Service(
         if (profile.supportAccepted != null && profile.supportDeclined != null) {
           throw InvalidStateException(offenderId)
         } else if (profile.supportAccepted != null) {
+          log.info("Profile update branch: NO RIGHT TO WORK -> ACCEPTED")
           createOrUpdateAcceptedStatusList(profile, userId, currentTime)
           profile.statusChangeType ?: run { profile.statusChangeType = StatusChange.NEW }
         } else if (profile.supportDeclined != null) {
+          log.info("Profile update branch: NO RIGHT TO WORK -> DECLINED")
           createOrUpdateDeclinedStatusList(profile, userId, offenderId, currentTime)
           profile.statusChangeType ?: run { profile.statusChangeType = StatusChange.NEW }
         }
 
-      storedCoreProfile.supportAccepted != null && profile.supportAccepted != null ->
+      // ACCEPTED -> ACCEPTED
+      storedCoreProfile.supportAccepted != null && profile.supportAccepted != null && profile.supportDeclined == null ->
         if (profile.supportAccepted != storedCoreProfile.supportAccepted) {
+          log.info("Profile update branch: ACCEPTED -> ACCEPTED")
           createOrUpdateAcceptedStatusList(profile, userId, currentTime)
         }
-
+      // DECLINED -> DECLINED
       storedCoreProfile.supportDeclined != null && profile.supportDeclined != null ->
         if (profile.supportDeclined != storedCoreProfile.supportDeclined) {
+          log.info("Profile update branch: DECLINED -> DECLINED")
           createOrUpdateDeclinedStatusList(profile, userId, offenderId, currentTime)
         }
 
-      storedCoreProfile.supportAccepted != null && profile.supportDeclined != null ->
+      // ACCEPTED -> DECLINED
+      storedCoreProfile.supportDeclined == null && profile.supportDeclined != null -> {
+        log.info("Profile update branch: ACCEPTED -> DECLINED")
         updateProfileDeclinedStatusChange(profile, userId, offenderId, profileToUpdate, currentTime)
+      }
 
-      storedCoreProfile.supportDeclined != null && profile.supportAccepted != null ->
+      // DECLINED -> ACCEPTED
+      storedCoreProfile.supportDeclined != null && profile.supportAccepted != null -> {
+        log.info("Profile update branch: DECLINED -> ACCEPTED")
         updateProfileAcceptStatusChange(profile, userId, offenderId, profileToUpdate, currentTime)
+      }
     }
 
     if (storedCoreProfile.status != profile.status) {

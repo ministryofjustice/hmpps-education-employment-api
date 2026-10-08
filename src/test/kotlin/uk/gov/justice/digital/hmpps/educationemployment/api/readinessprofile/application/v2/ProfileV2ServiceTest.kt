@@ -298,12 +298,22 @@ class ProfileV2ServiceTest : UnitTestBase() {
           assertThat(it.statusChange!!).isEqualTo(false)
         }
 
-        val profileAfter = assertProfileIsUpdated(userId, prisonNumber, bookingId, profileDataWithDecline)
+        val storedAcceptedData = profileJsonToValue(profileWithAcceptance.profileData)
+        val incomingPayload = profileDataWithDecline.copy().apply {
+          supportAccepted = storedAcceptedData.supportAccepted
+        }
+
+        val profileAfter = assertProfileIsUpdated(userId, prisonNumber, bookingId, incomingPayload)
 
         // After update, expect StatusChangeType and statusChange to have been updated correctly.
         profileJsonToValue(profileAfter.profileData).let {
+          assertThat(it.status).isEqualTo(ProfileStatus.SUPPORT_DECLINED)
           assertThat(it.statusChangeType!!).isEqualTo(StatusChange.ACCEPTED_TO_DECLINED)
           assertThat(it.statusChange!!).isEqualTo(true)
+          assertThat(it.supportAccepted).isNotNull()
+          assertThat(it.supportDeclined).isNotNull()
+          assertThat(it.supportDeclined!!.modifiedBy).isEqualTo(userId)
+          assertThat(it.supportDeclined!!.modifiedDateTime).isEqualTo(defaultCurrentLocalTime)
         }
       }
 
@@ -333,7 +343,6 @@ class ProfileV2ServiceTest : UnitTestBase() {
           assertThat(it.statusChangeType!!).isEqualTo(StatusChange.NEW)
           assertThat(it.statusChange!!).isEqualTo(false)
         }
-
         val profileAfter = assertProfileIsUpdated(userId, prisonNumber, bookingId, profileDataNoRightToWork)
 
         // After update, expect StatusChangeType and statusChange to have been updated correctly.
