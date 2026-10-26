@@ -31,7 +31,7 @@ services:
 #      - SPRING_PROFILES_ACTIVE=dev
 
   education-employment-db:
-    image: postgres:16
+    image: postgres:18
     networks:
       - hmpps
     # network_mode: "host"
