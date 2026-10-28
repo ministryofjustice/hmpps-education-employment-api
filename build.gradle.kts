@@ -1,7 +1,7 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "11.0.10"
-  kotlin("plugin.spring") version "2.4.20"
-  kotlin("plugin.jpa") version "2.4.20"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "11.0.14"
+  kotlin("plugin.spring") version "2.4.21"
+  kotlin("plugin.jpa") version "2.4.21"
   id("jacoco")
 }
 
@@ -10,7 +10,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
   implementation("org.springframework.boot:spring-boot-starter-flyway")
   implementation("org.springframework.data:spring-data-envers")
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.1.1")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.2.0")
   implementation("com.fasterxml.jackson.core:jackson-databind")
 
   runtimeOnly("org.flywaydb:flyway-database-postgresql")
@@ -36,7 +36,7 @@ testing {
       dependencies {
         kotlin.target.compilations { named("integrationTest") { associateWith(getByName("main")) } }
         implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:3.0.3")
-        implementation("uk.gov.justice.service.hmpps:hmpps-subject-access-request-test-support:2.8.3")
+        implementation("uk.gov.justice.service.hmpps:hmpps-subject-access-request-test-support:2.8.6")
         implementation("org.springframework.boot:spring-boot-starter-test")
         implementation("org.springframework.boot:spring-boot-starter-data-jpa-test")
         implementation("org.springframework.boot:spring-boot-restclient")
